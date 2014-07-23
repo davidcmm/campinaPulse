@@ -9,15 +9,18 @@ python preProcessa.py test3.csv
 #awk -F " " '{print $1, $3, $4, $5}' partial.csv > data.csv
 #rm partial.csv
 
-#Separa resultados gerais das comparacoes
+#Analisa dados de acordo com Q-Score do PlacePulse
+python analisaQScore.py output.csv > qscore.dat
+
+#Separa resultados gerais das comparacoes apenas pela contagem do número de imagens das quais ganhou
 python analisaGeral.py output.csv > geral.dat
 
-#Separa resultados das comparacoes por formação dos usuários
+#Separa resultados das comparacoes por formação dos usuários pela contagem do número de imagens das quais ganhou
 python analisaUsuario.py output.csv graduacao.csv > graduacao.dat
 python analisaUsuario.py output.csv mestrado.csv > mestrado.dat
 python analisaUsuario.py output.csv medio.csv > medio.dat
 
-#Separa resultados das comparacoes por questões
+#Separa resultados das comparacoes por questões pela contagem do número de imagens das quais ganhou
 python analisaQuestoes.py output.csv 1 > question1.dat
 python analisaQuestoes.py output.csv 2 > question2.dat
 python analisaQuestoes.py output.csv 3 > question3.dat

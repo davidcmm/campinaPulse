@@ -29,7 +29,7 @@ if __name__ == "__main__":
 		else:
 			folder = "http://socientize.lsd.ufcg.edu.br/floriano"
 		outputFile.write("<td><img src=\""+folder+"/"+photo+"\" width=\"400\" height=\"300\"></td>\n")
-		outputFile.write("<td>"+qscore+"</td>\n")
+		outputFile.write("<td>"+photo + " " + qscore+"</td>\n")
 		counter += 1
 
 		if counter % 3 == 0:

@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="span12">
+        <div id="modal" class="modal hide fade">
+            <div class="modal-header">
+                <h3>Tutorial Como é Campina?</h3>
+            </div>
+            <div id="0" class="modal-body" style="display:none">
+                <p><strong>Olá!</strong> Esta é uma aplicação que captura sua impressão sobre ambientes urbanos a partir da comparação de duas fotos. 
+               </p> 
+            </div>
+            <div id="1" class="modal-body" style="display:none">
+                <p>A aplicação é muito simples. Duas fotos da cidade de Campina Grande, Paraíba, Brasil são carregadas lado a lado e você pode responder a uma das seguintes questões: <strong>Que local lhe parece mais bonito?</strong> <strong>Que local lhe parece mais seguro?</strong> <strong>Que local lhe parece mais único?</strong> <strong>Que local lhe parece mais rico?</strong></p>
+		<p> Você deverá escolher uma das quatro questões sempre que for iniciar sua contribuição e você poderá alterar a questão a ser respondida a qualquer momento clicando no botão "Alterar pergunta". </p>
+		<div class="span3"><!-- Start of Photo DIV (column) -->		
+			<img src="http://www2.lsd.ufcg.edu.br/~davidcmm/campina1.jpg" class="img-polaroid" style="max-width=50%"/>
+		</div>
+		<div class="span3"><!-- Start of Photo DIV (column) -->                
+	                <img src="http://www2.lsd.ufcg.edu.br/~davidcmm/campina2.jpg" class="img-polaroid" style="max-width=50%"/>
+		</div>
+	    </div>
+	   <div id="2" class="modal-body" style="display:none">		
+                <p>Para responder a questão escolhida você pode clicar em uma das imagens! Analise bem cada uma das imagens e a questão escolhida para escolher qual das imagens tem a sua preferência.
+                </p>
+                <p> Caso nenhuma das imagens tenha sua preferência basta clicar no botão "Tanto faz!". A resposta "Tanto faz!" deve ser utilizada quando você não conseguir discernir claramente qual das duas fotos melhor responde a pergunta selecionada.</p>
+            </div>
+            <div class="modal-footer">
+                <a id="prevBtn" href="#" onclick="showStep('prev')" class="btn">Anterior</a>
+                <a id="nextBtn" href="#" onclick="showStep('next')" class="btn btn-success">Próximo</a>
+                <a id="startContrib" href="../comoecampina/newtask" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Tente!</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var step = -1;
+    function showStep(action) {
+        $("#" + step).hide();
+        if (action == 'next') {
+            step = step + 1;
+        }
+        if (action == 'prev') {
+            step = step - 1;
+        }
+        if (step == 0) {
+            $("#prevBtn").hide();
+        }
+        else {
+            $("#prevBtn").show();
+        }
+
+        if (step == 2 ) {
+            $("#nextBtn").hide();
+            $("#startContrib").show();
+        }
+        $("#" + step).show();
+    }
+
+    //showStep('next');
+    //$("#modal").modal('show');
+</script>

@@ -22,6 +22,28 @@ import json
 import string
 import glob
 import random
+import sys
+
+def get_photos_from_file(limit):
+    photos = []
+    dataFile = open("export.csv", "r")
+    lines = dataFile.readlines()
+    counter = 0
+
+    for line in lines:
+	if counter == 0:
+		counter += 1
+		continue
+	elif counter >= limit:
+		break
+	data = line.split(",")
+	element = {'url_c':  data[2], 'url_a': data[3]}
+	photos.append(element)
+	
+	counter += 1
+
+    dataFile.close()
+    return photos
 
 def get_photos(size="big"):
     """
@@ -42,7 +64,7 @@ def get_photos(size="big"):
     listOfAlmirante = glob.glob('/home/pybossa023/pybossa/pybossa/almirante/*.jpg')
     listOfRodrigues = glob.glob('/home/pybossa023/pybossa/pybossa/rodrigues/*.jpg')
     listOfFloriano = glob.glob('/home/pybossa023/pybossa/pybossa/floriano/*.jpg')
-
+    
     #values = {'nojsoncallback': 1,
     #          'format': "json"}
 
@@ -65,6 +87,8 @@ def get_photos(size="big"):
 
     allPhotos = [listOfAlmirante, listOfFloriano, listOfRodrigues]
     counter = 0	
+
+    #return get_photos_from_file(numberOfPairs)
 	
     while counter < numberOfPairs:
 	#Choose streets
@@ -98,3 +122,11 @@ def get_photos(size="big"):
     #    photos.append({'url_m':  imgUrl_m,
     #                   'url_b': imgUrl_b})
     return photos
+
+
+if __name__ == "__main__":
+	if len(sys.argv) < 1:
+		print "Uso: <arquivo com dados>"
+		sys.exit(1)
+	print len(get_photos_from_file(500))
+

@@ -41,7 +41,7 @@
 					<option value="3"> Qual local lhe parece mais único?</option>
 					<option value="4"> Qual local lhe parece mais rico?</option>
 		     </select> -->
-		     <form>
+	   <form>
               <div id="aspect">
                <table cellpadding="5px" cellspacing="10px">
                  <tr>
@@ -100,7 +100,7 @@
       <a id="photo-link" href="#">
           <img id="photo" src="http://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
       </a>
-      </div><!-- End of Photo DIV (columnt) -->
+  </div><!-- End of Photo DIV (columnt) -->
   <div class="span6" style="width:47%"><!-- Start of Photo DIV (column) -->
       <a id="photo-link2" href="#">
           <img id="photo2" src="http://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
@@ -151,7 +151,7 @@
         <!-- Disqus thread for the given task -->
         <!-- <div id="disqus_thread" style="margin-top:5px;display:none"></div> -->
     </div><!-- End of Question and Submission DIV (column) -->
-    </div><!-- End of Skeleton Row -->
+</div><!-- End of Skeleton Row -->
 
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -172,6 +172,7 @@
     }
 
 </script>
+
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 
@@ -190,23 +191,23 @@ function showStep(action) {
 	   //Start contributing clicked!
 	   $('#startContrib').off('click').on('click', function(evt) {
           
-	      if (document.getElementById('beautiful').checked){
-			perguntaAResponder = "Qual local lhe parece mais bonito?";            
-          }else if (document.getElementById('secure').checked){
-            //perguntaAResponder = "Qual local lhe parece mais seguro?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask"
-	      }else if (document.getElementById('unique').checked){
-            //perguntaAResponder = "Qual local lhe parece mais único?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask"
-	      }else {
-            //perguntaAResponder = "Qual local lhe parece mais rico?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask"
-	      }
-          $("#startContrib").hide();
-          $("#" + step).hide();
-          $("#modal").modal('hide');
-	      step = 1;
-          $("#question").html(perguntaAResponder);
+		    if (document.getElementById('beautiful').checked){
+				perguntaAResponder = "Qual local lhe parece mais bonito?";            
+		    }else if (document.getElementById('secure').checked){
+		    //perguntaAResponder = "Qual local lhe parece mais seguro?";
+		    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask"
+		    }else if (document.getElementById('unique').checked){
+		    //perguntaAResponder = "Qual local lhe parece mais único?";
+		    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask"
+		    }else {
+		    //perguntaAResponder = "Qual local lhe parece mais rico?";
+		    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask"
+		    }
+		  $("#startContrib").hide();
+		  $("#" + step).hide();
+		  $("#modal").modal('hide');
+		  step = 1;
+		  $("#question").html(perguntaAResponder);
 	  });
   }
 }
@@ -315,8 +316,7 @@ pybossa.presentTask(function(task, deferred) {
                     $('#disqus_thread').toggle();
                     $('.btn-disqus').toggle();
                 }
-            }
-            else {
+            } else {
                 $("#error").show();
             }
         });

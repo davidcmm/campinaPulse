@@ -47,7 +47,7 @@
                  <tr>
                    <td>
                      <input type="radio" name="aspe" id="beautiful" value="1"/>
-                      <label for="beautiful"><img src="http://socientize.lsd.ufcg.edu.br/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
+                      <label for="beautiful"><img src="/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
                    </td>
                    
                    <td>
@@ -196,17 +196,24 @@
 
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
-<script src="ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>document.write('<script src="{{
-  url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+<!--<script src="ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-<!--<script type=text/javascript>
+<script type=text/javascript>
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script> -->
 
 <script>
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);
+  
+  /*document.write('<');
+document.write('script ');
+document.write('src=\"');
+//next line is the path to jquery file
+document.write('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+document.write('\" type=\"text/javascript\"></');
+document.write('script');
+document.write('>');*/
 
 var perguntaAResponder = "";
 var step = 0;
@@ -215,20 +222,21 @@ var respostasDadas = 0;
 
 function showForm(currentInfo){
   var show = false;
-  
-  if (!currentInfo || currentInfo.length == 0) {	
+    
+  if (null != currentInfo || undefined != currentInfo || !currentInfo || currentInfo.length == 0) {	
 	    show = true;
+        alert("CI"+currentInfo);
 	    $('#startContrib').off('click').on('click', function(evt) {
-		//Save captured user data!
-		var age = document.getElementById('userage').value;
-		var userClass = document.getElementById('userclass').value;
-		var userEduc = document.getElementById('usereduc').value;
-		var userCity = document.getElementById('usercity').value;
-		var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
-
-		$.getJSON('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
-			info: newInfo
-	        });
+          //Save captured user data!
+          var age = document.getElementById('userage').value;
+          var userClass = document.getElementById('userclass').value;
+          var userEduc = document.getElementById('usereduc').value;
+          var userCity = document.getElementById('usercity').value;
+          var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
+  
+          $.getJSON('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
+              info: newInfo
+              });
                /*$.ajax({
 		    type: 'post',
 		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
@@ -245,16 +253,16 @@ function showForm(currentInfo){
 		$("#modal").modal('hide');
 		
 	   });
-        } else {
+   } else {
 		currentInfo = currentInfo.substring(1, currentInfo.length-1);
 		var userData = currentInfo.split(",");
 		var userAge = userData[0].split("=")[1];
 		var userClass = userData[1].split("=")[1];
 		var userDegree = userData[2].split("=")[1];
 		var userCity = userData[3].split("=")[1];
+        alert("Getting Info"+userAge);
         
-		if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 &&
-			userCity.length > 0)){
+		if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0)){
 			
 		    	show = true;
 		    	//Setting values already given in the form!
@@ -304,9 +312,10 @@ function showForm(currentInfo){
               });
                    	
 	   }
-      }
+  }
   
   if(show){
+    	alert("Estou habilitando");
         $("#startContrib").show();
         $("#1").show();
     	return show;
@@ -314,8 +323,9 @@ function showForm(currentInfo){
 }  
   
 function showStep(action) {
-   
+   var show = false;
    if (action == 'init' && perguntaAResponder.length == 0){
+       show = true;
        $("#startContrib").show();
        $("#0").show();
        $("#1").hide();
@@ -326,13 +336,13 @@ function showStep(action) {
 	    perguntaAResponder = "Qual local lhe parece mais bonito?";            			
 	  }else if (document.getElementById('secure').checked){
 	    //perguntaAResponder = "Qual local lhe parece mais seguro?";
-	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask"
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
 	  }else if (document.getElementById('unique').checked){
 	    //perguntaAResponder = "Qual local lhe parece mais único?";
-	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask"
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask";
 	  }else {
 	    //perguntaAResponder = "Qual local lhe parece mais rico?";
-	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask"
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask";
 	  }
 	  $("#startContrib").hide();
 	  $("#0").hide();
@@ -341,16 +351,18 @@ function showStep(action) {
 	  step = 1;
 	  $("#question").html(perguntaAResponder);
       });
-      return true;
+      return show;
    }else if(action == 'next') {
       $.ajax({
 	  url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/currentUserInfo",
 	  async: false,
 	  dataType: 'json',
 	  success: function(data) {
-	     return showForm(data.info)
+	     show = showForm(data.info);
+         alert("Show form"+show);         
 	  }    
      });
+     return show;
   }
 }
 
@@ -363,7 +375,8 @@ function loadUserProgress() {
         var pct = Math.round((data.done*100)/data.total);
         $("#progress").css("width", pct.toString() +"%");
         $("#progress").attr("title", pct.toString() + "% completed!");
-        $("#progress").tooltip({'placement': 'left'}); 
+        $("#progress").tooltip({ 'placement' : 'left' });
+        
         $("#total").text(data.total);
         $("#done").text(data.done);
       	if (respostasIniciais == 0) {
@@ -409,9 +422,10 @@ pybossa.presentTask(function(task, deferred) {
 	//At each 10 questions answered check user profile information
 	if (respostasDadas != 0 && (respostasDadas-respostasIniciais) % 2 == 0){
 	    step = 1;
-            if(showStep('next')){
-               $("#modal").modal('show');
-            }
+        if(showStep('next')){
+          	 alert("Estou habilitando 2");
+             $("#modal").modal('show');
+        }
 	}
       
         $('#photo-link').html('').append(task.info.left);
@@ -492,4 +506,5 @@ pybossa.presentTask(function(task, deferred) {
 
 pybossa.run('comoecampina');
 </script>
+
 

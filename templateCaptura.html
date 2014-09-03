@@ -1,3 +1,7 @@
+<head>
+<meta charset="UTF-8">
+</head>
+
 <div class="row">
     <!-- Success and Error Messages for the user --> 
     <div class="span6 offset2" style="height:50px">
@@ -71,7 +75,7 @@
            </form>   
 	</div>
         <div id="1" class="modal-body" style="display:none">
-             	<form>  
+            <form accept-charset="UTF-8">  
 			Idade: <input name="user1" id="userage" type="text" size="3" /><br><br>  
 			Classe Social: 
 			<select name="user2" id="userclass" name="class">  
@@ -202,7 +206,7 @@
   $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 </script> -->
 
-<script>
+<script charset="UTF-8">
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);
   
@@ -220,10 +224,11 @@ var step = 0;
 var respostasIniciais = 0;
 var respostasDadas = 0;
 
+ 
 function showForm(currentInfo){
   var show = false;
     
-  if (null != currentInfo || undefined != currentInfo || !currentInfo || currentInfo.length == 0) {	
+  if (null == currentInfo || undefined == currentInfo || !currentInfo || currentInfo.length == 0) {	
 	    show = true;
         alert("CI"+currentInfo);
 	    $('#startContrib').off('click').on('click', function(evt) {
@@ -232,19 +237,24 @@ function showForm(currentInfo){
           var userClass = document.getElementById('userclass').value;
           var userEduc = document.getElementById('usereduc').value;
           var userCity = document.getElementById('usercity').value;
-          var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
-  
-          $.getJSON('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
-              info: newInfo
+          //var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
+  			alert("NewINFO01"+newInfo);
+          $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
+          $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
+              age: age+"",
+                class: userClass+"",
+            educ: userEduc+"",
+            city: userCity+""
               });
-               /*$.ajax({
-		    type: 'post',
+          /*$.ajax({
+		    type: "POST",
 		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
-		    async: false,
-		    dataType: 'json',
-		    data: currentInfo,
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+          data: "{info: '" + userEduc + "'}",
 		    success: function(data) {
-				alert(currentInfo)
+				alert(newInfo)
 		    }
 		});*/
 		$("#startContrib").hide();
@@ -300,11 +310,26 @@ function showForm(currentInfo){
 			var userClass = document.getElementById('userclass').value;
 			var userEduc = document.getElementById('usereduc').value;
 			var userCity = document.getElementById('usercity').value;
-			var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
-
-			$.getJSON('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
-				info: newInfo
+          //var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
+			alert("NewINFO02"+newInfo);
+          $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
+          $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
+				age: age+"",
+                class: userClass+"",
+            educ: userEduc+"",
+            city: userCity+""
       			});
+          /*$.ajax({
+		    type: "POST",
+		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+		    data: "{info: '" + userEduc + "'}",
+		    success: function(data) {
+				alert(newInfo)
+		    }
+		   });*/
 		      $("#startContrib").hide();
 		      $("#0").hide();
 		      $("#1").hide();
@@ -428,6 +453,7 @@ pybossa.presentTask(function(task, deferred) {
         }
 	}
       
+          
         $('#photo-link').html('').append(task.info.left);
         $("#photo-link").attr("href", task.info.link);
  	$('#photo-link2').html('').append(task.info.right);

@@ -54,6 +54,9 @@ try:
 except ImportError:  # pragma: no cover
     import pickle
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 blueprint = Blueprint('account', __name__)
 
@@ -587,22 +590,28 @@ def reset_api_key(name):
 @blueprint.route('/currentUserInfo', methods=['GET', 'POST'])
 @login_required
 def currentUserInfo():
-	return jsonify(info=current_user.info)
+	user = User.query.filter_by(name=current_user.name).first()
+	return jsonify(info=user.extraInfo)
 
-@blueprint.route('/saveUserInfo', methods=['POST'])
+@blueprint.route('/saveUserInfo', methods=['GET', 'POST'])
 @login_required
 def saveUserInfo():
 	#age = request.args.get('age', 0, type=int)
     	#city = request.args.get('city', "", type=str)
     	#educ = request.args.get('educ', "", type=str)
     	#socialClass = request.args.get('social', "", type=str)
-	info =  request.args.get('info', "", type=str)
+	user = User.query.filter_by(name=current_user.name).first()
+        #info =  request.args.get('info', "", type=str)
+        age = request.args.get('age', "", type=str).decode('utf-8')
+	social = request.args.get('class', "", type=str).decode('utf-8')
+	educ = request.args.get('educ', "", type=str).decode('utf-8')
+	city = request.args.get('city', "", type=str).decode('utf-8')
 
 	#current_user.age = age
         #current_user.social = socialClass
         #current_user.degree = educ
         #current_user.city = city
-	current_user.info = info
-        
+	user.extraInfo = "{age="+age+",class="+social+",educ="+educ+",city="+city+"}"
 	db.session.commit()
-	cached_users.delete_user_summary(current_user.name)
+
+	return ""

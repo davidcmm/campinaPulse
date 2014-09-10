@@ -1,3 +1,7 @@
+<head>
+<meta charset="UTF-8">
+</head>
+
 <div class="row">
     <!-- Success and Error Messages for the user --> 
     <div class="span6 offset2" style="height:50px">
@@ -30,9 +34,9 @@
 <div class="row skeleton"> <!-- Start Skeleton Row-->
     <div class="span12 ">
         <div id="modal" class="modal hide fade">
-            <div class="modal-header">
+            <!--<div class="modal-header">
                 <h3>Você deseja avaliar as imagens em relação a qual pergunta?</h3>
-            </div>
+            </div>-->
             <div id="0" class="modal-body" style="display:none">
                 <p>Qual local lhe parece mais ...?</p>
 		    <!--<select id="questoes" style="width: 300px; position: relative; left: 50%; margin-left: -150px;" >
@@ -41,13 +45,13 @@
 					<option value="3"> Qual local lhe parece mais único?</option>
 					<option value="4"> Qual local lhe parece mais rico?</option>
 		     </select> -->
-		     <form>
+              <form>
               <div id="aspect">
                <table cellpadding="5px" cellspacing="10px">
                  <tr>
                    <td>
                      <input type="radio" name="aspe" id="beautiful" value="1"/>
-                      <label for="beautiful"><img src="http://socientize.lsd.ufcg.edu.br/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
+                      <label for="beautiful"><img src="/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
                    </td>
                    
                    <td>
@@ -70,23 +74,44 @@
             </div>
            </form>   
 	</div>
+        <div id="1" class="modal-body" style="display:none">
+            <form accept-charset="UTF-8">  
+			Idade: <input name="user1" id="userage" type="text" size="3" /><br><br>  
+			Classe Social: 
+			<select name="user2" id="userclass" name="class">  
+				<option>Alta</option>  
+				<option>Média Alta</option>  
+				<option>Média</option>  
+				<option>Média Baixa</option>  
+				<option>Baixa</option>  
+			</select> <br><br> 
+			Qual seu grau de formação? 
+			<select name="user3" id="usereduc" name="class">  
+				<option>Doutorado</option>  
+				<option>Mestrado</option>  
+				<option>Graduação</option>  
+				<option>Ensino Médio</option>  
+				<option>Ensino Fundamental</option>  
+			</select> <br><br> 
+			Sua Cidade: <input name="user4" id="usercity" type="text" size="15" /><br /><br />  			
+		</form>       
+        </div>
 	<div class="modal-footer">
-             <a id="startContrib" href="#" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Começar!</a>
+             <a id="startContrib" href="#" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Continuar!</a>
         </div>
    </div>  
  </div>
 </div>
 
-
 <div class="row skeleton">
   <div class="span12">
-      <button id="changeQuest" value='change' style="width: 20%; margin-left: 80%" ><i class="icon icon-white icon-question-sign"></i> Alterar pergunta</button>
+      <button id="changeQuest" class="btn btn-info btn-medium" value='change' style="width: 20%; margin-left: 80%" ><i class="icon icon-white icon-question-sign"></i> Alterar pergunta</button>
   </div>
 </div>
 
 <div class="row skeleton">
   <div class="span12">
-      <h1 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Question</h1>
+      <h3 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Question</h3>
   </div>
 </div>
 
@@ -118,7 +143,7 @@
             <!-- If the user clicks this button, the saved answer will be value="no"-->
             <!-- <button class="btn btn-answer" value='Right'><i class="icon icon-white"></i>Local da direita</button> -->
             <!-- If the user clicks this button, the saved answer will be value="NotKnown"-->
-      <button class="btn btn-answer" value='NotKnown' style="width: 15%; margin-left: 42%; margin-right: 43%" ><i class="icon icon-white"></i> Tanto faz!</button>
+      <button id="notknown" class="btn btn-info btn-large" value='NotKnown' style="width: 15%; margin-left: 42%; margin-right: 43%" ><i class="icon icon-white"></i> Tanto faz!</button>
 
         <!--<button type="submit" class="btn btn-answer" value="Outro">
 		 <img src="http://www2.lsd.ufcg.edu.br/~davidcmm/capitao/campina2.jpg" alt="Salvar" title="Salvar">
@@ -172,57 +197,227 @@
     }
 
 </script>
+
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
+<!--<script src="ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-<script>
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script> -->
+
+<script charset="UTF-8">
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);
+  
+  /*document.write('<');
+document.write('script ');
+document.write('src=\"');
+//next line is the path to jquery file
+document.write('http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+document.write('\" type=\"text/javascript\"></');
+document.write('script');
+document.write('>');*/
 
 var perguntaAResponder = "";
 var step = 0;
+var respostasIniciais = 0;
+var respostasDadas = 0;
 
+function encode_utf8(s) {
+  return unescape(encodeURIComponent(s));
+}
+
+function decode_utf8(s) {
+  return decodeURIComponent(escape(s));
+}
+  
+function showForm(currentInfo){
+  var show = false;
+    
+  if (null == currentInfo || undefined == currentInfo || !currentInfo || currentInfo.length == 0) {	
+	    show = true;
+        alert("CI"+currentInfo);
+	    $('#startContrib').off('click').on('click', function(evt) {
+          //Save captured user data!
+          var age = document.getElementById('userage').value;
+          var userClass = document.getElementById('userclass').value;
+          var userEduc = document.getElementById('usereduc').value;
+          var userCity = document.getElementById('usercity').value;
+           var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
+  			alert("NewINFO01"+newInfo);
+          $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
+          $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
+              age: age+"",
+                class: userClass+"",
+            educ: userEduc+"",
+            city: userCity+""
+              });
+          /*$.ajax({
+		    type: "POST",
+		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+          data: "{info: '" + userEduc + "'}",
+		    success: function(data) {
+				alert(newInfo)
+		    }
+		});*/
+		$("#startContrib").hide();
+		$("#0").hide();
+		$("#1").hide();
+		$("#modal").modal('hide');
+		
+	   });
+   } else {
+		currentInfo = currentInfo.substring(1, currentInfo.length-1);
+		var userData = currentInfo.split(",");
+		var userAge = userData[0].split("=")[1];
+		var userClass = userData[1].split("=")[1];
+		var userDegree = userData[2].split("=")[1];
+		var userCity = userData[3].split("=")[1];
+        alert("Getting Info"+userAge);
+        
+		if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0)){
+			
+		    	show = true;
+		    	//Setting values already given in the form!
+			$("#userage").val(userAge);
+			$("#usercity").val(userCity);
+			
+		    if(userClass.length > 0){
+			var classField  = document.getElementById('userclass');
+			if(classField){
+			    for(var i=0; i < classField.options.length; i++) { 
+			        if(classField.options[i].value == userClass) { 
+			            classField.options[i].selected = true;
+			            break;
+			        }
+			    }
+			}
+          	    }
+			
+	  	   if(userDegree.length > 0){
+			var degreeField  = document.getElementById('usereduc');
+			if(degreeField){
+			    for(var i=0; i < degreeField.options.length; i++) { 
+				if(degreeField.options[i].value == userDegree) { 
+				    degreeField.options[i].selected = true;
+				    break;
+				}
+			    }
+			}
+	           }
+             
+		//Asking for other values!
+		$('#startContrib').off('click').on('click', function(evt) {
+			//Save captured user data!
+			var age = document.getElementById('userage').value;
+			var userClass = document.getElementById('userclass').value;
+			var userEduc = document.getElementById('usereduc').value;
+			var userCity = document.getElementById('usercity').value;
+			 var newInfo = "{age="+age+",class="+userClass+",educ="+userEduc+",city="+userCity+"}";
+			alert("NewINFO02"+newInfo);
+          $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
+          $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
+				age: age+"",
+                class: userClass+"",
+            educ: userEduc+"",
+            city: userCity+""
+      			});
+          /*$.ajax({
+		    type: "POST",
+		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+		    data: "{info: '" + userEduc + "'}",
+		    success: function(data) {
+				alert(newInfo)
+		    }
+		   });*/
+		      $("#startContrib").hide();
+		      $("#0").hide();
+		      $("#1").hide();
+		      $("#modal").modal('hide');
+              });
+                   	
+	   }
+  }
+  
+  if(show){
+    	alert("Estou habilitando");
+        $("#startContrib").show();
+        $("#1").show();
+    	return show;
+  }
+}  
+  
 function showStep(action) {
-   if (action == 'next' && perguntaAResponder.length == 0){
-            $("#startContrib").show();
-            $("#" + step).show();
-
-	   //Start contributing clicked!
-	   $('#startContrib').off('click').on('click', function(evt) {
-          
-	      if (document.getElementById('beautiful').checked){
-			perguntaAResponder = "Qual local lhe parece mais bonito?";            
-          }else if (document.getElementById('secure').checked){
-            //perguntaAResponder = "Qual local lhe parece mais seguro?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask"
-	      }else if (document.getElementById('unique').checked){
-            //perguntaAResponder = "Qual local lhe parece mais único?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask"
-	      }else {
-            //perguntaAResponder = "Qual local lhe parece mais rico?";
-            window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask"
-	      }
-          $("#startContrib").hide();
-          $("#" + step).hide();
-          $("#modal").modal('hide');
-	      step = 1;
-          $("#question").html(perguntaAResponder);
-	  });
+   var show = false;
+   if (action == 'init' && perguntaAResponder.length == 0){
+       show = true;
+       $("#startContrib").show();
+       $("#0").show();
+       $("#1").hide();
+       
+       //Start contributing clicked!
+       $('#startContrib').off('click').on('click', function(evt) {
+	  if (document.getElementById('beautiful').checked){
+	    perguntaAResponder = "Qual local lhe parece mais bonito?";            			
+	  }else if (document.getElementById('secure').checked){
+	    //perguntaAResponder = "Qual local lhe parece mais seguro?";
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
+	  }else if (document.getElementById('unique').checked){
+	    //perguntaAResponder = "Qual local lhe parece mais único?";
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask";
+	  }else {
+	    //perguntaAResponder = "Qual local lhe parece mais rico?";
+	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask";
+	  }
+	  $("#startContrib").hide();
+	  $("#0").hide();
+	  $("#1").hide();
+	  $("#modal").modal('hide');
+	  step = 1;
+	  $("#question").html(perguntaAResponder);
+      });
+      return show;
+   }else if(action == 'next') {
+      $.ajax({
+	  url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/currentUserInfo",
+	  async: false,
+	  dataType: 'json',
+	  success: function(data) {
+	     show = showForm(data.info);
+         alert("Show form"+show);         
+	  }    
+     });
+     return show;
   }
 }
 
-showStep('next');
-$("#modal").modal('show');
+if(showStep('init')){
+   $("#modal").modal('show');
+}
   
 function loadUserProgress() {
     pybossa.userProgress('comoecampina').done(function(data){
         var pct = Math.round((data.done*100)/data.total);
         $("#progress").css("width", pct.toString() +"%");
         $("#progress").attr("title", pct.toString() + "% completed!");
-        $("#progress").tooltip({'placement': 'left'}); 
+        $("#progress").tooltip({ 'placement' : 'left' });
+        
         $("#total").text(data.total);
         $("#done").text(data.done);
+      	if (respostasIniciais == 0) {
+          	respostasIniciais = data.done;
+        }else{
+          	respostasDadas = data.done;
+        }	
     });
+
 }
 
 pybossa.taskLoaded(function(task, deferred) {
@@ -256,9 +451,19 @@ pybossa.taskLoaded(function(task, deferred) {
 pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         loadUserProgress();
+	//At each 10 questions answered check user profile information
+	if (respostasDadas != 0 && (respostasDadas-respostasIniciais) % 2 == 0){
+	    step = 1;
+        if(showStep('next')){
+          	 alert("Estou habilitando 2");
+             $("#modal").modal('show');
+        }
+	}
+      
+          
         $('#photo-link').html('').append(task.info.left);
         $("#photo-link").attr("href", task.info.link);
- 	    $('#photo-link2').html('').append(task.info.right);
+ 	$('#photo-link2').html('').append(task.info.right);
         $("#photo-link2").attr("href", task.info.link);
         $('#task-id').html(task.id);
         
@@ -290,15 +495,17 @@ pybossa.presentTask(function(task, deferred) {
           }
         });
       
+             
        //Change question button clicked
-	   $('#changeQuest').off('click').on('click', function(evt) {
-           perguntaAResponder = "";
+       $('#changeQuest').off('click').on('click', function(evt) {
+               perguntaAResponder = "";
 	       step = 0;
-	       showStep('next');
-	       $("#modal").modal('show');
+		if(showStep('init')){
+		   $("#modal").modal('show');
+		}
         });
       
-        $('.btn-answer').off('click').on('click', function(evt) {
+       $('#notknown').off('click').on('click', function(evt) {
             var answer = $(evt.target).attr("value");
 	        var question = $('#question').attr("value");
 	        var answerToSave = String(question) + " " + String(answer) + " " + String(task.info.url_c) + " " + String(task.info.url_a);
@@ -327,8 +534,10 @@ pybossa.presentTask(function(task, deferred) {
         $("#loading").hide();
         $("#finish").fadeIn(500);
     }
+  
 });
 
 pybossa.run('comoecampina');
 </script>
+
 

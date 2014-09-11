@@ -18,12 +18,12 @@
     </div>
     <div class="span9">
             <div id="sorts" class="btn-group pull-right" style="margin-top:12px;">
-                <button class="btn dropdown-toggle" data-toggle="dropdown" data-sort-value="original-order">Order by <span id="order">name</span> <span class="caret"></span></button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown" data-sort-value="original-order">{{ _('Order by') }} <span id="order">{{ _('name') }}</span> <span class="caret"></span></button>
               <ul class="dropdown-menu" style="top:35px;">
-                  <li><a href="#" data-sort-value="original-order">name</a></li>
-                  <li><a href="#" data-sort-value="date">date</a></li>
-                  <li><a href="#" data-sort-value="activity">activity</a></li>
-                  <li><a href="#" data-sort-value="progress">progress</a></li>
+                  <li><a href="#" data-sort-value="original-order">{{ _('name') }}</a></li>
+                  <li><a href="#" data-sort-value="date">{{ _('date') }}</a></li>
+                  <li><a href="#" data-sort-value="activity">{{ _('activity') }}</a></li>
+                  <li><a href="#" data-sort-value="progress">{{ _('progress') }}</a></li>
             </ul>
             </div>
 
@@ -82,10 +82,14 @@ $( function() {
     var sortValue = $(this).attr('data-sort-value');
     $container.isotope({ sortBy: sortValue });
     if (sortValue == 'original-order') {
-        $("#order").text('name');
+        $("#order").text('{{ _('name') }}');
     }
-    else {
-        $("#order").text(sortValue);
+    else if (sortValue == 'date') {
+        $("#order").text('{{ _('date') }}');
+    } else if (sortValue == 'activity') {
+	$("#order").text('{{ _('activity') }}');
+    } else {
+	$("#order").text('{{ _('progress') }}');
     }
   });
 

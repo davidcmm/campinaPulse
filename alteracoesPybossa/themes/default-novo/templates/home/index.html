@@ -34,7 +34,7 @@
             <p>{{ _('It\'s really simple to start contributing.') }}</p>
           </div>
           <div class="span8">
-              <a href="{{url_for('app.index')}}" class="btn btn-info btn-large"><i class="icon-ok-sign"></i>{{ _(' Start Contributing') }}</a> <a href="{{url_for('app.new')}}" class="btn btn-primary btn-large"><i class="icon-plus-sign"></i> {{ _('Create a Project') }}</a>
+              <a href="{{url_for('app.index')}}" class="btn btn-info btn-large"><i class="icon-ok-sign"></i>{{ _(' Start Contributing') }}</a> <a href="{{url_for('app.new')}}" class="btn btn-primary btn-large"><i class="glyphicon glyphicon-plus"></i> {{ _('Create a Project') }}</a>
           </div>
       </section>
       
@@ -49,6 +49,7 @@
                 {% else %}
                 <a href="{{url_for('app.details', short_name=app.short_name)}}" class="image" style="background-image:url({{url_for('static',filename='img/placeholder.project.png')}})"></a>
                 {% endif %}
+                {{helper.render_url_thumbnail(app, upload_method)}} 
                 <h3>{{app.name | truncate(20, true)}}</h3>
                 <p>{{app.description | truncate(32, true)}}</p>
                 <p><a href="{{url_for('app.details',short_name=app.short_name)}}" class="btn btn-mini btn-info">Info</a> <a href="{{url_for('app.presenter',short_name=app.short_name)}}" class="btn btn-mini btn-primary">{{ _('Start') }}</a></p>

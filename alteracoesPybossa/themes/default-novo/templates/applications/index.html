@@ -9,7 +9,7 @@
     <div class="span3">
             <ul data-spy="affix" data-offset-top="200px" class="nav nav-list bs-docs-sidenav affix-top">
                 {% for c in categories %}
-                <li {% if active_cat.short_name==c.short_name%}class="active"{% endif %}><a href="{{url_for('app.app_cat_index', category=c.short_name)}}"><i class="icon-chevron-right"></i> {{ c.name }}</a></li>
+                <li {% if active_cat.short_name==c.short_name%}class="active"{% endif %}><a href="{{url_for('app.app_cat_index', category=c.short_name)}}"><i class="icon-chevron-right"></i> {{ _(c.name) }}</a></li>
                 {% endfor %}
                 {% if current_user.is_authenticated() and current_user.admin %}
                 <li {% if active_cat.short_name=="draft"%}class="active"{% endif %}><a href="{{url_for('app.draft')}}"><i class="icon-chevron-right"></i> {{ _('Draft') }}</a></li>
@@ -35,12 +35,12 @@
             <h2>{{ _('A special selection of the most interesting projects') }}</h2>
             {% elif active_cat.short_name=='draft' %}
             <h1>
-                <i class="icon-wrench"></i> {{pagination.total_count}} {{ _('Draft Projects')}}</h1>
+                <i class="icon-wrench"></i> {{pagination.total_count}} {{ _('Draft Projects') }} </h1>
             <h2>{{ _('Work in progress projects') }}</h2>
             {% else %}
             <h1>
-                <i class="icon-th"></i> {{pagination.total_count}} {{ active_cat.name }} Projects</h1>
-            <h2>{{ active_cat.description }}</h2>
+                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Projects') }}</h1>
+            <h2>{{ _(active_cat.description) }}</h2> <!-- {{ _(active_cat.name) }} -->
             {% endif %}
 
 
@@ -54,7 +54,7 @@
             {% endif %}
         {% else %}
             <h1>
-                <i class="icon-th"></i> {{pagination.total_count}} {{ active_cat.name }} Projects</h1>
+                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Projects') }} </h1> <!-- {{ _(active_cat.name) }} {{ _('Projects') }} -->
             <h2>{{_('Sorry, there are no published projects for this category yet')}}</h2>
         {% endif %}
     </div>

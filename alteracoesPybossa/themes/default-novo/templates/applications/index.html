@@ -29,18 +29,18 @@
 
         {% if apps %}
             {% if active_cat.short_name=="featured"%} 
-            <h1>
-                <i class="icon-star"></i> {{pagination.total_count}} {{ _('Featured Projects') }}
-            </h1>
-            <h2>{{ _('A special selection of the most interesting projects') }}</h2>
+            <h2>
+                <i class="icon-star"></i> {{pagination.total_count}} {{ _('Featured Project(s)') }}
+            </h2>
+            <h3>{{ _('A special selection of the most interesting projects') }}</h3>
             {% elif active_cat.short_name=='draft' %}
-            <h1>
-                <i class="icon-wrench"></i> {{pagination.total_count}} {{ _('Draft Projects') }} </h1>
-            <h2>{{ _('Work in progress projects') }}</h2>
+            <h2>
+                <i class="icon-wrench"></i> {{pagination.total_count}} {{ _('Draft Project(s)') }} </h2>
+            <h3>{{ _('Work in progress projects') }}</h3>
             {% else %}
-            <h1>
-                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Projects') }}</h1>
-            <h2>{{ _(active_cat.description) }}</h2> <!-- {{ _(active_cat.name) }} -->
+            <h2>
+                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Project(s)') }}</h2>
+            <h3>{{ _(active_cat.description) }}</h3> <!-- {{ _(active_cat.name) }} -->
             {% endif %}
 
 
@@ -53,9 +53,9 @@
                 {{ helper.render_pagination(pagination) }}
             {% endif %}
         {% else %}
-            <h1>
-                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Projects') }} </h1> <!-- {{ _(active_cat.name) }} {{ _('Projects') }} -->
-            <h2>{{_('Sorry, there are no published projects for this category yet')}}</h2>
+            <h2>
+                <i class="icon-th"></i> {{pagination.total_count}} {{ _('Project(s)') }} </h2> <!-- {{ _(active_cat.name) }} {{ _('Projects') }} -->
+            <h3>{{_('Sorry, there are no published projects for this category yet')}}</h3>
         {% endif %}
     </div>
 </div>

@@ -178,26 +178,27 @@ function imgError(image) {
 {% endmacro %}
 
 {% macro render_app_title(app, upload_method, subtitle=None) %}
-<h1>
+<h2>
     {{ render_app_thumbnail(app, upload_method, class="img-polaroid", style="max-width:60px") }}
+
     {% if subtitle %}
-    <strong>{{ app.name }}</strong>: {{subtitle}}</h1>
+    <strong>{{ app.name }}</strong>: {{subtitle}}</h2>
     {% else %}
-    <strong>{{ app.name }}</strong></h1>
+    <strong>{{ app.name }}</strong></h2>
     {% endif %}
 {% endmacro %}
 
 {% macro render_overall_progress(app, n_tasks, overall_progress, show_contribute_btn=True, show_n_tasks=False) %}
 <div class="row-fluid">
     <div class="span1"><input type="text" value="{{overall_progress | round |int}}" class="dial"></div>
-    <h2><strong> {{_('Overall progress')}}</strong>: {{ overall_progress | round | int }}% {{_('completed')}}
+    <h3><strong> {{_('Overall progress')}}</strong>: {{ overall_progress | round | int }}% {{_('completed')}}
         {% if show_contribute_btn %}
         <a href="{{ url_for('app.presenter', short_name=app.short_name)}}" class="btn btn-primary pull-right"><i class="icon-thumbs-up" style="color:white;"></i> {{ _('Start Contributing Now!') }}</a>
         {% elif show_n_tasks %}
         <span class="pull-right"><strong>{{n_tasks}}</strong> {{_('Tasks')}}</span>
         {% endif %}
 
-    </h2>
+    </h3>
 </div>
 {% endmacro %}
 
@@ -237,7 +238,9 @@ function imgError(image) {
 {% endmacro %}
 
 {% macro render_app_thumbnail(app, upload_method, id, class, style) %}
-{% if app.info.container %}
+{% if app.name == 'Como é Campina?'%}
+	<img id="{{id}}" class="{{class}}" width="{{width}}" src="http://www.enepet.com.br/ENEPET2014/img/campina_A_cidade.jpg" style="{{style}}" onerror="imgError(this);">	
+{% elif app.info.container %}
     {% if upload_method == 'rackspace'%}
     <img id="{{id}}" class="{{class}}" width="{{width}}" src="{{ url_for('rackspace', filename=app.info.thumbnail, container=app.info.container)}}" style="{{style}}" onerror="imgError(this);">
     {% else %}
@@ -251,7 +254,9 @@ function imgError(image) {
 {% endmacro %}
 
 {% macro render_url_thumbnail(app, upload_method) %}
-{% if app.info.container %}
+{% if app.name == 'Como é Campina?'%}
+    http://www.enepet.com.br/ENEPET2014/img/campina_A_cidade.jpg
+{% elif app.info.container %}
     {% if upload_method == 'rackspace'%}
     {{ url_for('rackspace', filename=app.info.thumbnail, container=app.info.container)}}"
     {% else %}

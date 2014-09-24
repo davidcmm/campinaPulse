@@ -14,14 +14,14 @@
         <p>{{ _('You can export and download') }} <strong>{{ _('all the available') }}</strong> {{ _('Tasks and Task Runs (the submitted answers by the users) in CSV or JSON formats.') }}</p>
         <div class="row-fluid">
             <div id="csv" class="span6 well">
-                <h2>Export in CSV format</h2>
-                <a href={{url_for('app.export_to', short_name=app.short_name, type='task', format='csv')}} class="btn btn-large">{{ _('Tasks') }}</a>
-                <a href={{url_for('app.export_to', short_name=app.short_name, type='task_run', format='csv')}} class="btn btn-large">{{ _('Task Runs') }}</a>
+                <h3>Export in CSV format</h3>
+                <a href={{url_for('app.export_to', short_name=app.short_name, type='task', format='csv')}} class="btn btn-info btn-large">{{ _('Tasks') }}</a>
+                <a href={{url_for('app.export_to', short_name=app.short_name, type='task_run', format='csv')}} class="btn btn-info btn-large">{{ _('Task Runs') }}</a>
             </div>
             <div id="json" class="span6 well">
-                <h2>Export in JSON format</h2>
-                <a href={{url_for('app.export_to', short_name=app.short_name, type='task', format='json')}} class="btn btn-large">{{ _('Tasks') }}</a>
-                <a href={{url_for('app.export_to', short_name=app.short_name, type='task_run', format='json')}} class="btn btn-large">{{ _('Task Runs') }}</a>
+                <h3>Export in JSON format</h3>
+                <a href={{url_for('app.export_to', short_name=app.short_name, type='task', format='json')}} class="btn btn-info btn-large">{{ _('Tasks') }}</a>
+                <a href={{url_for('app.export_to', short_name=app.short_name, type='task_run', format='json')}} class="btn btn-info btn-large">{{ _('Task Runs') }}</a>
 
             </div>
         </div>
@@ -29,9 +29,9 @@
             {% if current_user.is_authenticated() and app.owner_id == current_user.id %}
             <div id="ckan" class="span6 well">
                 {% if ckan_name %}
-                <h2>Export to the {{ckan_name}}</h2>
+                <h3>Export to the {{ckan_name}}</h3>
                 {% else %}
-                <h2>Export to a CKAN server</h2>
+                <h3>Export to a CKAN server</h3>
                 {% endif %}
                 <p><span class="label label-danger"><i class="icon-bullhorn"></i> IMPORTANT</span> This export option stills in beta mode and may fail in the CKAN server. If you get an error, please send an e-mail to info@pybossa.com</p>
                 {% if current_user.ckan_api %}

@@ -240,10 +240,10 @@ function decode_utf8(s) {
   
 function showForm(currentInfo){
   var show = false;
-  //alert("CI"+currentInfo);  
+    
   if (null == currentInfo || undefined == currentInfo || !currentInfo || currentInfo.length == 0) {	
 	    show = true;
-    //alert("Vazio");
+        alert("CI"+currentInfo);
 	    $('#startContrib').off('click').on('click', function(evt) {
           //Save captured user data!
           var age = document.getElementById('userage').value;
@@ -252,8 +252,8 @@ function showForm(currentInfo){
           var userCity = document.getElementById('usercity').value;
           var userCityTime = document.getElementById('usercitytime').value;          
           var userSex = document.getElementById('usersex').value;
-          //var newInfo = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"}";
-          //alert("NewINFO01"+newInfo);
+          var newInfo = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"}";
+  			alert("NewINFO01"+newInfo);
           $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
           $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
               age: age+"",
@@ -263,7 +263,17 @@ function showForm(currentInfo){
             time: userCityTime+"",
             sex: userSex+""
               });
-          
+          /*$.ajax({
+		    type: "POST",
+		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+          data: "{info: '" + userEduc + "'}",
+		    success: function(data) {
+				alert(newInfo)
+		    }
+		});*/
 		$("#startContrib").hide();
 		$("#0").hide();
 		$("#1").hide();
@@ -272,8 +282,7 @@ function showForm(currentInfo){
 	   });
    } else {
 		currentInfo = currentInfo.substring(1, currentInfo.length-1);
-     //alert("Cheio");
-        var userData = currentInfo.split(",");
+		var userData = currentInfo.split(",");
 		var userAge = userData[0].split("=")[1];
 		var userClass = userData[1].split("=")[1];
 		var userDegree = userData[2].split("=")[1];
@@ -281,7 +290,7 @@ function showForm(currentInfo){
         var userCityTime = userData[4].split("=")[1];
         var userSex = userData[5].split("=")[1];
         
-     //alert("Getting Info"+userAge);
+        alert("Getting Info"+userAge);
         
 		if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0)){
 			
@@ -336,8 +345,8 @@ function showForm(currentInfo){
           var userCity = document.getElementById('usercity').value;
           var userCityTime = document.getElementById('usercitytime').value;          
           var userSex = document.getElementById('usersex').value;
-          // var newInfo = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"}";
-          //alert("NewINFO02"+newInfo);
+          var newInfo = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"}";
+			alert("NewINFO02"+newInfo);
           $.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
           $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo', {
 				age: age+"",
@@ -347,7 +356,17 @@ function showForm(currentInfo){
             time: userCityTime+"",
             sex: userSex+""
       			});
-          
+          /*$.ajax({
+		    type: "POST",
+		    url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserInfo",
+		    contentType: "application/json; charset=utf-8",
+            async: false,
+		    dataType: "json",
+		    data: "{info: '" + userEduc + "'}",
+		    success: function(data) {
+				alert(newInfo)
+		    }
+		   });*/
 		      $("#startContrib").hide();
 		      $("#0").hide();
 		      $("#1").hide();
@@ -358,7 +377,7 @@ function showForm(currentInfo){
   }
   
   if(show){
-    //alert("Estou habilitando");
+    	alert("Estou habilitando");
         $("#startContrib").show();
         $("#1").show();
     	return show;
@@ -402,7 +421,7 @@ function showStep(action) {
 	  dataType: 'json',
 	  success: function(data) {
 	     show = showForm(data.info);
-        //alert("Show form"+show);         
+         alert("Show form"+show);         
 	  }    
      });
      return show;
@@ -463,13 +482,12 @@ pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         loadUserProgress();
 	//At each 10 questions answered check user profile information
-	if (respostasDadas != 0 && (respostasDadas-respostasIniciais) % 9 == 0){
-      step = 1;
-         
-      if(showStep('next')){
-        //alert("Estou habilitando 2");
+	if (respostasDadas != 0 && (respostasDadas-respostasIniciais) % 2 == 0){
+	    step = 1;
+        if(showStep('next')){
+          	 alert("Estou habilitando 2");
              $("#modal").modal('show');
-      }
+        }
 	}
       
           

@@ -606,12 +606,14 @@ def saveUserInfo():
 	social = request.args.get('class', "", type=str).decode('utf-8')
 	educ = request.args.get('educ', "", type=str).decode('utf-8')
 	city = request.args.get('city', "", type=str).decode('utf-8')
+        time = request.args.get('time', "", type=str).decode('utf-8')
+	sex = request.args.get('sex', "", type=str).decode('utf-8')
 
 	#current_user.age = age
         #current_user.social = socialClass
         #current_user.degree = educ
         #current_user.city = city
-	user.extraInfo = "{age="+age+",class="+social+",educ="+educ+",city="+city+"}"
+	user.extraInfo = "{age="+age+",class="+social+",educ="+educ+",city="+city+",time="+time+",sex="+sex+"}"
 	db.session.commit()
 
 	return ""

@@ -379,12 +379,21 @@ function showStep(action) {
 	    perguntaAResponder = "Qual local lhe parece mais bonito?";            			
 	  }else if (document.getElementById('secure').checked){
 	    //perguntaAResponder = "Qual local lhe parece mais seguro?";
+		$.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect', {
+			redir: "True"
+      		});                
 	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
 	  }else if (document.getElementById('unique').checked){
 	    //perguntaAResponder = "Qual local lhe parece mais único?";
+		$.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect', {
+			redir: "True"
+      		});
 	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask";
 	  }else {
 	    //perguntaAResponder = "Qual local lhe parece mais rico?";
+		$.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect', {
+			redir: "True"
+      		});
 	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask";
 	  }
 	  $("#startContrib").hide();
@@ -409,9 +418,26 @@ function showStep(action) {
   }
 }
 
-if(showStep('init')){
-   $("#modal").modal('show');
-}
+$.ajax({
+          url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/currentUserRedirect",
+          async: false,
+          dataType: 'json',
+          success: function(data) {
+             show = data.redir;
+            //alert("VAL" + show + "" + (show == "true"));
+             if (!show){
+                if(showStep('init')){
+                  $("#modal").modal('show');
+                }       
+             }else{
+                perguntaAResponder = "Qual local lhe parece mais bonito?"; 
+               	$("#question").html(perguntaAResponder);
+                $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect', {
+					redir: "False"
+      			});
+             }  
+          }    
+ });
   
 function loadUserProgress() {
     pybossa.userProgress('comoecampina').done(function(data){

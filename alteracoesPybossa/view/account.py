@@ -59,7 +59,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 blueprint = Blueprint('account', __name__)
-
+redirect = False;
 
 def get_update_feed():
     """Return update feed list."""
@@ -586,6 +586,24 @@ def reset_api_key(name):
     msg = gettext('New API-KEY generated')
     flash(msg, 'success')
     return redirect(url_for('account.profile', name=name))
+
+
+@blueprint.route('/currentUserRedirect', methods=['GET', 'POST'])
+@login_required
+def currentUserRedirect():
+       return jsonify(redir=redirect)
+
+def parseBoolString(theString):
+       return theString[0].upper() == 'T'
+
+@blueprint.route('/saveUserRedirect', methods=['GET', 'POST'])
+@login_required
+def saveUserRedirect():
+	global redirect
+	userRedirect = request.args.get('redir', "", type=str)
+	redirect = parseBoolString(userRedirect)	
+	return ""
+	
 
 @blueprint.route('/currentUserInfo', methods=['GET', 'POST'])
 @login_required

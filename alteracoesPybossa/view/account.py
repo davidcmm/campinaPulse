@@ -45,6 +45,7 @@ from pybossa.core import db, signer, mail, uploader, sentinel, get_session
 from pybossa.util import Pagination, get_user_id_or_ip, pretty_date
 from pybossa.util import get_user_signup_method
 from pybossa.cache import users as cached_users
+from pybossa.cache import apps as cached_apps
 from pybossa.auth import require
 
 from pybossa.forms.account_view_forms import *
@@ -59,7 +60,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 blueprint = Blueprint('account', __name__)
-redirect = False;
+userRedirect = False;
 
 def get_update_feed():
     """Return update feed list."""
@@ -120,6 +121,7 @@ def signin():
             login_user(user, remember=True)
             msg_1 = gettext("Welcome back") + " " + user.fullname
             flash(msg_1, 'success')
+	    flash(request.args.get("next"),'sucess')
             return redirect(request.args.get("next") or url_for("home.home"))
         elif user:
             msg, method = get_user_signup_method(user)
@@ -591,7 +593,7 @@ def reset_api_key(name):
 @blueprint.route('/currentUserRedirect', methods=['GET', 'POST'])
 @login_required
 def currentUserRedirect():
-       return jsonify(redir=redirect)
+       return jsonify(redir=userRedirect)
 
 def parseBoolString(theString):
        return theString[0].upper() == 'T'
@@ -599,9 +601,9 @@ def parseBoolString(theString):
 @blueprint.route('/saveUserRedirect', methods=['GET', 'POST'])
 @login_required
 def saveUserRedirect():
-	global redirect
-	userRedirect = request.args.get('redir', "", type=str)
-	redirect = parseBoolString(userRedirect)	
+	global userRedirect
+	redir = request.args.get('redir', "", type=str)
+	userRedirect = parseBoolString(userRedirect)	
 	return ""
 	
 

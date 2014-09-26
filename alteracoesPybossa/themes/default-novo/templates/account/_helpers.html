@@ -36,12 +36,12 @@
         {{ render_user_thumbnail(user, upload_method, class="img-polaroid") }}
     </div>
     <div class="span9">
-        <h2><i class="icon-user"></i> {{ _('Nick')}}: <small>{{ user.name }}</small></h2>
+        <h3><i class="icon-user"></i> {{ _('Nick')}}: <small>{{ user.name }}</small></h3>
         {% if private %}
-        <h2><i class="icon-envelope"></i> {{_('E-mail')}}: <small>{{ user.email_addr }}</small></h2>
+        <h3><i class="icon-envelope"></i> {{_('E-mail')}}: <small>{{ user.email_addr }}</small></h3>
         {% endif %}
         {% if user.rank %}
-        <h2><i class="icon-trophy"></i> {{ _('Rank')}}: <small>
+        <h3><i class="icon-trophy"></i> {{ _('Rank')}}: <small>
                 {% if private %}
                 <a href="{{url_for('leaderboard.index')}}">
                 {% endif %}
@@ -52,15 +52,15 @@
                 {% endif %}
                 {% if private %}</a>{% endif %}
                 </small>
-        </h2>
+        </h3>
         {% else %}
-        <h2><i class="icon-trophy"></i> {{ _('Rank') }}: <small>{{ _('The user has not contributed to any tasks yet') }}</small></h2>
+        <h3><i class="icon-trophy"></i> {{ _('Rank') }}: <small>{{ _('The user has not contributed to any tasks yet') }}</small></h3>
         {% endif %}
         {% if not private %}
-        <h2><i class="icon-time"></i> {{ _('Joined') }}: <small>{{ user.created[0:10]}}</small></h2>
+        <h3><i class="icon-time"></i> {{ _('Joined') }}: <small>{{ user.created[0:10]}}</small></h3>
         {% endif %}
         {% if settings %}
-        <h2><i class="icon-key"></i> {{ _('API key') }}: <small>{{ user.api_key }}</small></h2>
+        <h3><i class="icon-key"></i> {{ _('API key') }}: <small>{{ user.api_key }}</small></h3>
         {% endif %}
         {% if private and not settings%}
         <a href="{{ url_for('account.update_profile', name=user.name) }}" class="btn btn-primary"><i class="icon icon-user"></i> {{ _('Edit your profile') }}</a>

@@ -163,7 +163,7 @@ def signout():
     """
     logout_user()
     flash(gettext('You are now signed out'), 'success')
-    return redirect(url_for('home.home'))
+    return redirect(url_for("home.home"))
 
 
 @blueprint.route('/register', methods=['GET', 'POST'])

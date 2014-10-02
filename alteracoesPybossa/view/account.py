@@ -603,7 +603,7 @@ def parseBoolString(theString):
 def saveUserRedirect():
 	global userRedirect
 	redir = request.args.get('redir', "", type=str)
-	userRedirect = parseBoolString(userRedirect)	
+	userRedirect = parseBoolString(redir)	
 	return ""
 	
 

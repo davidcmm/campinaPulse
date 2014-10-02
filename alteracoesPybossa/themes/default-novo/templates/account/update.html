@@ -34,7 +34,7 @@
         </form>
         <form method="post" class="form-horizontal" action="{{ url_for('account.update_profile', name=current_user.name) }}">
             <fieldset>
-                <h2 {% if form.errors %}name="profile"{%endif%}>Your profile</h2>
+                <h2 {% if form.errors %}name="profile"{%endif%}>{{ _('Your Profile') }}</h2>
             {{ form.id }}
             {{ form.hidden_tag() }}
             {{ render_field(form.fullname, placeholder= _('my full name') ) }}
@@ -69,7 +69,7 @@
 
         <form method="post" class="form-horizontal" action="{{ url_for('account.update_profile', name=current_user.name) }}">
             <hr>
-            <h2>External Services</h2>
+            <h2>{{ _('External Services') }}</h2>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             {{ render_field(external_form.ckan_api) }}
             <div class="form-actions">
@@ -84,7 +84,7 @@
         <h3><strong>{{ _('Do you want to reset your personal API Key?') }}</strong></h3>
             <div class="form-actions">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <button type="submit" class="btn btn-small" value="Reset">Reset</button>
+              <button type="submit" class="btn btn-small" value="Reset">{{ _('Reset') }}</button>
               <a href="{{ url_for('account.profile', name=current_user.name) }}" class="btn btn-large btn-primary">{{ _('No, do not reset the API key!') }}</a>
             </div>
         </fieldset>

@@ -216,26 +216,18 @@ var askForMoreInfo = false;
 var userDataToSave = "";
 
 //Checking if question options should be presented or not
-$.ajax({
-          url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/currentUserRedirect",
-          async: false,
-          dataType: 'json',
-          success: function(data) {
-             show = data.redir;
-            //alert("VAL" + show + "" + (show == "true"));
-             if (!show){
-                if(showStep('init')){
-                  $("#modal").modal('show');
-                }       
-             }else{
-                perguntaAResponder = "Qual local lhe parece mais bonito?"; 
-               	$("#question").html(perguntaAResponder);
-                $.get('http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect', {
-					redir: "False"
-      			});
-             }  
-          }    
- });
+var cookiesData = document.cookie.split(";");
+var showQuestions = cookiesData[cookiesData.length-1].split("=");
+if (showQuestions[0].toLowerCase().trim() == "redir" && showQuestions[1].toLowerCase() == "true"){
+	perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question	
+	$("#question").html(perguntaAResponder); 
+	alert(document.cookie);
+}else{
+	if(showStep('init')){
+	  	$("#modal").modal('show');
+	} 
+}  
+
 
 //http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=1&user_id=1&offset=0&limit=200
 function getUserData(userID, appID){
@@ -396,23 +388,14 @@ function showStep(action) {
 	  if (document.getElementById('beautiful').checked){
 	    perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question        			
 	  }else {
-		var sendInfo = {"redir" : "True"};
-		$.ajax({
-                  url: "http://socientize.lsd.ufcg.edu.br/pybossa/account/saveUserRedirect",
-  		  type: 'post',		 
-		  async: false,
-		  dataType: 'json',
-                  data: sendInfo,
-		  success: function(data) {		         
-		  }    
-	       });		
-	       if (document.getElementById('secure').checked){	                  
-		    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
-	       }else if (document.getElementById('unique').checked){
-	    	    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask";
-      	       }else {
-		    window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask";
-	       }
+		if (document.getElementById('secure').checked){	                  
+			window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
+		}else if (document.getElementById('unique').checked){
+			window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinaunica/newtask";
+		}else {
+			window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinarica/newtask";
+		}		         
+	       
 	  }
 	  $("#startContrib").hide();
 	  $("#0").hide();

@@ -611,7 +611,7 @@ def saveUserRedirect():
 @login_required
 def currentUserInfo():
 	user = User.query.filter_by(name=current_user.name).first()
-	return jsonify(info=user.extraInfo)
+	return jsonify(info=user.id)
 
 @blueprint.route('/saveUserInfo', methods=['GET', 'POST'])
 @login_required

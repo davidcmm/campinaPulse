@@ -51,7 +51,7 @@
                  <tr>
                    <td>
                      <input type="radio" name="aspe" id="beautiful" value="1"/>
-                      <label for="beautiful"><img src="/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
+                      <label for="beautiful"><img src="http://socientize.lsd.ufcg.edu.br/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
                    </td>
                    
                    <td>
@@ -117,7 +117,7 @@
 
 <div class="row skeleton">
   <div class="span12">
-      <h3 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Question</h3>
+      <h2 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Qual local lhe parece mais bonito?</h2>
   </div>
 </div>
 
@@ -207,10 +207,9 @@
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);  
 
-var perguntaAResponder = "";
+var perguntaAResponder = "Qual local lhe parece mais bonito?";
+var showQuestionOptions = true;
 var step = 0;
-var respostasIniciais = 0;
-var respostasDadas = 0;
 
 var askForMoreInfo = false;
 var userDataToSave = "";
@@ -250,9 +249,11 @@ function getUserData(userID, appID){
 					var initIndex = data[i].info.indexOf("{");
 					if(initIndex > -1){
 						var endIndex = data[i].info.indexOf("}");
-						userData = data[i].info.substring(initIndex, endIndex+1);
-						shouldBreak = true;	
-						break;
+						var currentData = data[i].info.substring(initIndex, endIndex+1);
+						if (currentData.length > userData.length) {
+							userData = currentData;
+						}
+						
 					}
 				}
 			}
@@ -296,11 +297,11 @@ function showForm(userID, appID){
 	//alert("Cheio");
         var currentData = userData.split(",");
 	var userAge = currentData[0].split("=")[1];
-	var userClass = currentData[1].split("=")[1];
-	var userDegree = currentData[2].split("=")[1];
-	var userCity = currentData[3].split("=")[1];
-	var userCityTime = currentData[4].split("=")[1];
-	var userSex = currentData[5].split("=")[1];
+	var userSex = currentData[1].split("=")[1];
+	var userClass = currentData[2].split("=")[1];
+	var userDegree = currentData[3].split("=")[1];
+	var userCity = currentData[4].split("=")[1];
+	var userCityTime = currentData[5].split("=")[1];
         
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0)){
 			
@@ -356,7 +357,6 @@ function showForm(userID, appID){
 			var userCityTime = document.getElementById('usercitytime').value;          
 			var userSex = document.getElementById('usersex').value;
 			userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"} ";
-			
 			$("#startContrib").hide();
 			$("#0").hide();
 			$("#1").hide();
@@ -377,7 +377,7 @@ function showForm(userID, appID){
 function showStep(action) {
    var show = false;
    
-   if (action == 'init' && perguntaAResponder.length == 0){
+   if (action == 'init' && showQuestionOptions){
        show = true;
        $("#startContrib").show();
        $("#0").show();
@@ -386,7 +386,8 @@ function showStep(action) {
        //Start contributing clicked!
        $('#startContrib').off('click').on('click', function(evt) {
 	  if (document.getElementById('beautiful').checked){
-	    perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question        			
+	    perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question
+	    showQuestionOptions = false;        			
 	  }else {
 		if (document.getElementById('secure').checked){	                  
 			window.location = "http://socientize.lsd.ufcg.edu.br/pybossa/app/comoecampinasegura/newtask";
@@ -495,6 +496,7 @@ pybossa.presentTask(function(task, deferred) {
         
         //Left image chosen
         $('#photo').off('click').on('click', function(evt) {
+		
 		var question = perguntaAResponder;
 		var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
 		pybossa.saveTask(task.id, answerToSave).done(function() {
@@ -511,7 +513,7 @@ pybossa.presentTask(function(task, deferred) {
       
         //Right image chosen
         $('#photo2').off('click').on('click', function(evt) {
-		var question = $('#questoes').attr("value");
+		var question = perguntaAResponder;
 		var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
 		pybossa.saveTask(task.id, answerToSave).done(function() {
 		      deferred.resolve();
@@ -528,8 +530,8 @@ pybossa.presentTask(function(task, deferred) {
              
        //Change question button clicked
        $('#changeQuest').off('click').on('click', function(evt) {
-               perguntaAResponder = "";
-	       step = 0;
+	        showQuestionOptions = true;
+                step = 0;
 		if(showStep('init')){
 		   $("#modal").modal('show');
 		}

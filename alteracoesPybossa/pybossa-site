@@ -1,0 +1,69 @@
+<VirtualHost *:80>
+    ServerName socientize.lsd.ufcg.edu.br
+
+    DocumentRoot /home/pybossa023/pybossa/pybossa
+    WSGIDaemonProcess pybossa user=www-data group=www-data threads=5
+    WSGIScriptAlias /pybossa /home/pybossa023/pybossa/contrib/pybossa.wsgi
+    
+    #Alias / /pybossa
+    #Alias / http:/socientize.lsd.ufcg.edu.br/pybossa
+    Alias /faltadeagua /home/faltadeagua/site
+    Redirect permanent /pybossa/uploads http://socientize.lsd.ufcg.edu.br/uploads
+
+    <Directory /home/pybossa023/pybossa/pybossa/>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+
+        AllowOverride All
+	Options None
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    <Directory /home/pybossa023/pybossa/pybossa/rodrigues>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+        
+        AllowOverride All
+	Options None
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+   <Directory /home/pybossa023/pybossa/pybossa/almirante>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+
+        AllowOverride All
+	Options None
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+   <Directory /home/pybossa023/pybossa/pybossa/floriano>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+
+        AllowOverride All
+	Options None
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+   <Directory /home/pybossa023/pybossa/pybossa/icones>
+        WSGIProcessGroup pybossa
+        WSGIApplicationGroup %{GLOBAL}
+
+        AllowOverride All
+	Options None
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    <Directory /home/pybossa023/public_html>
+        Options None
+	Order deny,allow
+        Deny from all
+    </Directory>
+
+</VirtualHost>

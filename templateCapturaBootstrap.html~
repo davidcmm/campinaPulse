@@ -218,7 +218,8 @@ var userDataToSave = "";
 var cookiesData = document.cookie.split(";");
 var showQuestions = cookiesData[cookiesData.length-1].split("=");
 if (showQuestions[0].toLowerCase().trim() == "redir" && showQuestions[1].toLowerCase() == "true"){
-	perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question	
+	perguntaAResponder = "Qual local lhe parece mais bonito?";//Default question
+	showQuestionOptions = false;	
 	$("#question").html(perguntaAResponder); 
 	alert(document.cookie);
 }else{
@@ -539,27 +540,19 @@ pybossa.presentTask(function(task, deferred) {
 
 	//User could not choose an image!      
        $('#notknown').off('click').on('click', function(evt) {
-		var answer = $(evt.target).attr("value");
-		var question = $('#question').attr("value");
-		var answerToSave = userDataToSave+String(question) + " " + String(answer) + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-		if (typeof answer != 'undefined') {
-			//console.log(answer);
-			//pybossa.saveTask(task.id, answer).done(function() {
-			//    deferred.resolve();
-			//});
-			pybossa.saveTask(task.id, answerToSave).done(function() {
-			      deferred.resolve();
-			});
-			$("#loading").fadeIn(500);
-			if ($("#disqus_thread").is(":visible")) {
-			    $('#disqus_thread').toggle();
-			    $('.btn-disqus').toggle();
-			}
-			userDataToSave = "";
+		var question = perguntaAResponder;
+		var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+		
+		pybossa.saveTask(task.id, answerToSave).done(function() {
+		      deferred.resolve();
+		});
+		$("#loading").fadeIn(500);
+		if ($("#disqus_thread").is(":visible")) {
+		    $('#disqus_thread').toggle();
+		    $('.btn-disqus').toggle();
 		}
-		else {
-			$("#error").show();
-		}
+		userDataToSave = "";
+		
         });
         $("#loading").hide();
     }

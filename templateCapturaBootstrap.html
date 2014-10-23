@@ -263,17 +263,16 @@ function getUserData(userID, appID){
 			if(data.length == 0){
 				shouldBreak = true;
 			}else{
-                alert(data[0]);
 				for (i = 0; i < data.length; i++) {
 					var initIndex = data[i].info.indexOf("{");
-                  	var currentFinishTime = new Date(data[i].finish_time);
+                  			var currentFinishTime = new Date(data[i].finish_time);
                     
 					if(initIndex > -1){
 						var endIndex = data[i].info.indexOf("}");
 						var currentData = data[i].info.substring(initIndex, endIndex+1);
 						if (finishTime == null || currentFinishTime > finishTime) {
 							userData = currentData;
-                            finishTime = currentFinishTime;
+                           				finishTime = currentFinishTime;
 						}
 						
 					}
@@ -298,10 +297,7 @@ function showForm(userID, appID){
   //alert("CI"+currentInfo);  
   if (userData.length == 0) {	
 	show = true;
-   
-    
-      
-	//alert("Vazio");
+
 	$('#startContrib').off('click').on('click', function(evt) {
 		//Save captured user data!
 		var age = document.getElementById('userage').value;
@@ -324,8 +320,7 @@ function showForm(userID, appID){
 	var userSex = currentData[1].split("=")[1];
 	var userClass = currentData[2].split("=")[1];
 	var userDegree = currentData[3].split("=")[1];
-    var userCity = currentData[4].split("=")[1];
-    alert("City "+userCity); 
+	var userCity = currentData[4].split("=")[1];
 	var userCityTime = currentData[5].split("=")[1];
     
         
@@ -443,7 +438,6 @@ function verifyUserData(appID) {
 	  dataType: 'json',
 	  success: function(data) {
 	     show = showForm(data.info, appID);
-             //alert("Show form"+show);         
 	  }    
      });
      return show;
@@ -459,11 +453,6 @@ function loadUserProgress() {
         
         $("#total").text(data.total);
         $("#done").text(data.done);
-      	/*if (respostasIniciais == 0) {
-          	respostasIniciais = data.done;
-        }else{
-          	respostasDadas = data.done;
-        }*/
         if (data.done != 0 && data.done % 1 == 0) {
 		askForMoreInfo = true;
 	}	
@@ -508,7 +497,6 @@ pybossa.presentTask(function(task, deferred) {
 	      askForMoreInfo = false;
          
 	      if(verifyUserData(task.app_id)){
-		//alert("Estou habilitando 2");
 		$("#modal").modal('show');
 	      }
 	}

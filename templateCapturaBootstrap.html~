@@ -74,8 +74,8 @@
             </div>
            </form>   
 	</div>
-        <div id="1" class="modal-body" style="display:none">
-            <form accept-charset="UTF-8">  
+        <div id="1" class="modal-body">
+            <form id="eventInsForm" accept-charset="UTF-8">  
 			Idade: <input name="user1" id="userage" type="text" size="3" /><br><br>  
 			Sexo: 
 			<select name="user2" id="usersex">  
@@ -98,8 +98,8 @@
 				<option>Ensino Médio</option>  
 				<option>Ensino Fundamental</option>  
 			</select> <br><br> 
-			Sua Cidade: <input name="user5" id="usercity" type="text" size="15" /><br /><br />  			
-                        Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
+			Sua Cidade: <input id="autocomplete" placeholder="Digite aqui" type="text"/> <br /><br />  			
+            Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
 		</form>       
         </div>
 	<div class="modal-footer">
@@ -117,6 +117,7 @@
 
 <div class="row skeleton">
   <div class="span12">
+      
       <h2 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Qual local lhe parece mais bonito?</h2>
   </div>
 </div>
@@ -203,7 +204,21 @@
 
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+
 <script charset="UTF-8">
+  //Google autocomplete
+  var cityInput = document.getElementById('autocomplete');
+  var autocomplete = new google.maps.places.Autocomplete(cityInput);
+  var pacContainerInitialized = false; 
+  $('#autocomplete').keypress(function() { 
+    if (!pacContainerInitialized) { 
+      $('.pac-container').css('z-index', '10000'); 
+      pacContainerInitialized = true; 
+    } 
+  }); 
+   
+  
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);  
 
@@ -212,7 +227,8 @@ var showQuestionOptions = true;
 var step = 0;
 
 var askForMoreInfo = false;
-var userDataToSave = "";
+var userDataToSave = "";  
+  
 
 //Checking if question options should be presented or not
 var cookiesData = document.cookie.split(";");
@@ -232,6 +248,7 @@ if (showQuestions[0].toLowerCase().trim() == "redir" && showQuestions[1].toLower
 //http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=1&user_id=1&offset=0&limit=200
 function getUserData(userID, appID){
 	var userData = "";
+    var finishTime;
 	var shouldBreak = false;
 	var offset = 0;	
 
@@ -241,18 +258,21 @@ function getUserData(userID, appID){
 		async: false,
 		dataType: 'json',
 		success: function(data) {
- 			alert(data[0].info);
+ 			
 			var i;
 			if(data.length == 0){
 				shouldBreak = true;
 			}else{
 				for (i = 0; i < data.length; i++) {
 					var initIndex = data[i].info.indexOf("{");
+                  			var currentFinishTime = new Date(data[i].finish_time);
+                    
 					if(initIndex > -1){
 						var endIndex = data[i].info.indexOf("}");
 						var currentData = data[i].info.substring(initIndex, endIndex+1);
-						if (currentData.length > userData.length) {
+						if (finishTime == null || currentFinishTime > finishTime) {
 							userData = currentData;
+                           				finishTime = currentFinishTime;
 						}
 						
 					}
@@ -277,13 +297,13 @@ function showForm(userID, appID){
   //alert("CI"+currentInfo);  
   if (userData.length == 0) {	
 	show = true;
-	//alert("Vazio");
+
 	$('#startContrib').off('click').on('click', function(evt) {
 		//Save captured user data!
 		var age = document.getElementById('userage').value;
 		var userClass = document.getElementById('userclass').value;
 		var userEduc = document.getElementById('usereduc').value;
-		var userCity = document.getElementById('usercity').value;
+		var userCity = document.getElementById('autocomplete').value;
 		var userCityTime = document.getElementById('usercitytime').value;          
 		var userSex = document.getElementById('usersex').value;
 		userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"} ";
@@ -295,21 +315,21 @@ function showForm(userID, appID){
         });
    } else {
 	userData = userData.substring(1, userData.length-1);
-	//alert("Cheio");
-        var currentData = userData.split(",");
+	var currentData = userData.split(",");
 	var userAge = currentData[0].split("=")[1];
 	var userSex = currentData[1].split("=")[1];
 	var userClass = currentData[2].split("=")[1];
 	var userDegree = currentData[3].split("=")[1];
 	var userCity = currentData[4].split("=")[1];
 	var userCityTime = currentData[5].split("=")[1];
+    
         
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0)){
 			
 		show = true;
 		//Setting values already given in the form!
 		$("#userage").val(userAge);
-		$("#usercity").val(userCity);
+		$("#autocomplete").val(userCity);
 		$("#usercitytime").val(userCityTime);
 
 		if(userClass.length > 0){
@@ -354,7 +374,7 @@ function showForm(userID, appID){
 			var age = document.getElementById('userage').value;
 			var userClass = document.getElementById('userclass').value;
 			var userEduc = document.getElementById('usereduc').value;
-			var userCity = document.getElementById('usercity').value;
+			var userCity = document.getElementById('autocomplete').value;
 			var userCityTime = document.getElementById('usercitytime').value;          
 			var userSex = document.getElementById('usersex').value;
 			userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+"} ";
@@ -418,7 +438,6 @@ function verifyUserData(appID) {
 	  dataType: 'json',
 	  success: function(data) {
 	     show = showForm(data.info, appID);
-             //alert("Show form"+show);         
 	  }    
      });
      return show;
@@ -434,12 +453,7 @@ function loadUserProgress() {
         
         $("#total").text(data.total);
         $("#done").text(data.done);
-      	/*if (respostasIniciais == 0) {
-          	respostasIniciais = data.done;
-        }else{
-          	respostasDadas = data.done;
-        }*/
-        if (data.done != 0 && data.done % 10 == 0) {
+        if (data.done != 0 && data.done % 1 == 0) {
 		askForMoreInfo = true;
 	}	
     });
@@ -483,78 +497,77 @@ pybossa.presentTask(function(task, deferred) {
 	      askForMoreInfo = false;
          
 	      if(verifyUserData(task.app_id)){
-		//alert("Estou habilitando 2");
 		$("#modal").modal('show');
 	      }
 	}
       
           
-        $('#photo-link').html('').append(task.info.left);
-        $("#photo-link").attr("href", task.info.link);
- 	$('#photo-link2').html('').append(task.info.right);
-        $("#photo-link2").attr("href", task.info.link);
-        $('#task-id').html(task.id);
+      $('#photo-link').html('').append(task.info.left);
+      $("#photo-link").attr("href", task.info.link);
+      $('#photo-link2').html('').append(task.info.right);
+      $("#photo-link2").attr("href", task.info.link);
+      $('#task-id').html(task.id);
         
-        //Left image chosen
-        $('#photo').off('click').on('click', function(evt) {
-		
-		var question = perguntaAResponder;
-		var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-		pybossa.saveTask(task.id, answerToSave).done(function() {
-		      deferred.resolve();
-		});
-		
-		$("#loading").fadeIn(500);
-		if ($("#disqus_thread").is(":visible")) {
-			$('#disqus_thread').toggle();
-			$('.btn-disqus').toggle();
-		}
-		userDataToSave = "";
+      //Left image chosen
+      $('#photo').off('click').on('click', function(evt) {
+        
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
         });
+		
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+      });
       
-        //Right image chosen
-        $('#photo2').off('click').on('click', function(evt) {
-		var question = perguntaAResponder;
-		var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-		pybossa.saveTask(task.id, answerToSave).done(function() {
-		      deferred.resolve();
-		});
-				
-		$("#loading").fadeIn(500);
-		if ($("#disqus_thread").is(":visible")) {
-			$('#disqus_thread').toggle();
-			$('.btn-disqus').toggle();
-		}
-		userDataToSave = "";
+      //Right image chosen
+      $('#photo2').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
         });
+        
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+      });
       
              
-       //Change question button clicked
-       $('#changeQuest').off('click').on('click', function(evt) {
-	        showQuestionOptions = true;
-                step = 0;
-		if(showStep('init')){
-		   $("#modal").modal('show');
-		}
-        });
+      //Change question button clicked
+      $('#changeQuest').off('click').on('click', function(evt) {
+        showQuestionOptions = true;
+        step = 0;
+        if(showStep('init')){
+          $("#modal").modal('show');
+        }
+      });
 
-	//User could not choose an image!      
-       $('#notknown').off('click').on('click', function(evt) {
-		var question = perguntaAResponder;
-		var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-		
-		pybossa.saveTask(task.id, answerToSave).done(function() {
-		      deferred.resolve();
-		});
-		$("#loading").fadeIn(500);
-		if ($("#disqus_thread").is(":visible")) {
-		    $('#disqus_thread').toggle();
-		    $('.btn-disqus').toggle();
-		}
-		userDataToSave = "";
-		
+      //User could not choose an image!      
+      $('#notknown').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
         });
-        $("#loading").hide();
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+        
+      });
+      $("#loading").hide();
     }
     else {
         $(".skeleton").hide();
@@ -566,5 +579,4 @@ pybossa.presentTask(function(task, deferred) {
 
 pybossa.run('comoecampina');
 </script>
-
 

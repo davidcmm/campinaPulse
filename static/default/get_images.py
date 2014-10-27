@@ -56,14 +56,14 @@ def get_photos(size="big"):
     # add the 'ids': '25053835@N03' to the values dict if you want to
     # specify a Flickr Person ID
     #print('Contacting Flickr for photos')
-    urlPadrao = "http://socientize.lsd.ufcg.edu.br/"
-    urlAlmirante = "http://socientize.lsd.ufcg.edu.br/almirante/"
-    urlRodrigues = "http://socientize.lsd.ufcg.edu.br/rodrigues/"
-    urlFloriano = "http://socientize.lsd.ufcg.edu.br/floriano/"
+    urlPadrao = "http://socientize.lsd.ufcg.edu.br/ruas/"
+    urlAlmirante = "almirante/"
+    urlRodrigues = "rodrigues/"
+    urlFloriano = "floriano/"
 
-    listOfAlmirante = glob.glob('/home/pybossa023/pybossa/pybossa/almirante/*.jpg')
-    listOfRodrigues = glob.glob('/home/pybossa023/pybossa/pybossa/rodrigues/*.jpg')
-    listOfFloriano = glob.glob('/home/pybossa023/pybossa/pybossa/floriano/*.jpg')
+    listOfAlmirante = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/almirante/*.jpg')
+    listOfRodrigues = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/rodrigues/*.jpg')
+    listOfFloriano = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/floriano/*.jpg')
 
     #values = {'nojsoncallback': 1,
     #          'format': "json"}
@@ -83,7 +83,7 @@ def get_photos(size="big"):
     # For each photo ID create its direct URL according to its size:
     # big, medium, small (or thumbnail) + Flickr page hosting the photo
     photos = []
-    numberOfPairs = 500
+    numberOfPairs = 10
     #return get_photos_from_file(numberOfPairs)
 
     allPhotos = [listOfAlmirante, listOfFloriano, listOfRodrigues]
@@ -102,8 +102,8 @@ def get_photos(size="big"):
 		choosed1 = random.choice(list1)
 		choosed2 = random.choice(list2)
 	
-	imgUrl_c = urlPadrao + choosed1.split("/")[5] + "/" + choosed1.split("/")[6]
-	imgUrl_a = urlPadrao + choosed2.split("/")[5] + "/" + choosed2.split("/")[6]
+	imgUrl_c = urlPadrao + choosed1.split("/")[6] + "/" + choosed1.split("/")[7]
+	imgUrl_a = urlPadrao + choosed2.split("/")[6] + "/" + choosed2.split("/")[7]
 	print imgUrl_c
 	print imgUrl_a
 

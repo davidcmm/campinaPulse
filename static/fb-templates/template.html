@@ -32,17 +32,8 @@
 	<!-- Start Skeleton Row-->
 	<div class="span12 ">
 		<div id="modal" class="modal hide fade">
-			<!--<div class="modal-header">
-                <h3>Você deseja avaliar as imagens em relação a qual pergunta?</h3>
-            </div>-->
 			<div id="0" class="modal-body" style="display: none">
 				<p>Qual local lhe parece mais ...?</p>
-				<!--<select id="questoes" style="width: 300px; position: relative; left: 50%; margin-left: -150px;" >
-					<option value="1"> Qual local lhe parece mais bonito?</option>
-					<option value="2"> Qual local lhe parece mais seguro?</option>
-					<option value="3"> Qual local lhe parece mais único?</option>
-					<option value="4"> Qual local lhe parece mais rico?</option>
-		     </select> -->
 				<form>
 					<div id="aspect">
 						<table cellpadding="5px" cellspacing="10px">
@@ -50,23 +41,23 @@
 								<tr>
 									<td><input type="radio" name="aspe" id="beautiful"
 										value="1"> <label for="beautiful"><img
-											src="./template_files/beleza.jpg" alt="bonito" title="bonito"
+											src="http://socientize.lsd.ufcg.edu.br/icones/beleza/beleza.jpg" alt="bonito" title="bonito"
 											style="width: 170px"></label></td>
 
 									<td><input type="radio" name="aspe" id="secure" value="2">
 										<label for="secure"><img
-											src="./template_files/seguranca.jpg" alt="seguro"
+											src="http://socientize.lsd.ufcg.edu.br/icones/seguranca/seguranca.jpg" alt="seguro"
 											title="seguro" style="width: 170px"></label></td>
 								</tr>
 								<tr>
 									<td><input type="radio" name="aspe" id="unique" value="3">
 										<label for="unique"><img
-											src="./template_files/unique.jpeg" alt="único" title="único"
+											src="http://socientize.lsd.ufcg.edu.br/icones/unicidade/unique.jpeg" alt="único" title="único"
 											style="width: 200px"></label></td>
 
 									<td><input type="radio" name="aspe" id="rich" value="4">
 										<label for="rich"><img
-											src="./template_files/tio-patinhas-690f8.jpg" alt="rico"
+											src="http://socientize.lsd.ufcg.edu.br/icones/riqueza/tio-patinhas-690f8.jpg" alt="rico"
 											title="rico" style="width: 170px"></label></td>
 								</tr>
 							</tbody>
@@ -75,30 +66,32 @@
 				</form>
 			</div>
 			<div id="1" class="modal-body" style="display: none">
-				<form accept-charset="UTF-8">
-					Idade: <input name="user1" id="userage" type="text" size="3"><br>
-					<br> Sexo: <select name="user2" id="usersex">
-						<option>Masculino</option>
-						<option>Feminino</option>
-					</select> <br> <br> Classe Social: <select name="user3"
-						id="userclass">
-						<option>Alta</option>
-						<option>Média Alta</option>
-						<option>Média</option>
-						<option>Média Baixa</option>
-						<option>Baixa</option>
-					</select> <br> <br> Qual seu grau de formação? <select
-						name="user4" id="usereduc">
-						<option>Doutorado</option>
-						<option>Mestrado</option>
-						<option>Graduação</option>
-						<option>Ensino Médio</option>
-						<option>Ensino Fundamental</option>
-					</select> <br> <br> Sua Cidade: <input name="user5" id="usercity"
-						type="text" size="15"><br> <br> Há quanto tempo
-					mora no local? <input name="user6" id="usercitytime" type="text"
-						size="2"><br> <br>
-				</form>
+				<form id="eventInsForm" accept-charset="UTF-8">  
+					Idade: <input name="user1" id="userage" type="text" size="3" /><br><br>  
+					Sexo: 
+					<select name="user2" id="usersex">  
+					<option>Masculino</option>  
+					<option>Feminino</option>  				
+					</select> <br><br> 
+					Classe Social: 
+					<select name="user3" id="userclass">  
+					<option>Alta</option>  
+					<option>Média Alta</option>  
+					<option>Média</option>  
+					<option>Média Baixa</option>  
+					<option>Baixa</option>  
+					</select> <br><br> 
+					Qual seu grau de formação? 
+					<select name="user4" id="usereduc">  
+					<option>Doutorado</option>  
+					<option>Mestrado</option>  
+					<option>Graduação</option>  
+					<option>Ensino Médio</option>  
+					<option>Ensino Fundamental</option>  
+					</select> <br><br> 
+					Sua Cidade: <input id="autocomplete" placeholder="Digite aqui" type="text"/> <br /><br />  			
+					Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
+				</form>   
 			</div>
 			<div class="modal-footer">
 				<a id="startContrib"
@@ -183,7 +176,6 @@
 	<div class="span6 ">
 		<!-- Start of Question and Submission DIV (column) -->
 		<br>
-
 		<!-- Feedback items for the user -->
 		<p>
 			Você está na tarefa: <span id="task-id" class="label label-warning">#</span>
@@ -272,7 +264,7 @@
 
 	function showForm(currentInfo) {
 		var show = false;
-		//alert("CI"+currentInfo);  
+
 		if (null == currentInfo || undefined == currentInfo || !currentInfo
 				|| currentInfo.length == 0) {
 			show = true;

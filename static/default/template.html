@@ -1,7 +1,3 @@
-<head>
-<meta charset="UTF-8">
-</head>
-
 <div class="row">
     <!-- Success and Error Messages for the user --> 
     <div class="span6 offset2" style="height:50px">
@@ -20,8 +16,8 @@
             <strong>Parabéns!</strong> Você completou todas as tarefas!
             <br/>
             <div class="alert-actions">
-                <a class="btn small" href="/">Volte</a>
-                <a class="btn small" href="/app">ou, Veja outras aplicações</a>
+                <a class="btn small" href="http://socientize.lsd.ufcg.edu.br/">Volte</a>
+                <a class="btn small" href="http://socientize.lsd.ufcg.edu.br/app">ou, Veja outras aplicações</a>
             </div>
         </div>
         <div id="error" class="alert alert-error" style="display:none;">
@@ -34,29 +30,21 @@
 <div class="row skeleton"> <!-- Start Skeleton Row-->
     <div class="span12 ">
         <div id="modal" class="modal hide fade">
-            <!--<div class="modal-header">
-                <h3>Você deseja avaliar as imagens em relação a qual pergunta?</h3>
-            </div>-->
+            
             <div id="0" class="modal-body" style="display:none">
                 <p>Qual local lhe parece mais ...?</p>
-		    <!--<select id="questoes" style="width: 300px; position: relative; left: 50%; margin-left: -150px;" >
-					<option value="1"> Qual local lhe parece mais bonito?</option>
-					<option value="2"> Qual local lhe parece mais seguro?</option>
-					<option value="3"> Qual local lhe parece mais único?</option>
-					<option value="4"> Qual local lhe parece mais rico?</option>
-		     </select> -->
               <form>
               <div id="aspect">
                <table cellpadding="5px" cellspacing="10px">
                  <tr>
                    <td>
                      <input type="radio" name="aspe" id="beautiful" value="1"/>
-                      <label for="beautiful"><img src="http://socientize.lsd.ufcg.edu.br/icones/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
+                      <label for="beautiful"><img src="http://socientize.lsd.ufcg.edu.br/icones/beleza/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
                    </td>
                    
                    <td>
                      <input type="radio" name="aspe" id="secure" value="2"/>
-                      <label for="secure"><img src="http://socientize.lsd.ufcg.edu.br/icones/seguranca.jpg" alt="seguro" title="seguro" style="width:170px"/></label>
+                      <label for="secure"><img src="http://socientize.lsd.ufcg.edu.br/icones/seguranca/seguranca.jpg" alt="seguro" title="seguro" style="width:170px"/></label>
                    </td>  
                  </tr>
                  <tr>
@@ -99,7 +87,7 @@
 				<option>Ensino Fundamental</option>  
 			</select> <br><br> 
 			Sua Cidade: <input id="autocomplete" placeholder="Digite aqui" type="text"/> <br /><br />  			
-            Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
+           		Há quanto tempo mora no local? (em meses) <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
 		</form>       
         </div>
 	<div class="modal-footer">
@@ -117,7 +105,6 @@
 
 <div class="row skeleton">
   <div class="span12">
-      
       <h2 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Qual local lhe parece mais bonito?</h2>
   </div>
 </div>
@@ -159,7 +146,6 @@
 <div class="row skeleton"> <!-- Start Skeleton Row-->
     <div class="span6 "><!-- Start of Question and Submission DIV (column) -->
       <br>
-        
         <!-- Feedback items for the user -->
         <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p>
         <p>Você já completou: <span id="done" class="label label-info"></span> tarefas de
@@ -187,17 +173,19 @@
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     function loadDisqus() {
-    $("#disqus_thread").toggle();
-    $(".btn-disqus").toggle();
-    var disqus_shortname = 'pybossa'; // required: replace example with your forum shortname
-    //var disqus_identifier = taskId;
-    var disqus_developer = 1;
+	    $("#disqus_thread").toggle();
+	    $(".btn-disqus").toggle();
+	    var disqus_shortname = 'pybossa'; // required: replace example with your forum shortname
+	    //var disqus_identifier = taskId;
+	    var disqus_developer = 1;
 
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
+	    (function() {
+		var dsq = document.createElement('script'); 
+		dsq.type = 'text/javascript'; 
+		dsq.async = true;
+		dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
     }
 
 </script>
@@ -207,21 +195,17 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
 <script charset="UTF-8">
-  //Google autocomplete
-  var cityInput = document.getElementById('autocomplete');
-  var autocomplete = new google.maps.places.Autocomplete(cityInput);
-  var pacContainerInitialized = false; 
-  $('#autocomplete').keypress(function() { 
-    if (!pacContainerInitialized) { 
-      $('.pac-container').css('z-index', '10000'); 
-      pacContainerInitialized = true; 
-    } 
-  }); 
+//Google autocomplete
+var cityInput = document.getElementById('autocomplete');
+var autocomplete = new google.maps.places.Autocomplete(cityInput);
+var pacContainerInitialized = false; 
+$('#autocomplete').keypress(function() { 
+	if (!pacContainerInitialized) { 
+		$('.pac-container').css('z-index', '10000'); 
+		pacContainerInitialized = true; 
+	} 
+}); 
    
-  
-endpoint = "/pybossa";
-pybossa.setEndpoint(endpoint);  
-
 var perguntaAResponder = "Qual local lhe parece mais bonito?";
 var showQuestionOptions = true;
 var step = 0;
@@ -245,42 +229,41 @@ if (showQuestions[0].toLowerCase().trim() == "redir" && showQuestions[1].toLower
 }  
 
 
-//http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=1&user_id=1&offset=0&limit=200
+//Requests user personal information already filled in previous tasks run. Request template: http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=1&user_id=1&offset=0&limit=200
 function getUserData(userID, appID){
 	var userData = "";
-    var finishTime;
+    	var finishTime;
 	var shouldBreak = false;
 	var offset = 0;	
 
 	while (!shouldBreak) {
 		$.ajax({
-		url: "http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id="+appID+"&user_id="+userID+"&offset="+offset+"&limit=100",
-		async: false,
-		dataType: 'json',
-		success: function(data) {
- 			
-			var i;
-			if(data.length == 0){
-				shouldBreak = true;
-			}else{
-                alert(data[0]);
-				for (i = 0; i < data.length; i++) {
-					var initIndex = data[i].info.indexOf("{");
-                  	var currentFinishTime = new Date(data[i].finish_time);
-                    
-					if(initIndex > -1){
-						var endIndex = data[i].info.indexOf("}");
-						var currentData = data[i].info.substring(initIndex, endIndex+1);
-						if (finishTime == null || currentFinishTime > finishTime) {
-							userData = currentData;
-                            finishTime = currentFinishTime;
-						}
+			url: "http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id="+appID+"&user_id="+userID+"&offset="+offset+"&limit=100",
+			async: false,
+			dataType: 'json',
+			success: function(data) {
+				var i;
+				if(data.length == 0){
+					shouldBreak = true;
+				}else{
+		        		//alert(data[0]);
+					for (i = 0; i < data.length; i++) {
+						var initIndex = data[i].info.indexOf("{");
+		          			var currentFinishTime = new Date(data[i].finish_time);
+		            
+						if(initIndex > -1){
+							var endIndex = data[i].info.indexOf("}");
+							var currentData = data[i].info.substring(initIndex, endIndex+1);
+							if (finishTime == null || currentFinishTime > finishTime) {
+								userData = currentData;
+		                   				finishTime = currentFinishTime;
+							}
 						
+						}
 					}
 				}
-			}
 						
-		}    
+			}    
 		});
 		offset += 100;	
 	}
@@ -292,16 +275,11 @@ function getUserData(userID, appID){
   
 function showForm(userID, appID){
   var show = false;
-
   var userData = getUserData(userID, appID);
 
-  //alert("CI"+currentInfo);  
   if (userData.length == 0) {	
 	show = true;
-   
-    
       
-	//alert("Vazio");
 	$('#startContrib').off('click').on('click', function(evt) {
 		//Save captured user data!
 		var age = document.getElementById('userage').value;
@@ -324,11 +302,10 @@ function showForm(userID, appID){
 	var userSex = currentData[1].split("=")[1];
 	var userClass = currentData[2].split("=")[1];
 	var userDegree = currentData[3].split("=")[1];
-    var userCity = currentData[4].split("=")[1];
-    alert("City "+userCity); 
+	var userCity = currentData[4].split("=")[1];
+	//alert("City "+userCity); 
 	var userCityTime = currentData[5].split("=")[1];
     
-        
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0)){
 			
 		show = true;
@@ -452,18 +429,15 @@ function verifyUserData(appID) {
   
 function loadUserProgress() {
     pybossa.userProgress('comoecampina').done(function(data){
-        var pct = Math.round((data.done*100)/data.total);
+        var pct = Math.round((data.done * 100) / data.total);
         $("#progress").css("width", pct.toString() +"%");
         $("#progress").attr("title", pct.toString() + "% completed!");
         $("#progress").tooltip({ 'placement' : 'left' });
         
         $("#total").text(data.total);
         $("#done").text(data.done);
-      	/*if (respostasIniciais == 0) {
-          	respostasIniciais = data.done;
-        }else{
-          	respostasDadas = data.done;
-        }*/
+	
+	//At each group of 10 questions check user personal information
         if (data.done != 0 && data.done % 1 == 0) {
 		askForMoreInfo = true;
 	}	
@@ -471,6 +445,31 @@ function loadUserProgress() {
 
 }
 
+function taskLoaded(task) {
+	if ( !$.isEmptyObject(task) ) {
+		// load image from flickr
+		var left = $('<img />');
+		//left.load(function() {
+		   // continue as soon as the image is loaded
+		//    deferred.resolve(task);
+		//});
+		left.attr('src', task.info.url_c);
+		left.attr('id', "photo");
+		left.addClass('img-polaroid');
+		task.info.left = left;
+
+		var right = $('<img />');
+		//right.load(function() {
+		    // continue as soon as the image is loaded
+		//    deferred.resolve(task);
+		//});
+		right.attr('src', task.info.url_a);
+		right.attr('id', "photo2");
+		right.addClass('img-polaroid');
+		task.info.right = right;
+	} 
+}
+/*
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         // load image from flickr
@@ -497,12 +496,26 @@ pybossa.taskLoaded(function(task, deferred) {
     else {
         deferred.resolve(task);
     }
-});
+});*/
 
-pybossa.presentTask(function(task, deferred) {
+//Saving user answer in Pybossa and requesting a new task
+function saveAnswer(taskId, answerToSave) {
+	pybossa.saveTask(taskId, answerToSave).done(function() {
+		pybossa.newTask(app_shortname).done(function(data) {
+			loadData(data);
+		});
+	});
+}
+
+//pybossa.presentTask(function(task, deferred) {
+function loadData(data) {
+    var task = data.task;
+    taskLoaded(task);
+
     if ( !$.isEmptyObject(task) ) {
         loadUserProgress();
-	//At each 10 questions answered check user profile information
+	
+        //At each 10 questions answered check user profile information
 	if (askForMoreInfo){
 	      step = 1;
 	      askForMoreInfo = false;
@@ -525,9 +538,10 @@ pybossa.presentTask(function(task, deferred) {
         
         var question = perguntaAResponder;
         var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-        pybossa.saveTask(task.id, answerToSave).done(function() {
+        saveAnswer(task.id, answerToSave);
+        /*pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
-        });
+        });*/
 		
         $("#loading").fadeIn(500);
         if ($("#disqus_thread").is(":visible")) {
@@ -541,9 +555,10 @@ pybossa.presentTask(function(task, deferred) {
       $('#photo2').off('click').on('click', function(evt) {
         var question = perguntaAResponder;
         var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-        pybossa.saveTask(task.id, answerToSave).done(function() {
+        saveAnswer(task.id, answerToSave);
+        /*pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
-        });
+        });*/
         
         $("#loading").fadeIn(500);
         if ($("#disqus_thread").is(":visible")) {
@@ -559,7 +574,7 @@ pybossa.presentTask(function(task, deferred) {
         showQuestionOptions = true;
         step = 0;
         if(showStep('init')){
-          $("#modal").modal('show');
+          	$("#modal").modal('show');
         }
       });
 
@@ -567,10 +582,10 @@ pybossa.presentTask(function(task, deferred) {
       $('#notknown').off('click').on('click', function(evt) {
         var question = perguntaAResponder;
         var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
-        
-        pybossa.saveTask(task.id, answerToSave).done(function() {
+        saveAnswer(task.id, answerToSave);
+        /*pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
-        });
+        });*/
         $("#loading").fadeIn(500);
         if ($("#disqus_thread").is(":visible")) {
           $('#disqus_thread').toggle();
@@ -587,8 +602,15 @@ pybossa.presentTask(function(task, deferred) {
         $("#finish").fadeIn(500);
     }
   
-});
+}
 
-pybossa.run('comoecampina');
+//pybossa.run('comoecampina');
+//General configuration  
+endpoint = "/pybossa";
+app_shortname = "comoecampina";
+pybossa.setEndpoint(endpoint);
+pybossa.newTask(app_shortname).done(function(data) {
+	loadData(data);
+});
 </script>
 

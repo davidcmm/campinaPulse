@@ -56,68 +56,71 @@ def get_photos(size="big"):
     # add the 'ids': '25053835@N03' to the values dict if you want to
     # specify a Flickr Person ID
     #print('Contacting Flickr for photos')
-    urlPadrao = "http://socientize.lsd.ufcg.edu.br/ruas/"
-    urlAlmirante = "almirante/"
-    urlRodrigues = "rodrigues/"
-    urlFloriano = "floriano/"
-
-    listOfAlmirante = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/almirante/*.jpg')
-    listOfRodrigues = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/rodrigues/*.jpg')
-    listOfFloriano = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/floriano/*.jpg')
-
-    #values = {'nojsoncallback': 1,
-    #          'format': "json"}
-
-    #query = url + "?" + urllib.urlencode(values)
-    #urlobj = urllib2.urlopen(query)
-    #data = urlobj.read()
-    #urlobj.close()
-    # The returned JSON object by Flickr is not correctly escaped,
-    # so we have to fix it see
-    # http://goo.gl/A9VNo
-    #regex = re.compile(r'\\(?![/u"])')
-    #fixed = regex.sub(r"\\\\", data)
-    #output = json.loads(fixed)
-    #print('Data retrieved from Flickr')
+    defaultURL = "http://socientize.lsd.ufcg.edu.br/bairros/"
+    neighborhoods = ['jt', 'ab', 'jc', 'mi', 'jp', 'nb', 'it', 'lib', 'di', 'uni', 'bod', 'ped']
+    photosPerNeighborhood = 5
+    #listOfAlmirante = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/almirante/*.jpg')
+    #listOfRodrigues = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/rodrigues/*.jpg')
+    #listOfFloriano = glob.glob('/local/david/pybossa_env/campinaPulse/ruas/floriano/*.jpg')
 
     # For each photo ID create its direct URL according to its size:
     # big, medium, small (or thumbnail) + Flickr page hosting the photo
     photos = []
-    numberOfPairs = 10
+    #numberOfPairs = 10
     #return get_photos_from_file(numberOfPairs)
+    #counter = 0	
+ 
+    #Combining each neighborhood with all other neighborhoods
+    for ind1 in range(0, len(neighborhoods)):
+	for ind2 in range(bairr1+1, len(neighborhoods)):
+		neigh1 = neighborhoods[ind1]
+		neigh2 = neighborhoods[ind2]
+		
+		listNeigh1 = glob.glob('/local/david/pybossa_env/campinaPulse/bairros/'+str(neigh1)+'/*.jpg')	    
+		listNeigh2 = glob.glob('/local/david/pybossa_env/campinaPulse/bairros/'+str(neigh2)+'/*.jpg')
+		
+		choosedPhotos1 = random.sample(listNeigh1, photosPerNeighborhood)
+		choosedPhotos2 = random.sample(listNeigh2, photosPerNeighborhood)
 
-    allPhotos = [listOfAlmirante, listOfFloriano, listOfRodrigues]
-    counter = 0	
-	
-    while counter < numberOfPairs:
+		for photoIndex in range(0,5):
+			choosed1 = choosedPhotos1[photoIndex]
+			choosed2 = choosedPhotos2[photoIndex]
+
+			imgUrl_c = defaultURL + choosed1.split("/")[6] + "/" + choosed1.split("/")[7]
+			imgUrl_a = defaultURL + choosed2.split("/")[6] + "/" + choosed2.split("/")[7]
+			
+			element = {'url_c':  imgUrl_c, 'url_a': imgUrl_a}
+			photos.append(element)
+    return photos	
+    #while counter < numberOfPairs:
 	#Choose streets
-	list1 = random.choice(allPhotos)
-	list2 = random.choice(allPhotos)
+	#list1 = random.choice(allPhotos)
+	#list2 = random.choice(allPhotos)
 	
 	#Choose a photo from selected street
-	choosed1 = random.choice(list1)
-	choosed2 = random.choice(list2)
+	#choosed1 = random.choice(list1)
+	#choosed2 = random.choice(list2)
     	
-	while choosed1 == choosed2:
-		choosed1 = random.choice(list1)
-		choosed2 = random.choice(list2)
+	#while choosed1 == choosed2:
+	#	choosed1 = random.choice(list1)
+	#	choosed2 = random.choice(list2)
 	
-	imgUrl_c = urlPadrao + choosed1.split("/")[6] + "/" + choosed1.split("/")[7]
-	imgUrl_a = urlPadrao + choosed2.split("/")[6] + "/" + choosed2.split("/")[7]
-	print imgUrl_c
-	print imgUrl_a
+	#imgUrl_c = urlPadrao + choosed1.split("/")[6] + "/" + choosed1.split("/")[7]
+	#imgUrl_a = urlPadrao + choosed2.split("/")[6] + "/" + choosed2.split("/")[7]
+	#print imgUrl_c
+	#print imgUrl_a
 
-	element = {'url_c':  imgUrl_c, 'url_a': imgUrl_a}
-	element2 = {'url_c': imgUrl_a, 'url_a': imgUrl_c}
-	if(element in photos or element2 in photos):
-		continue
-	else:
-		photos.append(element)
-		counter = counter + 1
+	#element = {'url_c':  imgUrl_c, 'url_a': imgUrl_a}
+	#element2 = {'url_c': imgUrl_a, 'url_a': imgUrl_c}
+	#if(element in photos or element2 in photos):
+	#	continue
+	#else:
+	#	photos.append(element)
+	#	counter = counter + 1
     #for idx, photo in enumerate(output['items']):
     #    print 'Retrieved photo: %s' % idx
     #    imgUrl_m = photo["media"]["m"]
     #    imgUrl_b = string.replace(photo["media"]["m"], "_m.jpg", "_b.jpg")
     #    photos.append({'url_m':  imgUrl_m,
     #                   'url_b': imgUrl_b})
-    return photos
+   

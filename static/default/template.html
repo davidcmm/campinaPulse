@@ -81,15 +81,15 @@
 			<select name="user2" id="usersex">  
 				<option>Masculino</option>  
 				<option>Feminino</option>  				
-			</select> <br><br> 
-			Estado Civil: 
+			</select> <br><br>
+            Estado Civil: 
 			<select name="user7" id="userrel">  
 				<option>Casado</option>  
 				<option>Solteiro</option>  
 				<option>Divorciado</option>				
 				<option>Viúvo</option>				
 			</select> <br><br>
-            		Classe Social: 
+            Classe Social: 
 			<select name="user3" id="userclass">  
 				<option>Alta (R$ 14480 ou mais)</option>  
 				<option>Média Alta (R$ 7964 a R$ 13756)</option>  
@@ -106,7 +106,7 @@
 				<option>Ensino Fundamental</option>  
 			</select> <br><br> 
 			Moro em (cidade): <input id="autocomplete" placeholder="Digite aqui" type="text"/> <br /><br />  			
-            		Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
+            Há quanto tempo mora no local? <input name="user6" id="usercitytime" type="text" size="2"/><br /><br />
 		</form>       
         </div>
 	<div class="modal-footer">
@@ -125,7 +125,7 @@
 <div class="row skeleton">
   <div class="span12">
       
-      <h2 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -150px;">Qual local lhe parece mais bonito?</h2>
+      <h2 id="question" style="width: 500px; position: relative; left: 50%; margin-left: -110px;">Qual local lhe parece mais bonito?</h2>
   </div>
 </div>
 
@@ -139,7 +139,7 @@
       <a id="photo-link" href="#">
           <img id="photo" src="https://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
       </a>
-      </div><!-- End of Photo DIV (columnt) -->
+  </div><!-- End of Photo DIV (columnt) -->
   <div class="span6" style="width:47%"><!-- Start of Photo DIV (column) -->
       <a id="photo-link2" href="#">
           <img id="photo2" src="https://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
@@ -157,7 +157,7 @@
             <!-- If the user clicks this button, the saved answer will be value="no"-->
             <!-- <button class="btn btn-answer" value='Right'><i class="icon icon-white"></i>Local da direita</button> -->
             <!-- If the user clicks this button, the saved answer will be value="NotKnown"-->
-      <button id="notknown" class="btn btn-info btn-large" value='NotKnown' style="width: 15%; margin-left: 42%; margin-right: 43%" ><i class="icon icon-white"></i> Tanto faz!</button>
+      <button id="notknown" class="btn btn-info btn-large" value='NotKnown' style="width: 15%; margin-left: 45%; margin-right: 40%" ><i class="icon icon-white"></i> Tanto faz!</button>
       
      </div><!-- End of DIV for the submission buttons -->
     </div><!-- End of Skeleton Row -->
@@ -168,7 +168,7 @@
       <br>
         
         <!-- Feedback items for the user -->
-        <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p>
+        <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
         <p>Você já completou: <span id="done" class="label label-info"></span> tarefas de
         <!-- Progress bar for the user -->
         <span id="total" class="label label-inverse"></span></p>
@@ -299,7 +299,6 @@ function getUserData(userID, appID){
   
 function showForm(userID, appID){
   var show = false;
-
   var userData = getUserData(userID, appID);
   //alert("User Data"+userData);  
   
@@ -316,8 +315,7 @@ function showForm(userID, appID){
 		var userCityTime = document.getElementById('usercitytime').value;          
 		var userSex = document.getElementById('usersex').value;
 		var userRel = document.getElementById('userrel').value;
-		userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+",rel="+userRel+"} ";
-
+		userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+",rel="+userRel+"} ";;
 		$("#startContrib").hide();
 		$("#0").hide();
 		$("#1").hide();
@@ -347,7 +345,8 @@ function showForm(userID, appID){
      //alert("time "+userCityTime); 
      currentValue = currentData[6].split("=")[1];  
 	var userRel = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-     //alert("time "+userRel); 
+     //alert("time "+userRel);
+    
         
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0)){
 			
@@ -356,7 +355,6 @@ function showForm(userID, appID){
 		$("#userage").val(userAge);
 		$("#autocomplete").val(userCity);
 		$("#usercitytime").val(userCityTime);
-
 		if(userClass.length > 0){
 			var classField  = document.getElementById('userclass');
 			if(classField){
@@ -392,8 +390,8 @@ function showForm(userID, appID){
 				}
 			}
 		}
-
-		if(userRel.length > 0){
+      
+        if(userRel.length > 0){
 			var userRelField  = document.getElementById('userrel');
 			if(userRelField){
 				for(var i=0; i < userRelField.options.length; i++) { 
@@ -431,7 +429,7 @@ function showForm(userID, appID){
 	$("#1").show();
 	return show;
   }
-}  
+} 	 
   
 function showStep(action) {
    var show = false;
@@ -510,7 +508,8 @@ pybossa.taskLoaded(function(task, deferred) {
         });
         left.attr('src', task.info.url_c);
       	left.attr('id', "photo");
-        left.addClass('img-polaroid');
+      //left.addClass('img-polaroid');
+        left.addClass('streetViewChoice');
         task.info.left = left;
 
         var right = $('<img />');
@@ -520,7 +519,8 @@ pybossa.taskLoaded(function(task, deferred) {
         });
         right.attr('src', task.info.url_a);
       	right.attr('id', "photo2");
-        right.addClass('img-polaroid');
+      //right.addClass('img-polaroid');
+      	right.addClass('streetViewChoice');
         task.info.right = right;
     }
     else {

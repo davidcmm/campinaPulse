@@ -1,4 +1,4 @@
-d>
+<head>
 <meta charset="UTF-8">
 </head>
 
@@ -20,8 +20,8 @@ d>
             <strong>Parabéns!</strong> Você completou todas as tarefas!
             <br/>
             <div class="alert-actions">
-                <a class="btn small" href="/pybossa">Volte</a>
-                <a class="btn small" href="/pybossa/app/category/thinking">ou, Veja outras aplicações</a>
+              <a class="btn small" href="/pybossa">Volte</a>
+              <a class="btn small" href="pybossa/app/category/thinking/">ou, Veja outras aplicações</a>
             </div>
         </div>
         <div id="error" class="alert alert-error" style="display:none;">
@@ -261,7 +261,7 @@ function getUserData(userID, appID){
 
 	while (!shouldBreak) {
 		$.ajax({
-		url: "https://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id="+appID+"&user_id="+userID+"&offset="+offset+"&limit=100",
+		url: "https://contribua.org/pybossa/api/taskrun?app_id="+appID+"&user_id="+userID+"&offset="+offset+"&limit=100",
 		async: false,
 		dataType: 'json',
 		success: function(data) {
@@ -424,7 +424,7 @@ function showForm(userID, appID){
   }
   
   if(show){
-	//alert("Estou habilitando");
+    //alert("Estou habilitando");
 	$("#startContrib").show();
 	$("#1").show();
 	return show;
@@ -469,12 +469,13 @@ function showStep(action) {
 function verifyUserData(appID) {
      var show = false;
      $.ajax({
-	  url: "https://socientize.lsd.ufcg.edu.br/pybossa/account/currentUserInfo",
+	  url: "https://contribua.org/pybossa/account/currentUserInfo",
 	  async: false,
 	  dataType: 'json',
 	  success: function(data) {
+        //alert("Dados recuperados "+ data.info);
 	     show = showForm(data.info, appID);
-         //alert("Show form"+show);         
+        //alert("Show form"+show);         
 	  }    
      });
      return show;
@@ -493,6 +494,7 @@ function loadUserProgress() {
       	        
         if (data.done != 0 && data.done % 1 == 0) {        
 			askForMoreInfo = true;
+          //alert("Troquei para true");
 		}	
     });
 
@@ -535,17 +537,18 @@ pybossa.taskLoaded(function(task, deferred) {
 pybossa.presentTask(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
         loadUserProgress();
-	//At each 10 questions answered check user profile information
+	  //At each 10 questions answered check user profile information
       //alert("APP ID "+task.app_id + " " + askForMoreInfo);
+      //alert("ASK: " + askForMoreInfo);
       if (askForMoreInfo){
 	      step = 1;
 	      askForMoreInfo = false;
           
 	      if(verifyUserData(task.app_id)){
-              //alert("Estou habilitando 2");
+            //alert("Estou habilitando 2");
               $("#modal").modal('show');
 	      }
-	}
+	  }
       
           
       $('#photo-link').html('').append(task.info.left);

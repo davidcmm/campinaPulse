@@ -82,8 +82,8 @@
       <p> Preenchimento do seu perfil </p> 
       
 	  <div class="progress progress-striped">
-           <div id="progress2" title="#" class="bar" style="width: 0%;background: green"></div>
-        </div>
+        <div id="progress2" title="#" class="bar" style="width: 0%;background: yellowgreen"></div>
+      </div>
       <div class="css3-tabstrip">
        <ul>
           <li>
@@ -205,11 +205,11 @@
         
         <!-- Feedback items for the user -->
         <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
-      <p>Você já completou: <span id="done" class="label label-info" style="background: green"></span> tarefas de
+      <p>Você já completou: <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas de
         <!-- Progress bar for the user -->
         <span id="total" class="label label-inverse"></span></p>
         <div class="progress progress-striped">
-            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%; background: green"></div>
+            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%; background: yellowgreen"></div>
         </div>
         <!-- 
             This application uses Disqus to allow users to provide some feedback.
@@ -375,7 +375,7 @@ function retrievePreferences(){
   	if (preferences.length == 0){
       	return preferences;
   	}
-	return preferences.substr(0, preferences.length-2);
+	return preferences.substr(0, preferences.length-1);
 }  
 
 //Showing profile form containg previous information provided  
@@ -505,7 +505,8 @@ function showForm(userID, appID){
 			var preferences = userPref.split(";");		
 			for (i=0; i < preferences.length ; i++){
 				preferencesFilled += 1;
-				document.getElementsByName(preferences[0])[0].checked = true;
+                alert(preferences[i]);
+              document.getElementsByName(preferences[i])[0].checked = true;//
 			}
 		}
       	if(preferencesFilled > 0){

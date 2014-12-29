@@ -1,14 +1,14 @@
 import random
 import sys
 import glob
-from get_images import get_photos_partial
+from get_images import get_photos_votes
 
 def createCSV(photos):
 
     file = open("tarefas.csv", "w")
     file.write("question,url_a,url_c\n")
     question1 = "Qual local lhe parece mais seguro?"
-    question2 = "Qual local lhe parece melhor para morar?"
+    question2 = "Qual local lhe parece mais agradável?"
 
     index2 = len(photos)-1
     print "Init" + " " + str(index2)

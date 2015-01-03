@@ -93,16 +93,6 @@ def get_photos_votes(size="big"):
     pontos = escolhe_pontos()
     todasFotos = escolhe_fotos(pontos)
 
-    #bairros = [leste[0], oeste[0], oeste[1], norte[0], norte[1], norte[2], sul[0], sul[1]]
-    #todasFotos.append(leste[0])
-    #todasFotos.append(oeste[0])
-    #todasFotos.append(oeste[1])
-    #todasFotos.append(norte[0])
-    #todasFotos.append(norte[1])
-    #todasFotos.append(norte[2])
-    #todasFotos.append(sul[0])
-    #todasFotos.append(sul[1])
-	
     # For each photo ID create its direct URL according to its size:
     # big, medium, small (or thumbnail) + Flickr page hosting the photo
     photos = []
@@ -122,6 +112,7 @@ def get_photos_votes(size="big"):
 		cont = contagemPorFoto.get(foto1)
 	while cont >= participacaoPorFoto:
  		foto1 = random.choice(todasFotos)
+		cont = 0
     		if contagemPorFoto.has_key(foto1):
 			cont = contagemPorFoto.get(foto1)
 

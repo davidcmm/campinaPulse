@@ -335,20 +335,6 @@ var step = 0;
 var askForMoreInfo = false;
 var userDataToSave = "";  
   
-//Checking if question options should be presented or not
-  /*var cookiesData = document.cookie.split(";");
-var showQuestions = cookiesData[cookiesData.length-1].split("=");
-if (showQuestions[0].toLowerCase().trim() == "redir" && showQuestions[1].toLowerCase() == "true"){
-	perguntaAResponder = "Qual local lhe parece mais seguro?";//Default question
-	showQuestionOptions = false;	
-	$("#question").html(perguntaAResponder); 
-	alert(document.cookie);
-}else{
-  if(showStep('init')){
-  	  	$("#modal").modal('show');
- 	} 
-} */
-
 
 //Retrieving user profile from previous task execution. URL request to http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=APPID&user_id=USERID&offset=0&limit=100
 function getUserData(userID, appID){
@@ -392,53 +378,6 @@ function getUserData(userID, appID){
 	return userData;
 }
 
-/*Retrieve user preferences for living
-function retrievePreferences(){
-	var preferences = "";
-
-	if(document.getElementsByName('traffic')[0].checked) {
-		preferences += "traffic;";
-	}
-	if(document.getElementsByName('security')[0].checked) {
-		preferences += "security;";
-	}
-	if(document.getElementsByName('protection')[0].checked) {
-		preferences += "protection;";
-	}
-	if(document.getElementsByName('walk')[0].checked) {
-		preferences += "walk;";
-	}
-	if(document.getElementsByName('stay')[0].checked) {
-		preferences += "stay;";
-	}
-	if(document.getElementsByName('sit')[0].checked) {
-		preferences += "sit;";
-	}
-	if(document.getElementsByName('observe')[0].checked) {
-		preferences += "observe;";
-	}
-	if(document.getElementsByName('talk')[0].checked) {
-		preferences += "talk;";
-	}
-	if(document.getElementsByName('exercise')[0].checked) {
-		preferences += "exercise;";
-	}
-	if(document.getElementsByName('human')[0].checked) {
-		preferences += "human;";
-	}
-	if(document.getElementsByName('climate')[0].checked) {
-		preferences += "climate;";
-	}
-	if(document.getElementsByName('sensorial')[0].checked) {
-		preferences += "sensorial;";
-	}
-
-  	if (preferences.length == 0){
-      	return preferences;
-  	}
-	return preferences.substr(0, preferences.length-1);
-}  */
-  
 function retrieveNeighborhoods(){
 	var neighborhoods = "";
 	//Retrieving north zone 
@@ -498,7 +437,7 @@ function showForm(userID, appID){
 		//User visiting neighborhoods
 		var neighborhoods = retrieveNeighborhoods();
 
-		userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+",rel="+userRel+",neig="+neighborhoods+"} ";
+		userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 		$("#startContrib").hide();
 		$("#0").hide();
 		$("#1").hide();
@@ -511,30 +450,31 @@ function showForm(userID, appID){
 
         var currentValue = currentData[0].split("=")[1]; 
         var userAge = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
         currentValue = currentData[1].split("=")[1];  
 	var userSex = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
         currentValue = currentData[2].split("=")[1];  
         var userClass = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
 	currentValue = currentData[3].split("=")[1];  
         var userDegree = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
         currentValue = currentData[4].split("=")[1];  
         var userCity = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
         currentValue = currentData[5].split("=")[1];  
 	var userCityTime = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+
         currentValue = currentData[6].split("=")[1];  
 	var userRel = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-	/*if(currentData.length >= 8){
-		currentValue = currentData[7].split("=")[1];  
-	}else{
-		currentValue = null;
-	} 
-	var userPref = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);*/
+
         if(currentData.length >= 8){
 		currentValue = currentData[7].split("=")[1];  
 	}else{
 		currentValue = null;
 	} 
-	var neigh = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+	var userNeigh = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
         
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0 && userRel.length > 0 && userNeigh.length > 0)){
 			
@@ -601,28 +541,14 @@ function showForm(userID, appID){
 			}
 		}
 
-		/*Loading user preferences already informed
-      	        var preferencesFilled = 0;
-		if (userPref.length > 0){
-			var preferences = userPref.split(";");		
-			for (i=0; i < preferences.length ; i++){
-				prefere	ncesFilled += 1;
-                  		//alert(preferences[i]);
-			        document.getElementsByName(preferences[i])[0].checked = true;//
-			}
-		}
-              	if(preferencesFilled > 0){
-          		totalProgress += 1;
-      	        }*/
-      
                 //Loading user neighborhodds already informed
       	        var neighborhoodsFilled = 0;
-		if (neigh.length > 0){
-			var neighborhoods = neigh.split(";");	
+		if (userNeigh.length > 0){
+			var neighborhoods = userNeigh.split(";");	
           	        //alert(neighborhoods);
 			for (i=0; i < neighborhoods.length ; i++){
 				neighborhoodsFilled += 1;
-				alert(neighborhoods[i]);
+				//alert(neighborhoods[i]);
 		              	document.getElementById(neighborhoods[i]).checked = true;
 			}
 		 }
@@ -644,13 +570,10 @@ function showForm(userID, appID){
 			var userSex = document.getElementById('usersex').value;
 			var userRel = document.getElementById('userrel').value;
 
-			//User preferences according to Ghel
-			//var preferences = retrievePreferences();
-          
 			//User visiting neighborhoods
 			var neighborhoods = retrieveNeighborhoods();
 
-			userDataToSave = "{age="+age+",sex="+userSex+",class="+userClass+",educ="+userEduc+",city="+userCity+",time="+userCityTime+",rel="+userRel+",neig="+neighborhoods+"} ";
+			userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 
 			$("#startContrib").hide();
 			$("#0").hide();
@@ -684,7 +607,7 @@ function showStep(action) {
        $("#1").hide();
        $("#modal").modal('hide');
        step = 1;
-     //$("#question").html(perguntaAResponder);
+
       return show;
    }
 }
@@ -706,7 +629,6 @@ function verifyUserData(appID) {
 //Loading user progress in terms of profile completion in current application
 function loadProfileProgress(filled) {
         var pct = Math.round((filled/9)*100);
-	//alert(pct);
         $("#progress2").css("width", pct.toString() +"%");
         $("#progress2").attr("title", pct.toString() + "% do perfil está completo!");
         //$("#progress2").tooltip({ 'placement' : 'right' });  		
@@ -812,7 +734,7 @@ function loadData(data) {
       $('#photo-link').html('').append(task.info.left);
       $('#photo-link2').html('').append(task.info.right);
       $('#task-id').html(task.id);
-      $('#question').html(task.info.question);
+      $('#question').html(decodeURIComponent(task.info.question));
       perguntaAResponder = task.info.question;
         
       //Left image chosen
@@ -847,15 +769,6 @@ function loadData(data) {
       });
       
              
-      //Change question button clicked
-      /*$('#changeQuest').off('click').on('click', function(evt) {
-        showQuestionOptions = true;
-        step = 0;
-        if(showStep('init')){
-          $("#modal").modal('show');
-        }
-      });*/
-
       //User could not choose an image!      
       $('#notknown').off('click').on('click', function(evt) {
         var question = perguntaAResponder;

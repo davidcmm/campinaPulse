@@ -237,7 +237,7 @@ function getUserData(userID, appID){
 		offset += 100;	
 	}
 
-        alert(userData);	
+        //alert(userData);	
 	return userData;
 }
 
@@ -286,7 +286,7 @@ function showForm(userID, appID){
   if (userData.length == 0) {	
 	show = true;   
 	loadProfileProgress(0);
-        alert("Zerado!");
+        //alert("Zerado!");
 	
 	$('#startContrib').off('click').on('click', function(evt) {
 		//Save captured user data!
@@ -303,7 +303,7 @@ function showForm(userID, appID){
 
 		userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 		$("#startContrib").hide();
-		$("#0").hide();
+		//$("#0").hide();
 		$("#1").hide();
 		$("#modal").modal('hide');
 		
@@ -314,31 +314,31 @@ function showForm(userID, appID){
 
         var currentValue = currentData[0].split("=")[1]; 
         var userAge = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-       alert("Age " + userAge);
+       //alert("Age " + userAge);
 
         currentValue = currentData[1].split("=")[1];  
 	var userSex = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Sex " + userSex);
+//alert("Sex " + userSex);
 
         currentValue = currentData[2].split("=")[1];  
         var userClass = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Class " + userClass);
+//alert("Class " + userClass);
 
 	currentValue = currentData[3].split("=")[1];  
         var userDegree = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Deg " + userDegree);
+//alert("Deg " + userDegree);
 
         currentValue = currentData[4].split("=")[1];  
         var userCity = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("City " + userCity);
+//alert("City " + userCity);
 
         currentValue = currentData[5].split("=")[1];  
 	var userCityTime = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Tim " + userCityTime);
+//alert("Tim " + userCityTime);
 
         currentValue = currentData[6].split("=")[1];  
 	var userRel = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Rel " + userRel);
+//alert("Rel " + userRel);
 
         if(currentData.length >= 8){
 		currentValue = currentData[7].split("=")[1];  
@@ -346,7 +346,7 @@ alert("Rel " + userRel);
 		currentValue = null;
 	} 
 	var userNeigh = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
-alert("Neigh " + userNeigh);
+//alert("Neigh " + userNeigh);
         
 	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0 && userRel.length > 0 && userNeigh.length > 0)){
 			
@@ -417,10 +417,10 @@ alert("Neigh " + userNeigh);
       	        var neighborhoodsFilled = 0;
 		if (userNeigh.length > 0){
 			var neighborhoods = userNeigh.split(";");	
-          	        alert(neighborhoods);
+          	        //alert(neighborhoods);
 			for (i=0; i < neighborhoods.length ; i++){
 				neighborhoodsFilled += 1;
-				alert(neighborhoods[i]);
+				//alert(neighborhoods[i]);
 		              	document.getElementById(neighborhoods[i]).checked = true;
 			}
 		 }
@@ -448,7 +448,7 @@ alert("Neigh " + userNeigh);
 			userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 
 			$("#startContrib").hide();
-			$("#0").hide();
+			//$("#0").hide();
 			$("#1").hide();
 			$("#modal").modal('hide');
               });
@@ -471,11 +471,11 @@ function showStep(action) {
    if (action == 'init' && showQuestionOptions){
        show = true;
        $("#startContrib").show();
-       $("#0").show();
+       //$("#0").show();
        $("#1").hide();
        
        $("#startContrib").hide();
-       $("#0").hide();
+       //$("#0").hide();
        $("#1").hide();
        $("#modal").modal('hide');
        step = 1;
@@ -564,10 +564,7 @@ function loadData(data) {
 	      askForMoreInfo = false;
           
 	      if(verifyUserData(task.app_id)){
-                alert(Object.getOwnPropertyNames(document.getElementById('modal')));
-                var test = document.getElementById('modal');
-                //test.modal('show');
-                //test.show();
+                //alert(Object.getOwnPropertyNames(document.getElementById('modal')));
               	$("#modal").modal('show');
 	      }
        }

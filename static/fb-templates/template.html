@@ -1,6 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
 <head>
 <meta charset="UTF-8">
-</head>
+<!-- Le styles -->
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+	rel="stylesheet">
+<link href="css/fonts/stylesheet.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+
+<!-- Le javascript -->
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/pybossa.js"></script>
+<!--<script type="text/javascript" src="js/bootstrap.min.js"></script> -->
+
+
+<style type="text/css">
+.container {
+	width: 940px;
+}
+.logo {
+	margin-right: 31px;
+}
+</style>
+
+<body>
+	<header>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" href="/pybossa" target="_blank"><img
+					src="img/contribua-logo-Atual.png" alt="Contribua"></a>
+				<div class="nav-collapse collapse">
+					<ul id="nav-buttons" class="nav">
+						<!--<li><a href="/pybossa/account/" target="_blank">Comunidade</a></li> -->
+						<li><a href="/pybossa/app/category/featured/" target="_blank">Aplica&ccedil;&otilde;es</a></li>
+						<li><a href="/pybossa/about" target="_blank">Sobre</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	</header>
+
 
 <div class="row">
     <!-- Success and Error Messages for the user --> 
@@ -33,9 +80,9 @@
 
 <div class="row skeleton"> <!-- Start Skeleton Row-->
     <div class="span12">
-        <div id="modal" class="modal">
-            <!--<div id="0" class="modal-body" style="display:none">
-	    </div> -->
+        <div id="modal" class="modal hide fade">
+            <div id="0" class="modal-body" style="display:none">
+	    </div>
     <div id="1" class="modal-body" style="display:none">
       <div class="row">
        
@@ -132,7 +179,7 @@
     It uses the class="skeleton" to identify the elements that belong to the
     task.
 -->
-<div class="row skeleton" style="width:1024px"> <!-- Start Skeleton Row-->
+<div class="row skeleton" style="width:1024px; margin-left: 30px"> <!-- Start Skeleton Row-->
   <div class="span6" style="width:47%"><!-- Start of Photo DIV (column) -->
       <a id="photo-link" href="#">
           <img id="photo" src="https://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
@@ -156,7 +203,7 @@
     </div><!-- End of Skeleton Row -->
 </div>
 
-<div class="row skeleton"> <!-- Start Skeleton Row-->
+<div class="row skeleton" style="margin-left: 30px"> <!-- Start Skeleton Row-->
     <div class="span6 "><!-- Start of Question and Submission DIV (column) -->
       <br>
         
@@ -170,27 +217,29 @@
     </div><!-- End of Question and Submission DIV (column) -->
     </div><!-- End of Skeleton Row -->
 
-<!--<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> -->
-
-<!--<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script> -->
-<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>  -->
-<!-- <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&library=places&callback=initialize"></script> -->
+<footer>
+	<div class="container">
+		<div class="row-fluid" style="text-align:center;">
+			<div class="span3">
+				<a href="http://citizencyberscience.net/"><img
+					src="img/ccc.png" width="70%" height="50%"></a>
+			</div>
+			<div class="span3">
+                                 <a href="http://okfn.org/"><img src="img/okf.png" width="70%" height="50%"></a>
+          		</div>
+		  	<div class="span2">
+		                 <a href="http://pybossa.com/"><img style="position:relative;top:30px" src="img/pybossa.png" width="70%" height="50%"></a>
+		  	</div>
+                         <div class="span2">
+                                <a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img style="position:relative;top:-10px"
+                                        src="img/lsdlogo.png" width="70%" height="50%"></a> <!-- 120px x 120px or 170px -->
+                        </div>
+		</div>
+	</div>
+</footer>
 
 <script charset="UTF-8">
 
-/*function initialize() {
-	//Google autocomplete
-	var cityInput = document.getElementById('autocomplete');
-	var autocomplete = new google.maps.places.Autocomplete(cityInput);
-	var pacContainerInitialized = false; 
-	$('#autocomplete').keypress(function() { 
-		if (!pacContainerInitialized) { 
-			$('.pac-container').css('z-index', '10000'); 
-			pacContainerInitialized = true;  
-		} 
-	}); 
-} */ 
-    
 var perguntaAResponder = "Qual local lhe parece mais seguro?";
 var showQuestionOptions = true;
 var step = 0;
@@ -198,7 +247,6 @@ var step = 0;
 var askForMoreInfo = false;
 var userDataToSave = "";  
   
-
 //Retrieving user profile from previous task execution. URL request to http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=APPID&user_id=USERID&offset=0&limit=100
 function getUserData(userID, appID){
 	var userData = "";
@@ -303,7 +351,7 @@ function showForm(userID, appID){
 
 		userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 		$("#startContrib").hide();
-		//$("#0").hide();
+		$("#0").hide();
 		$("#1").hide();
 		$("#modal").modal('hide');
 		
@@ -448,7 +496,7 @@ function showForm(userID, appID){
 			userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
 
 			$("#startContrib").hide();
-			//$("#0").hide();
+			$("#0").hide();
 			$("#1").hide();
 			$("#modal").modal('hide');
               });
@@ -459,6 +507,7 @@ function showForm(userID, appID){
   if(show){
 	//alert("Estou habilitando");
 	$("#startContrib").show();
+        $("#0").show();
 	$("#1").show();
 	return show;
   }
@@ -471,11 +520,11 @@ function showStep(action) {
    if (action == 'init' && showQuestionOptions){
        show = true;
        $("#startContrib").show();
-       //$("#0").show();
+       $("#0").show();
        $("#1").hide();
        
        $("#startContrib").hide();
-       //$("#0").hide();
+       $("#0").hide();
        $("#1").hide();
        $("#modal").modal('hide');
        step = 1;
@@ -517,7 +566,7 @@ function loadUserProgress() {
         $("#total").text(data.total);
         $("#done").text(data.done);
       	        
-        if (data.done != 0 && data.done % 1 == 0) {        
+        if (data.done != 0 && data.done % 5 == 0) {        
 	   askForMoreInfo = true;
 	}	
     });
@@ -639,4 +688,7 @@ pybossa.newTask(app_shortname).done(function(data) {
 	loadData(data);
 });
 </script>
+
+</body>
+</html>
 

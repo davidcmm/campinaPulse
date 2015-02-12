@@ -375,25 +375,36 @@ $('#autocomplete').keypress(function() {
   } 
 }); 
 
+//Showing application tutorial
 function showTutorial(action) {
-	$("#m0").show();
-	$('#startContrib2').show();
-	$('#startContrib2').off('click').on('click', function(evt) {
-		$("#startContrib2").hide();
-		$("#m0").hide();
-		$("#modal2").modal('hide');
-		
-        });
+	//Checking if tutorial should be presented or not
+	var cookiesData = document.cookie.split(";");
+	var showTutorial = cookiesData[cookiesData.length-1].split("=");
+	if (showTutorial[0].toLowerCase().trim() == "tutorial" && showTutorial[1].toLowerCase() == "false"){
+		return;
+	}else{
+		$("#modal2").modal('show');
+		$("#m0").show();
+		$('#startContrib2').show();
+		$('#startContrib2').off('click').on('click', function(evt) {
+			$("#startContrib2").hide();
+			$("#m0").hide();
+			$("#modal2").modal('hide');
+
+			//Setting cookies to not show tutorial again
+			var date = new Date();
+			date.setTime(date.getTime() + (20 * 1000));
+			var expires = date.toUTCString();          
+			document.cookie = "tutorial=false;path=/;domain=contribua.org;expires="+expires+";";
+        	});		
+	} 
 }
 
 showTutorial();
-$("#modal2").modal('show');
-  
-    
+
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);  
 
-var perguntaAResponder = "Qual local lhe parece mais seguro?";
 var showQuestionOptions = true;
 var step = 0;
 
@@ -664,27 +675,6 @@ function showForm(userID, appID){
   }
 } 	 
 
-//Showing question options. NOT BEING USED IN CURRENT VERSION!
-/*function showStep(action) {
-   var show = false;
-   
-   if (action == 'init' && showQuestionOptions){
-       show = true;
-       $("#startContrib").show();
-       $("#0").show();
-       $("#1").hide();
-       
-       
-	  $("#startContrib").hide();
-	  $("#0").hide();
-	  $("#1").hide();
-	  $("#modal").modal('hide');
-	  step = 1;
-     
-      return show;
-   }
-}*/
-
 //Retrieving user id
 function verifyUserData(appID) {
      var show = false;
@@ -775,21 +765,22 @@ pybossa.presentTask(function(task, deferred) {
       $('#photo-link').html('').append(task.info.left);      
       $('#photo-link2').html('').append(task.info.right);      
       $('#task-id').html(task.id);
+  
+      //Changing question color
       //$('#question').html(decodeURIComponent(task.info.question));
       var question = decodeURIComponent(task.info.question).split(" ")[5];
-	  if (question[0] == "s"){
-			$('#question').html(question);
+      $('#question').html(question);
+      if (question[0] == "s"){
 			$('#question').attr("color", "DodgerBlue");
             $('#photo2').addClass('streetViewChoice2');
         $('#photo').addClass('streetViewChoice2');
 	    }else{
-			$('#question').html(question);
             $('#question').attr("color", "OrangeRed");
              $('#photo2').addClass('streetViewChoice');
           $('#photo').addClass('streetViewChoice');
 		}
 
-      perguntaAResponder = task.info.question;
+      var perguntaAResponder = task.info.question;
         
       //Left image chosen
       $('#photo').off('click').on('click', function(evt) {

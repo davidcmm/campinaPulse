@@ -4,10 +4,16 @@
 
 <style>    
     .streetViewChoice {  cursor: pointer;  border: 3px solid #fff;}
-    .streetViewChoice:hover {  cursor: pointer;  border: 3px solid #FF4500;}
+    .streetViewChoice:hover, .streetViewChoice.hovered {  cursor: pointer;  border: 3px solid #FF4500;}
+    .streetViewChoice:focus {
+        outline: none;
+    }
   
     .streetViewChoice2 {  cursor: pointer;  border: 3px solid #fff;}
-    .streetViewChoice2:hover {  cursor: pointer;  border: 3px solid #1E90FF;}
+    .streetViewChoice2:hover, .streetViewChoice2.hovered {  cursor: pointer;  border: 3px solid #1E90FF;}
+  .streetViewChoice2:focus {
+        outline: none;
+    }
   
   .choice_button {
 	  width: 50px;
@@ -34,6 +40,9 @@
 	  text-decoration: none;
 	  color: black;
   }
+  .choice_button:focus {
+        outline: none;
+    }
 </style>
 
 <div class="row">
@@ -69,10 +78,10 @@
     <div class="span12"> <!-- Tutorial indicating how application works! -->
         <div id="modal2" class="modal hide fade">
             <div class="modal-header">
-                <h3>Tutorial Como é Campina?</h3>
+                <h3>Instruções Como é Campina?</h3>
             </div>
             <div id="m0" class="modal-body" style="display:none">
-                <p> Duas fotos da cidade de Campina Grande, Paraíba, Brasil serão apresentadas lado a lado: 
+                <p> Duas fotos da cidade de Campina Grande, Paraíba, serão apresentadas lado a lado: 
 
 		<div class="row skeleton"> 
                 <div class="span3">	
@@ -86,11 +95,13 @@
 		<p> Para cada par de fotos você poderá responder a uma das seguintes questões: </p>
 <ul>
 <li> Qual local lhe parece mais<font color="DodgerBlue"> seguro? </font> </li>
-<li> Que local lhe parece mais <font color="OrangeRed"> agradável? </font></p> </li>
+<li> Que local lhe parece mais <font color="OrangeRed"> agradável? </font> </li>
 </ul>
 		<p> Cada pergunta é apresentada em uma cor diferente de modo a facilitar sua percepção quando a pergunta for alterada! </p>
-                <p> Para responder a pergunta basta clicar em uma das fotos! Analise bem cada uma das imagens de modo a escolher aquela que melhor responde à pergunta apresentada. </p>
-		<p> Se você não conseguir escolher a foto que melhor responde à pergunta basta clicar no botão <img src="https://contribua.org/icones/botao2.jpg" />.</p>
+             
+        <p> Para responder a pergunta basta clicar em uma das fotos ou na seta que indica o lado da foto escolhida! Analise bem cada uma das imagens de modo a escolher aquela que melhor responde à pergunta apresentada. </p>
+              <p> <font color="Red">Importante! </font> Se você não conseguir escolher a foto que melhor responde à pergunta basta clicar no botão <img src="https://contribua.org/icones/botao2.jpg" />.</p>
+        <p> A cada 10 questões respondidas, nós iremos lhe fazer algumas perguntas sobre seu perfil! Ajude-nos a conhecer um pouco mais sobre você! </p>      
 
 	    </div>
             <div class="modal-footer">
@@ -160,7 +171,7 @@
               <h3>Estado Civil: </h3>
                   <select name="user7" id="userrel">  
                       <option>Casado</option>  
-                      <option>Solteiro</option>  
+                      <option selected>Solteiro</option>  
                       <option>Divorciado</option>				
                       <option>Viúvo</option>				
                   </select> <br>
@@ -168,7 +179,7 @@
                   <select name="user3" id="userclass"> <!-- http://blog.thiagorodrigo.com.br/index.php/faixas-salariais-classe-social-abep-ibge?blog=5 --> 
                       <option>Alta (R$ 14.500 ou mais)</option>  
                       <option>Média Alta (R$ 7.250 a R$ 14.499,99)</option>  
-                      <option>Média (R$ 2.900 a R$ 7.249,99)</option>  
+                      <option selected>Média (R$ 2.900 a R$ 7.249,99)</option>  
                       <option>Média Baixa (R$ 1.450 a R$ 2.899,99)</option>  
                       <option>Baixa (até R$ 1.449,99)</option>  
                   </select> <br> 
@@ -176,7 +187,7 @@
                   <select name="user4" id="usereduc">  
                       <option>Doutorado</option>  
                       <option>Mestrado</option>  
-                      <option>Graduação</option>  
+                      <option selected>Graduação</option>  
                       <option>Ensino Médio</option>  
                       <option>Ensino Fundamental</option>  
                   </select> <br> 
@@ -298,6 +309,15 @@
    </div><!-- End of Photo DIV (columnt) -->
 </div><!-- End of Skeleton Row -->
 
+<!--<div class="row skeleton"> 
+   <br>  
+   <div class="span12 ">
+      <div id="answer"> 
+       <button id="notknown" class="choice_button" value='NotKnown' style="width: 15%; margin-left: 45%; margin-right: 40%" ><i class="icon icon-white"></i> = </button>
+         
+     </div>
+    </div>
+</div> -->
 <div class="row skeleton"> <!-- Start Skeleton Row-->
    <br>  
    <div class="span12 "><!-- Start of Question and Submission DIV (column) -->
@@ -307,7 +327,9 @@
             <!-- If the user clicks this button, the saved answer will be value="no"-->
             <!-- <button class="btn btn-answer" value='Right'><i class="icon icon-white"></i>Local da direita</button> -->
             <!-- If the user clicks this button, the saved answer will be value="NotKnown"-->
-      <button id="notknown" class="choice_button" value='NotKnown' style="width: 15%; margin-left: 45%; margin-right: 40%" ><i class="icon icon-white"></i> = </button>
+      <button id="left" class="choice_button" value='left' style="width: 15%; margin-left: 25%" ><i class="icon icon-white"></i> ⇦ </button>
+        <button id="notknown" class="choice_button" value='NotKnown' style="width: 15%; margin-left: 5%; margin-right: 5%" ><i class="icon icon-white"></i> = </button>
+        <button id="right" class="choice_button" value='right' style="width: 15%; margin-right: 10%" ><i class="icon icon-white"></i> ⇨ </button>
       
      </div><!-- End of DIV for the submission buttons -->
     </div><!-- End of Skeleton Row -->
@@ -319,10 +341,10 @@
         
         <!-- Feedback items for the user -->
         <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
-      <p>Você já completou: <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas de
+      <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas <!-- de -->
         <!-- Progress bar for the user -->
-        <span id="total" class="label label-inverse"></span></p>
-        <div class="progress progress-striped">
+        <!-- <span id="total" class="label label-inverse"></span></p> -->
+        <div class="progress progress-striped" style="background: LightGray">
             <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%; background: yellowgreen"></div>
         </div>
         <!-- 
@@ -374,7 +396,8 @@ $('#autocomplete').keypress(function() {
     pacContainerInitialized = true;  
   } 
 }); 
-
+  
+ 
 //Showing application tutorial
 function showTutorial(action) {
 	//Checking if tutorial should be presented or not
@@ -401,6 +424,38 @@ function showTutorial(action) {
 }
 
 showTutorial();
+  
+//Making buttons to hover images!  
+var button = $("#notknown")
+button.mouseover(function () {
+  	$("#photo").addClass("hovered");
+    $("#photo2").addClass("hovered");
+} );
+button.mouseout(function () {
+  	$("#photo").removeClass("hovered");
+    $("#photo2").removeClass("hovered");
+} );
+
+var lbutton = $("#left")
+lbutton.mouseover(function () {
+  	$("#photo").addClass("hovered");
+    
+} );
+lbutton.mouseout(function () {
+  	$("#photo").removeClass("hovered");
+    
+} );
+  
+var rbutton = $("#right")
+rbutton.mouseover(function () {
+  	$("#photo2").addClass("hovered");
+    
+} );
+rbutton.mouseout(function () {
+  	$("#photo2").removeClass("hovered");
+    
+} );
+  
 
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);  
@@ -701,16 +756,31 @@ function loadProfileProgress(filled) {
 //Loading user progress in terms of tasks performed  
 function loadUserProgress() {
     pybossa.userProgress('comoecampina').done(function(data){
-        var pct = Math.round((data.done*100)/data.total);
+      var pct = Math.round((data.done*100)/300);//data.total
         $("#progress").css("width", pct.toString() +"%");
         $("#progress").attr("title", pct.toString() + "% das tarefas!");      
         
-        $("#total").text(data.total);
+      //$("#total").text(data.total);
         $("#done").text(data.done);
       	        
         if (data.done != 0 && data.done % 10 == 0) {        
 			askForMoreInfo = true;          
-		}	
+		}
+      
+      //Choosing praise
+      if (data.done > 160) {
+        $("#praise").text("Você já é um mestre nisso!");        
+      }else if (data.done > 110){
+        $("#praise").text("Você já é quase um mestre nisso!");        
+      } else if (data.done > 70) {
+           $("#praise").text("Excepcional!");
+      } else if (data.done > 40) {     
+        $("#praise").text("Muito Bom!");
+      } else if (data.done > 20) {
+        $("#praise").text("Bom!");
+      } else if (data.done > 10) {
+        $("#praise").text("Parabéns!");
+      } 
     });
 
 }
@@ -796,8 +866,30 @@ pybossa.presentTask(function(task, deferred) {
           $('#disqus_thread').toggle();
           $('.btn-disqus').toggle();
         }
-        userDataToSave = "";
+        userDataToSave = "";        
       });
+      
+      //Left image chosen
+      $('#left').off('click').on('click', function(evt) {
+        
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+		
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";  
+        var photo = $("#photo");
+        photo.removeClass("hovered")
+        
+      });
+      
+      
       
       //Right image chosen
       $('#photo2').off('click').on('click', function(evt) {
@@ -815,6 +907,26 @@ pybossa.presentTask(function(task, deferred) {
         userDataToSave = "";
       });
       
+      
+      //Right image chosen
+      $('#right').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+        
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+        var photo = $("#photo2");
+        photo.removeClass("hovered");
+      });
+      
+      
              
       //User could not choose an image!      
       $('#notknown').off('click').on('click', function(evt) {
@@ -829,7 +941,11 @@ pybossa.presentTask(function(task, deferred) {
           $('#disqus_thread').toggle();
           $('.btn-disqus').toggle();
         }
-        userDataToSave = "";
+        userDataToSave = "";  
+        var photo = $("#photo");
+        photo.removeClass("hovered")
+        photo = $("#photo2");
+        photo.removeClass("hovered")
         
       });
       $("#loading").hide();
@@ -842,6 +958,7 @@ pybossa.presentTask(function(task, deferred) {
   
 });
 
-pybossa.run('comoecampina');
+  pybossa.run('comoecampina');
+  //pybossa.run('Campinav2');
 </script>
 

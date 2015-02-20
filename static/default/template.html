@@ -45,17 +45,16 @@
     }
   .mybadge {
     	color: #fff !important;
-      background-color: #333;
-      border: 1px solid #333;
-      margin: 0 3px 3px 0;
-      padding: 0 6px 0 3px;
-      display: inline-block;
-      text-decoration: none;
-      white-space: nowrap;
-      line-height: 24px;
-      border-radius: 6px;
-
-    }  
+        background-color: #959595;
+        border: 1px solid #959595;
+        margin: 0 3px 3px 0;
+        padding: 0 6px 0 3px;
+        display: inline-block;
+        text-decoration: none;
+        white-space: nowrap;
+        line-height: 24px;
+        border-radius: 6px;
+    }   
   .badge1, .badge2, .badge3 {
     display: inline-block;
     width: 6px;
@@ -364,7 +363,7 @@
         
         <!-- Feedback items for the user -->
         <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
-      <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas <!-- de -->
+      <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas <!-- de --> <!-- de -->
         <!-- Progress bar for the user -->
         <!-- <span id="total" class="label label-inverse"></span></p> -->
         <!--<div class="progress progress-striped" style="background: LightGray">
@@ -879,6 +878,11 @@ pybossa.presentTask(function(task, deferred) {
       //Changing question color and size
       document.getElementById("questCommon").setAttribute("size", Math.round(0.004166667 * screen.width));
       document.getElementById("question").setAttribute("size", Math.round(0.004166667 * screen.width));
+      
+      if(screen.width <= 480){
+        document.getElementById("questCommon").setAttribute("style", "position: relative; left: 30%; margin-left: 0px;");
+        document.getElementById("question").setAttribute("style", "position: relative; left: 30%; margin-left: 0px;");      
+      }
       
       var question = decodeURIComponent(task.info.question).split(" ")[5];
       $('#question').html(question);

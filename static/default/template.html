@@ -43,6 +43,29 @@
   .choice_button:focus {
         outline: none;
     }
+  .mybadge {
+    	color: #fff !important;
+      background-color: #333;
+      border: 1px solid #333;
+      margin: 0 3px 3px 0;
+      padding: 0 6px 0 3px;
+      display: inline-block;
+      text-decoration: none;
+      white-space: nowrap;
+      line-height: 24px;
+      border-radius: 6px;
+
+    }  
+  .badge1, .badge2, .badge3 {
+    display: inline-block;
+    width: 6px;
+    height: 11px;
+    overflow: hidden;
+    line-height: inherit;
+    background-position: -40px -1034px;
+    vertical-align: text-bottom;
+    margin: 0 1px 1px 3px;
+  }  
 </style>
 
 <div class="row">
@@ -204,7 +227,7 @@
                <label for="cb3"><input name="group1" type="checkbox" id="cen" value="cen" /> Centro</label>
                <label for="cb17"><input name="group2" type="checkbox" id="jpi" value="jpi" /> José Pinheiro</label>
                <label for="cb28"><input name="group3" type="checkbox" id="lib" value="lib" /> Liberdade</label>
-				<label for="cb22"><input name="group3" type="checkbox" id="cat" value="cat" /> Catolé</label>
+				<label for="cb22"><input name="group4" type="checkbox" id="cat" value="cat" /> Catolé</label>
                     </fieldset>  
 			<!-- <fieldset class="group"> 
 				<legend>Bairros da Zona Norte</legend> -->
@@ -287,7 +310,7 @@
 <div class="row skeleton">
   <div class="span12">
     <!-- <h1 style="width: 500px; position: relative; left: 30%; margin-left: -70px;">Qual local lhe parece mais</h1> <h1 style="width: 100px; position: relative; left: 30%; margin-left: -70px;"> <font color=”red”> seguro? </font> </h1> -->
-    <font size="6" style="position: relative; left: 30%; margin-left: -70px;">Qual local lhe parece mais</font> <font size="6" id="question" style="position: relative; left: 38%; margin-left: -70px;" color="DodgerBlue">  </font>
+    <font size="6" id="questCommon" style="position: relative; left: 30%; margin-left: -70px;">Qual local lhe parece mais</font> <font size="6" id="question" style="position: relative; left: 38%; margin-left: -70px;" color="DodgerBlue">  </font>
   </div>
 </div>
 <br>
@@ -296,15 +319,15 @@
     It uses the class="skeleton" to identify the elements that belong to the
     task.
 -->
-<div class="row skeleton" style="width:1024px"> <!-- Start Skeleton Row-->
+<div id="photos" class="row skeleton"> <!-- Start Skeleton Row-->
   <div class="span6" style="width:47%"><!-- Start of Photo DIV (column) -->
       <a id="photo-link" href="#">
-          <img id="photo" src="https://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
+          <img id="photo" src="https://img339.imageshack.us/img339/9017/loadingo.png">
       </a>
   </div><!-- End of Photo DIV (columnt) -->
   <div class="span6" style="width:47%"><!-- Start of Photo DIV (column) -->
       <a id="photo-link2" href="#">
-          <img id="photo2" src="https://img339.imageshack.us/img339/9017/loadingo.png" style="max-width=100%">
+          <img id="photo2" src="https://img339.imageshack.us/img339/9017/loadingo.png">
       </a>
    </div><!-- End of Photo DIV (columnt) -->
 </div><!-- End of Skeleton Row -->
@@ -344,9 +367,9 @@
       <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas <!-- de -->
         <!-- Progress bar for the user -->
         <!-- <span id="total" class="label label-inverse"></span></p> -->
-        <div class="progress progress-striped" style="background: LightGray">
+        <!--<div class="progress progress-striped" style="background: LightGray">
             <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%; background: yellowgreen"></div>
-        </div>
+        </div>-->
         <!-- 
             This application uses Disqus to allow users to provide some feedback.
             The next section includes a button that when a user clicks on it will
@@ -402,8 +425,17 @@ $('#autocomplete').keypress(function() {
 function showTutorial(action) {
 	//Checking if tutorial should be presented or not
 	var cookiesData = document.cookie.split(";");
-	var showTutorial = cookiesData[cookiesData.length-1].split("=");
-	if (showTutorial[0].toLowerCase().trim() == "tutorial" && showTutorial[1].toLowerCase() == "false"){
+  
+    var showTutorial = "";
+    for (i=cookiesData.length-1; i >= 0; i--){
+      var currentData = cookiesData[i].split("=");
+      if(currentData[0].trim() == "tutorial"){
+        showTutorial = currentData[1];
+        break;
+      } 
+    }  
+	
+	if (showTutorial.length > 0 && showTutorial.toLowerCase() == "false"){
 		return;
 	}else{
 		$("#modal2").modal('show');
@@ -419,44 +451,49 @@ function showTutorial(action) {
 			date.setTime(date.getTime() + (2 * 60 * 1000));
 			var expires = date.toUTCString();          
 			document.cookie = "tutorial=false;path=/;domain=contribua.org;expires="+expires+";";
-        	});		
+		});		
 	} 
 }
 
 showTutorial();
   
-//Making buttons to hover images!  
-var button = $("#notknown")
-button.mouseover(function () {
-  	$("#photo").addClass("hovered");
-    $("#photo2").addClass("hovered");
-} );
-button.mouseout(function () {
-  	$("#photo").removeClass("hovered");
-    $("#photo2").removeClass("hovered");
-} );
+//Making buttons to hover images!
+function configureHover(){  
+	var button = $("#notknown")
+	button.mouseover(function () {
+	  	$("#photo").addClass("hovered");
+	    $("#photo2").addClass("hovered");
+	} );
+	button.mouseout(function () {
+	  	$("#photo").removeClass("hovered");
+	    $("#photo2").removeClass("hovered");
+	} );
 
-var lbutton = $("#left")
-lbutton.mouseover(function () {
-  	$("#photo").addClass("hovered");
-    
-} );
-lbutton.mouseout(function () {
-  	$("#photo").removeClass("hovered");
-    
-} );
-  
-var rbutton = $("#right")
-rbutton.mouseover(function () {
-  	$("#photo2").addClass("hovered");
-    
-} );
-rbutton.mouseout(function () {
-  	$("#photo2").removeClass("hovered");
-    
-} );
+	var lbutton = $("#left")
+	lbutton.mouseover(function () {
+	  	$("#photo").addClass("hovered");
+	    
+	} );
+	lbutton.mouseout(function () {
+	  	$("#photo").removeClass("hovered");
+	    
+	} );
+	  
+	var rbutton = $("#right")
+	rbutton.mouseover(function () {
+	  	$("#photo2").addClass("hovered");
+	    
+	} );
+	rbutton.mouseout(function () {
+	  	$("#photo2").removeClass("hovered");
+	    
+	} );
+}
+
+configureHover();
   
 
+  //General configuration
 endpoint = "/pybossa";
 pybossa.setEndpoint(endpoint);  
 
@@ -757,8 +794,8 @@ function loadProfileProgress(filled) {
 function loadUserProgress() {
     pybossa.userProgress('comoecampina').done(function(data){
       var pct = Math.round((data.done*100)/300);//data.total
-        $("#progress").css("width", pct.toString() +"%");
-        $("#progress").attr("title", pct.toString() + "% das tarefas!");      
+      //$("#progress").css("width", pct.toString() +"%");
+      // $("#progress").attr("title", pct.toString() + "% das tarefas!");      
         
       //$("#total").text(data.total);
         $("#done").text(data.done);
@@ -788,6 +825,9 @@ function loadUserProgress() {
 //Loading task information
 pybossa.taskLoaded(function(task, deferred) {
     if ( !$.isEmptyObject(task) ) {
+      	var photosEnv = document.getElementById("photos");
+      photosEnv.setAttribute("style", "width:auto !important");//screen.width*0.72+"px
+      
         // load image from flickr
         var left = $('<img />');
         left.load(function() {
@@ -836,8 +876,10 @@ pybossa.presentTask(function(task, deferred) {
       $('#photo-link2').html('').append(task.info.right);      
       $('#task-id').html(task.id);
   
-      //Changing question color
-      //$('#question').html(decodeURIComponent(task.info.question));
+      //Changing question color and size
+      document.getElementById("questCommon").setAttribute("size", Math.round(0.004166667 * screen.width));
+      document.getElementById("question").setAttribute("size", Math.round(0.004166667 * screen.width));
+      
       var question = decodeURIComponent(task.info.question).split(" ")[5];
       $('#question').html(question);
       if (question[0] == "s"){
@@ -850,12 +892,12 @@ pybossa.presentTask(function(task, deferred) {
           $('#photo').addClass('streetViewChoice');
 		}
 
-      var perguntaAResponder = task.info.question;
+      var questionToAnswer = task.info.question;
         
       //Left image chosen
       $('#photo').off('click').on('click', function(evt) {
         
-        var question = perguntaAResponder;
+        var question = questionToAnswer;
         var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
         pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
@@ -872,7 +914,7 @@ pybossa.presentTask(function(task, deferred) {
       //Left image chosen
       $('#left').off('click').on('click', function(evt) {
         
-        var question = perguntaAResponder;
+        var question = questionToAnswer;
         var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
         pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
@@ -893,7 +935,7 @@ pybossa.presentTask(function(task, deferred) {
       
       //Right image chosen
       $('#photo2').off('click').on('click', function(evt) {
-        var question = perguntaAResponder;
+        var question = questionToAnswer;
         var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
         pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
@@ -910,7 +952,7 @@ pybossa.presentTask(function(task, deferred) {
       
       //Right image chosen
       $('#right').off('click').on('click', function(evt) {
-        var question = perguntaAResponder;
+        var question = questionToAnswer;
         var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
         pybossa.saveTask(task.id, answerToSave).done(function() {
           deferred.resolve();
@@ -930,7 +972,7 @@ pybossa.presentTask(function(task, deferred) {
              
       //User could not choose an image!      
       $('#notknown').off('click').on('click', function(evt) {
-        var question = perguntaAResponder;
+        var question = questionToAnswer;
         var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
         
         pybossa.saveTask(task.id, answerToSave).done(function() {

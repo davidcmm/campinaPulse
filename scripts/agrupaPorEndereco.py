@@ -30,6 +30,8 @@ def agregaTarefas(nomeArquivo):
 
 	mapa[dados[1].strip()] = comparacoes
 	mapa[dados[2].strip()] = comparacoes2
+	
+	tarefas[dados[0]] = mapa
 
    tarefasAgradavel = tarefas.get("Qual local lhe parece mais agradável?")
    tarefasSeguro = tarefas.get("Qual local lhe parece mais seguro?")

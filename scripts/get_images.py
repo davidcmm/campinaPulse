@@ -34,22 +34,22 @@ def escolhe_pontos():
     oeste[1] = glob.glob('/home/david/Universidade/doutorado/oeste/catole/*.jpg')
 
     norte = [[], [], []]
-    norte[0] = glob.glob('/home/david/Universidade/doutorado/norte/jardim/*.jpg')
-    norte[1] = glob.glob('/home/david/Universidade/doutorado/norte/alto/*.jpg')
-    norte[2] = glob.glob('/home/david/Universidade/doutorado/norte/centro/*.jpg')
+    #norte[0] = glob.glob('/home/david/Universidade/doutorado/norte/jardim/*.jpg')
+    #norte[1] = glob.glob('/home/david/Universidade/doutorado/norte/alto/*.jpg')
+    norte[0] = glob.glob('/home/david/Universidade/doutorado/norte/centro/*.jpg')
 
-    sul = [[], []]
-    sul[0] = glob.glob('/home/david/Universidade/doutorado/sul/bodocongo/*.jpg')
-    sul[1] = glob.glob('/home/david/Universidade/doutorado/sul/prata/*.jpg')
+    #sul = [[], []]
+    #sul[0] = glob.glob('/home/david/Universidade/doutorado/sul/bodocongo/*.jpg')
+    #sul[1] = glob.glob('/home/david/Universidade/doutorado/sul/prata/*.jpg')
 
     leste[0] = recupera_lugar_unico(leste[0])
     oeste[0] = recupera_lugar_unico(oeste[0])
     oeste[1] = recupera_lugar_unico(oeste[1])
     norte[0] = recupera_lugar_unico(norte[0])
-    norte[1] = recupera_lugar_unico(norte[1])
-    norte[2] = recupera_lugar_unico(norte[2])
-    sul[0] = recupera_lugar_unico(sul[0])
-    sul[1] = recupera_lugar_unico(sul[1])
+    #norte[1] = recupera_lugar_unico(norte[1])
+    #norte[2] = recupera_lugar_unico(norte[2])
+    #sul[0] = recupera_lugar_unico(sul[0])
+    #sul[1] = recupera_lugar_unico(sul[1])
 
     #print "JOSEP " + str(len(leste[0]))
     #print "LIB " + str(len(oeste[0]))
@@ -60,7 +60,13 @@ def escolhe_pontos():
     #print "BOD " + str(len(sul[0]))
     #print "PRA " + str(len(sul[1])) + str(sul[1])
 
-    return [random.sample(leste[0], 12), random.sample(oeste[0], 12), random.sample(oeste[1], 12), random.sample(norte[0], 12), random.sample(norte[1], 12), random.sample(norte[2], 12), random.sample(sul[0], 12), random.sample(sul[1], 12)]
+    #return [random.sample(leste[0], 12), random.sample(oeste[0], 12), random.sample(oeste[1], 12), random.sample(norte[0], 12), random.sample(norte[1], 12), random.sample(norte[2], 12), random.sample(sul[0], 12), random.sample(sul[1], 12)]
+    resultado = []
+    resultado.append(leste[0])
+    resultado.append(oeste[0])
+    resultado.append(oeste[1])
+    resultado.append(norte[0])
+    return resultado
 
 def escolhe_fotos(pontos):
     print pontos
@@ -69,9 +75,12 @@ def escolhe_fotos(pontos):
 	for ponto in listaBairro:
 		fotos = glob.glob(ponto+'*.jpg')       	   
 		print "Fotos " + str(fotos) + " " + str(ponto)
-		escolhida = random.choice(fotos)
+		#escolhida = random.choice(fotos)
 		#print "Escolhida " + str(escolhida)
-		todasFotos.append(escolhida)
+		#todasFotos.append(escolhida)
+		for foto in fotos:
+			todasFotos.append(foto)
+		#todasFotos.append(ponto)
     return todasFotos
 		
 

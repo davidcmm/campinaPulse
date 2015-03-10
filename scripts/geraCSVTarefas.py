@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import random
 import sys
 import glob
 from get_images import get_photos_votes
 
+#Para agrupar no final: sort -t$'\t' -k1,1 -k2,2 -k3,3 tarefasModificadas.csv > tarefasOrdenadas.csv
 def createCSV(photos):
 
     file = open("tarefas.csv", "w")

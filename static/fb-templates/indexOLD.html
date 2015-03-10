@@ -14,8 +14,6 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/pybossa.js"></script>
-<!--<script type="text/javascript" src="js/bootstrap.min.js"></script> -->
-
 
 <style type="text/css">
 .container {
@@ -57,13 +55,13 @@
 		</div>
 	</div>
 	</header>
-       
+
 	<div id="task-long-description" class="container">
 		<div class="well">
 			<div id="long-description-info" style="height: 165px;">
 				<div style="width: 200px; float: left; margin-right: 25px;">
 					<img class="img-polaroid"
-						src="https://contribua.org/images/comoecampinaicone.jpg">
+						src="http://img28.imageshack.us/img28/6435/d2ww.jpg">
 				</div>
 				<span
 					style="font-size: 28px; line-height: 26px; float: left; font-weight: bold; margin-top: 48px;">Como
@@ -76,26 +74,27 @@
 		</div>
 	</div>
 
-	<!--<div id="task-template" class="container" style="display: none; width: 1020px;"></div> -->
-	<!--<div id="task-tutorial" class="container"></div> -->
+	<div id="task-template" class="container" style="display: none; width: 1020px;"></div>
+	<div id="task-tutorial" class="container"></div>
 
 	<footer>
 	<div class="container">
 		<div class="row-fluid" style="text-align:center;">
 			<div class="span3">
-				<a href="http://citizencyberscience.net/"><img
-					src="img/ccc.png" width="70%" height="50%"></a>
-			</div>
-			<div class="span3">
-                                 <a href="http://okfn.org/"><img src="img/okf.png" width="70%" height="50%"></a>
-          		</div>
-		  	<div class="span2">
-		                 <a href="http://pybossa.com/"><img style="position:relative;top:30px" src="img/pybossa.png" width="70%" height="50%"></a>
-		  	</div>
+                                <a href="http://citizencyberscience.net/"><img
+                                        src="img/ccc.png" width="200" height="120"></a>
+                        </div>
+                        <div class="span3">
+                                 <a href="http://okfn.org/"><img src="img/okf.png" width="200" height="120"></a>
+                        </div>
+                        <div class="span2">
+                                 <a href="http://pybossa.com/"><img style="position:relative;top:30px" src="img/pybossa.png" width="200" height="170"></a>
+                        </div>
                          <div class="span2">
                                 <a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img style="position:relative;top:-10px"
-                                        src="img/lsdlogo.png" width="70%" height="50%"></a> <!-- 120px x 120px or 170px -->
+                                        src="img/lsdlogo.png" width="120" height="120"></a>
                         </div>
+
 		</div>
 	</div>
 	</footer>
@@ -167,13 +166,12 @@
 
 						pybossa.authenticateFacebookUser(authData, function(
 								answer) {
-							//console.log(answer);//AQUI!
+							console.log(answer);
 							successfullyLogged = true;
 							FB.Event.subscribe('auth.authResponseChange',
 									handleAuthChange);
-							//checkUserProgress();
-							//showTaskTemplate();
- 							redirectToTaskTemplate();
+							checkUserProgress();
+							showTaskTemplate();
 						});
 					});
 		}
@@ -201,19 +199,19 @@
 			pybossa.userProgress(app_shortname).done(function(data) {
 				var numOfTaskRunDone = data.done;
 				if (numOfTaskRunDone == 0) {
-					//loadTutorial();
+					loadTutorial();
 				}
 			});
 		}
 
-		/*function loadTutorial() {
+		function loadTutorial() {
 			$("#task-tutorial").load("tutorial.html", function() {
 				$("#startContrib").on("click", function(evt) {
 					evt.preventDefault();
 					$("#modal").modal("hide");
 				})
 			});
-		}*/
+		}
 
 		function showTaskTemplate() {
 			$("#task-long-description").hide();
@@ -222,9 +220,6 @@
 			$("#task-template").load("template.html", function() {
 				$("#task-content").show();
 			});
-		}
-		function redirectToTaskTemplate(){
-			location.href="template.html";
 		}
 	</script>
 </body>

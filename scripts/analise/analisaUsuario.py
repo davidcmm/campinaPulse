@@ -5,15 +5,15 @@ if __name__ == "__main__":
 		print "Uso: <arquivo com dados> <arquivo com ids de usuarios a considerar>"
 		sys.exit(1)
 
-	data = open(sys.argv[1], 'r')
+	dataInput = open(sys.argv[1], 'r')
 	users = open(sys.argv[2], 'r')
 	
-	dataLines = data.readlines()
+	dataLines = dataInput.readlines()
 	dataUsers = users.readlines()
 
 	usersIDs = []
-	for id in dataUsers:
-		usersIDs.append(id.strip())
+	for userID in dataUsers:
+		usersIDs.append(userID.strip())
 
 	results = {}
 	counter = {}
@@ -22,13 +22,13 @@ if __name__ == "__main__":
 		data = line.split("\t")
 		
 		userID = data[0]
-
 		if not userID in usersIDs:
 			continue
-
-		answer = data[1]
-		photo1 = data[2].split("/")[4].replace("\"", "").strip()
-		photo2 = data[3].split("/")[4].replace("\"", "").strip()
+		
+		question = data[1]		
+		answer = data[2]
+		photo1 = data[3].split("/")[4].replace("\"", "").strip()
+		photo2 = data[4].split("/")[4].replace("\"", "").strip()
 		
 		if not counter.has_key(photo1):
 			counter[photo1] = 0

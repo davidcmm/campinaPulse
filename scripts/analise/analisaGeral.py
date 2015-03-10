@@ -4,17 +4,18 @@ if __name__ == "__main__":
 	if len(sys.argv) < 1:
 		print "Uso: <arquivo com dados>"
 		sys.exit(1)
-	data = open(sys.argv[1], 'r')
-	lines = data.readlines()
+	dataInput = open(sys.argv[1], 'r')
+	lines = dataInput.readlines()
 
 	results = {}
 	counter = {}
 	for line in lines:
-		data = line.split(" ")
+		data = line.split("\t")
 		
-		answer = data[1]
-		photo1 = data[2].split("/")[4].replace("\"", "").strip()
-		photo2 = data[3].split("/")[4].replace("\"", "").strip()
+		question = data[1]		
+		answer = data[2]
+		photo1 = data[3].split("/")[4].replace("\"", "").strip()
+		photo2 = data[4].split("/")[4].replace("\"", "").strip()
 		
 		if not counter.has_key(photo1):
 			counter[photo1] = 0
@@ -35,4 +36,5 @@ if __name__ == "__main__":
 
 	print "Total de Comparacoes", len(lines)
 	for key in results:
-		print key, " ", len(results[key]), " ", counter[key], " ", results[key]
+		#print key, " ", len(results[key]), " ", counter[key], " ", results[key]
+		print key, " ", len(results[key]), " ", counter[key], " "

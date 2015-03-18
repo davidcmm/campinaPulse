@@ -2,6 +2,9 @@
 
 import sys
 
+#possible questions
+possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
+
 if __name__ == "__main__":
 	if len(sys.argv) < 1:
 		print "Uso: <arquivo com dados>"
@@ -12,32 +15,38 @@ if __name__ == "__main__":
 	lines = dataFile.readlines()
 	
 	counter = 0
-	outputFile.write("<table>\n")
-	outputFile.write("<tr>\n")
 
-	for line in lines[1:]:
-		data = line.split(" ")
+	results = {possibleQuestions[0]: [], possibleQuestions[1] : []}
 
-		question = data[1].strip(' \t\n\r')
-		photo = data[2].strip(' \t\n\r')[1:-1]
-		qscore = data[3].strip(' \t\n\r')
+	for line in lines:
+		data = line.split("\t")
 
-		if "almirante" in photo:
-			folder = "http://socientize.lsd.ufcg.edu.br/almirante"
-		elif "rodrigues" in photo:
-			folder = "http://socientize.lsd.ufcg.edu.br/rodrigues"
-		else:
-			folder = "http://socientize.lsd.ufcg.edu.br/floriano"
-		outputFile.write("<td><img src=\""+folder+"/"+photo+"\" width=\"400\" height=\"300\"></td>\n")
-		outputFile.write("<td>"+photo + " " + qscore+"</td>\n")
-		counter += 1
+		question = data[0].strip(' \t\n\r')
+		photo = data[1].strip(' \t\n\r')
+		qscore = data[2].strip(' \t\n\r')
+		
+		results[question].append(photo+" "+qscore)
+	
+	outputFile.write("<body style=\"overflow:scroll\">\n");
+	for question, questionPhotos in results.iteritems():
+		outputFile.write("<h2>"+question+"</h2>")
+		
+		outputFile.write("<table>\n")
+		outputFile.write("<tr>\n")
+		for data in questionPhotos:
+			currentData = data.split(" ")
+			
+			outputFile.write("<td><img src=\""+currentData[0]+"\" width=\"400\" height=\"300\"></td>\n")
+			outputFile.write("<td>"+currentData[0] + " " + currentData[1]+"</td>\n")
+			counter += 1
 
-		if counter % 3 == 0:
-			outputFile.write("</tr>\n")
-			outputFile.write("<tr>\n")
+			if counter % 3 == 0:
+				outputFile.write("</tr>\n")
+				outputFile.write("<tr>\n")
 
-	outputFile.write("</tr>\n")
-	outputFile.write("</table>")
-
+		outputFile.write("</tr>\n")
+		outputFile.write("</table>")
+	outputFile.write("</body>\n");	
+	
 	dataFile.close()
 	outputFile.close()

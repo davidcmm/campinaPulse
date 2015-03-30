@@ -249,7 +249,7 @@ def evaluateAllVotes(lines, outputFileName):
 
 
 if __name__ == "__main__":
-	if len(sys.argv) < 1:
+	if len(sys.argv) < 2:
 		print "Uso: <arquivo com execuções das tarefas>"
 		sys.exit(1)
 	dataFile = open(sys.argv[1], 'r')

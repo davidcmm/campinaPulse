@@ -1,0 +1,624 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #FFF;
+        overflow: hidden;
+        font-family: "Trebuchet MS";
+      }
+    </style>
+    <script src="http://js.arcgis.com/3.13/"></script>
+    <!--<script>
+      var map;
+
+      require(["esri/map", "dojo/domReady!"], function(Map) {
+        map = new Map("map", {
+          basemap: "streets",  //For full list of pre-defined basemaps, navigate to http://arcg.is/1JVo6Wd
+          center: [-35.8817, -7.23072], // longitude, latitude
+          zoom: 13
+        });
+      });
+    </script> -->
+  </head>
+
+<body style="overflow:scroll">
+    <!-- <div id="map"></div> -->
+
+
+<h2>agrad%C3%A1vel?</h2>
+<table class="flexy">
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg 8.12606837607</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg 8.11519848053</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg 7.75875139353</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_90.jpg 6.97249417249</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg 6.7432616766</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg 6.64053724054</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__90.jpg 6.59201079622</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg 6.42194681861</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg 6.35122507123</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_270.jpg 6.3395951417</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg 6.27706959707</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__0.jpg 6.20032188734</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__0.jpg 6.00062994619</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__0.jpg 5.94901960784</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg 5.93613835158</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__180.jpg 5.91897435897</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg 5.87969610636</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_90.jpg 5.84183535762</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__270.jpg 5.79646627882</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg 5.75595776772</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__270.jpg 5.74929487179</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__0.jpg 5.74085470085</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__180.jpg 5.69565018315</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__0.jpg 5.68559218559</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_180.jpg 5.67774216524</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_180.jpg 5.66907993967</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_90.jpg 5.51858974359</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__0.jpg 5.51606837607</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_270.jpg 5.50564102564</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__270.jpg 5.4987933635</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_90.jpg 5.49829059829</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_0.jpg 5.49592909148</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_90.jpg 5.47412886259</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__180.jpg 5.46529492455</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__90.jpg 5.45268065268</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_0.jpg 5.44935897436</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg 5.37196106363</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_90.jpg 5.34444444444</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_270.jpg 5.34129460283</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__180.jpg 5.32680776014</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_180.jpg 5.30263736264</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__90.jpg 5.28098619329</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__90.jpg 5.23418803419</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg 5.14287676236</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__90.jpg 5.11473654551</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg 5.11166995398</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_270.jpg 5.09852801519</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_270.jpg 5.09053320848</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_90.jpg 5.07225071225</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_0.jpg 5.07158119658</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__90.jpg 5.06346493013</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg 5.04211344211</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__90.jpg 4.97538461538</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_0.jpg 4.92644791106</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__180.jpg 4.8993006993</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__180.jpg 4.88504273504</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg 4.84358974359</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_0.jpg 4.84136435581</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg 4.82310979619</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_270.jpg 4.80327635328</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__0.jpg 4.70042735043</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_0.jpg 4.69421968978</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__270.jpg 4.65874125874</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__0.jpg 4.5083691617</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__270.jpg 4.47538461538</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_90.jpg 4.44990138067</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_0.jpg 4.44529791196</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__270.jpg 4.41563390313</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__90.jpg 4.32908482031</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg 4.32692307692</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg 4.29627039627</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg 4.28341880342</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__180.jpg 4.2551048951</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg 4.13736263736</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_270.jpg 4.12467948718</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__270.jpg 4.09717948718</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg 4.04</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_270.jpg 4.02429149798</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg 4.02422839506</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__180.jpg 4.00723208416</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__90.jpg 4.00363247863</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__90.jpg 3.95318138651</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__180.jpg 3.9452991453</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_0.jpg 3.93315233786</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__180.jpg 3.91213675214</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__270.jpg 3.8858974359</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_180.jpg 3.86185897436</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_90.jpg 3.77955998734</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__270.jpg 3.776904722</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_90.jpg 3.70712250712</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_180.jpg 3.70455128205</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg 3.62358974359</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_270.jpg 3.52056682122</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__90.jpg 3.44153846154</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_90.jpg 3.44149901381</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__0.jpg 3.41274509804</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg 3.27599067599</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__0.jpg 3.15719233562</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg 2.87155067155</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_90.jpg 2.83311036789</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__0.jpg 2.62564102564</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__270.jpg 2.5910031489</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg 2.44297245964</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_90.jpg 2.26245963913</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg 2.2281025641</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg 1.93916083916</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg 1.91721611722</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg 1.91282051282</td>
+</tr>
+<tr>
+</tr>
+</table>
+<h2>seguro?</h2>
+<table>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg 7.08965688096</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg 6.72258852259</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg 6.65445665446</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__270.jpg 6.61349527665</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_270.jpg 6.11245852187</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg 6.09050332384</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg 6.06974358974</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg 6.05666666667</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_0.jpg 5.98207977208</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__90.jpg 5.97008547009</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_90.jpg 5.93808367072</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__306_90.jpg 5.91121794872</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg 5.90031488979</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg 5.85538461538</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_90.jpg 5.84002849003</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg 5.82742673993</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__270.jpg 5.70468864469</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__0.jpg 5.68909148465</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_270.jpg 5.67834757835</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_90.jpg 5.65885225885</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg 5.65760683761</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_180.jpg 5.65651080945</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__0.jpg 5.62615384615</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_270.jpg 5.57452177452</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg 5.55205535206</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg 5.50213675214</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg 5.4975010175</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_270.jpg 5.49313186813</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__90.jpg 5.48918773534</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__270.jpg 5.47794871795</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg 5.43736263736</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__388__270.jpg 5.43562271062</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__847__180.jpg 5.42747252747</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_90.jpg 5.35299145299</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg 5.32916270972</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_0.jpg 5.30599308099</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_90.jpg 5.26820512821</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__0.jpg 5.22769230769</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__90.jpg 5.22125356125</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_90.jpg 5.20627577551</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg 5.20036630037</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__90.jpg 5.18986193294</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__336__90.jpg 5.15205128205</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__0.jpg 5.08049382716</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__321__180.jpg 5.04300094967</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_0.jpg 5.04004144004</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__90.jpg 5.02592791824</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Vigario_Calixto__1201_0.jpg 5.0154503616</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__90.jpg 4.93935693936</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg 4.93792735043</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_90.jpg 4.9258382643</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_90.jpg 4.89076923077</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__90.jpg 4.80675213675</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg 4.77867630945</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__0.jpg 4.74743589744</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__270.jpg 4.7033530572</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__0.jpg 4.69971509972</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_180.jpg 4.67538461538</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_270.jpg 4.64803418803</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__0.jpg 4.61757217142</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__90.jpg 4.59538461538</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__0.jpg 4.55995855996</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg 4.55128205128</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Espirito_Santo__1288__180.jpg 4.53148567119</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__180.jpg 4.50358974359</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__90.jpg 4.46081525312</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__511_270.jpg 4.43822843823</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__180.jpg 4.41777777778</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Avenida_Assis_Chateaubriand__1334__180.jpg 4.37179487179</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg 4.3336996337</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg 4.31153846154</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__119_270.jpg 4.30307692308</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__90.jpg 4.29102564103</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__270.jpg 4.2141183919</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__150_270.jpg 4.18787878788</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_270.jpg 4.17869822485</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Severino_Pimentel__439__0.jpg 4.17465483235</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__67__180.jpg 4.14126305793</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_90.jpg 4.11693201497</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg 4.09021592443</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__180.jpg 4.0673992674</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg 4.01106612686</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_0.jpg 4.00771130104</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__235_180.jpg 3.95692307692</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__270.jpg 3.95641025641</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Deputado_Ascendino_Moura__101__270.jpg 3.93821733822</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg 3.92724189391</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__930__180.jpg 3.89010989011</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg 3.88438914027</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_0.jpg 3.86101055807</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__180.jpg 3.77094017094</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_90.jpg 3.6996712689</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_0.jpg 3.68005698006</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__48__270.jpg 3.54004524887</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg 3.52247863248</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Coronel_Salvino_Figueiredo__251_90.jpg 3.47503373819</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__0.jpg 3.47130104463</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg 3.46777777778</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__270.jpg 3.45586726998</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg 3.36111111111</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__0.jpg 3.34185035238</td>
+<td><img src="https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg 3.28021525799</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_90.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_90.jpg 3.17863247863</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_180.jpg 3.0735042735</td>
+<td><img src="https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg 3.03162393162</td>
+</tr>
+<tr>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_0.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_0.jpg 2.9872297637</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_180.jpg 2.92538964304</td>
+<td><img src="https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg" width="400" height="300"></td>
+<td>https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg 2.06769230769</td>
+</tr>
+<tr>
+</tr>
+</table>
+
+  </body>

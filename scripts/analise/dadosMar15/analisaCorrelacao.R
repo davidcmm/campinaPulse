@@ -1,4 +1,5 @@
 #!/bin/Rscript
+# Analyses QScore versus color and amount of lines using Spearman and Kendall
 
 #Agradavel
 data = read.table("rgbQScoreAgrad.dat", header=TRUE)

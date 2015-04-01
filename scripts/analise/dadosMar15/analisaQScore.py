@@ -1,10 +1,13 @@
 # coding=utf-8
+#Calculates QScore for a set of tasks execution according to Salesses
+
 
 import sys
+from sets import Set
 #import pdb
 
 #photos considered in comparisons
-allPhotos = set([])
+allPhotos = Set([])
 
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]

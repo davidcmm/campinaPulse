@@ -1,4 +1,5 @@
 #!/bin/Rscript
+# Analyses the regression of QScore in terms of color and amount of lines according to previous data of all-subset
 
 #Agradavel
 data = read.table("rgbQScoreAgrad.dat", header=TRUE)

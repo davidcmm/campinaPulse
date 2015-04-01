@@ -1,3 +1,5 @@
+#Analyses the file containing user profile, tasks executed by user and users id in order to prepare a matrix of users x tasks containing the answers of each task in order to calculate Krippendorfs alpha
+
 import sys
 from sets import Set
 

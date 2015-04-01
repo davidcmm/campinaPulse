@@ -1,4 +1,5 @@
 # coding=utf-8
+# Prepares an HTML page presenting the photos and QScores obtained per question in descending order
 
 import sys
 
@@ -7,7 +8,7 @@ possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
 
 if __name__ == "__main__":
 	if len(sys.argv) < 1:
-		print "Uso: <arquivo com dados>"
+		print "Uso: <arquivo com qscore por foto e questão>"
 		sys.exit(1)
 	
 	dataFile = open(sys.argv[1], 'r')

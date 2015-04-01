@@ -7,6 +7,7 @@ import numpy as np
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
 
+#Calculates the mean and confidence interval of QScore per district
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
 		print "Uso: <arquivo com qscore>"
@@ -25,7 +26,7 @@ if __name__ == "__main__":
 
 		qscoreDic[data[0].strip()][photo.strip()] = qscore.strip()
 	
-	#Calculating mean qscores por district
+	#Calculating mean qscores per district
 	districtDic = {possibleQuestions[0]:{}, possibleQuestions[1]: {}}
 	for question in possibleQuestions:
 		for photo in qscoreDic[question].keys():

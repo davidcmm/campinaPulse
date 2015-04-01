@@ -1,3 +1,5 @@
+# Functions to calculate the kendall tau distance of two rankings
+
 mergeSort <- function(x){
   # Sorts a list computing the number of inversions
   #
@@ -73,3 +75,9 @@ normalizedKendallTauDistance <- function(x,y){
   return(normalized)
 }
 
+args <- commandArgs(trailingOnly = TRUE)
+
+rank1 <- read.table(args[1])
+rank2 <- read.table(args[2])
+matriz <- merge(rank1, rank2, by="V1")
+normalizedKendallTauDistance(matriz$V2.x, matriz$V2.y)

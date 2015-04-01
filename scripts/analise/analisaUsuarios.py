@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from sets import Set
 
 #User profiles summary dictionaries
 userAge = {}
@@ -12,6 +13,13 @@ userTime = {}
 userRel = {}
 userNeig = {}
 
+#possible questions
+possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
+
+photosAnsweredPerQuestion = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+
+#Tasks definition
+tasksIDDefinition = {}
 
 def plotAge():
 	pp = PdfPages('age.pdf')
@@ -181,17 +189,21 @@ def plotNeig():
 	cen = 0
 	lib = 0
 	catol = 0
+	vazio = 0
 	for neig in userNeig.keys():
-		if 'cen' in neig.lower():
-			cen += 1
-		if 'lib' in neig.lower():
-			lib += 1
-		if 'cat' in neig.lower():
-			catol += 1
+		if len(neig) == 0:
+			vazio += 1
+		else:		
+			if 'cen' in neig.lower():
+				cen += 1
+			if 'lib' in neig.lower():
+				lib += 1
+			if 'ca' in neig.lower():
+				catol += 1
 
-	labels = 'Centro', 'Liberdade', 'Catole'
-	sizes = [cen, lib, catol]
-	colors = ['yellowgreen', 'lightskyblue', 'lightcoral']
+	labels = 'Centro', 'Liberdade', 'Catole', 'Nao conhecem'
+	sizes = [cen, lib, catol, vazio]
+	colors = ['yellowgreen', 'green', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
 	plt.pie(sizes, labels=labels, colors=colors,
@@ -220,13 +232,63 @@ def plotSummary():
 	#plt.show()
 	#plt.savefig(pp, format='pdf')
 
+def countSummary(profileInfo):
+	if len(profileInfo) > 0:
+		#Extracting profile
+		userProfileData = profileInfo.split("+")
+		age = userProfileData[0]
+		sex = userProfileData[1]
+		currentClass = userProfileData[2]
+		educ =  userProfileData[3]
+		city = userProfileData[4]
+		time = userProfileData[5]
+		rel = userProfileData[6]
+		neig = userProfileData[7]
+		neig = neig[0:len(neig)-1]
+
+		#Saving occurrences of profiles
+		if age in userAge.keys():
+			userAge[age] = userAge[age] + 1
+		else:
+			userAge[age] = 1
+		if sex in userSex.keys():
+			userSex[sex] = userSex[sex] + 1
+		else:
+			userSex[sex] = 1
+		if currentClass in userClass.keys():
+			userClass[currentClass] = userClass[currentClass] + 1
+		else:
+			userClass[currentClass] = 1
+		if educ in userEduc.keys():
+			userEduc[educ] = userEduc[educ] + 1
+		else:
+			userEduc[educ] = 1
+		if city in userCity.keys():
+			userCity[city] = userCity[city] + 1
+		else:
+			userCity[city] = 1
+		if time in userTime.keys():
+			userTime[time] = userTime[time] + 1
+		else:
+			userTime[time] = 1
+		if rel in userRel.keys():
+			userRel[rel] = userRel[rel] + 1
+		else:
+			userRel[rel] = 1
+		if neig in userNeig.keys():
+			userNeig[neig] = userNeig[neig] + 1
+		else:
+			userNeig[neig] = 1
+
+
 def writeOutput(usersTasks):
 	outputFile = open("usersInfo.dat", "w")
 
-	#Writing users profile information and tasks executed
+	#Writing users profile and tasks executed
 	for userID in usersTasks.keys():
 		userData = usersTasks[userID]
-		outputFile.write(userID+"+"+str(userData[0])+"+"+str(userData[1])+"\n")
+		outputFile.write(userID+"|"+str(userData[0])+"|"+str(userData[1])+"|"+str(userData[2])+"|"+str(userData[3])+"|"+str(userData[4])+"\n")
+		countSummary(userData[0])
 	outputFile.close()
 	
 	#Writing profile summary
@@ -240,8 +302,28 @@ def writeOutput(usersTasks):
 	outputFile.write(str(userRel)+"\n")
 	outputFile.write(str(userNeig)+"\n")
 	outputFile.close()
-	
 	plotSummary()
+
+	#Writing tasks definition
+	outputFile = open("tasksDefinition.dat", "w")
+	for taskID in tasksIDDefinition.keys():
+		outputFile.write(taskID+"\t"+tasksIDDefinition[taskID]+"\n")
+	outputFile.close()
+
+	#Writing photos evaluated by user
+	outputFile = open("usersPhotosAgrad.dat", "w")
+	for userID in photosAnsweredPerQuestion[possibleQuestions[0]].keys():
+		for photo in photosAnsweredPerQuestion[possibleQuestions[0]][userID]:
+			outputFile.write(userID+"\t"+photo+"\n")
+	outputFile.close()
+
+	#Writing photos evaluated by user
+	outputFile = open("usersPhotosSeg.dat", "w")
+	for userID in photosAnsweredPerQuestion[possibleQuestions[1]].keys():
+		for photo in photosAnsweredPerQuestion[possibleQuestions[1]][userID]:
+			outputFile.write(userID+"\t"+photo+"\n")
+	outputFile.close()
+	
 
 
 def readUserData(lines, outputFileName):
@@ -260,20 +342,17 @@ def readUserData(lines, outputFileName):
 		if userID in usersTasks.keys():
 			userExecutions = usersTasks[userID]
 		else:
-			userExecutions = ["", []]
-		userExecutions[1].append(taskID)
+			userExecutions = ["", [], [], [], []]#Tasks for Agradavel e Seguro and their respective answers
 
-		#In user answers that contain profile information, jump to comparison
+		#In user answers that contain profile information extract profile
 		if userAnswer[0] == '{':
 			index = userAnswer.find("}")
 			if index == -1:
 				raise Exception("Line with profile does not contain final delimiter: " + userAnswer)
-			userAnswer = userAnswer[0:index+1]
+			currentAnswer = userAnswer[0:index+1]
 			
-			userExecutions[0] = userAnswer
-
 			#Extracting profile
-			userProfileData = userAnswer.split("|")
+			userProfileData = currentAnswer.split("|")
 			age = userProfileData[0].split("=")[1]
 			sex = userProfileData[1].split("=")[1]
 			currentClass = userProfileData[2].split("=")[1]
@@ -284,39 +363,37 @@ def readUserData(lines, outputFileName):
 			neig = userProfileData[7].split("=")[1]
 			neig = neig[0:len(neig)-1]
 
-			#Saving occurrences of profiles
-			if age in userAge.keys():
-				userAge[age] = userAge[age] + 1
-			else:
-				userAge[age] = 1
-			if sex in userSex.keys():
-				userSex[sex] = userSex[sex] + 1
-			else:
-				userSex[sex] = 1
-			if currentClass in userClass.keys():
-				userClass[currentClass] = userClass[currentClass] + 1
-			else:
-				userClass[currentClass] = 1
-			if educ in userEduc.keys():
-				userEduc[educ] = userEduc[educ] + 1
-			else:
-				userEduc[educ] = 1
-			if city in userCity.keys():
-				userCity[city] = userCity[city] + 1
-			else:
-				userCity[city] = 1
-			if time in userTime.keys():
-				userTime[time] = userTime[time] + 1
-			else:
-				userTime[time] = 1
-			if rel in userRel.keys():
-				userRel[rel] = userRel[rel] + 1
-			else:
-				userRel[rel] = 1
-			if neig in userNeig.keys():
-				userNeig[neig] = userNeig[neig] + 1
-			else:
-				userNeig[neig] = 1
+			userExecutions[0] = age+"+"+sex+"+"+currentClass+"+"+educ+"+"+city+"+"+time+"+"+rel+"+"+neig
+		
+		#Saving photos that user evaluated
+		index = userAnswer.find("Qual")
+		userAnswer = userAnswer[index:].split(" ")
+ 		
+		question = userAnswer[5].strip(' \t\n\r"')
+		answer = userAnswer[6].strip(' \t\n\r"')
+		photo1 = userAnswer[7].strip(' \t\n\r"')
+		photo2 = userAnswer[8].strip(' \t\n\r"')
+
+		if userID in photosAnsweredPerQuestion[question].keys():
+			photos = photosAnsweredPerQuestion[question][userID]
+		else:
+			photos = Set([])
+		photos.add(photo1)
+		photos.add(photo2)
+		photosAnsweredPerQuestion[question][userID] = photos
+
+		#Saving user answer near task ID
+		if question == possibleQuestions[0]:#Agra
+			userExecutions[1].append(taskID)
+			userExecutions[3].append(answer)
+		elif question == possibleQuestions[1]:#Seg
+			userExecutions[2].append(taskID)
+			userExecutions[4].append(answer)
+		else:
+			print "Error! " + question		
+
+		#Saving task ID definition
+		tasksIDDefinition[taskID] = photo1+"\t"+photo2
 
 		usersTasks[userID] = userExecutions
 

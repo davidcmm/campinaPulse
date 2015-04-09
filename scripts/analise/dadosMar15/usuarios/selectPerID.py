@@ -1,4 +1,5 @@
 # coding=utf-8
+# Separates tasks execution according to a group of users
 
 import sys
 

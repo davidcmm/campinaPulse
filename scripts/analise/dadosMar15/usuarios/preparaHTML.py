@@ -1,4 +1,5 @@
 # coding=utf-8
+# Prepares a HTML page containing the photos and their QScore per question, filtered according to an intersection file containing the set of photos to be considered or not, and prints the set of photos that will appear in the HTML page
 
 import sys
 from sets import Set
@@ -43,7 +44,8 @@ if __name__ == "__main__":
 		if len(photosToFilter) > 0:
 			currentFilter = photosToFilter[question]
 			if photo in currentFilter:
-				results[question].append(photo+" "+qscore)				
+				results[question].append(photo+" "+qscore)
+				print question+"\t"+photo+"\t"+qscore				
 		else:
 			results[question].append(photo+" "+qscore)
 	

@@ -1,4 +1,5 @@
 # coding=utf-8
+# Calculates photos qscore from a set of tasks execution file
 
 import sys
 from sets import Set

@@ -1,17 +1,16 @@
 # coding=utf-8
+# Separates tasks execution according to a group of users
 
 import sys
 
 def selectTasks(lines, criteria):
 	""" Selecting tasks according to user ids defined in criteria """
-	
-	tasksToFilter = eval(criteria[0])	
-	#print str(len(tasksToFilter)) + "\t" + str(len(criteria))
+
 	for line in lines:#Reading from pybossa task-run CSV
 		lineData = line.split("+")
-		taskID = lineData[3]
+		
 		currentUserID = lineData[4]
-		if currentUserID+"\n" in criteria and taskID in tasksToFilter:
+		if currentUserID+"\n" in criteria:
 			print line.strip()
 
 if __name__ == "__main__":

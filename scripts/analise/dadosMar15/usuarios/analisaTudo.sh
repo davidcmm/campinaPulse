@@ -100,11 +100,49 @@ mv rgbQScoreSeg.dat rgbQScoreSegSolteiro.dat
 #Analisa Correlacao
 Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
 Rscript analisaCorrelacao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradSolteiro.dat rgbQScoreSegSolteiro.dat > correlacaoSolteiro.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradCasado.dat rgbQScoreSegCasado.dat > correlacaoCasado.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradJovem.dat rgbQScoreSegJovem.dat > correlacaoJovem.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradAdulto.dat rgbQScoreSegAdulto.dat > correlacaoAdulto.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradFeminino.dat rgbQScoreSegFeminino.dat > correlacaoFeminino.dat
+Rscript analisaCorrelacao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.dat > correlacaoMasculino.dat
 
-Rscript analisaRegressao.R
+mv *.pdf correlacao*.dat correlacao/
+
+#Analisa Regressao
+
+Rscript analisaRegressao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > regressaoMedia.dat
+Rscript analisaRegressao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > regressaoBaixa.dat
+Rscript analisaRegressao.R rgbQScoreAgradSolteiro.dat rgbQScoreSegSolteiro.dat > regressaoSolteiro.dat
+Rscript analisaRegressao.R rgbQScoreAgradCasado.dat rgbQScoreSegCasado.dat > regressaoCasado.dat
+Rscript analisaRegressao.R rgbQScoreAgradJovem.dat rgbQScoreSegJovem.dat > regressaoJovem.dat
+Rscript analisaRegressao.R rgbQScoreAgradAdulto.dat rgbQScoreSegAdulto.dat > regressaoAdulto.dat
+Rscript analisaRegressao.R rgbQScoreAgradFeminino.dat rgbQScoreSegFeminino.dat > regressaoFeminino.dat
+Rscript analisaRegressao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.dat > regressaoMasculino.dat
+
+mv *.pdf regressao*.dat correlacao/
+
+#Kendall tau distance
+grep "agrad" firsCasadoOrdInter.dat > ranking1.dat
+grep "agrad" firsSolteiroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+grep "seg" firsCasadoOrdInter.dat > ranking1.dat
+grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+grep "agrad" firsBaixaOrdInter.dat firsMediaOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+grep "seg" firsBaixaOrdInter.dat firsMediaOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+grep "agrad" firsFemininoOrdInter.dat firsMasculinoOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+grep "seg" firsFemininoOrdInter.dat firsMasculinoOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+grep "agrad" firsJovemOrdInter.dat firsAdultoOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+grep "seg" firsJovemOrdInter.dat firsAdultoOrdInter.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+

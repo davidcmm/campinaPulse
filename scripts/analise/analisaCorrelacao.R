@@ -1,7 +1,10 @@
 #!/bin/Rscript
+# Analyses QScore versus color and amount of lines using Spearman and Kendall
+
+args <- commandArgs(trailingOnly = TRUE)
 
 #Agradavel
-data = read.table("rgbQScoreAgrad.dat", header=TRUE)
+data = read.table(args[1], header=TRUE)
 
 print("Agradável")
 #Spearman, analise do rho  > 0,90 a 1,0 indica correlação muito forte; +- 0,70 a +- 0,90 indica correlação forte; +- 0,50 a +- 0,70 moderada
@@ -31,7 +34,7 @@ cor.test(data$qscore, data$hor, method="kendall")
 print("Kendall ver")
 cor.test(data$qscore, data$ver, method="kendall")
 
-pdf(file="histAgrad.pdf", paper="special")
+pdf(file=paste("histAgrad", args[1], ".pdf"), paper="special")
 par(mfrow = c(4,2))
 hist(data$qscore, prob=TRUE, main="QScore")
 hist(data$red, prob=TRUE, main="Red")
@@ -41,7 +44,7 @@ hist(data$diag, prob=TRUE, main="Diag")
 hist(data$hor, prob=TRUE, main="Hor")
 hist(data$ver, prob=TRUE, main="Ver")
 
-pdf(file="boxAgrad.pdf", paper="special")
+pdf(file=paste("boxAgrad", args[1], ".pdf"), paper="special")
 #par(mfrow = c(4,2))
 boxplot(data$qscore, prob=TRUE, main="QScore")
 #boxplot(data$red, prob=TRUE, main="Red")
@@ -51,7 +54,7 @@ boxplot(data$qscore, prob=TRUE, main="QScore")
 #boxplot(data$hor, prob=TRUE, main="Hor")
 #boxplot(data$ver, prob=TRUE, main="Ver")
 
-pdf(file="qqplotsAgrad.pdf", paper="special")
+pdf(file=paste("qqplotsAgrad", args[1], ".pdf"), paper="special")
 par(mfrow = c(4,2))
 qqnorm(data$qscore, main="QScore");qqline(data$qscore)
 qqnorm(data$red, main="Red");qqline(data$red)
@@ -61,7 +64,7 @@ qqnorm(data$diag, main="Diag");qqline(data$diag)
 qqnorm(data$hor, main="Hor");qqline(data$hor)
 qqnorm(data$ver, main="Ver");qqline(data$ver)
 
-pdf(file="plotsAgrad.pdf", paper="special")
+pdf(file=paste("plotsAgrad", args[1], ".pdf"), paper="special")
 par(mfrow = c(3,2))
 plot(data$red, data$qscore, main="Red")
 plot(data$green, data$qscore, main="Green")
@@ -73,7 +76,7 @@ plot(data$ver, data$qscore, main="Ver")
 
 
 #Segurança
-data = read.table("rgbQScoreSeg.dat", header=TRUE)
+data = read.table(args[2], header=TRUE)
 
 print("Segurança")
 #Spearman, analise do rho  > 0,90 a 1,0 indica correlação muito forte; +- 0,70 a +- 0,90 indica correlação forte; +- 0,50 a +- 0,70 moderada
@@ -103,7 +106,7 @@ cor.test(data$qscore, data$hor, method="kendall")
 print("Kendall ver")
 cor.test(data$qscore, data$ver, method="kendall")
 
-pdf(file="histSeg.pdf", paper="special")
+pdf(file=paste("histSeg", args[1], ".pdf"), paper="special")
 par(mfrow = c(4,2))
 hist(data$qscore, prob=TRUE, main="QScore")
 hist(data$red, prob=TRUE, main="Red")
@@ -113,7 +116,7 @@ hist(data$diag, prob=TRUE, main="Diag")
 hist(data$hor, prob=TRUE, main="Hor")
 hist(data$ver, prob=TRUE, main="Ver")
 
-pdf(file="boxSeg.pdf", paper="special")
+pdf(file=paste("boxSeg", args[1], ".pdf"), paper="special")
 #par(mfrow = c(4,2))
 boxplot(data$qscore, prob=TRUE, main="QScore")
 #boxplot(data$red, prob=TRUE, main="Red")
@@ -123,7 +126,7 @@ boxplot(data$qscore, prob=TRUE, main="QScore")
 #boxplot(data$hor, prob=TRUE, main="Hor")
 #boxplot(data$ver, prob=TRUE, main="Ver")
 
-pdf(file="qqplotsSeg.pdf", paper="special")
+pdf(file=paste("qqplotsSeg", args[1], ".pdf"), paper="special")
 par(mfrow = c(4,2))
 qqnorm(data$qscore, main="QScore");qqline(data$qscore)
 qqnorm(data$red, main="Red");qqline(data$red)
@@ -133,7 +136,7 @@ qqnorm(data$diag, main="Diag");qqline(data$diag)
 qqnorm(data$hor, main="Hor");qqline(data$hor)
 qqnorm(data$ver, main="Ver");qqline(data$ver)
 
-pdf(file="plotsSeg.pdf", paper="special")
+pdf(file=paste("plotsSeg", args[1], ".pdf"), paper="special")
 par(mfrow = c(3,2))
 plot(data$red, data$qscore, main="Red")
 plot(data$green, data$qscore, main="Green")

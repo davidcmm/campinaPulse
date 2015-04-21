@@ -19,4 +19,4 @@ while read line ; do
 	echo "$line+$lat+$long" >> streetsQScoresLatLong.dat
 done < streetNames.dat
 
-rm teste.dat
+rm streetNames.dat teste.dat

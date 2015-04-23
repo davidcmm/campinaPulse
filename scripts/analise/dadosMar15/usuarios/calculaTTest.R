@@ -9,13 +9,18 @@ file1 = args[3]
 file2 = args[4]
 color = args[5]
 
+
+
 print(">> Equal")
+wilcox.test(data1$V3, data2$V3, alternative="t", paired=F)
 t.test(data1$V3, data2$V3, alternative="t")
 
 print(">> Less")
+wilcox.test(data1$V3, data2$V3, alternative="t", paired=F)
 t.test(data1$V3, data2$V3, alternative="l")
 
 print(">> Greater")
+wilcox.test(data1$V3, data2$V3, alternative="t", paired=F)
 t.test(data1$V3, data2$V3, alternative="g")
 
 #Creating boxplots of qscores per district

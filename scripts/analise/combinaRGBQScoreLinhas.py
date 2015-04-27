@@ -1,4 +1,5 @@
 # coding=utf-8
+# Combines RGB, QScore and amount of lines for each photo according to input data
 
 import sys
 

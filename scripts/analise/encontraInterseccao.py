@@ -35,4 +35,5 @@ if __name__ == "__main__":
 	for question in possibleQuestions:
 		set1 = photos1[question]
 		set2 = photos2[question]
-		print question+"\t"+str(len(set1.intersection(set2)))
+		intersection = set1.intersection(set2)
+		print question+"\t"+str(len(intersection)) + "\t" + str(intersection)

@@ -1,17 +1,33 @@
 import sys
 from sets import Set
 
+possibleIncomes = ["Baixa (at\u00e9 R$ 1.449,99)", "M\u00e9dia Baixa (R$ 1.450 a R$ 2.899,99)", "M\u00e9dia (R$ 2.900 a R$ 7.249,99)", "M\u00e9dia Alta (R$ 7.250 a R$ 14.499,99)", "Alta (R$ 14.500 ou mais)"]
+
 def parseUserData(lines):
 	""" Reading user data """
-	fAgra = Set([])
-	fSeg = Set([])
-	mAgra = Set([])
-	mSeg = Set([])
+	feminine = Set([])
+	tasksFem = Set([])
+	#fSeg = Set([])
+	masculine = Set([])
+	tasksMasc = Set([])
+	#mSeg = Set([])
 
-	sAgra = Set([])
-	sSeg = Set([])
-	cAgra = Set([])
-	cSeg = Set([])
+	single = Set([])
+	tasksSingle = Set([])
+	#sSeg = Set([])
+	married = Set([])
+	tasksMarried = Set([])
+	#cSeg = Set([])
+
+	low = Set([])
+	tasksLow = Set([])
+	high = Set([])
+	tasksHigh = Set([])
+	
+	young = Set([])
+	tasksYoung = Set([])
+	old = Set([])
+	tasksOld = Set([])
 
 	for line in lines:
 		data = line.split("|")
@@ -24,47 +40,94 @@ def parseUserData(lines):
 		if len(data[1]) > 0:
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
-			if profile[1].lower()[0] == 'f':
-				#fTasksAgra.update(tasksIDAgra)
-				#fTasksSeg.update(tasksIDSeg)
-				fAgra.add(userID)
-				fSeg.add(userID)
+			sex = profile[1].lower()
+			if sex[0] == 'f':
+				feminine.add(userID)
+				tasksFem.update(tasksIDSeg)
+				tasksFem.update(tasksIDAgra)
 			else:
-				#mTasksAgra.update(tasksIDAgra)
-				#mTasksSeg.update(tasksIDSeg)
-				mAgra.add(userID)
-				mSeg.add(userID)
+				masculine.add(userID)
+				tasksMasc.update(tasksIDSeg)
+				tasksMasc.update(tasksIDAgra)
 		
 			#Separating by relationship
-			if profile[6].lower()[0] == 's':
-				#sTasksAgra.update(tasksIDAgra)
-				#sTasksSeg.update(tasksIDSeg)
-				sAgra.add(userID)
-				sSeg.add(userID)
-			elif profile[6].lower()[0] == 'c':
-				#cTasksAgra.update(tasksIDAgra)
-				#cTasksSeg.update(tasksIDSeg)
-				cAgra.add(userID)
-				cSeg.add(userID)
+			rel = profile[6].lower()
+			if rel[0] == 's':
+				single.add(userID)
+				tasksSingle.update(tasksIDSeg)
+				tasksSingle.update(tasksIDAgra)
+			elif rel[0] == 'c':
+				married.add(userID)
+				tasksMarried.update(tasksIDSeg)
+				tasksMarried.update(tasksIDAgra)
 
-	#print("F x m\t" + str(list(fTasksAgra.intersection(mTasksAgra)))+"\t"+str(list(fTasksSeg.intersection(mTasksSeg)))+"\n")
-	#print("S x c\t" + str(list(sTasksAgra.intersection(cTasksAgra)))+"\t"+str(list(sTasksSeg.intersection(cTasksSeg)))+"\n")
-	solteiros = open("solteiro.dat", "w")
-	for userID in sAgra:
-		solteiros.write(str(userID)+"\n")#FIXME: add tasksID
-	solteiros.close()
-	casados = open("casado.dat", "w")
-	for userID in cAgra:
-		casados.write(str(userID)+"\n")
-	casados.close()
-	fem = open("feminino.dat", "w")
-	for userID in fAgra:
-		fem.write(str(userID)+"\n")
-	fem.close()
-	mas = open("masculino.dat", "w")
-	for userID in mAgra:
-		mas.write(str(userID)+"\n")
-	mas.close()
+			#Separating by age
+			age = int(profile[0].lower())
+			if age <= 24:
+				young.add(userID)
+				tasksYoung.update(tasksIDSeg)
+				tasksYoung.update(tasksIDAgra)
+			elif age >=35 and age <=44:
+				old.add(userID)
+				tasksOld.update(tasksIDSeg)
+				tasksOld.update(tasksIDAgra)
+
+			#Separating by income
+			income = profile[2]
+			if income == possibleIncomes[0] or income == possibleIncomes[1]:
+				low.add(userID)
+				tasksLow.update(tasksIDSeg)
+				tasksLow.update(tasksIDAgra)
+			elif income == possibleIncomes[2] or income == possibleIncomes[3]:
+				high.add(userID)
+				tasksHigh.update(tasksIDSeg)
+				tasksHigh.update(tasksIDAgra)
+
+
+	singleFile = open("solteiro.dat", "w")
+	singleFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
+	for userID in single:
+		singleFile.write(str(userID)+"\n")#FIXME: add tasksID
+	singleFile.close()
+	marriedFile = open("casado.dat", "w")
+	marriedFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
+	for userID in married:
+		marriedFile.write(str(userID)+"\n")
+	marriedFile.close()
+
+	femFile = open("feminino.dat", "w")
+	femFile.write(str(list(tasksFem.intersection(tasksMasc)))+"\n")
+	for userID in feminine:
+		femFile.write(str(userID)+"\n")
+	femFile.close()
+	masFile = open("masculino.dat", "w")
+	masFile.write(str(list(tasksFem.intersection(tasksMasc)))+"\n")
+	for userID in masculine:
+		masFile.write(str(userID)+"\n")
+	masFile.close()
+
+	youngFile = open("jovem.dat", "w")
+	youngFile.write(str(list(tasksYoung.intersection(tasksOld)))+"\n")
+	for userID in young:
+		youngFile.write(str(userID)+"\n")
+	youngFile.close()
+	oldFile = open("adulto.dat", "w")
+	oldFile.write(str(list(tasksYoung.intersection(tasksOld)))+"\n")
+	for userID in old:
+		oldFile.write(str(userID)+"\n")
+	oldFile.close()
+
+	lowFile = open("baixa.dat", "w")
+	lowFile.write(str(list(tasksLow.intersection(tasksHigh)))+"\n")
+	for userID in low:
+		lowFile.write(str(userID)+"\n")
+	lowFile.close()
+	highFile = open("alta.dat", "w")
+	highFile.write(str(list(tasksLow.intersection(tasksHigh)))+"\n")
+	for userID in high:
+		highFile.write(str(userID)+"\n")
+	highFile.close()
+
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:

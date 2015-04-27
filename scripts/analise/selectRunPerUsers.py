@@ -21,7 +21,7 @@ if __name__ == "__main__":
 	lines = dataFile.readlines()
 
 	usersFile = open(sys.argv[2], 'r')
-	criteria = usersFile.readlines()
+	criteria = usersFile.readlines()[1:]#skipping first line containing tasks id of intersection
 
 	selectTasks(lines, criteria)#FIXME: add tasksID
 	dataFile.close()

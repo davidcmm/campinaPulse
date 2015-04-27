@@ -147,47 +147,130 @@ mv *.pdf regressao*.dat correlacao/
 
 #Kendall tau distance
 rm -f kendall.dat
+
+grep "agrad" first_vote_ordenado.dat > agradGeral.dat #General ranking data
+grep "seg" first_vote_ordenado.dat > segGeral.dat
+
+#Casados e Solteiros
 echo " Cas x Solteiro Agrad" >> kendall.dat
 grep "agrad" firsCasadoOrdInter.dat > ranking1.dat
 grep "agrad" firsSolteiroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+#Selecting photos from general ranking that were considered in current rankings
+echo " Cas x Geral Agrad" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo agradGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Sol x Geral Agrad" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
 
 echo " Cas x Solteiro Seg" >> kendall.dat
 grep "seg" firsCasadoOrdInter.dat > ranking1.dat
 grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Cas x Geral Seg" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo segGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Sol x Geral Seg" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
+
+
+#Baixa e Media
 echo " Baixa x Media Agrad" >> kendall.dat
 grep "agrad" firsBaixaOrdInter.dat > ranking1.dat
 grep "agrad" firsMediaOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+echo " Baixa x Geral Agrad" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo agradGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Media x Geral Agrad" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
 
 echo " Baixa x Media Seg" >> kendall.dat
 grep "seg" firsBaixaOrdInter.dat > ranking1.dat
 grep "seg" firsMediaOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
 
+echo " Baixa x Geral Seg" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo segGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Media x Geral Seg" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
+
+#Fem e Masc
 echo " Fem x Masc Agrad" >> kendall.dat
 grep "agrad" firsFemininoOrdInter.dat > ranking1.dat
 grep "agrad" firsMasculinoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+echo " Fem x Geral Agrad" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo agradGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Masc x Geral Agrad" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
 
 echo " Fem x Masc Seg" >> kendall.dat
 grep "seg" firsFemininoOrdInter.dat > ranking1.dat
 grep "seg" firsMasculinoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
 
+echo " Fem x Geral Seg" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo segGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Masc x Geral Seg" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
+
+#Jovem e Adulto
 echo " Jov x Adu Agrad" >> kendall.dat
 grep "agrad" firsJovemOrdInter.dat > ranking1.dat
 grep "agrad" firsAdultoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+echo " Jovem x Geral Agrad" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo agradGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Adulto x Geral Agrad" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
 
 echo " Jov x Adu Seg" >> kendall.dat
 grep "seg" firsJovemOrdInter.dat > ranking1.dat
 grep "seg" firsAdultoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
 
-rm ranking1.dat ranking2.dat
+echo " Jovem x Geral Seg" >> kendall.dat
+awk '{print $2}' ranking1.dat > temp.dat
+while read photo ; do 
+	grep $photo segGeral.dat >> ranking3.dat
+done < temp.dat
+Rscript kendallDistance.R ranking1.dat ranking3.dat >> kendall.dat
+echo " Adulto x Geral Seg" >> kendall.dat
+Rscript kendallDistance.R ranking2.dat ranking3.dat >> kendall.dat
+
+
+rm ranking1.dat ranking2.dat ranking3.dat temp.dat agradGeral.dat segGeral.dat
 mv kendall.dat correlacao/
 
 #Analisa QScore por Bairro

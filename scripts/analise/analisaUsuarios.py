@@ -1,5 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
+import time as tm
+import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 from sets import Set
 
@@ -283,16 +285,28 @@ def countSummary(profileInfo):
 
 def writeOutput(usersTasks):
 	outputFile = open("usersInfo.dat", "w")
+	answeredProfile = 0
+	nAnsweredProfile = 0
+	usersIDNAnsweredProfile = []
+	finishTimeNAnswered = []
 
 	#Writing users profile and tasks executed
 	for userID in usersTasks.keys():
 		userData = usersTasks[userID]
 		outputFile.write(userID+"|"+str(userData[0])+"|"+str(userData[1])+"|"+str(userData[2])+"|"+str(userData[3])+"|"+str(userData[4])+"\n")
 		countSummary(userData[0])
+		
+		if len(userData[0]) > 0:
+			answeredProfile += 1
+		else:
+			nAnsweredProfile += 1
+			usersIDNAnsweredProfile.append(userID)
+			finishTimeNAnswered.append(userData[5])
 	outputFile.close()
 	
 	#Writing profile summary
 	outputFile = open("usersInfoSummary.dat", "w")
+	outputFile.write("Answered\t" + str(answeredProfile) + "\t" + str(nAnsweredProfile) + "\t" + str(answeredProfile*1.0/(answeredProfile+nAnsweredProfile)) + "\t" + str(nAnsweredProfile*1.0/(answeredProfile+nAnsweredProfile)) + "\n")
 	outputFile.write(str(userAge)+"\n")
 	outputFile.write(str(userSex)+"\n")
 	outputFile.write(str(userClass)+"\n")		
@@ -323,13 +337,27 @@ def writeOutput(usersTasks):
 		for photo in photosAnsweredPerQuestion[possibleQuestions[1]][userID]:
 			outputFile.write(userID+"\t"+photo+"\n")
 	outputFile.close()
-	
+
+	#Writing users that did not answered profile
+	outputFile = open("usersNAnswered.dat", "w")
+	usersProfileFile = open("users.csv", "r")
+	usersProfile = usersProfileFile.readlines()
+
+	for index in range(0, len(usersIDNAnsweredProfile)):
+		userID = usersIDNAnsweredProfile[index]
+		for profile in usersProfile:
+			data = profile.split(",")
+			if data[0].strip() == userID:
+				outputFile.write(userID+"\t"+data[2]+"\t"+str(finishTimeNAnswered[index])+"\n")
+	outputFile.close()
+	usersProfileFile.close()
 
 
 def readUserData(lines, outputFileName):
 	""" Reading user profile """
 	
 	usersTasks = {}
+	firstDate = datetime.date(1970, 6, 24)
 
 	#Reading from pybossa task-run CSV
 	for line in lines:
@@ -337,12 +365,15 @@ def readUserData(lines, outputFileName):
 
 		taskID = data[3]
 		userID = data[4]
+		timeInfo = data[6].split("T")[0].split("-")#2015-02-17T18:19:52.589591
+		finish_time = datetime.date(int(timeInfo[0]), int(timeInfo[1]), int(timeInfo[2]))
+		
 		userAnswer = data[9].strip(' \t\n\r"')
 		
 		if userID in usersTasks.keys():
 			userExecutions = usersTasks[userID]
 		else:
-			userExecutions = ["", [], [], [], []]#Tasks for Agradavel e Seguro and their respective answers
+			userExecutions = ["", [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
 
 		#In user answers that contain profile information extract profile
 		if userAnswer[0] == '{':
@@ -364,7 +395,7 @@ def readUserData(lines, outputFileName):
 			neig = neig[0:len(neig)-1]
 
 			userExecutions[0] = age+"+"+sex+"+"+currentClass+"+"+educ+"+"+city+"+"+time+"+"+rel+"+"+neig
-		
+			
 		#Saving photos that user evaluated
 		index = userAnswer.find("Qual")
 		userAnswer = userAnswer[index:].split(" ")
@@ -390,7 +421,10 @@ def readUserData(lines, outputFileName):
 			userExecutions[2].append(taskID)
 			userExecutions[4].append(answer)
 		else:
-			print "Error! " + question		
+			print "Error! " + question
+
+		if finish_time > userExecutions[5]:
+			userExecutions[5] = finish_time
 
 		#Saving task ID definition
 		tasksIDDefinition[taskID] = photo1+"\t"+photo2

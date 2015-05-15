@@ -28,6 +28,21 @@ def parseUserData(lines):
 	tasksYoung = Set([])
 	old = Set([])
 	tasksOld = Set([])
+		
+	centro = Set([])
+	tasksCentro = Set([])
+	notCentro = Set([])
+	tasksNotCentro = Set([])
+
+	catole = Set([])
+	tasksCatole = Set([])
+	notCatole = Set([])
+	tasksNotCatole = Set([])
+
+	liberdade = Set([])
+	tasksLiberdade = Set([])
+	notLiberdade = Set([])
+	tasksNotLiberdade = Set([])
 
 	for line in lines:
 		data = line.split("|")
@@ -38,6 +53,17 @@ def parseUserData(lines):
 		tasksIDSeg = eval(data[3])
 
 		if len(data[1]) > 0:
+			#Separating by age
+			age = int(profile[0].lower())
+			if age <= 24:
+				young.add(userID)
+				tasksYoung.update(tasksIDSeg)
+				tasksYoung.update(tasksIDAgra)
+			elif age >=35 and age <=44:
+				old.add(userID)
+				tasksOld.update(tasksIDSeg)
+				tasksOld.update(tasksIDAgra)
+
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
 			sex = profile[1].lower()
@@ -50,28 +76,6 @@ def parseUserData(lines):
 				tasksMasc.update(tasksIDSeg)
 				tasksMasc.update(tasksIDAgra)
 		
-			#Separating by relationship
-			rel = profile[6].lower()
-			if rel[0] == 's':
-				single.add(userID)
-				tasksSingle.update(tasksIDSeg)
-				tasksSingle.update(tasksIDAgra)
-			elif rel[0] == 'c':
-				married.add(userID)
-				tasksMarried.update(tasksIDSeg)
-				tasksMarried.update(tasksIDAgra)
-
-			#Separating by age
-			age = int(profile[0].lower())
-			if age <= 24:
-				young.add(userID)
-				tasksYoung.update(tasksIDSeg)
-				tasksYoung.update(tasksIDAgra)
-			elif age >=35 and age <=44:
-				old.add(userID)
-				tasksOld.update(tasksIDSeg)
-				tasksOld.update(tasksIDAgra)
-
 			#Separating by income
 			income = profile[2]
 			if income == possibleIncomes[0] or income == possibleIncomes[1]:
@@ -83,6 +87,46 @@ def parseUserData(lines):
 				tasksHigh.update(tasksIDSeg)
 				tasksHigh.update(tasksIDAgra)
 
+			#Separating by relationship
+			rel = profile[6].lower()
+			if rel[0] == 's':
+				single.add(userID)
+				tasksSingle.update(tasksIDSeg)
+				tasksSingle.update(tasksIDAgra)
+			elif rel[0] == 'c':
+				married.add(userID)
+				tasksMarried.update(tasksIDSeg)
+				tasksMarried.update(tasksIDAgra)
+
+			#Separating by known places
+			places = profile[7].lower()
+			if len(places) > 0:
+				if "cen" in places.strip():
+					centro.add(userID)
+					tasksCentro.update(tasksIDSeg)
+					tasksCentro.update(tasksIDAgra)
+				else:
+					notCentro.add(userID)
+					tasksNotCentro.update(tasksIDSeg)
+					tasksNotCentro.update(tasksIDAgra)
+
+				if "lib" in places.strip():
+					liberdade.add(userID)
+					tasksLiberdade.update(tasksIDSeg)
+					tasksLiberdade.update(tasksIDAgra)
+				else:
+					notLiberdade.add(userID)
+					tasksNotLiberdade.update(tasksIDSeg)
+					tasksNotLiberdade.update(tasksIDAgra)
+
+				if "cat" in places.strip():
+					catole.add(userID)
+					tasksCatole.update(tasksIDSeg)
+					tasksCatole.update(tasksIDAgra)
+				else:
+					notCatole.add(userID)
+					tasksNotCatole.update(tasksIDSeg)
+					tasksNotCatole.update(tasksIDAgra)
 
 	singleFile = open("solteiro.dat", "w")
 	singleFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
@@ -127,6 +171,40 @@ def parseUserData(lines):
 	for userID in high:
 		highFile.write(str(userID)+"\n")
 	highFile.close()
+
+	
+	centroFile = open("centro.dat", "w")
+	centroFile.write("[]\n")
+	for userID in centro:
+		centroFile.write(str(userID)+"\n")
+	centroFile.close()
+	notCentroFile = open("notcentro.dat", "w")
+	notCentroFile.write("[]\n")
+	for userID in notCentro:
+		notCentroFile.write(str(userID)+"\n")
+	notCentroFile.close()
+
+	liberdadeFile = open("liberdade.dat", "w")
+	liberdadeFile.write("[]\n")
+	for userID in liberdade:
+		liberdadeFile.write(str(userID)+"\n")
+	liberdadeFile.close()
+	notLiberdadeFile = open("notliberdade.dat", "w")
+	notLiberdadeFile.write("[]\n")
+	for userID in notLiberdade:
+		notLiberdadeFile.write(str(userID)+"\n")
+	notLiberdadeFile.close()
+
+	catoleFile = open("catole.dat", "w")
+	catoleFile.write("[]\n")
+	for userID in catole:
+		catoleFile.write(str(userID)+"\n")
+	catoleFile.close()
+	notCatoleFile = open("notcatole.dat", "w")
+	notCatoleFile.write("[]\n")
+	for userID in notCatole:
+		notCatoleFile.write(str(userID)+"\n")
+	notCatoleFile.close()
 
 
 if __name__ == "__main__":

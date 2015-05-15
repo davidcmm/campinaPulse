@@ -200,10 +200,10 @@ def plotNeig():
 				cen += 1
 			if 'lib' in neig.lower():
 				lib += 1
-			if 'ca' in neig.lower():
+			if 'cat' in neig.lower():
 				catol += 1
 
-	labels = 'Centro', 'Liberdade', 'Catole', 'Nao conhecem'
+	labels = 'Centro', 'Liberdade', 'Catole', 'Nao responderam ou Nao conhecem'
 	sizes = [cen, lib, catol, vazio]
 	colors = ['yellowgreen', 'green', 'lightskyblue', 'lightcoral']
 	plt.figure()
@@ -246,7 +246,7 @@ def countSummary(profileInfo):
 		time = userProfileData[5]
 		rel = userProfileData[6]
 		neig = userProfileData[7]
-		neig = neig[0:len(neig)-1]
+		neig = neig[0:len(neig)]
 
 		#Saving occurrences of profiles
 		if age in userAge.keys():

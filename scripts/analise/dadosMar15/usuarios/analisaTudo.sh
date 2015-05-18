@@ -29,34 +29,48 @@ mv media.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat
 python analisaQScore.py run.csv
 mv first.dat first_vote.dat
 
-python analisaQScore.py runAdulto.csv
+python analisaQScore.py runAdulto.csv 1000
 mv first.dat firstAdulto.dat
-python analisaQScore.py runJovem.csv 
+mv all.dat allAdulto.dat
+python analisaQScore.py runJovem.csv 1000
 mv first.dat firstJovem.dat
-python analisaQScore.py runSolteiro.csv 
+mv all.dat allJovem.dat
+python analisaQScore.py runSolteiro.csv 1000
 mv first.dat firstSolteiro.dat
-python analisaQScore.py runCasado.csv 
+mv all.dat allSolteiro.dat
+python analisaQScore.py runCasado.csv 1000
 mv first.dat firstCasado.dat
-python analisaQScore.py runMedia.csv 
+mv all.dat allCasado.dat
+python analisaQScore.py runMedia.csv 1000
 mv first.dat firstMedia.dat
-python analisaQScore.py runBaixa.csv 
+mv all.dat allMedia.dat
+python analisaQScore.py runBaixa.csv 1000
 mv first.dat firstBaixa.dat
-python analisaQScore.py runFeminino.csv 
+mv all.dat allBaixa.dat
+python analisaQScore.py runFeminino.csv 1000 
 mv first.dat firstFeminino.dat
-python analisaQScore.py runMasculino.csv
+mv all.dat allFeminino.dat
+python analisaQScore.py runMasculino.csv 1000
 mv first.dat firstMasculino.dat
-python analisaQScore.py runCatole.csv
+mv all.dat allMasculino.dat
+python analisaQScore.py runCatole.csv 1000
 mv first.dat firstCatole.dat
-python analisaQScore.py runCentro.csv
+mv all.dat allCatole.dat
+python analisaQScore.py runCentro.csv 1000
 mv first.dat firstCentro.dat
-python analisaQScore.py runLiberdade.csv
+mv all.dat allCentro.dat
+python analisaQScore.py runLiberdade.csv 1000
 mv first.dat firstLiberdade.dat
-python analisaQScore.py runNotCatole.csv
+mv all.dat allLiberdade.dat
+python analisaQScore.py runNotCatole.csv 1000
 mv first.dat firstNotCatole.dat
-python analisaQScore.py runNotCentro.csv
+mv all.dat allNotCatole.dat
+python analisaQScore.py runNotCentro.csv 1000
 mv first.dat firstNotCentro.dat
-python analisaQScore.py runNotLiberdade.csv
+mv all.dat allNotCentro.dat
+python analisaQScore.py runNotLiberdade.csv 1000
 mv first.dat firstNotLiberdade.dat
+mv all.dat allNotLiberdade.dat
 
 sort -k 3 -r first_vote.dat > first_vote_ordenado.dat
 
@@ -73,6 +87,20 @@ sort -k 3 -r firstLiberdade.dat > firsLiberdadeOrd.dat
 sort -k 3 -r firstNotCatole.dat > firsNotCatoleOrd.dat
 sort -k 3 -r firstNotCentro.dat > firsNotCentroOrd.dat
 sort -k 3 -r firstNotLiberdade.dat > firsNotLiberdadeOrd.dat
+
+sort -k 3 -r allMedia.dat > allMediaOrd.dat
+sort -k 3 -r allBaixa.dat > allBaixaOrd.dat
+sort -k 3 -r allSolteiro.dat > allSolteiroOrd.dat
+sort -k 3 -r allCasado.dat > allCasadoOrd.dat
+sort -k 3 -r allFeminino.dat > allFemininoOrd.dat
+sort -k 3 -r allMasculino.dat > allMasculinoOrd.dat
+sort -k 3 -r allJovem.dat > allJovemOrd.dat
+sort -k 3 -r allCatole.dat > allCatoleOrd.dat
+sort -k 3 -r allCentro.dat > allCentroOrd.dat
+sort -k 3 -r allLiberdade.dat > allLiberdadeOrd.dat
+sort -k 3 -r allNotCatole.dat > allNotCatoleOrd.dat
+sort -k 3 -r allNotCentro.dat > allNotCentroOrd.dat
+sort -k 3 -r allNotLiberdade.dat > allNotLiberdadeOrd.dat
 
 #Calculating Moran I (falta revisar)
 python extractLatLongStreet.py first_vote.dat > newFirst.dat

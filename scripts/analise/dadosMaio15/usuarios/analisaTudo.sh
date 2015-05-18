@@ -2,11 +2,6 @@
 
 python analisaUsuarios.py run.csv
 
-#Krippendorfs alpha for general data (falta revisar)
-python preparaConsenso.py usersInfoSummary.dat
-
-Rscript krippMoran.R kripp > kripp.dat
-
 #Separa grupos de usuarios
 python selectRunPerUsers.py run.csv media.dat > runMedia.csv
 python selectRunPerUsers.py run.csv baixa.dat > runBaixa.csv 
@@ -29,7 +24,7 @@ mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat 
 python analisaQScore.py run.csv
 mv first.dat first_vote.dat
 
-python analisaQScore.py runAdulto.csv 1000
+python analisaQScore.py runAdulto.csv 
 mv first.dat firstAdulto.dat
 mv all.dat allAdulto.dat
 python analisaQScore.py runJovem.csv 1000
@@ -365,21 +360,153 @@ Rscript analisaRegressao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.dat
 mv *.pdf regressao*.dat correlacao/
 
 #Calcula ICs por ponto para cada grupo
-Rscript analisaICPorFoto.R allSolteiroOrdInter.dat allCasadoOrdInter.dat
+Rscript analisaICPorFoto.R allSolteiroOrdInter.dat allCasadoOrdInter.dat solteiro casado
+#head -n 1 teste1.txt > allICSolteiroCentro.dat
+#head -n 1 teste1.txt > allICSolteiroLib.dat
+#head -n 1 teste1.txt > allICSolteiroCat.dat
+#grep "centro" teste1.txt >> allICSolteiroCentro.dat
+#grep "liberdade" teste1.txt >> allICSolteiroLib.dat
+#grep "catole" teste1.txt >> allICSolteiroCat.dat
+#head -n 1 teste2.txt > allICCasadoCentro.dat
+#head -n 1 teste2.txt > allICCasadoLib.dat
+#head -n 1 teste2.txt > allICCasadoCat.dat
+#grep "centro" teste2.txt >> allICCasadoCentro.dat
+#grep "liberdade" teste2.txt >> allICCasadoLib.dat
+#grep "catole" teste2.txt >> allICCasadoCat.dat
 mv teste1.txt allICSolteiro.dat
 mv teste2.txt allICCasado.dat
-Rscript analisaICPorFoto.R allBaixaOrdInter.dat allMediaOrdInter.dat
+Rscript analisaICPorFoto.R allBaixaOrdInter.dat allMediaOrdInter.dat baixa media
+#head -n 1 teste1.txt > allICBaixaCentro.dat
+#head -n 1 teste1.txt > allICBaixaLib.dat
+#head -n 1 teste1.txt > allICBaixaCat.dat
+#grep "centro" teste1.txt >> allICBaixaCentro.dat
+#grep "liberdade" teste1.txt >> allICBaixaLib.dat
+#grep "catole" teste1.txt >> allICBaixaCat.dat
+#head -n 1 teste2.txt > allICMediaCentro.dat
+#head -n 1 teste2.txt > allICMediaLib.dat
+#head -n 1 teste2.txt > allICMediaCat.dat
+#grep "centro" teste2.txt >> allICMediaCentro.dat
+#grep "liberdade" teste2.txt >> allICMediaLib.dat
+#grep "catole" teste2.txt >> allICMediaCat.dat
 mv teste1.txt allICBaixa.dat
 mv teste2.txt allICMedia.dat
-Rscript analisaICPorFoto.R allFemininoOrdInter.dat allMasculinoOrdInter.dat
+Rscript analisaICPorFoto.R allFemininoOrdInter.dat allMasculinoOrdInter.dat feminino masculino
+#head -n 1 teste1.txt > allICFemininoCentro.dat
+#head -n 1 teste1.txt > allICFemininoLib.dat
+#head -n 1 teste1.txt > allICFemininoCat.dat
+#grep "centro" teste1.txt >> allICFemininoCentro.dat
+#grep "liberdade" teste1.txt >> allICFemininoLib.dat
+#grep "catole" teste1.txt >> allICFemininoCat.dat
+#head -n 1 teste2.txt > allICMasculinoCentro.dat
+#head -n 1 teste2.txt > allICMasculinoLib.dat
+#head -n 1 teste2.txt > allICMasculinoCat.dat
+#grep "centro" teste2.txt >> allICMasculinoCentro.dat
+#grep "liberdade" teste2.txt >> allICMasculinoLib.dat
+#grep "catole" teste2.txt >> allICMasculinoCat.dat
 mv teste1.txt allICFeminino.dat
 mv teste2.txt allICMasculino.dat
-Rscript analisaICPorFoto.R allAdultoOrdInter.dat allJovemOrdInter.dat
+Rscript analisaICPorFoto.R allAdultoOrdInter.dat allJovemOrdInter.dat adulto jovem
+#head -n 1 teste1.txt > allICAdultoCentro.dat
+#head -n 1 teste1.txt > allICAdultoLib.dat
+#head -n 1 teste1.txt > allICAdultoCat.dat
+#grep "centro" teste1.txt >> allICAdultoCentro.dat
+#grep "liberdade" teste1.txt >> allICAdultoLib.dat
+#grep "catole" teste1.txt >> allICAdultoCat.dat
+#head -n 1 teste2.txt > allICJovemCentro.dat
+#head -n 1 teste2.txt > allICJovemLib.dat
+#head -n 1 teste2.txt > allICJovemCat.dat
+#grep "centro" teste2.txt >> allICJovemCentro.dat
+#grep "liberdade" teste2.txt >> allICJovemLib.dat
+#grep "catole" teste2.txt >> allICJovemCat.dat
 mv teste1.txt allICAdulto.dat
 mv teste2.txt allICJovem.dat
-Rscript analisaICPorFoto.R allSolteiroOrdInter.dat allCasadoOrdInter.dat
-mv teste1.txt allICSolteiro.dat
-mv teste2.txt allICCasado.dat
+
+#Krippendorfs alpha for general data (falta revisar)
+python preparaConsenso.py usersInfo.dat
+
+Rscript krippMoran.R kripp consenseMatrixAgra.dat consenseMatrixSeg.dat > kripp.dat
+
+#Kripp por grupo
+python preparaConsenso.py usersInfo.dat adulto.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraAdulto.dat
+mv consenseMatrixSeg.dat consenseMatrixSegAdulto.dat
+echo "Adulto" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraAdulto.dat consenseMatrixSegAdulto.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat jovem.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraJovem.dat
+mv consenseMatrixSeg.dat consenseMatrixSegJovem.dat
+echo "Jovem" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraJovem.dat consenseMatrixSegJovem.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat jovem.dat adulto.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraJovemAdulto.dat
+mv consenseMatrixSeg.dat consenseMatrixSegJovemAdulto.dat
+echo "Jovem e Adulto" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraJovemAdulto.dat consenseMatrixSegJovemAdulto.dat >> krippAll.dat
+
+
+
+python preparaConsenso.py usersInfo.dat casado.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraCasado.dat
+mv consenseMatrixSeg.dat consenseMatrixSegCasado.dat
+echo "Casado" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraCasado.dat consenseMatrixSegCasado.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat solteiro.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraSolteiro.dat
+mv consenseMatrixSeg.dat consenseMatrixSegSolteiro.dat
+echo "Solteiro" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraSolteiro.dat consenseMatrixSegSolteiro.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat casado.dat solteiro.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraCasadoSolteiro.dat
+mv consenseMatrixSeg.dat consenseMatrixSegCasadoSolteiro.dat
+echo "CAsado e Solteiro" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraCasadoSolteiro.dat consenseMatrixSegCasadoSolteiro.dat >> krippAll.dat
+
+
+python preparaConsenso.py usersInfo.dat baixa.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraBaixa.dat
+mv consenseMatrixSeg.dat consenseMatrixSegBaixa.dat
+echo "Baixa" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraBaixa.dat consenseMatrixSegBaixa.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat media.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraMedia.dat
+mv consenseMatrixSeg.dat consenseMatrixSegMedia.dat
+echo "Media" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraMedia.dat consenseMatrixSegMedia.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat baixa.dat media.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraBaixaMedia.dat
+mv consenseMatrixSeg.dat consenseMatrixSegBaixaMedia.dat
+echo "Baixa e Media" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraBaixaMedia.dat consenseMatrixSegBaixaMedia.dat >> krippAll.dat
+
+
+python preparaConsenso.py usersInfo.dat feminino.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraFeminino.dat
+mv consenseMatrixSeg.dat consenseMatrixSegFeminino.dat
+echo "Feminino" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraFeminino.dat consenseMatrixSegFeminino.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat media.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraMasculino.dat
+mv consenseMatrixSeg.dat consenseMatrixSegMasculino.dat
+echo "Masculino" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraMasculino.dat consenseMatrixSegMasculino.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat feminino.dat masculino.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraFemininoMasculino.dat
+mv consenseMatrixSeg.dat consenseMatrixSegFemininoMasculino.dat
+echo "Feminino e Masculino" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraFemininoMasculino.dat consenseMatrixSegFemininoMasculino.dat >> krippAll.dat
+
+
+mkdir consense 
+mv consenseMatrix*.dat krippAll.dat kripp.dat consense
+mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
 #Kendall tau distance
 rm -f kendall.dat
@@ -392,6 +519,11 @@ echo " Cas x Solteiro Agrad" >> kendall.dat
 grep "agrad" firsCasadoOrdInter.dat > ranking1.dat
 grep "agrad" firsSolteiroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+echo " Cas x Solteiro Agrad" >> kendallAll.dat
+grep "agrad" allCasadoOrdInter.dat > ranking1.dat
+grep "agrad" allSolteiroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 #Selecting photos from general ranking that were considered in current rankings
 echo " Cas x Geral Agrad" >> kendall.dat
@@ -409,6 +541,11 @@ echo " Cas x Solteiro Seg" >> kendall.dat
 grep "seg" firsCasadoOrdInter.dat > ranking1.dat
 grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+
+echo " Cas x Solteiro Seg" >> kendallAll.dat
+grep "seg" allCasadoOrdInter.dat > ranking1.dat
+grep "seg" allSolteiroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 echo " Cas x Geral Seg" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
@@ -428,6 +565,11 @@ grep "agrad" firsBaixaOrdInter.dat > ranking1.dat
 grep "agrad" firsMediaOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Baixa x Media Agrad" >> kendallAll.dat
+grep "agrad" allBaixaOrdInter.dat > ranking1.dat
+grep "agrad" allMediaOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 echo " Baixa x Geral Agrad" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
 rm ranking3.dat
@@ -443,6 +585,11 @@ echo " Baixa x Media Seg" >> kendall.dat
 grep "seg" firsBaixaOrdInter.dat > ranking1.dat
 grep "seg" firsMediaOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
+
+echo " Baixa x Media Agrad" >> kendallAll.dat
+grep "seg" allBaixaOrdInter.dat > ranking1.dat
+grep "seg" allMediaOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 echo " Baixa x Geral Seg" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
@@ -461,6 +608,11 @@ grep "agrad" firsFemininoOrdInter.dat > ranking1.dat
 grep "agrad" firsMasculinoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Fem x Masc Agrad" >> kendallAll.dat
+grep "agrad" allFemininoOrdInter.dat > ranking1.dat
+grep "agrad" allMasculinoOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 echo " Fem x Geral Agrad" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
 rm ranking3.dat
@@ -476,6 +628,11 @@ echo " Fem x Masc Seg" >> kendall.dat
 grep "seg" firsFemininoOrdInter.dat > ranking1.dat
 grep "seg" firsMasculinoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
+
+echo " Fem x Masc Seg" >> kendallAll.dat
+grep "seg" allFemininoOrdInter.dat > ranking1.dat
+grep "seg" allMasculinoOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 echo " Fem x Geral Seg" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
@@ -494,6 +651,11 @@ grep "agrad" firsJovemOrdInter.dat > ranking1.dat
 grep "agrad" firsAdultoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Jovem x Adulto Agrad" >> kendallAll.dat
+grep "agrad" allJovemOrdInter.dat > ranking1.dat
+grep "agrad" allAdultoOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 echo " Jovem x Geral Agrad" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
 rm ranking3.dat
@@ -509,6 +671,11 @@ echo " Jov x Adu Seg" >> kendall.dat
 grep "seg" firsJovemOrdInter.dat > ranking1.dat
 grep "seg" firsAdultoOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
+
+echo " Jovem x Adulto Seg" >> kendallAll.dat
+grep "seg" allJovemOrdInter.dat > ranking1.dat
+grep "seg" allAdultoOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 echo " Jovem x Geral Seg" >> kendall.dat
 awk '{print $2}' ranking1.dat > temp.dat
@@ -527,10 +694,20 @@ grep "agrad" firsCentroOrdInter.dat > ranking1.dat
 grep "agrad" firsNotCentroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Centro x Not Centro Agrad" >> kendallAll.dat
+grep "agrad" allCentroOrdInter.dat > ranking1.dat
+grep "agrad" allNotCentroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 echo " Centro x Not Centro Seg" >> kendall.dat
 grep "seg" firsCentroOrdInter.dat > ranking1.dat
 grep "seg" firsNotCentroOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
+
+echo " Centro x Not Centro Seg" >> kendallAll.dat
+grep "seg" allCentroOrdInter.dat > ranking1.dat
+grep "seg" allNotCentroOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
 
 #Catole e Not Catole
 echo " Catole x Not Catole Agrad" >> kendall.dat
@@ -538,26 +715,46 @@ grep "agrad" firsCatoleOrdInter.dat > ranking1.dat
 grep "agrad" firsNotCatoleOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Catole x Not Catole Agrad" >> kendallAll.dat
+grep "agrad" allCatoleOrdInter.dat > ranking1.dat
+grep "agrad" allNotCatoleOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 echo " Catole x Not Catole Seg" >> kendall.dat
 grep "seg" firsCatoleOrdInter.dat > ranking1.dat
 grep "seg" firsNotCatoleOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
 
+echo " Catole x Not Catole Seg" >> kendallAll.dat
+grep "seg" allCatoleOrdInter.dat > ranking1.dat
+grep "seg" allNotCatoleOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+
 #Liberdade e Not Liberdade
 echo " Liberdade x Not Liberdade Agrad" >> kendall.dat
 grep "agrad" firsLiberdadeOrdInter.dat > ranking1.dat
 grep "agrad" firsNotLiberdadeOrdInter.dat > ranking2.dat
-Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
+
+echo " Liberdade x Not Liberdade Agra" >> kendallAll.dat
+grep "agrad" allLiberdadeOrdInter.dat > ranking1.dat
+grep "agrad" allNotLiberdadeOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat 
 
 echo " Liberdade x Not Liberdade Agrad" >> kendall.dat
 grep "seg" firsLiberdadeOrdInter.dat > ranking1.dat
 grep "seg" firsNotLiberdadeOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat
 
-rm ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat agradGeral.dat segGeral.dat 
-mv kendall.dat correlacao/
+echo " Liberdade x Not Liberdade Seg" >> kendallAll.dat
+grep "seg" allLiberdadeOrdInter.dat > ranking1.dat
+grep "seg" allNotLiberdadeOrdInter.dat > ranking2.dat
+Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat 
 
-#Analisa QScore por Bairro
+rm ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat agradGeral.dat segGeral.dat 
+mv kendall*.dat correlacao/
+
+#Analisa QScore por Bairro (adicionar All)
 rm -f bairro.dat
 
 echo ">>>>>>>> Geral" >> bairro.dat

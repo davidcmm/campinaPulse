@@ -4,6 +4,7 @@
 import sys
 from sets import Set
 import random
+import numpy
 #import pdb
 
 #photos considered in comparisons
@@ -242,17 +243,17 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 		if not votes[question][photo1].has_key(photo2):
 			votes[question][photo1][photo2] = set([])
 
-		if not allQScores[question].has_key(photo1):
-			allQScores[question][photo1] = []
-		if not allQScores[question].has_key(photo2):
-			allQScores[question][photo2] = []	
-
 		#Saving votes from task-run
 		votes[question][photo1][photo2].add(answer)
 
 		allPhotos.add(photo1)
 		allPhotos.add(photo2)
+
 	
+	#print str(len(allPhotos))
+	#print str(len(votes[possibleQuestions[0]]))
+	#print str(len(votes[possibleQuestions[1]]))
+
 	#Evaluating votes in order to choose winning photos or ties
 	for i in range(0, amountOfSamples):
 		resetCounters()
@@ -261,7 +262,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 			for photo1, photosDic in qDic.iteritems():
 				for photo2, votesList in photosDic.iteritems():
 					answer = random.sample(votesList, 1)[0]#Generating answer to consider
-					print question + "\t" + photo1 + "\t" + photo2 + "\t" + str(votesList) + "\t" + str(answer)
+					#print question + "\t" + photo1 + "\t" + photo2 + "\t" + str(votesList) + "\t" + str(answer)
 			
 					if answer == left:
 						saveWin(photo1, photo2, question)
@@ -272,14 +273,16 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 
 		qscores = computeQScores(allPhotos, outputFileName)
 		for question, qDic in qscores.iteritems():
-			for photo, qscore in qDic.iteritems(): 
+			for photo, qscore in qDic.iteritems():
+				if not allQScores[question].has_key(photo):
+					allQScores[question][photo] = []
 				allQScores[question][photo].append(qscore)
 
 	#Output file
 	output = open(outputFileName, 'w')
 	for question, qDic in allQScores.iteritems():
 		for photo, qscoreList in qDic.iteritems():
-			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
 	output.close()
 
 

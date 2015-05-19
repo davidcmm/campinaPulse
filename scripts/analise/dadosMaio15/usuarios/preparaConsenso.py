@@ -40,7 +40,7 @@ def parseUserData(lines, filterLines, outputFileNameAgra, outputFileNameSeg):
 				tasksInfo[tasksIDSeg[i]] = tasksAnswerSeg[i]
 			usersTasksMatrixSeg[userID] = tasksInfo
 
-	#Iterating through users and tasks in ascending order of IDs
+	#Iterating through users and tasks in ascending order of IDs. Tasks Agradable
 	currentTasks = list(allTasksAgra)
 	currentTasks.sort()
 	outputFile = open(outputFileNameAgra, 'w')	
@@ -65,7 +65,8 @@ def parseUserData(lines, filterLines, outputFileNameAgra, outputFileNameSeg):
 					outputFile.write(str(2)+"\t")
 		outputFile.write("\n")
 	outputFile.close()
-
+	
+	#Iterating through users and tasks in ascending order of IDs. Tasks Secure
 	currentTasks = list(allTasksSeg)
 	currentTasks.sort()
 	outputFile = open(outputFileNameSeg, 'w')	

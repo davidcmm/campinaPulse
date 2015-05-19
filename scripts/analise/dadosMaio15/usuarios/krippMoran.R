@@ -17,8 +17,9 @@ krippAlpha <- function () {
 
 	res <- kripp.alpha(matrizAgra, method="nominal")
 	res1 <- kripp.alpha(matrizSeg, method="nominal")
-	
+	print (">>> Agra")
 	print (res)
+	print (">>> Seg")
 	print (res1)
 }
 

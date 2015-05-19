@@ -24,7 +24,7 @@ mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat 
 python analisaQScore.py run.csv
 mv first.dat first_vote.dat
 
-python analisaQScore.py runAdulto.csv 
+python analisaQScore.py runAdulto.csv 1000
 mv first.dat firstAdulto.dat
 mv all.dat allAdulto.dat
 python analisaQScore.py runJovem.csv 1000
@@ -68,6 +68,7 @@ mv first.dat firstNotLiberdade.dat
 mv all.dat allNotLiberdade.dat
 
 sort -k 3 -r first_vote.dat > first_vote_ordenado.dat
+sort -k 3 -r all.dat > all_ordenado.dat
 
 sort -k 3 -r firstMedia.dat > firsMediaOrd.dat
 sort -k 3 -r firstBaixa.dat > firsBaixaOrd.dat
@@ -110,7 +111,7 @@ grep "seguro?" streetsQScoresLatLong.dat > streetsQScoresLatLongSeg.dat
 
 Rscript krippMoran.R moran streetsQScoresLatLongAgra.dat streetsQScoresLatLongSeg.dat > moran.dat
 
-#TODO Adicionar krippMoran por grupo!
+#TODO Adicionar Moran por grupo!
 
 #Encontra interseccao entre qscores gerados
 python encontraInterseccao.py firsBaixaOrd.dat firsMediaOrd.dat > intersectionBaixaMedia.dat 
@@ -132,6 +133,7 @@ python encontraInterseccao.py allCatoleOrd.dat allNotCatoleOrd.dat > intersectio
 #Prepara paginas html e arquivos de interseccao ordenados (revisar a partir daqui)
 mkdir rankings
 python preparaHTML.py first_vote_ordenado.dat
+python preparaHTML.py all_ordenado.dat
 
 python preparaHTML.py firsJovemOrd.dat intersectionJovemAdulto.dat > firsJovemOrdInter.dat 
 mv question.html questionJovem.html
@@ -231,6 +233,14 @@ mv question.html questionAllNotLiberdade.html
 mv question*.html rankings
 
 #Combina RGB, #Linhas e criterios
+python combinaRGBQScoreLinhas.py rgb.dat first_vote_ordenado.dat lines.dat
+mv rgbQScoreAgrad.dat rgbQScoreAgradFirst.dat
+mv rgbQScoreSeg.dat rgbQScoreSegFirst.dat
+
+python combinaRGBQScoreLinhas.py rgb.dat all_ordenado.dat lines.dat
+mv rgbQScoreAgrad.dat rgbQScoreAgradAll.dat
+mv rgbQScoreSeg.dat rgbQScoreSegAll.dat
+
 python combinaRGBQScoreLinhas.py rgb.dat firsAdultoOrdInter.dat lines.dat
 mv rgbQScoreAgrad.dat rgbQScoreAgradAdulto.dat
 mv rgbQScoreSeg.dat rgbQScoreSegAdulto.dat
@@ -509,10 +519,18 @@ mv consenseMatrix*.dat krippAll.dat kripp.dat consense
 mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
 #Kendall tau distance
-rm -f kendall.dat
+rm -f kendall.dat kendalAll.dat
 
 grep "agrad" first_vote_ordenado.dat > agradGeral.dat #General ranking data
 grep "seg" first_vote_ordenado.dat > segGeral.dat
+grep "agrad" all_ordenado.dat > agradGeralAll.dat #General ranking data
+grep "seg" all_ordenado.dat > segGeralAll.dat
+
+echo "First" > kendall.dat
+Rscript kendallDistance.R agradGeral.dat segGeral.dat >> kendall.dat 
+
+echo "All" >> kendall.dat
+Rscript kendallDistance.R agradGeralAll.dat segGeralAll.dat >> kendall.dat
 
 #Casados e Solteiros
 echo " Cas x Solteiro Agrad" >> kendall.dat
@@ -537,6 +555,17 @@ Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Sol x Geral Agrad" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
 
+echo " Cas x Geral Agrad" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm -f ranking3.dat
+while read photo ; do 
+	grep $photo agradGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Sol x Geral Agrad" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
+
 echo " Cas x Solteiro Seg" >> kendall.dat
 grep "seg" firsCasadoOrdInter.dat > ranking1.dat
 grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
@@ -557,6 +586,17 @@ sort -k 3 -r ranking3.dat > ranking3Ord.dat
 Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Sol x Geral Seg" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
+
+echo " Cas x Geral Seg" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo segGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Sol x Geral Seg" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
 
 
 #Baixa e Media
@@ -581,6 +621,17 @@ Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Media x Geral Agrad" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
 
+echo " Baixa x Geral Agrad" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo agradGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Media x Geral Agrad" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
+
 echo " Baixa x Media Seg" >> kendall.dat
 grep "seg" firsBaixaOrdInter.dat > ranking1.dat
 grep "seg" firsMediaOrdInter.dat > ranking2.dat
@@ -601,6 +652,17 @@ sort -k 3 -r ranking3.dat > ranking3Ord.dat
 Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Media x Geral Seg" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
+
+echo " Baixa x Geral Seg" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo segGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Media x Geral Seg" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
 
 #Fem e Masc
 echo " Fem x Masc Agrad" >> kendall.dat
@@ -624,6 +686,17 @@ Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Masc x Geral Agrad" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
 
+echo " Fem x Geral Agrad" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo agradGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Masc x Geral Agrad" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
+
 echo " Fem x Masc Seg" >> kendall.dat
 grep "seg" firsFemininoOrdInter.dat > ranking1.dat
 grep "seg" firsMasculinoOrdInter.dat > ranking2.dat
@@ -644,6 +717,17 @@ sort -k 3 -r ranking3.dat > ranking3Ord.dat
 Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Masc x Geral Seg" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
+
+echo " Fem x Geral Seg" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo segGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Masc x Geral Seg" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
 
 #Jovem e Adulto
 echo " Jov x Adu Agrad" >> kendall.dat
@@ -667,6 +751,17 @@ Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Adulto x Geral Agrad" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
 
+echo " Jovem x Geral Agrad" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo agradGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Adulto x Geral Agrad" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
+
 echo " Jov x Adu Seg" >> kendall.dat
 grep "seg" firsJovemOrdInter.dat > ranking1.dat
 grep "seg" firsAdultoOrdInter.dat > ranking2.dat
@@ -687,6 +782,17 @@ sort -k 3 -r ranking3.dat > ranking3Ord.dat
 Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
 echo " Adulto x Geral Seg" >> kendall.dat
 Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
+
+echo " Jovem x Geral Seg" >> kendallAll.dat
+awk '{print $2}' ranking1.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo segGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+echo " Adulto x Geral Seg" >> kendallAll.dat
+Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
 
 #Centro e Not Centro
 echo " Centro x Not Centro Agrad" >> kendall.dat
@@ -751,11 +857,11 @@ grep "seg" allLiberdadeOrdInter.dat > ranking1.dat
 grep "seg" allNotLiberdadeOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat 
 
-rm ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat agradGeral.dat segGeral.dat 
+rm -f ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat agradGeral.dat segGeral.dat agradGeralAll.dat segGeralAll.dat
 mv kendall*.dat correlacao/
 
-#Analisa QScore por Bairro (adicionar All)
-rm -f bairro.dat
+#Analisa QScore por Bairro
+rm -f bairro.dat bairroAll.dat
 
 echo ">>>>>>>> Geral" >> bairro.dat
 python analisaQScorePorBairro.py first_vote_ordenado.dat > temp.dat
@@ -779,6 +885,30 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Ger" "Centro Seg
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Ger" "Liberdade Seg Ger" "red" >> bairro.dat
 
+#Todos os votos
+echo ">>>>>>>> Geral" >> bairroAll.dat
+python analisaQScorePorBairro.py all_ordenado.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Ger" "Centro Agra Ger" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Ger" "Centro Agra Ger" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Ger" "Liberdade Agra Ger" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Ger" "Centro Seg Ger" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Ger" "Centro Seg Ger" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Ger" "Liberdade Seg Ger" "red" >> bairroAll.dat
+
+#Por grupo
 echo ">>>>>>>> Jovem" >> bairro.dat
 python analisaQScorePorBairro.py firsJovemOrdInter.dat > temp.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
@@ -800,6 +930,28 @@ echo "Seg Lib x Centro" >> bairro.dat
 Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Jov" "Centro Seg Jov" "red" >> bairro.dat
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Jov" "Liberdade Seg Jov" "red" >> bairro.dat
+
+echo ">>>>>>>> Jovem" >> bairroAll.dat
+python analisaQScorePorBairro.py allJovemOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Jov" "Centro Agra Jov" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Jov" "Centro Agra Jov" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Jov" "Liberdade Agra Jov" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Jov" "Centro Seg Jov" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Jov" "Centro Seg Jov" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Jov" "Liberdade Seg Jov" "red" >> bairroAll.dat
 
 
 
@@ -825,6 +977,31 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg" "Centro Seg Adu
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Adu" "Liberdade Seg Adu" "red" >> bairro.dat
 
+echo ">>>>>>> Adulto" >> bairroAll.dat
+python analisaQScorePorBairro.py allAdultoOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Adu" "Centro Agra Adu" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Adu" "Centro Agra Adu" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Adu" "Liberdade Agra Adu" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Adu" "Centro Seg Adu" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg" "Centro Seg Adu" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Adu" "Liberdade Seg Adu" "red" >> bairroAll.dat
+
+
+
+
 
 echo ">>>>>>>>>> Baixa" >> bairro.dat
 python analisaQScorePorBairro.py firsBaixaOrdInter.dat > temp.dat
@@ -849,6 +1026,28 @@ echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Bai" "Liberdade Seg Bai" "red" >> bairro.dat
 
 
+echo ">>>>>>>>>> Baixa" >> bairroAll.dat
+python analisaQScorePorBairro.py allBaixaOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Bai" "Centro Agra Bai" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Bai" "Centro Agra Bai" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Bai" "Liberdade Agra Bai" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Bai" "Centro Seg Bai" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Bai" "Centro Seg Bai" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Bai" "Liberdade Seg Bai" "red" >> bairroAll.dat
+
 
 echo ">>>>>>>>>> Media" >> bairro.dat
 python analisaQScorePorBairro.py firsMediaOrdInter.dat > temp.dat
@@ -871,6 +1070,28 @@ echo "Seg Lib x Centro" >> bairro.dat
 Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Med" "Centro Seg Med" "red" >> bairro.dat
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Med" "Liberdade Seg Med" "red" >> bairro.dat
+
+echo ">>>>>>>>>> Media" >> bairroAll.dat
+python analisaQScorePorBairro.py allMediaOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Med" "Centro Agra Med" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Med" "Centro Agra Med" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Med" "Liberdade Agra Med" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Med" "Centro Seg Med" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Med" "Centro Seg Med" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Med" "Liberdade Seg Med" "red" >> bairroAll.dat
 
 
 
@@ -897,6 +1118,28 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Fem" "Centro Seg
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Fem" "Liberdade Seg Fem" "red" >> bairro.dat
 
+echo ">>>>>>>>>> Fem" >> bairroAll.dat
+python analisaQScorePorBairro.py allFemininoOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Fem" "Centro Agra Fem" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Fem" "Centro Agra Fem" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Fem" "Liberdade Agra Fem" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Fem" "Centro Seg Fem" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Fem" "Centro Seg Fem" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Fem" "Liberdade Seg Fem" "red" >> bairroAll.dat
+
 
 
 
@@ -921,6 +1164,28 @@ echo "Seg Lib x Centro" >> bairro.dat
 Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Mas" "Centro Seg Mas" "red" >> bairro.dat
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Mas" "Liberdade Seg Mas" "red" >> bairro.dat
+
+echo ">>>>>>>>> Masc" >> bairroAll.dat
+python analisaQScorePorBairro.py allMasculinoOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Mas" "Centro Agra Mas" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Mas" "Centro Agra Mas" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Mas" "Liberdade Agra Mas" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Mas" "Centro Seg Mas" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Mas" "Centro Seg Mas" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Mas" "Liberdade Seg Mas" "red" >> bairroAll.dat
 
 
 
@@ -947,6 +1212,27 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Cas" "Centro Seg
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Cas" "Liberdade Seg Cas" "red" >> bairro.dat
 
+echo ">>>>>>>>>>>> Casado" >> bairroAll.dat
+python analisaQScorePorBairro.py allCasadoOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Cas" "Centro Agra Cas" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Cas" "Centro Agra Cas" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Cas" "Liberdade Agra Cas" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Cas" "Centro Seg Cas" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Cas" "Centro Seg Cas" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Cas" "Liberdade Seg Cas" "red" >> bairroAll.dat
 
 
 
@@ -972,6 +1258,28 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Sol" "Centro Seg
 echo "Seg Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Sol" "Liberdade Seg Sol" "red" >> bairro.dat
 
+echo ">>>>>>>>>>>>>> Solteiro" >> bairroAll.dat
+python analisaQScorePorBairro.py allSolteiroOrdInter.dat > temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Sol" "Centro Agra Sol" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Sol" "Centro Agra Sol" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Sol" "Liberdade Agra Sol" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catole.dat
+grep "centro" temp.dat | grep "seg" > centro.dat
+grep "liberdade" temp.dat | grep "seg" > liberdade.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Seg Sol" "Centro Seg Sol" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Seg Sol" "Centro Seg Sol" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Sol" "Liberdade Seg Sol" "red" >> bairroAll.dat
+
 
 echo ">>>>>>>>>>>>>> Conhece" >> bairro.dat
 python analisaQScorePorBairro.py firsCentroOrdInter.dat > temp.dat
@@ -987,6 +1295,22 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Sol" "Centro Ag
 echo "Agra Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Sol" "Liberdade Agra Sol" "green" >> bairro.dat
 
+echo ">>>>>>>>>>>>>> Conhece" >> bairroAll.dat
+python analisaQScorePorBairro.py allCentroOrdInter.dat > temp.dat
+python analisaQScorePorBairro.py allCatoleOrdInter.dat >> temp.dat
+python analisaQScorePorBairro.py allLiberdadeOrdInter.dat >> temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Sol" "Centro Agra Sol" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Sol" "Centro Agra Sol" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Sol" "Liberdade Agra Sol" "green" >> bairroAll.dat
+
+
+
 echo ">>>>>>>>>>>>>> Não Conhece" >> bairro.dat
 python analisaQScorePorBairro.py firsNotCentroOrdInter.dat > temp.dat
 python analisaQScorePorBairro.py firsNotCatoleOrdInter.dat >> temp.dat
@@ -1001,6 +1325,20 @@ Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Sol" "Centro Ag
 echo "Agra Cat x Liberdade" >> bairro.dat
 Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Sol" "Liberdade Agra Sol" "green" >> bairro.dat
 
-rm temp.dat liberdade.dat catole.dat centro.dat
+echo ">>>>>>>>>>>>>> Não Conhece" >> bairroAll.dat
+python analisaQScorePorBairro.py allNotCentroOrdInter.dat > temp.dat
+python analisaQScorePorBairro.py allNotCatoleOrdInter.dat >> temp.dat
+python analisaQScorePorBairro.py allNotLiberdadeOrdInter.dat >> temp.dat
+grep "catole" temp.dat | grep "agra" > catole.dat
+grep "centro" temp.dat | grep "agra" > centro.dat
+grep "liberdade" temp.dat | grep "agra" > liberdade.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat centro.dat "Catole Agra Sol" "Centro Agra Sol" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdade.dat centro.dat "Liberdade Agra Sol" "Centro Agra Sol" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Agra Sol" "Liberdade Agra Sol" "green" >> bairroAll.dat
+
+rm -f temp.dat liberdade.dat catole.dat centro.dat
 
 

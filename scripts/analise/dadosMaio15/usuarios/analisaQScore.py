@@ -262,7 +262,6 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 			for photo1, photosDic in qDic.iteritems():
 				for photo2, votesList in photosDic.iteritems():
 					answer = random.sample(votesList, 1)[0]#Generating answer to consider
-					#print question + "\t" + photo1 + "\t" + photo2 + "\t" + str(votesList) + "\t" + str(answer)
 			
 					if answer == left:
 						saveWin(photo1, photo2, question)

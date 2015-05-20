@@ -24,46 +24,46 @@ mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat 
 python analisaQScore.py run.csv
 mv first.dat first_vote.dat
 
-python analisaQScore.py runAdulto.csv 1000
+python analisaQScore.py runAdulto.csv 100
 mv first.dat firstAdulto.dat
 mv all.dat allAdulto.dat
-python analisaQScore.py runJovem.csv 1000
+python analisaQScore.py runJovem.csv 100
 mv first.dat firstJovem.dat
 mv all.dat allJovem.dat
-python analisaQScore.py runSolteiro.csv 1000
+python analisaQScore.py runSolteiro.csv 100
 mv first.dat firstSolteiro.dat
 mv all.dat allSolteiro.dat
-python analisaQScore.py runCasado.csv 1000
+python analisaQScore.py runCasado.csv 100
 mv first.dat firstCasado.dat
 mv all.dat allCasado.dat
-python analisaQScore.py runMedia.csv 1000
+python analisaQScore.py runMedia.csv 100
 mv first.dat firstMedia.dat
 mv all.dat allMedia.dat
-python analisaQScore.py runBaixa.csv 1000
+python analisaQScore.py runBaixa.csv 100
 mv first.dat firstBaixa.dat
 mv all.dat allBaixa.dat
-python analisaQScore.py runFeminino.csv 1000 
+python analisaQScore.py runFeminino.csv 100 
 mv first.dat firstFeminino.dat
 mv all.dat allFeminino.dat
-python analisaQScore.py runMasculino.csv 1000
+python analisaQScore.py runMasculino.csv 100
 mv first.dat firstMasculino.dat
 mv all.dat allMasculino.dat
-python analisaQScore.py runCatole.csv 1000
+python analisaQScore.py runCatole.csv 100
 mv first.dat firstCatole.dat
 mv all.dat allCatole.dat
-python analisaQScore.py runCentro.csv 1000
+python analisaQScore.py runCentro.csv 100
 mv first.dat firstCentro.dat
 mv all.dat allCentro.dat
-python analisaQScore.py runLiberdade.csv 1000
+python analisaQScore.py runLiberdade.csv 100
 mv first.dat firstLiberdade.dat
 mv all.dat allLiberdade.dat
-python analisaQScore.py runNotCatole.csv 1000
+python analisaQScore.py runNotCatole.csv 100
 mv first.dat firstNotCatole.dat
 mv all.dat allNotCatole.dat
-python analisaQScore.py runNotCentro.csv 1000
+python analisaQScore.py runNotCentro.csv 100
 mv first.dat firstNotCentro.dat
 mv all.dat allNotCentro.dat
-python analisaQScore.py runNotLiberdade.csv 1000
+python analisaQScore.py runNotLiberdade.csv 100
 mv first.dat firstNotLiberdade.dat
 mv all.dat allNotLiberdade.dat
 

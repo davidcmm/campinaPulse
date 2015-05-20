@@ -5,7 +5,8 @@ library(ggplot2)
 
 #Calculates the variance that should be added or removed from the mean
 ic <- function(x) { 
-	return (sd(x)/sqrt(length(x))*qt(.95,999))#95% confidence interval for a sample of 1000 items
+	#return (sd(x)/sqrt(length(x))*qt(.95,999))#95% confidence interval for a sample of 1000 items
+	return (sd(x)/sqrt(length(x))*qnorm(1-(0.05/2)))#95% confidence interval, significance level of 0.05 (alpha) - sample 100
 }
 
 # Multiple plot function
@@ -62,8 +63,8 @@ type1 <- args[3]
 type2 <- args[4]
 
 #Selecting only qscores
-newdata1 <- data1 [ c(4:1003) ]
-newdata2 <- data2 [ c(4:1003) ]
+newdata1 <- data1 [ c(4:103) ]
+newdata2 <- data2 [ c(4:103) ]
 
 icData1 <- apply(newdata1, 1, ic)
 icData2 <- apply(newdata2, 1, ic)
@@ -94,12 +95,18 @@ centro <- total[total$neig == "centro",]
 liberdade <- total[total$neig == "liberdade",]
 catole <- total[total$neig == "catole",]
 
-pdf(file=paste("IC", args[3], args[4], ".pdf"), paper="special")
-g1 <- ggplot(centro, aes(x=photo, y=mean, colour=type, title="Centro")) + geom_errorbar(aes(ymin=inf, ymax=sup), width=1, size=2) + facet_grid(. ~ ques) + xlab("Location") + ylab("QScore")
-g2 <- ggplot(liberdade, aes(x=photo, y=mean, colour=type, title="Liberdade")) + geom_errorbar(aes(ymin=inf, ymax=sup), width=1, size=2) + facet_grid(. ~ ques) + xlab("Location") + ylab("QScore")
-g3 <- ggplot(catole, aes(x=photo, y=mean, colour=type, title="Catole")) + geom_errorbar(aes(ymin=inf, ymax=sup), width=1, size=2) + facet_grid(. ~ ques) + xlab("Location") + ylab("QScore")
+total$photo
 
-multiplot(g1, g2, g3, cols=2)
+pdf(file=paste("IC-Centro-", args[3], "-", args[4], ".pdf"), paper="special")
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+
+pdf(file=paste("IC-Liberdade-", args[3], "-", args[4], ".pdf"), paper="special")
+ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+
+pdf(file=paste("IC-Catole-", args[3], "-", args[4], ".pdf"), paper="special")
+ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé")
+
+#multiplot(g1, g2, g3, cols=1)
 
 # solt$type <- "solteiro"
 # casa$type <- "casado"

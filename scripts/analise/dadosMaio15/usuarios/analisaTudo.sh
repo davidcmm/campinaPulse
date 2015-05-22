@@ -341,6 +341,8 @@ mv rgbQScoreAgrad.dat rgbQScoreAgradAllNotCatole.dat
 mv rgbQScoreSeg.dat rgbQScoreSegAllNotCatole.dat
 
 #Analisa Correlacao
+Rscript analisaCorrelacao.R rgbQScoreAgradAll.dat rgbQScoreSegAll.dat > correlacaoAll.dat
+
 Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
 Rscript analisaCorrelacao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
 Rscript analisaCorrelacao.R rgbQScoreAgradSolteiro.dat rgbQScoreSegSolteiro.dat > correlacaoSolteiro.dat
@@ -355,6 +357,7 @@ Rscript analisaCorrelacao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.da
 mv *.pdf correlacao*.dat correlacao/
 
 #Analisa Regressao
+Rscript analisaRegressao.R rgbQScoreAgradAll.dat rgbQScoreSegAll.dat > regressaoAll.dat
 
 Rscript analisaRegressao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > regressaoMedia.dat
 Rscript analisaRegressao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > regressaoBaixa.dat

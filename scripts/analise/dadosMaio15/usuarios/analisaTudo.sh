@@ -101,17 +101,85 @@ sort -k 3 -r allNotCatole.dat > allNotCatoleOrd.dat
 sort -k 3 -r allNotCentro.dat > allNotCentroOrd.dat
 sort -k 3 -r allNotLiberdade.dat > allNotLiberdadeOrd.dat
 
-#Calculating Moran I (falta revisar)
-python extractLatLongStreet.py first_vote.dat > newFirst.dat
-./processInputLatLong.sh newFirst.dat
-rm newFirst.dat
-
+#Calculating Moran I Geral(falta revisar)
+./processInputLatLong.sh first_vote.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongFirst.dat
 grep "agrad%C3%A1vel?" streetsQScoresLatLong.dat > streetsQScoresLatLongAgra.dat
 grep "seguro?" streetsQScoresLatLong.dat > streetsQScoresLatLongSeg.dat
-
 Rscript krippMoran.R moran streetsQScoresLatLongAgra.dat streetsQScoresLatLongSeg.dat > moran.dat
 
-#TODO Adicionar Moran por grupo!
+./processInputLatLong.sh all.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAll.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAll.dat > streetsQScoresLatLongAgraAll.dat
+grep "seguro?" streetsQScoresLatLongAll.dat > streetsQScoresLatLongSegAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAll.dat streetsQScoresLatLongSegAll.dat > moranAll.dat
+
+#Por grupo
+./processInputLatLong.sh allAdulto.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllAdulto.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongAgraAllAdulto.dat
+grep "seguro?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongSegAllAdulto.dat
+echo "Adulto" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllAdulto.dat streetsQScoresLatLongSegAllAdulto.dat >> moranAll.dat
+
+
+./processInputLatLong.sh allJovem.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllJovem.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllJovem.dat > streetsQScoresLatLongAgraAllJovem.dat
+grep "seguro?" streetsQScoresLatLongAllJovem.dat > streetsQScoresLatLongSegAllJovem.dat
+echo "Jovem" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllJovem.dat streetsQScoresLatLongSegAllJovem.dat >> moranAll.dat
+
+
+./processInputLatLong.sh allFeminino.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllFeminino.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllFeminino.dat > streetsQScoresLatLongAgraAllFeminino.dat
+grep "seguro?" streetsQScoresLatLongAllFeminino.dat > streetsQScoresLatLongSegAllFeminino.dat
+echo "Feminino" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllFeminino.dat streetsQScoresLatLongSegAllFeminino.dat >> moranAll.dat
+
+
+./processInputLatLong.sh allMasculino.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllMasculino.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllMasculino.dat > streetsQScoresLatLongAgraAllMasculino.dat
+grep "seguro?" streetsQScoresLatLongAllMasculino.dat > streetsQScoresLatLongSegAllMasculino.dat
+echo "Masculino" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllMasculino.dat streetsQScoresLatLongSegAllMasculino.dat >> moranAll.dat
+
+./processInputLatLong.sh allCasado.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllCasado.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllCasado.dat > streetsQScoresLatLongAgraAllCasado.dat
+grep "seguro?" streetsQScoresLatLongAllCasado.dat > streetsQScoresLatLongSegAllCasado.dat
+echo "Casado" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllCasado.dat streetsQScoresLatLongSegAllCasado.dat >> moranAll.dat
+
+
+./processInputLatLong.sh allSolteiro.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllSolteiro.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllSolteiro.dat > streetsQScoresLatLongAgraAllSolteiro.dat
+grep "seguro?" streetsQScoresLatLongAllSolteiro.dat > streetsQScoresLatLongSegAllSolteiro.dat
+echo "Solteiro" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllSolteiro.dat streetsQScoresLatLongSegAllSolteiro.dat >> moranAll.dat
+
+
+./processInputLatLong.sh allBaixa.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllBaixa.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllBaixa.dat > streetsQScoresLatLongAgraAllBaixa.dat
+grep "seguro?" streetsQScoresLatLongAllBaixa.dat > streetsQScoresLatLongSegAllBaixa.dat
+echo "Baixa" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllBaixa.dat streetsQScoresLatLongSegAllBaixa.dat >> moranAll.dat
+
+./processInputLatLong.sh allMedia.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllMedia.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllMedia.dat > streetsQScoresLatLongAgraAllMedia.dat
+grep "seguro?" streetsQScoresLatLongAllMedia.dat > streetsQScoresLatLongSegAllMedia.dat
+echo "Media" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllMedia.dat streetsQScoresLatLongSegAllMedia.dat >> moranAll.dat
+
+
+rm streetsQScoresLatLongAll*.dat
+mkdir moran
+mv streetsQScoresLatLongAgraAll* streetsQScoresLatLongSegAll* moranAll.dat moran/
 
 #Encontra interseccao entre qscores gerados
 python encontraInterseccao.py firsBaixaOrd.dat firsMediaOrd.dat > intersectionBaixaMedia.dat 
@@ -891,6 +959,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Ger" "Liberdade Seg
 #Todos os votos
 echo ">>>>>>>> Geral" >> bairroAll.dat
 python analisaQScorePorBairro.py all_ordenado.dat > temp.dat
+echo "### All Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### All Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -936,6 +1009,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Jov" "Liberdade Seg
 
 echo ">>>>>>>> Jovem" >> bairroAll.dat
 python analisaQScorePorBairro.py allJovemOrdInter.dat > temp.dat
+echo "### Jovem Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Jovem Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -982,6 +1060,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Adu" "Liberdade Seg
 
 echo ">>>>>>> Adulto" >> bairroAll.dat
 python analisaQScorePorBairro.py allAdultoOrdInter.dat > temp.dat
+echo "### Adulto Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Adulto Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1031,6 +1114,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Bai" "Liberdade Seg
 
 echo ">>>>>>>>>> Baixa" >> bairroAll.dat
 python analisaQScorePorBairro.py allBaixaOrdInter.dat > temp.dat
+echo "### Baixa Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Baixa Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1076,6 +1164,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Med" "Liberdade Seg
 
 echo ">>>>>>>>>> Media" >> bairroAll.dat
 python analisaQScorePorBairro.py allMediaOrdInter.dat > temp.dat
+echo "### Media Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Media Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1123,6 +1216,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Fem" "Liberdade Seg
 
 echo ">>>>>>>>>> Fem" >> bairroAll.dat
 python analisaQScorePorBairro.py allFemininoOrdInter.dat > temp.dat
+echo "### Fem Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Fem Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1170,6 +1268,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Mas" "Liberdade Seg
 
 echo ">>>>>>>>> Masc" >> bairroAll.dat
 python analisaQScorePorBairro.py allMasculinoOrdInter.dat > temp.dat
+echo "### Masc Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Masc Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1217,6 +1320,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Cas" "Liberdade Seg
 
 echo ">>>>>>>>>>>> Casado" >> bairroAll.dat
 python analisaQScorePorBairro.py allCasadoOrdInter.dat > temp.dat
+echo "### Casado Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Casado Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat
@@ -1263,6 +1371,11 @@ Rscript  calculaTTest.R catole.dat liberdade.dat "Catole Seg Sol" "Liberdade Seg
 
 echo ">>>>>>>>>>>>>> Solteiro" >> bairroAll.dat
 python analisaQScorePorBairro.py allSolteiroOrdInter.dat > temp.dat
+echo "### Solteiro Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Solteiro Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
 grep "catole" temp.dat | grep "agra" > catole.dat
 grep "centro" temp.dat | grep "agra" > centro.dat
 grep "liberdade" temp.dat | grep "agra" > liberdade.dat

@@ -3,13 +3,9 @@
 library(irr)
 library(ape)
 
-args <- commandArgs(trailingOnly = TRUE)
-
 #Kripp
-krippAlpha <- function () {
-	agra <- args[2]
-	seg <- args[3]
-
+krippAlpha <- function (agra, seg) {
+	
 	dadosAgra <- read.table(agra, header=TRUE, row.names=1)
 	dadosSeg <- read.table(seg, header=TRUE, row.names=1)
 	matrizAgra <- data.matrix(dadosAgra)
@@ -25,10 +21,8 @@ krippAlpha <- function () {
 
 
 #Moran I
-moranI <- function () {
-	agra <- args[2]
-	seg <- args[3]
-
+moranI <- function (agra, seg) {
+	
 	data <- read.table(agra, sep="+", header=F)
 	data.dists <- as.matrix(dist(cbind(data$V5, data$V4)))
 
@@ -50,13 +44,19 @@ moranI <- function () {
 	print(paste(result$observed, " ", result$expected, " ", result$p.value))
 }
 
-execute <- args[1]
+args <- commandArgs(trailingOnly = TRUE)
 
-if (execute == 'both'){
-	krippAlpha()
-	moranI()	
-} else if (execute == 'moran') {
-	moranI()
-} else if (execute == 'kripp') {
-	krippAlpha()
+if (length(args) > 1){
+  execute <- args[1]
+  agra <- args[2]
+  seg <- args[3]
+  
+  if (execute == 'both'){
+  	krippAlpha(agra, seg)
+  	moranI(agra, seg)	
+  } else if (execute == 'moran') {
+  	moranI(agra, seg)
+  } else if (execute == 'kripp') {
+  	krippAlpha(agra, seg)
+  }
 }

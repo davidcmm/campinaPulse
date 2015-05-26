@@ -65,19 +65,26 @@ normalizedKendallTauDistance <- function(x,y){
   #   The normalized Kendall tau distance 
   #
   # Based on http://en.wikipedia.org/wiki/Kendall_tau_distance
-
-
+  rank1 <- read.table(args[1])
+  rank2 <- read.table(args[2])
+  matriz <- merge(rank1, rank2, by="V2")
+  
+  x <- matriz$V3.x
+  y <- matriz$V3.y
+  
   tau = numberOfInversions(order(x)[rank(y)])
   nItens = length(x)
   maxNumberOfInverstions <- (nItens*(nItens-1))/2
   normalized = tau/maxNumberOfInverstions
 
-  return(normalized)
+  print (normalized)
 }
 
 args <- commandArgs(trailingOnly = TRUE)
 
-rank1 <- read.table(args[1])
-rank2 <- read.table(args[2])
-matriz <- merge(rank1, rank2, by="V2")
-normalizedKendallTauDistance(matriz$V3.x, matriz$V3.y)
+if (length(args) > 1){
+  file1 <- args[1]
+  file2 <- args[2]
+  
+  normalizedKendallTauDistance(file1, file2)
+}

@@ -176,10 +176,8 @@ grep "seguro?" streetsQScoresLatLongAllMedia.dat > streetsQScoresLatLongSegAllMe
 echo "Media" >> moranAll.dat
 Rscript krippMoran.R moran streetsQScoresLatLongAgraAllMedia.dat streetsQScoresLatLongSegAllMedia.dat >> moranAll.dat
 
-
-rm streetsQScoresLatLongAll*.dat
-mkdir moran
-mv streetsQScoresLatLongAgraAll* streetsQScoresLatLongSegAll* moranAll.dat moran/
+mkdir moran100
+mv streetsQScoresLatLongAll*.dat streetsQScoresLatLongAgraAll* streetsQScoresLatLongSegAll* moranAll.dat moran100/
 
 #Encontra interseccao entre qscores gerados
 python encontraInterseccao.py firsBaixaOrd.dat firsMediaOrd.dat > intersectionBaixaMedia.dat 
@@ -199,7 +197,6 @@ python encontraInterseccao.py allLiberdadeOrd.dat allNotLiberdadeOrd.dat > inter
 python encontraInterseccao.py allCatoleOrd.dat allNotCatoleOrd.dat > intersectionAllCatole.dat
 
 #Prepara paginas html e arquivos de interseccao ordenados (revisar a partir daqui)
-mkdir rankings
 python preparaHTML.py first_vote_ordenado.dat
 python preparaHTML.py all_ordenado.dat
 
@@ -298,7 +295,8 @@ grep "liberdade" allNotLiberdadeOrdInter.dat > tmp.dat
 mv tmp.dat allNotLiberdadeOrdInter.dat 
 mv question.html questionAllNotLiberdade.html
 
-mv question*.html rankings
+mkdir rankings100
+mv question*.html rankings100
 
 #Combina RGB, #Linhas e criterios
 python combinaRGBQScoreLinhas.py rgb.dat first_vote_ordenado.dat lines.dat
@@ -408,37 +406,40 @@ python combinaRGBQScoreLinhas.py rgb.dat allNotCatoleOrdInter.dat lines.dat
 mv rgbQScoreAgrad.dat rgbQScoreAgradAllNotCatole.dat
 mv rgbQScoreSeg.dat rgbQScoreSegAllNotCatole.dat
 
-#Analisa Correlacao
-Rscript analisaCorrelacao.R rgbQScoreAgradAll.dat rgbQScoreSegAll.dat > correlacaoAll.dat
+mkdir inputCorrelacaoRegressao100
+mv rgbQScore*.dat inputCorrelacaoRegressao100/
 
-Rscript analisaCorrelacao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradSolteiro.dat rgbQScoreSegSolteiro.dat > correlacaoSolteiro.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradCasado.dat rgbQScoreSegCasado.dat > correlacaoCasado.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradJovem.dat rgbQScoreSegJovem.dat > correlacaoJovem.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradAdulto.dat rgbQScoreSegAdulto.dat > correlacaoAdulto.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradFeminino.dat rgbQScoreSegFeminino.dat > correlacaoFeminino.dat
-Rscript analisaCorrelacao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.dat > correlacaoMasculino.dat
+#Analisa Correlacao
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat inputCorrelacaoRegressao100/rgbQScoreSegAll.dat > correlacaoAll.dat
+
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegMedia.dat > correlacaoMedia.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegSolteiro.dat > correlacaoSolteiro.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegCasado.dat > correlacaoCasado.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegJovem.dat > correlacaoJovem.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAdulto.dat > correlacaoAdulto.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegFeminino.dat > correlacaoFeminino.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegMasculino.dat > correlacaoMasculino.dat
 
 #TODO adicionar conhecer bairros e arquivos com all
 
-mv *.pdf correlacao*.dat correlacao/
+mv *.pdf correlacao*.dat correlacao100/
 
 #Analisa Regressao
-Rscript analisaRegressao.R rgbQScoreAgradAll.dat rgbQScoreSegAll.dat > regressaoAll.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat inputCorrelacaoRegressao100/rgbQScoreSegAll.dat > regressaoAll.dat
 
-Rscript analisaRegressao.R rgbQScoreAgradMedia.dat rgbQScoreSegMedia.dat > regressaoMedia.dat
-Rscript analisaRegressao.R rgbQScoreAgradBaixa.dat rgbQScoreSegBaixa.dat > regressaoBaixa.dat
-Rscript analisaRegressao.R rgbQScoreAgradSolteiro.dat rgbQScoreSegSolteiro.dat > regressaoSolteiro.dat
-Rscript analisaRegressao.R rgbQScoreAgradCasado.dat rgbQScoreSegCasado.dat > regressaoCasado.dat
-Rscript analisaRegressao.R rgbQScoreAgradJovem.dat rgbQScoreSegJovem.dat > regressaoJovem.dat
-Rscript analisaRegressao.R rgbQScoreAgradAdulto.dat rgbQScoreSegAdulto.dat > regressaoAdulto.dat
-Rscript analisaRegressao.R rgbQScoreAgradFeminino.dat rgbQScoreSegFeminino.dat > regressaoFeminino.dat
-Rscript analisaRegressao.R rgbQScoreAgradMasculino.dat rgbQScoreSegMasculino.dat > regressaoMasculino.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegMedia.dat > regressaoMedia.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegBaixa.dat > regressaoBaixa.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegSolteiro.dat > regressaoSolteiro.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegCasado.dat > regressaoCasado.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegJovem.dat > regressaoJovem.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAdulto.dat > regressaoAdulto.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegFeminino.dat > regressaoFeminino.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegMasculino.dat > regressaoMasculino.dat
 
 #TODO adicionar conhecer bairros e arquivos com all
 
-mv *.pdf regressao*.dat correlacao/
+mv *.pdf regressao*.dat regressao100/
 
 #Calcula ICs por ponto para cada grupo
 Rscript analisaICPorFoto.R allSolteiroOrdInter.dat allCasadoOrdInter.dat solteiro casado
@@ -585,8 +586,8 @@ echo "Feminino e Masculino" >> krippAll.dat
 Rscript krippMoran.R kripp consenseMatrixAgraFemininoMasculino.dat consenseMatrixSegFemininoMasculino.dat >> krippAll.dat
 
 
-mkdir consense 
-mv consenseMatrix*.dat krippAll.dat kripp.dat consense
+mkdir consense100 
+mv consenseMatrix*.dat krippAll.dat kripp.dat consense100
 mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
 #Kendall tau distance
@@ -604,43 +605,43 @@ echo "All" >> kendall.dat
 Rscript kendallDistance.R agradGeralAll.dat segGeralAll.dat >> kendall.dat
 
 #Casados e Solteiros
-echo " Cas x Solteiro Agrad" >> kendall.dat
-grep "agrad" firsCasadoOrdInter.dat > ranking1.dat
-grep "agrad" firsSolteiroOrdInter.dat > ranking2.dat
-Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+#echo " Cas x Solteiro Agrad" >> kendall.dat
+#grep "agrad" firsCasadoOrdInter.dat > ranking1.dat
+#grep "agrad" firsSolteiroOrdInter.dat > ranking2.dat
+#Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
 echo " Cas x Solteiro Agrad" >> kendallAll.dat
-grep "agrad" allCasadoOrdInter.dat > ranking1.dat
-grep "agrad" allSolteiroOrdInter.dat > ranking2.dat
-Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat
+grep "agrad" allCasadoOrdInter.dat > kendallAllCasado.dat
+grep "agrad" allSolteiroOrdInter.dat > kendallAllSolteiro.dat
+Rscript kendallDistance.R kendallAllCasado.dat kendallAllSolteiro.dat >> kendallAll.dat
 
 #Selecting photos from general ranking that were considered in current rankings
-echo " Cas x Geral Agrad" >> kendall.dat
-awk '{print $2}' ranking1.dat > temp.dat
-rm -f ranking3.dat
-while read photo ; do 
-	grep $photo agradGeral.dat >> ranking3.dat
-done < temp.dat
-sort -k 3 -r ranking3.dat > ranking3Ord.dat 
-Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
-echo " Sol x Geral Agrad" >> kendall.dat
-Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
+#echo " Cas x Geral Agrad" >> kendall.dat
+#awk '{print $2}' ranking1.dat > temp.dat
+#rm -f ranking3.dat
+#while read photo ; do 
+#	grep $photo agradGeral.dat >> ranking3.dat
+#done < temp.dat
+#sort -k 3 -r ranking3.dat > ranking3Ord.dat 
+#Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendall.dat
+#echo " Sol x Geral Agrad" >> kendall.dat
+#Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendall.dat
 
 echo " Cas x Geral Agrad" >> kendallAll.dat
-awk '{print $2}' ranking1.dat > temp.dat
+awk '{print $2}' kendallAllCasado.dat > temp.dat
 rm -f ranking3.dat
 while read photo ; do 
 	grep $photo agradGeralAll.dat >> ranking3.dat
 done < temp.dat
-sort -k 3 -r ranking3.dat > ranking3Ord.dat 
-Rscript kendallDistance.R ranking1.dat ranking3Ord.dat >> kendallAll.dat
+sort -k 3 -r ranking3.dat > kendallAllGeralCasadoOrd.dat 
+Rscript kendallDistance.R kendallAllCasado.dat kendallAllGeralCasadoOrd.dat >> kendallAll.dat
 echo " Sol x Geral Agrad" >> kendallAll.dat
-Rscript kendallDistance.R ranking2.dat ranking3Ord.dat >> kendallAll.dat
+Rscript kendallDistance.R kendallAllSolteiro.dat kendallAllGeralCasadoOrd.dat >> kendallAll.dat
 
-echo " Cas x Solteiro Seg" >> kendall.dat
-grep "seg" firsCasadoOrdInter.dat > ranking1.dat
-grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
-Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
+#echo " Cas x Solteiro Seg" >> kendall.dat
+#grep "seg" firsCasadoOrdInter.dat > ranking1.dat
+#grep "seg" firsSolteiroOrdInter.dat > ranking2.dat
+#Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
 echo " Cas x Solteiro Seg" >> kendallAll.dat
 grep "seg" allCasadoOrdInter.dat > ranking1.dat
@@ -929,7 +930,7 @@ grep "seg" allNotLiberdadeOrdInter.dat > ranking2.dat
 Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendallAll.dat 
 
 rm -f ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat agradGeral.dat segGeral.dat agradGeralAll.dat segGeralAll.dat
-mv kendall*.dat correlacao/
+mv agradGeralAll.dat segGeralAll.dat kendall*.dat correlacao/
 
 #Analisa QScore por Bairro
 rm -f bairro.dat bairroAll.dat

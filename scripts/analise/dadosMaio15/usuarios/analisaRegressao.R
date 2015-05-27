@@ -17,15 +17,15 @@ calculateRegression <- function(file1, file2, shouldPlot=FALSE){
                    
     print(">>>> Regressao Agradavel: qscore = red + green + blue + diag + hor + vert")
     #modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    print(modelo)
-    print(summary(modelo))
+    modeloAgrad <<- lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
+    print(modeloAgrad)
+    print(summary(modeloAgrad))
     
-    print(">>>> Regressao Agradavel: qscore = red + green + blue + diag")
+    #print(">>>> Regressao Agradavel: qscore = red + green + blue + diag")
     #modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    modelo = lm(qscore ~ red + green + blue + diag, data=dados)
-    print(modelo)
-    print(summary(modelo))
+    #modelo = lm(qscore ~ red + green + blue + diag, data=dados)
+    #print(modelo)
+    #print(summary(modelo))
     
     #Seguranca
     data = read.table(file2, header=TRUE)
@@ -40,14 +40,14 @@ calculateRegression <- function(file1, file2, shouldPlot=FALSE){
     }
     
     print(">>>> Regressao Seguro: qscore = red + green + blue + diag + hor + vert")
-    modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    print(modelo)
-    print(summary(modelo))
+    modeloSeg <<- lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
+    print(modeloSeg)
+    print(summary(modeloSeg))
     
-    print(">>>> Regressao Seguro: qscore = red + green + diag + hor")
-    modelo = lm(qscore ~ red + green + diag + hor, data=dados)
-    print(modelo)
-    print(summary(modelo))
+    #print(">>>> Regressao Seguro: qscore = red + green + diag + hor")
+    #modelo = lm(qscore ~ red + green + diag + hor, data=dados)
+    #print(modelo)
+    #print(summary(modelo))
 }
 
 

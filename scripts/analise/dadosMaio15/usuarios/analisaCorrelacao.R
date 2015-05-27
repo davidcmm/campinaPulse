@@ -58,7 +58,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
     
         pdf(file=paste(file1,"boxAgrad", ".pdf"), paper="special")
         #par(mfrow = c(4,2))
-        boxplot(dataAgrad$qscore, prob=TRUE, main="QScore")
+        boxplot(dataAgrad$qscore, prob=TRUE, main=paste("QScore ", file1))
         #boxplot(dataAgrad$red, prob=TRUE, main="Red")
         #boxplot(dataAgrad$green, prob=TRUE, main="Green")
         #boxplot(dataAgrad$blue, prob=TRUE, main="Blue")
@@ -145,7 +145,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         
         pdf(file=paste(file2, "boxSeg", ".pdf"), paper="special")
         #par(mfrow = c(4,2))
-        boxplot(dataSeg$qscore, prob=TRUE, main="QScore")
+        boxplot(dataSeg$qscore, prob=TRUE, main=paste("QScore ", file2))
         #boxplot(dataSeg$red, prob=TRUE, main="Red")
         #boxplot(dataSeg$green, prob=TRUE, main="Green")
         #boxplot(dataSeg$blue, prob=TRUE, main="Blue")

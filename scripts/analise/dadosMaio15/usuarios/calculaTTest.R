@@ -1,5 +1,6 @@
 #!/bin/Rscript
 # Calculates the comparison tests (t-test and mann-whitney) for a set of two data sets
+library(ggplot2)
 
 calculateTTests <- function(file1, file2, output1, output2, color, shouldPlot=FALSE){
 
@@ -27,10 +28,12 @@ calculateTTests <- function(file1, file2, output1, output2, color, shouldPlot=FA
     #Creating boxplots of qscores per district
     if (shouldPlot){
         pdf(paste("boxplot", output1, ".pdf"), paper="special")
-        boxplot(data1$V3, main=paste("Boxplot", output1), col=color)
+        #boxplot(data1$V3, main=paste("Boxplot", output1), col=color)
+        ggplot(data1, aes(y=data1$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
         
         pdf(paste("boxplot", output2, ".pdf"), paper="special")
-        boxplot(data2$V3, main=paste("Boxplot", output2), col=color)
+        #boxplot(data2$V3, main=paste("Boxplot", output2), col=color)
+        ggplot(data2, aes(y=data1$V3, x=c(output2)))+geom_boxplot()+ggtitle(paste("Boxplot ", output2))
         
         #Verifying if data is normal
         pdf(paste("norm", output1, "-", output2, ".pdf"), paper="special")

@@ -6,6 +6,7 @@ output: pdf_document
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
 source('krippMoran.R')
+library(texreg)
 
 moranI("moran100/streetsQScoresLatLongAgraAll.dat", "moran100/streetsQScoresLatLongSegAll.dat")
 ```
@@ -138,6 +139,9 @@ source('analisaRegressao.R')
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradGeral <- modeloAgrad
+modeloSegGeral <- modeloSeg
 ```
 
 ## Adulto
@@ -146,6 +150,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllAdulto.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllAdulto.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradAdulto <- modeloAgrad
+modeloSegAdulto <- modeloSeg
 ```
 
 ## Jovem
@@ -154,6 +161,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllJovem.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllJovem.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradJovem <- modeloAgrad
+modeloSegJovem <- modeloSeg
 ```
 
 ## Baixa
@@ -162,6 +172,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllBaixa.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllBaixa.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradBaixa <- modeloAgrad
+modeloSegBaixa <- modeloSeg
 ```
 
 ## Media
@@ -170,6 +183,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedia.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedia.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMedia <- modeloAgrad
+modeloSegMedia <- modeloSeg
 ```
 
 ## Feminino
@@ -178,6 +194,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllFeminino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllFeminino.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradFeminino <- modeloAgrad
+modeloSegFeminino <- modeloSeg
 ```
 
 ## Masculino
@@ -186,6 +205,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMasculino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMasculino.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMasculino <- modeloAgrad
+modeloSegMasculino <- modeloSeg
 ```
 
 ## Solteiro
@@ -194,6 +216,9 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllSolteiro.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllSolteiro.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradSolteiro <- modeloAgrad
+modeloSegSolteiro <- modeloSeg
 ```
 
 ## Casado
@@ -202,4 +227,23 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat", shouldPlot=TRUE)
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradCasado <- modeloAgrad
+modeloSegCasado <- modeloSeg
+```
+
+## Tabela com Modelos para Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4, out.width=4}
+texreg(list(modeloAgradGeral, modeloAgradAdulto, modeloAgradJovem, modeloAgradBaixa, modeloAgradMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Agradável")
+
+texreg(list(modeloAgradGeral, modeloAgradFeminino, modeloAgradMasculino, modeloAgradSolteiro, modeloAgradCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Agradável")
+```
+
+## Tabelas com Modelos para Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4, out.width=4}
+texreg(list(modeloSegGeral, modeloSegAdulto, modeloSegJovem, modeloSegBaixa, modeloSegMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Seguro")
+
+texreg(list(modeloSegGeral, modeloSegFeminino, modeloSegMasculino, modeloSegSolteiro, modeloSegCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Seguro")
 ```

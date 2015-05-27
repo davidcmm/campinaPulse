@@ -46,7 +46,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
     print(paste(res$p.value, " ", res$estimate))
     
     if (shouldPlot){
-        pdf(file=paste("histAgrad", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file1, "histAgrad", ".pdf"), paper="special")
         par(mfrow = c(4,2))
         hist(dataAgrad$qscore, prob=TRUE, main="QScore")
         hist(dataAgrad$red, prob=TRUE, main="Red")
@@ -56,7 +56,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         hist(dataAgrad$hor, prob=TRUE, main="Hor")
         hist(dataAgrad$ver, prob=TRUE, main="Ver")
     
-        pdf(file=paste("boxAgrad", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file1,"boxAgrad", ".pdf"), paper="special")
         #par(mfrow = c(4,2))
         boxplot(dataAgrad$qscore, prob=TRUE, main="QScore")
         #boxplot(dataAgrad$red, prob=TRUE, main="Red")
@@ -66,7 +66,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         #boxplot(dataAgrad$hor, prob=TRUE, main="Hor")
         #boxplot(dataAgrad$ver, prob=TRUE, main="Ver")
         
-        pdf(file=paste("qqplotsAgrad", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file1, "qqplotsAgrad", ".pdf"), paper="special")
         par(mfrow = c(4,2))
         qqnorm(dataAgrad$qscore, main="QScore");qqline(dataAgrad$qscore)
         qqnorm(dataAgrad$red, main="Red");qqline(dataAgrad$red)
@@ -76,7 +76,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         qqnorm(dataAgrad$hor, main="Hor");qqline(dataAgrad$hor)
         qqnorm(dataAgrad$ver, main="Ver");qqline(dataAgrad$ver)
         
-        pdf(file=paste("plotsAgrad", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file1, "plotsAgrad", ".pdf"), paper="special")
         par(mfrow = c(3,2))
         plot(dataAgrad$red, dataAgrad$qscore, main="Red")
         plot(dataAgrad$green, dataAgrad$qscore, main="Green")
@@ -84,6 +84,8 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         plot(dataAgrad$diag, dataAgrad$qscore, main="Diag")
         plot(dataAgrad$hor, dataAgrad$qscore, main="Hor")
         plot(dataAgrad$ver, dataAgrad$qscore, main="Ver")
+        
+        dev.off()
     }
     
     
@@ -131,7 +133,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
     print(paste(res$p.value, " ", res$estimate))
     
     if (shouldPlot){
-        pdf(file=paste("histSeg", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file2, "histSeg", ".pdf"), paper="special")
         par(mfrow = c(4,2))
         hist(dataSeg$qscore, prob=TRUE, main="QScore")
         hist(dataSeg$red, prob=TRUE, main="Red")
@@ -141,7 +143,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         hist(dataSeg$hor, prob=TRUE, main="Hor")
         hist(dataSeg$ver, prob=TRUE, main="Ver")
         
-        pdf(file=paste("boxSeg", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file2, "boxSeg", ".pdf"), paper="special")
         #par(mfrow = c(4,2))
         boxplot(dataSeg$qscore, prob=TRUE, main="QScore")
         #boxplot(dataSeg$red, prob=TRUE, main="Red")
@@ -151,7 +153,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         #boxplot(dataSeg$hor, prob=TRUE, main="Hor")
         #boxplot(dataSeg$ver, prob=TRUE, main="Ver")
         
-        pdf(file=paste("qqplotsSeg", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file2, "qqplotsSeg", ".pdf"), paper="special")
         par(mfrow = c(4,2))
         qqnorm(dataSeg$qscore, main="QScore");qqline(dataSeg$qscore)
         qqnorm(dataSeg$red, main="Red");qqline(dataSeg$red)
@@ -161,7 +163,7 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         qqnorm(dataSeg$hor, main="Hor");qqline(dataSeg$hor)
         qqnorm(dataSeg$ver, main="Ver");qqline(dataSeg$ver)
         
-        pdf(file=paste("plotsSeg", args[1], ".pdf"), paper="special")
+        pdf(file=paste(file2, "plotsSeg", ".pdf"), paper="special")
         par(mfrow = c(3,2))
         plot(dataSeg$red, dataSeg$qscore, main="Red")
         plot(dataSeg$green, dataSeg$qscore, main="Green")
@@ -169,6 +171,8 @@ calculateTests <- function(file1, file2, shouldPlot=FALSE) {
         plot(dataSeg$diag, dataSeg$qscore, main="Diag")
         plot(dataSeg$hor, dataSeg$qscore, main="Hor")
         plot(dataSeg$ver, dataSeg$qscore, main="Ver")
+        
+        dev.off()
     }
 }
 

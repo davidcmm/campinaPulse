@@ -10,21 +10,22 @@ calculateRegression <- function(file1, file2, shouldPlot=FALSE){
     dados = data.frame(qscore=data$qscore, red=data$red, green=data$green, blue=data$blue, diag=data$diag, hor=data$hor, vert=data$vert)
     regsubsetsAgrad.out <<- regsubsets(qscore ~ red + green + blue + diag + vert + hor, data = dados, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
     if(shouldPlot){
-      jpeg(file = paste(file1, ".jpg"))
+      pdf(file = paste(file1, ".pdf"))
       plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+      dev.off()
     }
                    
     print(">>>> Regressao Agradavel: qscore = red + green + blue + diag + hor + vert")
     #modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
     modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    modelo
-    summary(modelo)
+    print(modelo)
+    print(summary(modelo))
     
     print(">>>> Regressao Agradavel: qscore = red + green + blue + diag")
     #modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
     modelo = lm(qscore ~ red + green + blue + diag, data=dados)
-    modelo
-    summary(modelo)
+    print(modelo)
+    print(summary(modelo))
     
     #Seguranca
     data = read.table(file2, header=TRUE)
@@ -33,19 +34,20 @@ calculateRegression <- function(file1, file2, shouldPlot=FALSE){
     dados = data.frame(qscore=data$qscore, red=data$red, green=data$green, blue=data$blue, diag=data$diag, hor=data$hor, vert=data$vert)
     regsubsetsSeg.out <<- regsubsets(qscore ~ red + green + blue + diag + vert + hor, data = dados, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
     if(shouldPlot){
-        jpeg(file = paste(file2, ".jpg"))
+        pdf(file = paste(file2, ".pdf"))
         plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+        dev.off()
     }
     
     print(">>>> Regressao Seguro: qscore = red + green + blue + diag + hor + vert")
     modelo = lm(qscore ~ red + green + blue + diag + hor + vert, data=dados)
-    modelo
-    summary(modelo)
+    print(modelo)
+    print(summary(modelo))
     
     print(">>>> Regressao Seguro: qscore = red + green + diag + hor")
     modelo = lm(qscore ~ red + green + diag + hor, data=dados)
-    modelo
-    summary(modelo)
+    print(modelo)
+    print(summary(modelo))
 }
 
 

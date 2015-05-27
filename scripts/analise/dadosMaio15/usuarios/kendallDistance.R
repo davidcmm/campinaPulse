@@ -53,7 +53,7 @@ numberOfInversions <- function(x){
   return (r$inversions)
 }
 
-normalizedKendallTauDistance <- function(x,y){
+normalizedKendallTauDistance <- function(file1,file2){
   # Computes normalized kendall tau distance
   #
   # Args:
@@ -65,8 +65,9 @@ normalizedKendallTauDistance <- function(x,y){
   #   The normalized Kendall tau distance 
   #
   # Based on http://en.wikipedia.org/wiki/Kendall_tau_distance
-  rank1 <- read.table(args[1])
-  rank2 <- read.table(args[2])
+  rank1 <- read.table(file1)
+  rank2 <- read.table(file2)
+  
   matriz <- merge(rank1, rank2, by="V2")
   
   x <- matriz$V3.x

@@ -125,7 +125,7 @@ def calcLiu(photo, question):
 	Liu = ((1.0*liu) / (wiu + liu + tiu))
 	return Liu
 
-def computeQScores(allPhotos, outputFileName):
+def computeQScores(allPhotos):
 	"""Computing qscore of each photo used in experiment."""
 	output = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	
@@ -207,14 +207,14 @@ def evaluateFirstVote(lines, outputFileName):
 			photosAlreadyComputed[question].add(photo1+" "+photo2)
 
 	output = open(outputFileName, 'w')
-	outputData = computeQScores(allPhotos, outputFileName)
+	outputData = computeQScores(allPhotos)
 	for question, qDic in outputData.iteritems():
 		for photo, qscore in qDic.iteritems():
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(qscore)+'\n')
 	output.close()
 
 def evaluateAllVotes(lines, outputFileName, amountOfSamples):
-	""" Considering all votes for each pair of photos and performing a bootstrap"""
+	""" Considering all votes for each pair of photos and performing a simulation (bootstrap based)"""
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	
@@ -270,7 +270,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 					elif answer == notKnown:
 						saveDraw(photo1, photo2, question)	
 
-		qscores = computeQScores(allPhotos, outputFileName)
+		qscores = computeQScores(allPhotos)
 		for question, qDic in qscores.iteritems():
 			for photo, qscore in qDic.iteritems():
 				if not allQScores[question].has_key(photo):
@@ -284,17 +284,92 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples):
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
 	output.close()
 
+def evaluateVotePerIteration(lines, outputFileNames):
+	""" Considering votes per replica iteration for each pair of photos"""
+	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	votesUsers = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+
+	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	
+	#Reading from pybossa task-run CSV
+	for iteration in  range(0, 3):
+		resetCounters()
+
+		for line in lines:
+			lineData = line.split("+")
+			userID = lineData[4]		
+			userAnswer = lineData[9].strip(' \t\n\r"')
+
+			#In user answers that contain profile information, jump to comparison
+			if userAnswer[0] == '{':
+				index = userAnswer.find("Qual")
+				if index == -1:
+					raise Exception("Line with profile does not contain question: " + userAnswer)
+				userAnswer = userAnswer[index:].split(" ")
+			else:
+				userAnswer = userAnswer.split(" ")
+
+			question = userAnswer[5].strip(' \t\n\r"')
+			answer = userAnswer[6].strip(' \t\n\r"')
+			photo1 = userAnswer[7].strip(' \t\n\r"')
+			photo2 = userAnswer[8].strip(' \t\n\r"')
+
+			#Creating votes dictionary
+			if not votes[question].has_key(photo1):
+				votes[question][photo1] = {}
+			if not votes[question][photo1].has_key(photo2):
+				votes[question][photo1][photo2] = 0
+
+			#Creating users control dictionary
+			if not votesUsers[question].has_key(photo1):
+				votesUsers[question][photo1] = Set([])
+			if not votesUsers[question].has_key(photo2):
+				votesUsers[question][photo2] = Set([])
+
+
+			if (iteration == 0 and votes[question][photo1][photo2] == 0) or (iteration == 1 and votes[question][photo1][photo2] == 1) or (iteration == 2 and votes[question][photo1][photo2] == 2):
+				if answer == left:
+					saveWin(photo1, photo2, question)
+				elif answer == right:
+					saveWin(photo2, photo1, question)
+				elif answer == notKnown:
+					saveDraw(photo1, photo2, question)
+
+				allPhotos.add(photo1)
+				allPhotos.add(photo2)
+
+				votes[question][photo1][photo2] += 1
+				votesUsers[question][photo1].add(userID)
+				votesUsers[question][photo2].add(userID)
+	
+		qscores = computeQScores(allPhotos)
+		for question, qDic in qscores.iteritems():
+			for photo, qscore in qDic.iteritems():
+				if not allQScores[question].has_key(photo):
+					allQScores[question][photo] = []
+				allQScores[question][photo].append(qscore)
+		#??? Como colocar userID + profile se cada QScore é computador com base em várias opiniões? Já colocar o binário por perfil?
+		#Output file
+		output = open(outputFileNames[iteration], 'w')
+		for question, qDic in allQScores.iteritems():
+			for photo, qscoreList in qDic.iteritems():
+				output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(qscoreList[0])+"\t" + str(votesUsers[question][photo]).strip("Set( )").strip("[ ]").replace(",", "\t").replace("'", "")+'\n')
+		output.close()
+
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
+	if len(sys.argv) < 2:
 		print "Uso: <arquivo com execuções das tarefas> <bootstrap samples - used in all votes>"
 		sys.exit(1)
-
-	amountOfSamples = int(sys.argv[2])
+	
+	if len(sys.argv) > 2:
+		amountOfSamples = int(sys.argv[2])
 
 	dataFile = open(sys.argv[1], 'r')
 	lines = dataFile.readlines()
 
-	evaluateFirstVote(lines, "first.dat")
-	evaluateAllVotes(lines, "all.dat", amountOfSamples)
+	#evaluateFirstVote(lines, "first.dat")
+	#evaluateAllVotes(lines, "all.dat", amountOfSamples)
+	evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
+
 	dataFile.close()

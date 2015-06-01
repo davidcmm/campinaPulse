@@ -1035,7 +1035,7 @@ rm -f ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat
 mkdir kendal100
 mv agradGeral.dat segGeral.dat agradGeralAll.dat segGeralAll.dat agradGeralAll.dat segGeralAll.dat kendall*.dat kendall100/
 
-#Analisa QScore por Bairro (TODO medio e pos)
+#Analisa QScore por Bairro
 rm -f bairro.dat bairroAll.dat
 
 #echo ">>>>>>>> Geral" >> bairro.dat
@@ -1500,6 +1500,60 @@ Rscript  calculaTTest.R liberdadeSegSolteiroAll.dat centroSegSolteiroAll.dat "Li
 echo "Seg Cat x Liberdade" >> bairroAll.dat
 Rscript  calculaTTest.R catoleSegSolteiroAll.dat liberdadeSegSolteiroAll.dat "Catole Seg Sol" "Liberdade Seg Sol" "red" >> bairroAll.dat
 
+
+echo ">>>>>>>>>>>>>> Medio" >> bairroAll.dat
+python analisaQScorePorBairro.py allMedioOrdInter.dat > temp.dat
+echo "### Medio Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Medio Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
+grep "catole" temp.dat | grep "agra" > catoleAgradMedioAll.dat
+grep "centro" temp.dat | grep "agra" > centroAgradMedioAll.dat
+grep "liberdade" temp.dat | grep "agra" > liberdadeAgradMedioAll.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catoleAgradMedioAll.dat centroAgradMedioAll.dat "Catole Agra Medio" "Centro Agra Medio" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdadeAgradMedioAll.dat centroAgradMedioAll.dat "Liberdade Agra Medio" "Centro Agra Medio" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catoleAgradMedioAll.dat liberdadeAgradMedioAll.dat "Catole Agra Medio" "Liberdade Agra Medio" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catoleSegMedioAll.dat
+grep "centro" temp.dat | grep "seg" > centroSegMedioAll.dat
+grep "liberdade" temp.dat | grep "seg" > liberdadeSegMedioAll.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catoleSegMedioAll.dat centroSegMedioAll.dat "Catole Seg Medio" "Centro Seg Medio" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdadeSegMedioAll.dat centroSegMedioAll.dat "Liberdade Seg Medio" "Centro Seg Medio" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catoleSegMedioAll.dat liberdadeSegMedioAll.dat "Catole Seg Medio" "Liberdade Seg Medio" "red" >> bairroAll.dat
+
+echo ">>>>>>>>>>>>>> Pos" >> bairroAll.dat
+python analisaQScorePorBairro.py allPosOrdInter.dat > temp.dat
+echo "### Pos Agra" >> bairroAll.dat
+cat meanNeigAgra.dat >> bairroAll.dat
+echo "### Pos Seg" >> bairroAll.dat
+cat meanNeigSeg.dat >> bairroAll.dat
+rm meanNeigAgra.dat meanNeigSeg.dat
+grep "catole" temp.dat | grep "agra" > catoleAgradPosAll.dat
+grep "centro" temp.dat | grep "agra" > centroAgradPosAll.dat
+grep "liberdade" temp.dat | grep "agra" > liberdadeAgradPosAll.dat
+echo "Agra Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catoleAgradPosAll.dat centroAgradPosAll.dat "Catole Agra Pos" "Centro Agra Pos" "green">> bairroAll.dat
+echo "Agra Lib x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R liberdadeAgradPosAll.dat centroAgradPosAll.dat "Liberdade Agra Pos" "Centro Agra Pos" "green" >> bairroAll.dat
+echo "Agra Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catoleAgradPosAll.dat liberdadeAgradPosAll.dat "Catole Agra Pos" "Liberdade Agra Pos" "green" >> bairroAll.dat
+
+grep "catole" temp.dat | grep "seg" > catoleSegPosAll.dat
+grep "centro" temp.dat | grep "seg" > centroSegPosAll.dat
+grep "liberdade" temp.dat | grep "seg" > liberdadeSegPosAll.dat
+echo "Seg Cat x Centro" >> bairroAll.dat
+Rscript  calculaTTest.R catoleSegPosAll.dat centroSegPosAll.dat "Catole Seg Pos" "Centro Seg Pos" "red" >> bairroAll.dat
+echo "Seg Lib x Centro" >> bairroAll.dat 
+Rscript  calculaTTest.R liberdadeSegPosAll.dat centroSegPosAll.dat "Liberdade Seg Pos" "Centro Seg Pos" "red" >> bairroAll.dat
+echo "Seg Cat x Liberdade" >> bairroAll.dat
+Rscript  calculaTTest.R catoleSegPosAll.dat liberdadeSegPosAll.dat "Catole Seg Pos" "Liberdade Seg Pos" "red" >> bairroAll.dat
 
 #echo ">>>>>>>>>>>>>> Conhece" >> bairro.dat
 #python analisaQScorePorBairro.py firsCentroOrdInter.dat > temp.dat

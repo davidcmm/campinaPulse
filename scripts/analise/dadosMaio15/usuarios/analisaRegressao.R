@@ -2,6 +2,9 @@
 # Analyses the regression of QScore in terms of color and amount of lines according to previous data of all-subset
 library(leaps)
 
+# Regressao categorica: contrasts(iris$Species.f) <- contr.treatment(3, base=3) -> base é o terceiro fator
+# summary(lm(Petal.Width ~ Species.f, data = iris)) -> mostra regressao com f1 e f2 (primeiro e segundo fator)
+ 
 calculateRegression <- function(file1, file2, shouldPlot=FALSE){
     #Agradavel
     data = read.table(file1, header=TRUE)

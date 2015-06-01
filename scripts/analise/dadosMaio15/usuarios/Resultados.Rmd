@@ -6,7 +6,6 @@ output: pdf_document
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
 source('krippMoran.R')
-library(texreg)
 
 moranI("moran100/streetsQScoresLatLongAgraAll.dat", "moran100/streetsQScoresLatLongSegAll.dat")
 ```
@@ -51,6 +50,16 @@ moranI("moran100/streetsQScoresLatLongAgraAllSolteiro.dat", "moran100/streetsQSc
 ## Casado
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
 moranI("moran100/streetsQScoresLatLongAgraAllCasado.dat", "moran100/streetsQScoresLatLongSegAllCasado.dat")
+```
+
+## Medio
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllMedio.dat", "moran100/streetsQScoresLatLongSegAllMedio.dat")
+```
+
+## Pos
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllPos.dat", "moran100/streetsQScoresLatLongSegAllPos.dat")
 ```
 
 # Correlações
@@ -125,6 +134,23 @@ boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
 calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Medio
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Pos
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('analisaCorrelacao.R')
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat", shouldPlot=TRUE)
 boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
 boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
 ```
@@ -232,9 +258,32 @@ modeloAgradCasado <- modeloAgrad
 modeloSegCasado <- modeloSeg
 ```
 
+## Medio
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMedio <- modeloAgrad
+modeloSegMedio <- modeloSeg
+```
+
+## Casado
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradPos <- modeloAgrad
+modeloSegPos <- modeloSeg
+```
+
 ## Modelo de Regressão com Variáveis Categóricas (Binárias)
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
+library(texreg)
 dadosAgrad0 <- read.table("rgbQScoreAgrad0.dat", header=TRUE)
 dadosSeg0 <- read.table("rgbQScoreSeg0.dat", header=TRUE)
 
@@ -258,6 +307,8 @@ texreg(lm(qscore ~ hasFemale + hasYoung + hasOld + hasLowClass + hasMHighClass +
 texreg(list(modeloAgradGeral, modeloAgradAdulto, modeloAgradJovem, modeloAgradBaixa, modeloAgradMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Agradável")
 
 texreg(list(modeloAgradGeral, modeloAgradFeminino, modeloAgradMasculino, modeloAgradSolteiro, modeloAgradCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Agradável")
+
+texreg(list(modeloAgradGeral, modeloAgradMedio, modeloAgradPos), custom.model.names=c("Geral", "Medio", "Pos"), caption="Modelo de Regressão para Agradável")
 ```
 
 ## Tabelas com Modelos para Seguro
@@ -266,4 +317,6 @@ texreg(list(modeloAgradGeral, modeloAgradFeminino, modeloAgradMasculino, modeloA
 texreg(list(modeloSegGeral, modeloSegAdulto, modeloSegJovem, modeloSegBaixa, modeloSegMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Seguro")
 
 texreg(list(modeloSegGeral, modeloSegFeminino, modeloSegMasculino, modeloSegSolteiro, modeloSegCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Seguro")
+
+texreg(list(modeloSegGeral, modeloSegMedio, modeloSegPos), custom.model.names=c("Geral", "Medio", "Pos"), caption="Modelo de Regressão para Seguro")
 ```

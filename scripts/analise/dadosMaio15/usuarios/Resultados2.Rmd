@@ -61,7 +61,18 @@ ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) 
     ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
 ```
 
+## Medio x Pos
 
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "allMedioOrdInter.dat"
+file2 <- "allPosOrdInter.dat"
+type1 <- "medio"
+type2 <- "pos"
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+```
 # Krippendorf
 
 ## Geral
@@ -130,6 +141,19 @@ file2 <- "consense100/consenseMatrixSegCasado.dat"
 krippAlpha(file1, file2)
 ```
 
+## Medio
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraMedio.dat"
+file2 <- "consense100/consenseMatrixSegMedio.dat"
+krippAlpha(file1, file2)
+```
+
+## Pos
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraPos.dat"
+file2 <- "consense100/consenseMatrixSegPos.dat"
+krippAlpha(file1, file2)
+```
 # Kendall
 
 ## Geral
@@ -282,6 +306,42 @@ normalizedKendallTauDistance(file1, file2)
 
 file1 <- "kendall100/kendallSegAllAdulto.dat"
 file2 <- "kendall100/kendallSegAllGeralJovem.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Medio x Pos
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllMedio.dat"
+file2 <- "kendall100/kendallAgradAllPos.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllMedio.dat"
+file2 <- "kendall100/kendallSegAllPos.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Medio x Geral e Pos x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllMedio.dat"
+file2 <- "kendall100/kendallAgradAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllPos.dat"
+file2 <- "kendall100/kendallAgradAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllMedio.dat"
+file2 <- "kendall100/kendallSegAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllMedio.dat"
+file2 <- "kendall100/kendallSegAllGeralMedio.dat"
 normalizedKendallTauDistance(file1, file2)
 ```
 

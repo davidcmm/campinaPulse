@@ -11,6 +11,9 @@ python selectRunPerUsers.py run.csv solteiro.dat > runSolteiro.csv
 python selectRunPerUsers.py run.csv casado.dat > runCasado.csv 
 python selectRunPerUsers.py run.csv feminino.dat > runFeminino.csv 
 python selectRunPerUsers.py run.csv masculino.dat > runMasculino.csv
+python selectRunPerUsers.py run.csv medio.dat > runMedio.csv
+python selectRunPerUsers.py run.csv posgrad.dat > runPos.csv
+
 python selectRunPerUsers.py run.csv catole.dat > runCatole.csv
 python selectRunPerUsers.py run.csv centro.dat > runCentro.csv
 python selectRunPerUsers.py run.csv liberdade.dat > runLiberdade.csv
@@ -18,7 +21,7 @@ python selectRunPerUsers.py run.csv notcatole.dat > runNotCatole.csv
 python selectRunPerUsers.py run.csv notcentro.dat > runNotCentro.csv
 python selectRunPerUsers.py run.csv notliberdade.dat > runNotLiberdade.csv
 
-mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
+mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat medio.dat posgrad.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
 #Analisa QScores
 python analisaQScore.py run.csv
@@ -48,6 +51,13 @@ mv all.dat allFeminino.dat
 python analisaQScore.py runMasculino.csv 100
 mv first.dat firstMasculino.dat
 mv all.dat allMasculino.dat
+python analisaQScore.py runMedio.csv 100
+mv first.dat firstMedio.dat
+mv all.dat allMedio.dat
+python analisaQScore.py runPos.csv 100
+mv first.dat firstPos.dat
+mv all.dat allPos.dat
+
 python analisaQScore.py runCatole.csv 100
 mv first.dat firstCatole.dat
 mv all.dat allCatole.dat
@@ -78,6 +88,9 @@ sort -k 3 -r firstFeminino.dat > firsFemininoOrd.dat
 sort -k 3 -r firstMasculino.dat > firsMasculinoOrd.dat
 sort -k 3 -r firstJovem.dat > firsJovemOrd.dat
 sort -k 3 -r firstAdulto.dat > firsAdultoOrd.dat
+sort -k 3 -r firstMedio.dat > firsMedioOrd.dat
+sort -k 3 -r firstPost.dat > firsPosOrd.dat
+
 sort -k 3 -r firstCatole.dat > firsCatoleOrd.dat
 sort -k 3 -r firstCentro.dat > firsCentroOrd.dat
 sort -k 3 -r firstLiberdade.dat > firsLiberdadeOrd.dat
@@ -94,6 +107,9 @@ sort -k 3 -r allFeminino.dat > allFemininoOrd.dat
 sort -k 3 -r allMasculino.dat > allMasculinoOrd.dat
 sort -k 3 -r allJovem.dat > allJovemOrd.dat
 sort -k 3 -r allAdulto.dat > allAdultoOrd.dat
+sort -k 3 -r allMedio.dat > allMedioOrd.dat
+sort -k 3 -r allPos.dat > allPosOrd.dat
+
 sort -k 3 -r allCatole.dat > allCatoleOrd.dat
 sort -k 3 -r allCentro.dat > allCentroOrd.dat
 sort -k 3 -r allLiberdade.dat > allLiberdadeOrd.dat
@@ -176,6 +192,20 @@ grep "seguro?" streetsQScoresLatLongAllMedia.dat > streetsQScoresLatLongSegAllMe
 echo "Media" >> moranAll.dat
 Rscript krippMoran.R moran streetsQScoresLatLongAgraAllMedia.dat streetsQScoresLatLongSegAllMedia.dat >> moranAll.dat
 
+./processInputLatLong.sh allMedio.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllMedio.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllMedio.dat > streetsQScoresLatLongAgraAllMedio.dat
+grep "seguro?" streetsQScoresLatLongAllMedio.dat > streetsQScoresLatLongSegAllMedio.dat
+echo "Medio" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllMedio.dat streetsQScoresLatLongSegAllMedio.dat >> moranAll.dat
+
+./processInputLatLong.sh allPos.dat
+mv streetsQScoresLatLong.dat streetsQScoresLatLongAllPos.dat
+grep "agrad%C3%A1vel?" streetsQScoresLatLongAllPos.dat > streetsQScoresLatLongAgraAllPos.dat
+grep "seguro?" streetsQScoresLatLongAllPos.dat > streetsQScoresLatLongSegAllPos.dat
+echo "Pos" >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllPos.dat streetsQScoresLatLongSegAllPos.dat >> moranAll.dat
+
 mkdir moran100
 mv streetsQScoresLatLongAll*.dat streetsQScoresLatLongAgraAll* streetsQScoresLatLongSegAll* moranAll.dat moran100/
 
@@ -192,6 +222,8 @@ python encontraInterseccao.py allBaixaOrd.dat allMediaOrd.dat > intersectionAllB
 python encontraInterseccao.py allSolteiroOrd.dat allCasadoOrd.dat > intersectionAllSolteiroCasado.dat
 python encontraInterseccao.py allFemininoOrd.dat allMasculinoOrd.dat > intersectionAllFemininoMasculino.dat
 python encontraInterseccao.py allJovemOrd.dat allAdultoOrd.dat > intersectionAllJovemAdulto.dat
+python encontraInterseccao.py allMedioOrd.dat allPosOrd.dat > intersectionAllMedioPos.dat
+
 python encontraInterseccao.py allCentroOrd.dat allNotCentroOrd.dat > intersectionAllCentro.dat
 python encontraInterseccao.py allLiberdadeOrd.dat allNotLiberdadeOrd.dat > intersectionAllLiberdade.dat
 python encontraInterseccao.py allCatoleOrd.dat allNotCatoleOrd.dat > intersectionAllCatole.dat
@@ -267,6 +299,11 @@ python preparaHTML.py allCasadoOrd.dat intersectionAllSolteiroCasado.dat > allCa
 mv question.html questionAllCasado.html
 python preparaHTML.py allSolteiroOrd.dat intersectionAllSolteiroCasado.dat > allSolteiroOrdInter.dat 
 mv question.html questionAllSolteiro.html
+
+python preparaHTML.py allMedioOrd.dat intersectionAllMedioPos.dat > allMedioOrdInter.dat 
+mv question.html questionAllMedio.html
+python preparaHTML.py allPosOrd.dat intersectionAllMedioPos.dat > allPosOrdInter.dat 
+mv question.html questionAllPos.html
 
 python preparaHTML.py allCentroOrd.dat intersectionAllCentro.dat > allCentroOrdInter.dat 
 grep "centro" allCentroOrdInter.dat > tmp.dat
@@ -385,6 +422,13 @@ python combinaRGBQScoreLinhas.py rgb.dat allSolteiroOrdInter.dat lines.dat
 mv rgbQScoreAgrad.dat rgbQScoreAgradAllSolteiro.dat
 mv rgbQScoreSeg.dat rgbQScoreSegAllSolteiro.dat
 
+python combinaRGBQScoreLinhas.py rgb.dat allMedioOrdInter.dat lines.dat
+mv rgbQScoreAgrad.dat rgbQScoreAgradAllMedio.dat
+mv rgbQScoreSeg.dat rgbQScoreSegAllMedio.dat
+python combinaRGBQScoreLinhas.py rgb.dat allPosOrdInter.dat lines.dat
+mv rgbQScoreAgrad.dat rgbQScoreAgradAllPos.dat
+mv rgbQScoreSeg.dat rgbQScoreSegAllPos.dat
+
 python combinaRGBQScoreLinhas.py rgb.dat allCentroOrdInter.dat lines.dat
 mv rgbQScoreAgrad.dat rgbQScoreAgradAllCentro.dat
 mv rgbQScoreSeg.dat rgbQScoreSegAllCentro.dat
@@ -412,14 +456,16 @@ mv rgbQScore*.dat inputCorrelacaoRegressao100/
 #Analisa Correlacao
 Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat inputCorrelacaoRegressao100/rgbQScoreSegAll.dat > correlacaoAll.dat
 
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegMedia.dat > correlacaoMedia.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegSolteiro.dat > correlacaoSolteiro.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegCasado.dat > correlacaoCasado.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegJovem.dat > correlacaoJovem.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAdulto.dat > correlacaoAdulto.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegFeminino.dat > correlacaoFeminino.dat
-Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegMasculino.dat > correlacaoMasculino.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegMedia.dat > correlacaoMedia.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegBaixa.dat > correlacaoBaixa.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegAllSolteiro.dat > correlacaoSolteiro.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat > correlacaoCasado.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegJovem.dat > correlacaoAllJovem.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAllAdulto.dat > correlacaoAdulto.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegAllFeminino.dat > correlacaoFeminino.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegAllMasculino.dat > correlacaoMasculino.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat > correlacaoMedio.dat
+Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat > correlacaoPos.dat
 
 #TODO adicionar conhecer bairros e arquivos com all
 
@@ -428,14 +474,16 @@ mv *.pdf correlacao*.dat correlacao100/
 #Analisa Regressao
 Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat inputCorrelacaoRegressao100/rgbQScoreSegAll.dat > regressaoAll.dat
 
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegMedia.dat > regressaoMedia.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegBaixa.dat > regressaoBaixa.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegSolteiro.dat > regressaoSolteiro.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegCasado.dat > regressaoCasado.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegJovem.dat > regressaoJovem.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAdulto.dat > regressaoAdulto.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegFeminino.dat > regressaoFeminino.dat
-Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegMasculino.dat > regressaoMasculino.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMedia.dat inputCorrelacaoRegressao100/rgbQScoreSegAllMedia.dat > regressaoMedia.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllBaixa.dat inputCorrelacaoRegressao100/rgbQScoreSegAllBaixa.dat > regressaoBaixa.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllSolteiro.dat inputCorrelacaoRegressao100/rgbQScoreSegAllSolteiro.dat > regressaoSolteiro.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat > regressaoCasado.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllJovem.dat inputCorrelacaoRegressao100/rgbQScoreSegAllJovem.dat > regressaoJovem.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllAdulto.dat inputCorrelacaoRegressao100/rgbQScoreSegAllAdulto.dat > regressaoAdulto.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllFeminino.dat inputCorrelacaoRegressao100/rgbQScoreSegAllFeminino.dat > regressaoFeminino.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMasculino.dat inputCorrelacaoRegressao100/rgbQScoreSegAllMasculino.dat > regressaoMasculino.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat > regressaoMedio.dat
+Rscript analisaRegressao.R inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat > regressaoPos.dat
 
 #TODO adicionar conhecer bairros e arquivos com all
 
@@ -502,6 +550,10 @@ Rscript analisaICPorFoto.R allAdultoOrdInter.dat allJovemOrdInter.dat adulto jov
 #grep "catole" teste2.txt >> allICJovemCat.dat
 mv teste1.txt allICAdulto.dat
 mv teste2.txt allICJovem.dat
+
+Rscript analisaICPorFoto.R allMedioOrdInter.dat allPosOrdInter.dat medio pos
+mv teste1.txt allICMedio.dat
+mv teste2.txt allICPos.dat
 
 #Krippendorfs alpha for general data (falta revisar)
 python preparaConsenso.py usersInfo.dat
@@ -573,7 +625,7 @@ mv consenseMatrixSeg.dat consenseMatrixSegFeminino.dat
 echo "Feminino" >> krippAll.dat
 Rscript krippMoran.R kripp consenseMatrixAgraFeminino.dat consenseMatrixSegFeminino.dat >> krippAll.dat
 
-python preparaConsenso.py usersInfo.dat media.dat
+python preparaConsenso.py usersInfo.dat masculino.dat
 mv consenseMatrixAgra.dat consenseMatrixAgraMasculino.dat
 mv consenseMatrixSeg.dat consenseMatrixSegMasculino.dat
 echo "Masculino" >> krippAll.dat
@@ -585,6 +637,23 @@ mv consenseMatrixSeg.dat consenseMatrixSegFemininoMasculino.dat
 echo "Feminino e Masculino" >> krippAll.dat
 Rscript krippMoran.R kripp consenseMatrixAgraFemininoMasculino.dat consenseMatrixSegFemininoMasculino.dat >> krippAll.dat
 
+python preparaConsenso.py usersInfo.dat medio.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraMedio.dat
+mv consenseMatrixSeg.dat consenseMatrixSegMedio.dat
+echo "Medio" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraMedio.dat consenseMatrixSegMedio.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat posgrad.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraPos.dat
+mv consenseMatrixSeg.dat consenseMatrixSegPos.dat
+echo "Pos" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraPos.dat consenseMatrixSegPos.dat >> krippAll.dat
+
+python preparaConsenso.py usersInfo.dat medio.dat posgrad.dat
+mv consenseMatrixAgra.dat consenseMatrixAgraMedioPos.dat
+mv consenseMatrixSeg.dat consenseMatrixSegMedioPos.dat
+echo "Medio e Pos" >> krippAll.dat
+Rscript krippMoran.R kripp consenseMatrixAgraMedioPos.dat consenseMatrixSegMedioPos.dat >> krippAll.dat
 
 mkdir consense100 
 mv consenseMatrix*.dat krippAll.dat kripp.dat consense100
@@ -872,6 +941,39 @@ Rscript kendallDistance.R kendallSegAllAdulto.dat kendallSegAllGeralJovem.dat >>
 #grep "agrad" firsNotCentroOrdInter.dat > ranking2.dat
 #Rscript kendallDistance.R ranking1.dat ranking2.dat >> kendall.dat 
 
+echo " Medio x Pos Agrad" >> kendallAll.dat
+grep "agrad" allMedioOrdInter.dat > kendallAgradAllMedio.dat
+grep "agrad" allPosOrdInter.dat > kendallAgradAllPos.dat
+Rscript kendallDistance.R kendallAgradAllMedio.dat kendallAgradAllPos.dat >> kendallAll.dat
+
+echo " Medio x Geral Agrad" >> kendallAll.dat
+awk '{print $2}' kendallAgradAllMedio.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo agradGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > kendallAgradAllGeralMedio.dat 
+Rscript kendallDistance.R kendallAgradAllMedio.dat kendallAgradAllGeralMedio.dat >> kendallAll.dat
+echo " Pos x Geral Agrad" >> kendallAll.dat
+Rscript kendallDistance.R kendallAgradAllPos.dat kendallAgradAllGeralMedio.dat >> kendallAll.dat
+
+echo " Medio x Pos Seg" >> kendallAll.dat
+grep "seg" allMedioOrdInter.dat > kendallSegAllMedio.dat
+grep "seg" allPosOrdInter.dat > kendallSegAllPos.dat
+Rscript kendallDistance.R kendallSegAllMedio.dat kendallSegAllPos.dat >> kendallAll.dat
+
+echo " Medio x Geral Seg" >> kendallAll.dat
+awk '{print $2}' kendallSegAllMedio.dat > temp.dat
+rm ranking3.dat
+while read photo ; do 
+	grep $photo segGeralAll.dat >> ranking3.dat
+done < temp.dat
+sort -k 3 -r ranking3.dat > kendallSegAllGeralMedio.dat 
+Rscript kendallDistance.R kendallSegAllMedio.dat kendallSegAllGeralMedio.dat >> kendallAll.dat
+echo " Pos x Geral Seg" >> kendallAll.dat
+Rscript kendallDistance.R kendallSegAllPos.dat kendallSegAllGeralMedio.dat >> kendallAll.dat
+
+
 echo " Centro x Not Centro Agrad" >> kendallAll.dat
 grep "agrad" allCentroOrdInter.dat > kendallAgradAllCentro.dat
 grep "agrad" allNotCentroOrdInter.dat > kendallAgradAllNotCentro.dat
@@ -933,7 +1035,7 @@ rm -f ranking1.dat ranking2.dat ranking3.dat ranking3Ord.dat temp.dat
 mkdir kendal100
 mv agradGeral.dat segGeral.dat agradGeralAll.dat segGeralAll.dat agradGeralAll.dat segGeralAll.dat kendall*.dat kendall100/
 
-#Analisa QScore por Bairro
+#Analisa QScore por Bairro (TODO medio e pos)
 rm -f bairro.dat bairroAll.dat
 
 #echo ">>>>>>>> Geral" >> bairro.dat

@@ -369,7 +369,7 @@ if __name__ == "__main__":
 	lines = dataFile.readlines()
 
 	#evaluateFirstVote(lines, "first.dat")
-	#evaluateAllVotes(lines, "all.dat", amountOfSamples)
-	evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
+	evaluateAllVotes(lines, "all.dat", amountOfSamples)
+	#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
 
 	dataFile.close()

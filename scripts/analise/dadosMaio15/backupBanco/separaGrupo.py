@@ -28,6 +28,11 @@ def parseUserData(lines):
 	tasksYoung = Set([])
 	old = Set([])
 	tasksOld = Set([])
+
+	highSchool = Set([])
+	tasksHighSchool = Set([])
+	posGrad = Set([])
+	tasksPosGrad = Set([])
 		
 	centro = Set([])
 	tasksCentro = Set([])
@@ -53,6 +58,17 @@ def parseUserData(lines):
 		tasksIDSeg = eval(data[3])
 
 		if len(data[1]) > 0:
+			#Separating by age
+			age = int(profile[0].lower())
+			if age <= 24:
+				young.add(userID)
+				tasksYoung.update(tasksIDSeg)
+				tasksYoung.update(tasksIDAgra)
+			elif age >=35 and age <=44:
+				old.add(userID)
+				tasksOld.update(tasksIDSeg)
+				tasksOld.update(tasksIDAgra)
+
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
 			sex = profile[1].lower()
@@ -65,28 +81,6 @@ def parseUserData(lines):
 				tasksMasc.update(tasksIDSeg)
 				tasksMasc.update(tasksIDAgra)
 		
-			#Separating by relationship
-			rel = profile[6].lower()
-			if rel[0] == 's':
-				single.add(userID)
-				tasksSingle.update(tasksIDSeg)
-				tasksSingle.update(tasksIDAgra)
-			elif rel[0] == 'c':
-				married.add(userID)
-				tasksMarried.update(tasksIDSeg)
-				tasksMarried.update(tasksIDAgra)
-
-			#Separating by age
-			age = int(profile[0].lower())
-			if age <= 24:
-				young.add(userID)
-				tasksYoung.update(tasksIDSeg)
-				tasksYoung.update(tasksIDAgra)
-			elif age >=35 and age <=44:
-				old.add(userID)
-				tasksOld.update(tasksIDSeg)
-				tasksOld.update(tasksIDAgra)
-
 			#Separating by income
 			income = profile[2]
 			if income == possibleIncomes[0] or income == possibleIncomes[1]:
@@ -97,6 +91,28 @@ def parseUserData(lines):
 				high.add(userID)
 				tasksHigh.update(tasksIDSeg)
 				tasksHigh.update(tasksIDAgra)
+		
+			#Separating by education degree
+			education = profile[3]
+			if education[0].lower() == 'e':
+				highSchool.add(userID)
+				tasksHighSchool.update(tasksIDSeg)
+				tasksHighSchool.update(tasksIDAgra)
+			elif education[0].lower == 'm' or education[0].lower() == 'd':
+				posGrad.add(userID)
+				tasksPosGrad.update(tasksIDSeg)
+				tasksPosGrad.update(tasksIDAgra)
+
+			#Separating by relationship
+			rel = profile[6].lower()
+			if rel[0] == 's':
+				single.add(userID)
+				tasksSingle.update(tasksIDSeg)
+				tasksSingle.update(tasksIDAgra)
+			elif rel[0] == 'c':
+				married.add(userID)
+				tasksMarried.update(tasksIDSeg)
+				tasksMarried.update(tasksIDAgra)
 
 			#Separating by known places
 			places = profile[7].lower()
@@ -172,6 +188,17 @@ def parseUserData(lines):
 		highFile.write(str(userID)+"\n")
 	highFile.close()
 
+	highSchoolFile = open("medio.dat", "w")
+	highSchoolFile.write(str(list(tasksHighSchool.intersection(tasksPosGrad)))+"\n")
+	for userID in highSchool:
+		highSchoolFile.write(str(userID)+"\n")
+	highSchoolFile.close()
+	posGradFile = open("posgrad.dat", "w")
+	posGradFile.write(str(list(tasksHighSchool.intersection(tasksPosGrad)))+"\n")
+	for userID in high:
+		posGradFile.write(str(userID)+"\n")
+	posGradFile.close()
+
 	
 	centroFile = open("centro.dat", "w")
 	centroFile.write("[]\n")
@@ -209,7 +236,7 @@ def parseUserData(lines):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com ids, tarefas e perfis dos usuarios>"
+		print "Uso: <arquivo com ids dos usuários, das tarefas e perfis dos usuarios>"
 		sys.exit(1)
 	dataFile = open(sys.argv[1], 'r')
 	lines = dataFile.readlines()

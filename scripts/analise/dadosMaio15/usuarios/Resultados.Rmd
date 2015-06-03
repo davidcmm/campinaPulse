@@ -296,9 +296,24 @@ dadosSeg2 <- read.table("rgbQScoreSeg2.dat", header=TRUE)
 dadosAgrad <- rbind(dadosAgrad0, dadosAgrad1, dadosAgrad2)
 dadosSeg <- rbind(dadosSeg0, dadosSeg1, dadosSeg2)
 
-texreg(lm(qscore ~ hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + red + green + blue + diag + vert + hor, data=dadosAgrad))
+print(">>>> Agrad")
+regAgrad <- lm(qscore ~ hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + red + green + blue + diag + vert + hor, data=dadosAgrad)
+texreg(regAgrad)
 
-texreg(lm(qscore ~ hasFemale + hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + knowsLiberdade + red + green + blue + diag + vert + hor, data=dadosSeg))
+print(">>>> Seg")
+regSeg <- lm(qscore ~ hasFemale + hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + knowsLiberdade + red + green + blue + diag + vert + hor, data=dadosSeg)
+texreg(regSeg)
+
+source('sjPlot/R/sjPlotOdds.R')
+source('sjPlot/R/helpfunctions.R')
+source('sjPlot/R/sjPlotSetTheme.R')
+library("ggplot2")
+library("sjPlot")
+library("sjmisc")
+
+sjp.setTheme(axis.title.size = .85, axis.textsize = .85, legend.size = .8, geom.label.size = 3.5)
+sjp.lm(regAgrad, title="Regressão Agradável")
+sjp.lm(regSeg, title="Regressão Seguro")
 ```
 
 ## Tabela com Modelos para Agradavel

@@ -68,10 +68,22 @@ file1 <- "allMedioOrdInter.dat"
 file2 <- "allPosOrdInter.dat"
 type1 <- "medio"
 type2 <- "pos"
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Agradável",
+  'seguro?'="Seguro"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
 analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
-ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
-    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
-    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE, labeller=facet_labeller) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
+
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade")+ scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
+
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
 ```
 
 # Krippendorf

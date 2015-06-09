@@ -31,7 +31,8 @@ moranI <- function (agra, seg) {
 	
 	print(">> Agradavel observed expected p.value")
 	result <- Moran.I(data$V3, data.dists.inv)
-	print(paste(result$observed, " ", result$expected, " ", result$p.value))
+	zScore <- (result$observed - result$expected) / result$sd
+	print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
 
 	data <- read.table(seg, sep="+", header=F)
 	data.dists <- as.matrix(dist(cbind(data$V5, data$V4)))
@@ -41,7 +42,8 @@ moranI <- function (agra, seg) {
 	
 	print(">> Seguro observed expected p.value")
 	result <- Moran.I(data$V3, data.dists.inv)
-	print(paste(result$observed, " ", result$expected, " ", result$p.value))
+	zScore <- (result$observed - result$expected) / result$sd
+	print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
 }
 
 args <- commandArgs(trailingOnly = TRUE)

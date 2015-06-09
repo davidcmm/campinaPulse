@@ -95,19 +95,19 @@ analyseIC <- function(file1, file2, type1, type2, shouldPlot=FALSE){
   liberdade <<- total[total$neig == "liberdade",]
   catole <<- total[total$neig == "catole",]
  
-  if(shouldPlot){        
-      
-    pdf(file=paste("IC-Centro-", type1, "-", type2, ".pdf"), paper="special")
-    ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+  #if(shouldPlot){        
+  #    
+  #  pdf(file=paste("IC-Centro-", type1, "-", type2, ".pdf"), paper="special")
+  #  ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Centro")
+  #  
+  #  pdf(file=paste("IC-Liberdade-", type1, "-", type2, ".pdf"), paper="special")
+  #  ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade")
+  #  
+  #  pdf(file=paste("IC-Catole-", type1, "-", type2, ".pdf"), paper="special")
+  #  ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Catolé")
     
-    pdf(file=paste("IC-Liberdade-", type1, "-", type2, ".pdf"), paper="special")
-    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
-    
-    pdf(file=paste("IC-Catole-", type1, "-", type2, ".pdf"), paper="special")
-    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé")
-    
-    dev.off()
-  }
+  #  dev.off()
+  # }
  
 }
 #multiplot(g1, g2, g3, cols=1)

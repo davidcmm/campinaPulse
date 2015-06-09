@@ -9,7 +9,7 @@ possibleIncomes = ["Baixa (at\u00e9 R$ 1.449,99)", "M\u00e9dia Baixa (R$ 1.450 a
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:
-		print "Uso: <arquivo com rgb> <arquivo com qscore> <arquivo com linhas> <com perfil?>"
+		print "Uso: <arquivo com rgb> <arquivo com qscore> <arquivo com lincount> <com perfil?>"
 		sys.exit(1)
 
 	if len(sys.argv) > 4:
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 	#Writing outputFile with qscores and rgb
 	outputFile = open("rgbQScoreAgrad.dat","w")
 	if withProfile:
-		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\thasYoung\thasOld\thasFemale\thasMale\thasLowClass\thasMLowClass\thasMClass\thasMHighClass\thasHighClass\thasGraduated\thasHighSchool\thasMaster\thasPHD\thasSingle\thasDivorced\thasWidower\thasMarried\tknowsCenter\tknowsLiberdade\tknowsCatole\n")
+		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\tcountYoung\tcountOld\tcountFemale\tcountMale\tcountLowClass\tcountMLowClass\tcountMClass\tcountMHighClass\tcountHighClass\tcountGraduated\tcountHighSchool\tcountMaster\tcountPHD\tcountSingle\tcountDivorced\tcountWidower\tcountMarried\tcountKnowsCenter\tcountKnowsLiberdade\tcountKnowsCatole\n")
 	else:
 		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\n")
 	for photo in qscoreDic[possibleQuestions[0]].keys():
@@ -96,26 +96,28 @@ if __name__ == "__main__":
 			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\n")
 		else:
 			users = usersDic[possibleQuestions[0]][photo]
-			hasYoung = False
-			hasOld = False
-			hasMale = False
-			hasFemale = False
-			hasMarried = False
-			hasLowClass = False
-			hasMLowClass = False
-			hasMClass = False
-			hasMHighClass = False
-			hasHighClass = False
-			hasGraduated = False
-			hasHighSchool = False
-			hasMaster = False
-			hasPHD = False
-			hasSingle = False
-			hasDivorced = False
-			hasWidower = False
-			knowsCenter = False
-			knowsCatole = False
-			knowsLiberdade = False
+			totalAmountOfUsers = len(users)
+
+			countYoung = 0.0
+			countOld = 0.0
+			countMale = 0.0
+			countFemale = 0.0
+			countLowClass = 0.0
+			countMLowClass = 0.0
+			countMClass = 0.0
+			countMHighClass = 0.0
+			countHighClass = 0.0
+			countHighSchool = 0.0
+			countGraduated = 0.0
+			countMaster = 0.0
+			countPHD = 0.0
+			countSingle = 0.0
+			countMarried = 0.0
+			countDivorced = 0.0
+			countWidower = 0.0
+			countKnowsCenter = 0.0
+			countKnowsCatole = 0.0
+			countKnowsLiberdade = 0.0
 
 			for ID in users:
 				#age, sex, income, education, lives, time, civil status, knows
@@ -123,60 +125,61 @@ if __name__ == "__main__":
 				if userProfile.has_key(ID.strip()):
 					profile = userProfile[ID.strip()]
 					#print str(ID) + "\t" + str(photo) + str(profile)
-					print str(profile)
+					#print str(profile)
 
 					if len(profile) > 0:
 						if profile[0] <= 24:
-							hasYoung = True
+							countYoung += 1.0
 						elif profile[0] >=35 and profile[0] <=44:
-							hasOld = True
+							countOld += 1.0
 
 						if profile[1].lower()[0] == 'f':
-							hasFemale = True
+							countFemale += 1.0
 						elif profile[1].lower()[0] == 'm':
-							hasMale = True
+							countMale += 1.0
 
 						if profile[2] == possibleIncomes[0]:
-							hasLowClass = True
+							countLowClass += 1.0
 						elif profile[2] == possibleIncomes[1]:
-							hasMLowClass = True
+							countMLowClass += 1.0
 						elif profile[2] == possibleIncomes[2]:
-							hasMClass = True
+							countMClass += 1.0
 						elif profile[2] == possibleIncomes[3]:
-							hasMHighClass = True
+							countMHighClass += 1.0
 						elif profile[2] == possibleIncomes[4]:
-							hasHighClass = True
+							countHighClass += 1.0
 
 						if profile[3].lower()[0] == "g":
-							hasGraduated = True
+							countGraduated += 1.0
 						elif profile[3].lower()[0] == "e":
-							hasHighSchoool = True
+							countHighSchool += 1.0
 						elif profile[3].lower()[0] == "m":
-							hasMaster = True
+							countMaster += 1.0
 						elif profile[3].lower()[0] == "d":
-							hasPHD = True
+							countPHD += 1.0
 
 						if profile[6].lower()[0] == 's':
-							hasSingle = True
+							countSingle += 1.0
 						elif profile[6].lower()[0] == 'd':
-							hasDivorced = True
+							countDivorced += 1.0
 						elif profile[6].lower()[0] == 'v':
-							hasWidower = True
+							countWidower += 1.0
 						elif profile[6].lower()[0] == 'c':
-							hasMarried = True
+							countMarried += 1.0
 
 						if 'cen' in profile[7]:
-							knowsCenter = True
+							countKnowsCenter += 1.0
 						if 'lib' in profile[7]: 
-							knowsLiberdade = True
+							countKnowsLiberdade += 1.0
 						if 'cat' in profile[7]:
-							knowsCatole = True
-			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\t"+str(hasYoung)+"\t"+str(hasOld)+"\t"+str(hasFemale)+"\t"+str(hasMale)+"\t"+str(hasLowClass)+"\t"+str(hasMLowClass)+"\t"+str(hasMClass)+"\t"+str(hasMHighClass)+"\t"+str(hasHighClass)+"\t"+str(hasGraduated)+"\t"+str(hasHighSchool)+"\t"+str(hasMaster)+"\t"+str(hasPHD)+"\t"+str(hasSingle)+"\t"+str(hasDivorced)+"\t"+str(hasWidower)+"\t"+str(hasMarried)+"\t"+str(knowsCenter)+"\t"+str(knowsLiberdade)+"\t"+str(knowsCatole)+"\n")
+							countKnowsCatole += 1.0
+
+			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\t"+str(countYoung/totalAmountOfUsers)+"\t"+str(countOld/totalAmountOfUsers)+"\t"+str(countFemale/totalAmountOfUsers)+"\t"+str(countMale/totalAmountOfUsers)+"\t"+str(countLowClass/totalAmountOfUsers)+"\t"+str(countMLowClass/totalAmountOfUsers)+"\t"+str(countMClass/totalAmountOfUsers)+"\t"+str(countMHighClass/totalAmountOfUsers)+"\t"+str(countHighClass/totalAmountOfUsers)+"\t"+str(countGraduated/totalAmountOfUsers)+"\t"+str(countHighSchool/totalAmountOfUsers)+"\t"+str(countMaster/totalAmountOfUsers)+"\t"+str(countPHD/totalAmountOfUsers)+"\t"+str(countSingle/totalAmountOfUsers)+"\t"+str(countDivorced/totalAmountOfUsers)+"\t"+str(countWidower/totalAmountOfUsers)+"\t"+str(countMarried/totalAmountOfUsers)+"\t"+str(countKnowsCenter/totalAmountOfUsers)+"\t"+str(countKnowsLiberdade/totalAmountOfUsers)+"\t"+str(countKnowsCatole/totalAmountOfUsers)+"\n")
 
 	#Writing outputFile with qscores and rgb
 	outputFile = open("rgbQScoreSeg.dat","w")
 	if withProfile:
-		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\thasYoung\thasOld\thasFemale\thasMale\thasLowClass\thasMLowClass\thasMClass\thasMHighClass\thasHighClass\thasGraduated\thasHighSchool\thasMaster\thasPHD\thasSingle\thasDivorced\thasWidower\thasMarried\tknowsCenter\tknowsLiberdade\tknowsCatole\n")
+		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\tcountYoung\tcountOld\tcountFemale\tcountMale\tcountLowClass\tcountMLowClass\tcountMClass\tcountMHighClass\tcountHighClass\tcountGraduated\tcountHighSchool\tcountMaster\tcountPHD\tcountSingle\tcountDivorced\tcountWidower\tcountMarried\tcountKnowsCenter\tcountKnowsLiberdade\tcountKnowsCatole\n")
 	else:
 		outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\n")
 	for photo in qscoreDic[possibleQuestions[1]].keys():
@@ -188,26 +191,28 @@ if __name__ == "__main__":
 			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\n")
 		else:
 			users = usersDic[possibleQuestions[1]][photo]
-			hasYoung = False
-			hasOld = False
-			hasMale = False
-			hasFemale = False
-			hasMarried = False
-			hasLowClass = False
-			hasMLowClass = False
-			hasMClass = False
-			hasMHighClass = False
-			hasHighClass = False
-			hasGraduated = False
-			hasHighSchool = False
-			hasMaster = False
-			hasPHD = False
-			hasSingle = False
-			hasDivorced = False
-			hasWidower = False
-			knowsCenter = False
-			knowsCatole = False
-			knowsLiberdade = False
+			totalAmountOfUsers = len(users)
+
+			countYoung = 0.0
+			countOld = 0.0
+			countMale = 0.0
+			countFemale = 0.0
+			countMarried = 0.0
+			countLowClass = 0.0
+			countMLowClass = 0.0
+			countMClass = 0.0
+			countMHighClass = 0.0
+			countHighClass = 0.0
+			countGraduated = 0.0
+			countHighSchool = 0.0
+			countMaster = 0.0
+			countPHD = 0.0
+			countSingle = 0.0
+			countDivorced = 0.0
+			countWidower = 0.0
+			countKnowsCenter = 0.0
+			countKnowsCatole = 0.0
+			countKnowsLiberdade = 0.0
 
 			for ID in users:
 				#age, sex, income, education, lives, time, civil status, knows
@@ -216,51 +221,53 @@ if __name__ == "__main__":
 				
 					if len(profile) > 0:
 						if profile[0] <= 24:
-							hasYoung = True
+							countYoung += 1.0
 						elif profile[0] >=35 and profile[0] <=44:
-							hasOld = True
+							countOld += 1.0
 
 						if profile[1].lower()[0] == 'f':
-							hasFemale = True
+							countFemale += 1.0
 						elif profile[1].lower()[0] == 'm':
-							hasMale = True
+							countMale += 1.0
 
 						if profile[2] == possibleIncomes[0]:
-							hasLowClass = True
+							countLowClass += 1.0
 						elif profile[2] == possibleIncomes[1]:
-							hasMLowClass = True
+							countMLowClass += 1.0
 						elif profile[2] == possibleIncomes[2]:
-							hasMClass = True
+							countMClass += 1.0
 						elif profile[2] == possibleIncomes[3]:
-							hasMHighClass = True
+							countMHighClass += 1.0
 						elif profile[2] == possibleIncomes[4]:
-							hasHighClass = True
+							countHighClass += 1.0
 
 						if profile[3].lower()[0] == "g":
-							hasGraduated = True
+							countGraduated += 1.0
 						elif profile[3].lower()[0] == "e":
-							hasHighSchoool = True
+							countHighSchoool += 1.0
 						elif profile[3].lower()[0] == "m":
-							hasMaster = True
+							countMaster += 1.0
 						elif profile[3].lower()[0] == "d":
-							hasPHD = True
+							countPHD += 1.0
 
 						if profile[6].lower()[0] == 's':
-							hasSingle = True
+							countSingle += 1.0
 						elif profile[6].lower()[0] == 'd':
-							hasDivorced = True
+							countDivorced += 1.0
 						elif profile[6].lower()[0] == 'v':
-							hasWidower = True
+							countWidower += 1.0
 						elif profile[6].lower()[0] == 'c':
-							hasMarried = True
+							countMarried += 1.0
 
 						if 'cen' in profile[7]:
-							knowsCenter = True
+							countKnowsCenter += 1.0
 						if 'lib' in profile[7]: 
-							knowsLiberdade = True
+							countKnowsLiberdade += 1.0
 						if 'cat' in profile[7]:
-							knowsCatole = True
-			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\t"+str(hasYoung)+"\t"+str(hasOld)+"\t"+str(hasFemale)+"\t"+str(hasMale)+"\t"+str(hasLowClass)+"\t"+str(hasMLowClass)+"\t"+str(hasMClass)+"\t"+str(hasMHighClass)+"\t"+str(hasHighClass)+"\t"+str(hasGraduated)+"\t"+str(hasHighSchool)+"\t"+str(hasMaster)+"\t"+str(hasPHD)+"\t"+str(hasSingle)+"\t"+str(hasDivorced)+"\t"+str(hasWidower)+"\t"+str(hasMarried)+"\t"+str(knowsCenter)+"\t"+str(knowsLiberdade)+"\t"+str(knowsCatole)+"\n")
+							countKnowsCatole += 1.0
+
+			outputFile.write(photo+"\t"+qscore+"\t"+rgb[0]+"\t"+rgb[1]+"\t"+rgb[2]+"\t"+lines[0]+"\t"+lines[1]+"\t"+lines[2]+"\t"+str(countYoung/totalAmountOfUsers)+"\t"+str(countOld/totalAmountOfUsers)+"\t"+str(countFemale/totalAmountOfUsers)+"\t"+str(countMale/totalAmountOfUsers)+"\t"+str(countLowClass/totalAmountOfUsers)+"\t"+str(countMLowClass/totalAmountOfUsers)+"\t"+str(countMClass/totalAmountOfUsers)+"\t"+str(countMHighClass/totalAmountOfUsers)+"\t"+str(countHighClass/totalAmountOfUsers)+"\t"+str(countGraduated/totalAmountOfUsers)+"\t"+str(countHighSchool/totalAmountOfUsers)+"\t"+str(countMaster/totalAmountOfUsers)+"\t"+str(countPHD/totalAmountOfUsers)+"\t"+str(countSingle/totalAmountOfUsers)+"\t"+str(countDivorced/totalAmountOfUsers)+"\t"+str(countWidower/totalAmountOfUsers)+"\t"+str(countMarried/totalAmountOfUsers)+"\t"+str(countKnowsCenter/totalAmountOfUsers)+"\t"+str(countKnowsLiberdade/totalAmountOfUsers)+"\t"+str(countKnowsCatole/totalAmountOfUsers)+"\n")
+
 	outputFile.close()
 
 

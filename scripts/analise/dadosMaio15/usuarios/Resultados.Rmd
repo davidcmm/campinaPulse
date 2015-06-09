@@ -296,12 +296,35 @@ dadosSeg2 <- read.table("rgbQScoreSeg2.dat", header=TRUE)
 dadosAgrad <- rbind(dadosAgrad0, dadosAgrad1, dadosAgrad2)
 dadosSeg <- rbind(dadosSeg0, dadosSeg1, dadosSeg2)
 
+#colnames(dadosAgrad) <- c("foto", "qscore",	"vermelho", "verde", "azul", "diag", "hor", "vert", "jovem", "adulto", "mulher", "homem", "renda baixa", "renda média baix", "renda média"	hasLowClass	hasMLowClass	hasMClass	hasMHighClass	hasHighClass	hasGraduated	hasHighSchool	hasMaster	hasPHD	hasSingle	hasDivorced	hasWidower	hasMarried	knowsCenter	knowsLiberdade	knowsCatole) 
+
 print(">>>> Agrad")
-regAgrad <- lm(qscore ~ hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + red + green + blue + diag + vert + hor, data=dadosAgrad)
+regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countHighSchool + countGraduated + countMaster + countSingle + countMarried + countDivorced + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosAgrad)
 texreg(regAgrad)
 
 print(">>>> Seg")
-regSeg <- lm(qscore ~ hasFemale + hasYoung + hasOld + hasLowClass + hasMHighClass + hasHighClass + hasMaster + hasPHD + hasMarried + hasDivorced + hasWidower + knowsLiberdade + red + green + blue + diag + vert + hor, data=dadosSeg)
+regSeg <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countGraduated + countMaster + countSingle + countMarried + countDivorced + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosSeg)
+texreg(regSeg)
+
+source('sjPlot/R/sjPlotLinreg.R')
+source('sjPlot/R/helpfunctions.R')
+source('sjPlot/R/sjPlotSetTheme.R')
+library("ggplot2")
+library("sjPlot")
+library("sjmisc")
+
+sjp.setTheme(axis.title.size = .85, axis.textsize = .85, legend.size = .5, geom.label.size = 3.5, legend.pos = "left", title.align = "center", legend.inside = FALSE)
+#axisLabels.y=c("Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais","Horizontais")
+sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Divorciado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas")
+#, axisLabels.y=c("Mulher", "Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Conh. Liberdade", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais")
+sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Divorciado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas")
+
+print(">>>> Agrad")
+regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countFemale + countMClass + countMHighClass + countHighSchool + countGraduated + countMaster + countPHD + countSingle + countMarried + countDivorced + countWidower + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + red + green + blue + diag + vert + hor, data=dadosAgrad)
+texreg(regAgrad)
+
+print(">>>> Seg")
+regSeg <- lm(qscore ~ countYoung + countOld + countMale + countFemale + countLowClass + countMLowClass + countMClass + countMHighClass + countHighClass + countHighSchool + countGraduated + countMaster + countPHD + countSingle + countMarried + countDivorced + countWidower + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + red + green + blue + diag + vert + hor, data=dadosSeg)
 texreg(regSeg)
 
 source('sjPlot/R/sjPlotOdds.R')
@@ -312,8 +335,8 @@ library("sjPlot")
 library("sjmisc")
 
 sjp.setTheme(axis.title.size = .85, axis.textsize = .85, legend.size = .8, geom.label.size = 3.5)
-sjp.lm(regAgrad, title="Regressão Agradável")
-sjp.lm(regSeg, title="Regressão Seguro")
+sjp.lm(regAgrad, title="Regressão Agradável", sort.est=FALSE)
+sjp.lm(regSeg, title="Regressão Seguro", sort.est=FALSE)
 ```
 
 ## Tabela com Modelos para Agradavel

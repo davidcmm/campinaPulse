@@ -15,9 +15,12 @@ catole <- "bairros100/catoleAgradAll.dat"
 centro <- "bairros100/centroAgradAll.dat"
 liberdade <- "bairros100/liberdadeAgradAll.dat"
 color <- "green"
-output1 <- "Catolé Agradável Geral"
-output2 <- "Centro Agradável Geral"
-output3 <-  "Liberdade Agradável Geral"
+#output1 <- "Catolé Agradável Geral"
+#output2 <- "Centro Agradável Geral"
+#output3 <-  "Liberdade Agradável Geral"
+output1 <- "Catolé"
+output2 <- "Centro"
+output3 <-  "Liberdade"
 calculateTTests(catole, centro, output1, output2, color, TRUE)
 catoleData <- data1
 centroData <- data2
@@ -36,10 +39,9 @@ calculateTTests(catole, liberdade, output1, output3, color, TRUE)
 
 ### Normalidade Catole, Centro, Liberdade
 ```{r, echo=FALSE, fig.show='asis', fig.width=2.5}
-screen(FALSE)
-ggplot(catoleData, aes(y=catoleData$V3, x=c("")))+geom_boxplot() + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")
-ggplot(centroData, aes(y=centroData$V3, x=c("")))+geom_boxplot() + ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")
-ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot() + ggtitle(paste(output3))+theme_bw()+ xlab("") + ylab("QScore")
+ggplot(catoleData, aes(y=catoleData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(centroData, aes(y=centroData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output3))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)
@@ -58,9 +60,12 @@ catole <- "bairros100/catoleSegAll.dat"
 centro <- "bairros100/centroSegAll.dat"
 liberdade <- "bairros100/liberdadeSegAll.dat"
 color <- "green"
-output1 <- "Catolé Segurança"
-output2 <- "Centro Segurança"
-output3 <-  "Liberdade Segurança"
+#output1 <- "Catolé Segurança"
+#output2 <- "Centro Segurança"
+#output3 <-  "Liberdade Segurança"
+output1 <- "Catolé"
+output2 <- "Centro"
+output3 <-  "Liberdade"
 calculateTTests(catole, centro, output1, output2, color, TRUE)
 catoleData <- data1
 centroData <- data2
@@ -80,9 +85,9 @@ calculateTTests(catole, liberdade, output1, output3, color, TRUE)
 ### Normalidade Catole, Centro, Liberdade
 ```{r, echo=FALSE, fig.show='asis', fig.width=2.5}
 
-ggplot(catoleData, aes(y=catoleData$V3, x=c("")))+geom_boxplot() + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")
-ggplot(centroData, aes(y=centroData$V3, x=c("")))+geom_boxplot() + ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")
-ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot() + ggtitle(paste( output3))+theme_bw()+ xlab("") + ylab("QScore")
+ggplot(catoleData, aes(y=catoleData$V3, x=c("")))+geom_boxplot()+ geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")+ ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(centroData, aes(y=centroData$V3, x=c("")))+geom_boxplot() + geom_point(position = position_jitter(width = 0.2))+ ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")+ ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot()+ geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste( output3))+theme_bw()+ xlab("") + ylab("QScore") + ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 
 
 qqnorm(catoleData$V3)

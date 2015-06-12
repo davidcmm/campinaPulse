@@ -43,6 +43,19 @@ ggplot(catoleData, aes(y=catoleData$V3, x=c(""))) + geom_boxplot() + geom_point(
 ggplot(centroData, aes(y=centroData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output3))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 
+catoleData$bairro <- "Catolé"
+centroData$bairro <- "Centro"
+liberdadeData$bairro <- "Liberdade"
+
+os3 <- rbind(catoleData, centroData, liberdadeData)
+ggplot(os3, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)
 qqnorm(centroData$V3)
@@ -90,6 +103,18 @@ ggplot(centroData, aes(y=centroData$V3, x=c("")))+geom_boxplot() + geom_point(po
 ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot()+ geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste( output3))+theme_bw()+ xlab("") + ylab("QScore") + ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 
 
+catoleData$bairro <- "Catolé"
+centroData$bairro <- "Centro"
+liberdadeData$bairro <- "Liberdade"
+
+os3 <- rbind(catoleData, centroData, liberdadeData)
+ggplot(os3, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)
 qqnorm(centroData$V3)
@@ -133,6 +158,9 @@ ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(
 ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
 ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
 
+summary(liberdadeData)
+summary(catoleData)
+summary(centroData)
 
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)
@@ -221,6 +249,9 @@ ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(
 ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
 ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
 
+summary(liberdadeData)
+summary(catoleData)
+summary(centroData)
 
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)

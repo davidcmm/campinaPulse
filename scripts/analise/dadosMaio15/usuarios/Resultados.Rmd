@@ -280,7 +280,7 @@ modeloAgradPos <- modeloAgrad
 modeloSegPos <- modeloSeg
 ```
 
-## Modelo de Regressão com Variáveis Categóricas (Binárias)
+## Modelo de Regressão com Percentual de Usuários por Perfil SócioDemográfico
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}
 library(texreg)
@@ -298,12 +298,15 @@ dadosSeg <- rbind(dadosSeg0, dadosSeg1, dadosSeg2)
 
 #colnames(dadosAgrad) <- c("foto", "qscore",	"vermelho", "verde", "azul", "diag", "hor", "vert", "jovem", "adulto", "mulher", "homem", "renda baixa", "renda média baix", "renda média"	hasLowClass	hasMLowClass	hasMClass	hasMHighClass	hasHighClass	hasGraduated	hasHighSchool	hasMaster	hasPHD	hasSingle	hasDivorced	hasWidower	hasMarried	knowsCenter	knowsLiberdade	knowsCatole) 
 
+#dadosAgrad$countSingle <- dadosAgrad$countSingle + dadosAgrad$countDivorced + dadosAgrad$countWidower
+#dadosSeg$countSingle <- dadosSeg$countSingle + dadosSeg$countDivorced + dadosSeg$countWidower
+
 print(">>>> Agrad")
-regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countHighSchool + countGraduated + countMaster + countSingle + countMarried + countDivorced + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosAgrad)
+regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countHighSchool + countGraduated + countMaster + countSingle + countMarried + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosAgrad)
 texreg(regAgrad)
 
 print(">>>> Seg")
-regSeg <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countGraduated + countMaster + countSingle + countMarried + countDivorced + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosSeg)
+regSeg <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countGraduated + countMaster + countSingle + countMarried + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor), data=dadosSeg)
 texreg(regSeg)
 
 source('sjPlot/R/sjPlotLinreg.R')
@@ -313,11 +316,11 @@ library("ggplot2")
 library("sjPlot")
 library("sjmisc")
 
-sjp.setTheme(axis.title.size = .85, axis.textsize = .85, legend.size = .5, geom.label.size = 3.5, legend.pos = "left", title.align = "center", legend.inside = FALSE)
+sjp.setTheme(axis.title.size = 1.0, axis.textsize = 1.0, legend.size = .8, geom.label.size = 3.5, legend.pos = "left", title.align = "center", legend.inside = FALSE, geom.label.angle = 0)
 #axisLabels.y=c("Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais","Horizontais")
-sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Divorciado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas")
+sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas dos Coeficientes")
 #, axisLabels.y=c("Mulher", "Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Conh. Liberdade", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais")
-sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Divorciado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas")
+sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais"), axisTitle.x="Estimativas dos Coeficientes")
 
 print(">>>> Agrad")
 regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countFemale + countMClass + countMHighClass + countHighSchool + countGraduated + countMaster + countPHD + countSingle + countMarried + countDivorced + countWidower + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + red + green + blue + diag + vert + hor, data=dadosAgrad)

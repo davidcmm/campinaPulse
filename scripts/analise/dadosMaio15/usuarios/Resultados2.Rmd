@@ -262,6 +262,20 @@ normalizedKendallTauDistance(file1, file2)
 file1 <- "kendall100/kendallSegAllFeminino.dat"
 file2 <- "kendall100/kendallSegAllMasculino.dat"
 normalizedKendallTauDistance(file1, file2)
+
+rank1Parc <- rank1[,c("V2","V3")]
+rank1Parc$tipo <- "Feminino"
+rank1Parc$posicao <- 1:104
+rank2Parc <- rank2[,c("V2","V3")]
+rank2Parc$tipo <- "Masculino"
+rank2Parc$posicao <- 1:104
+
+rankTotal <- merge(rank1Parc, rank2Parc, by="V2")
+
+ggplot(rankTotal, aes(y=posicao.y, x=posicao.x, colour="red")) + geom_point() + ggtitle("Diferenças de posições entre fotos") + theme_bw()+ xlab("Posição no ranking Feminino") + ylab("Posição no ranking Masculino")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(rankTotal, aes(y=posicao.y-posicao.x, x=posicao.x, colour="red")) + geom_point() + ggtitle("") + theme_bw()+ xlab("Posição no Ranking Feminino") + ylab("Posição Masculino - Posição Feminino")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ scale_x_continuous(breaks=seq(1,104, 9))+ theme(legend.position="none")
+
 ```
 
 ## Feminino x Geral e Masculino x Geral
@@ -292,6 +306,20 @@ normalizedKendallTauDistance(file1, file2)
 file1 <- "kendall100/kendallAgradAllJovem.dat"
 file2 <- "kendall100/kendallAgradAllAdulto.dat"
 normalizedKendallTauDistance(file1, file2)
+
+rank1Parc <- rank1[,c("V2","V3")]
+rank1Parc$tipo <- "Jovem"
+rank1Parc$posicao <- 1:103
+rank2Parc <- rank2[,c("V2","V3")]
+rank2Parc$tipo <- "Adulto"
+rank2Parc$posicao <- 1:103
+
+rankTotal <- merge(rank1Parc, rank2Parc, by="V2")
+
+ggplot(rankTotal, aes(y=posicao.y, x=posicao.x, colour="red")) + geom_point() + ggtitle("Diferenças de posições entre fotos") + theme_bw()+ xlab("Posição no ranking Jovem") + ylab("Posição no ranking Adulto")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(rankTotal, aes(y=posicao.y-posicao.x, x=posicao.x, colour="red")) + geom_point() + ggtitle("") + theme_bw()+ xlab("Posição no Ranking Jovem") + ylab("Posição Adulto - Posição Jovem")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ scale_x_continuous(breaks=seq(1,104, 9))+ theme(legend.position="none")
+
 ```
 ### Seguranca
 ```{r, echo=FALSE, fig.show='asis', fig.width=4}

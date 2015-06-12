@@ -65,8 +65,8 @@ normalizedKendallTauDistance <- function(file1,file2){
   #   The normalized Kendall tau distance 
   #
   # Based on http://en.wikipedia.org/wiki/Kendall_tau_distance
-  rank1 <- read.table(file1)
-  rank2 <- read.table(file2)
+  rank1 <<- read.table(file1)
+  rank2 <<- read.table(file2)
   
   matriz <- merge(rank1, rank2, by="V2")
   

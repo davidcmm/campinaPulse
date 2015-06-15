@@ -453,6 +453,17 @@ mv rgbQScoreSeg.dat rgbQScoreSegAllNotCatole.dat
 mkdir inputCorrelacaoRegressao100
 mv rgbQScore*.dat inputCorrelacaoRegressao100/
 
+#Combina todos os arquivos de entrada em um arquivo para análise
+
+for file in `ls all*OrdInter.dat` ; do 
+	sed -i "s/https:\/\/contribua.org\/bairros\/norte\///g" $file 
+done
+Rscript combinaEntradas.R
+python combinaEntradas.py temp.dat entradaGrupos.dat
+
+rm -f temp.dat
+
+
 #Analisa Correlacao
 Rscript analisaCorrelacao.R inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat inputCorrelacaoRegressao100/rgbQScoreSegAll.dat > correlacaoAll.dat
 

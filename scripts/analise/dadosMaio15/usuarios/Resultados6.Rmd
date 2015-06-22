@@ -1,0 +1,165 @@
+---
+title: "Análise Comparativa Grupos"
+output: pdf_document
+---
+
+#Homens x Mulheres
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library(ggplot2)
+library(gridExtra)
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Agradável",
+  'seguro?'="Seguro"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
+#empty <- ggplot()+geom_point(aes(1,1), colour="white") +
+#     theme(                              
+#       plot.background = element_blank(), 
+#       panel.grid.major = element_blank(), 
+#       panel.grid.minor = element_blank(), 
+##       panel.border = element_blank(), 
+#       panel.background = element_blank(),
+#       axis.title.x = element_blank(),
+#       axis.title.y = element_blank(),
+#       axis.text.x = element_blank(),
+##       axis.text.y = element_blank(),
+#       axis.ticks = element_blank()
+#     )
+
+
+dados <- read.table("geral.dat", header=TRUE)
+
+dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) 
+
+#plot_top <- ggplot(novosDados, aes(V3.Feminino, fill=bairro)) + 
+#  geom_density(alpha=.5) + 
+#  scale_fill_manual(values = c("pink", "green", "blue"))  
+#  +theme(legend.position = "none")
+
+#plot_right <- ggplot(novosDados, aes(V3.Masculino, fill=bairro)) + 
+#  geom_density(alpha=.5) + 
+#  coord_flip() + 
+#  scale_fill_manual(values = c("pink", "green", "blue")) + 
+#  theme(legend.position = "none") 
+
+#grid.arrange(plot_top, empty, plot1, plot_right, ncol=2, nrow=2, widths=c(4, 1), heights=c(1, 4))
+
+
+#ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) + geom_rug(col="darkred",alpha=.7)
+
+```
+
+#Casado x Solteiro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ggplot(novosDados, aes(y=V3.Casado, x=V3.Solteiro, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro")+ylab("QScore Casado")+geom_abline(intercept=0, colour="red")
+```
+
+#Media x Baixa
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ggplot(novosDados, aes(y=V3.Baixa, x=V3.Media, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Media")+ylab("QScore Baixa")+geom_abline(intercept=0, colour="red")
+```
+
+#Jovem x Adulto
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ggplot(novosDados, aes(y=V3.Jovem, x=V3.Adulto, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Adulto")+ylab("QScore Jovem")+geom_abline(intercept=0, colour="red")
+```
+
+#Medio x Pos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ggplot(novosDados, aes(y=V3.Pos, x=V3.Medio, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Medio")+ylab("QScore Pos")+geom_abline(intercept=0, colour="red")
+```
+
+#Agradavel x Seguranca
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+novosDados <- reshape(dadosSub, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue" ,"bairro"), direction="wide")
+
+library(plyr)
+novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?"="Seguro"))
+
+ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point()+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")
+```
+
+#Solteiro x Solteiro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+solteiro1 <- read.table("allSolteiroOrdInter1.dat")
+solteiro2 <- read.table("allSolteiroOrdInter2.dat")
+
+solteiro1$grupo <- "Solteiro1"
+solteiro2$grupo <- "Solteiro2"
+
+segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=TRUE)
+newFrame <- rbind(solteiro1, solteiro2)
+temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
+final <- temp[with(temp, order(V2)),]
+
+temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs1 <- unlist(lapply(temp1, '[[', 1))
+final$bairro <- neigs1
+
+dadosSub <- final[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+ggplot(novosDados, aes(y=V3.Solteiro1, x=V3.Solteiro2, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro2")+ylab("QScore Solteiro1")+geom_abline(intercept=0, colour="red")
+
+ggplot(novosDados, aes(y=V3.Solteiro1, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Solteiro 1")+
+  ylab("QScore")+ylim(2, 8)+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(novosDados, aes(y=V3.Solteiro2, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") +facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
+  ylab("QScore")+ylim(2, 8)+ggtitle("Solteiro 2")+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+```
+
+#Homens x Homens
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+masculino1 <- read.table("allMasculinoOrdInter1.dat")
+masculino2 <- read.table("allMasculinoOrdInter2.dat")
+
+masculino1$grupo <- "Masculino1"
+masculino2$grupo <- "Masculino2"
+
+segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=TRUE)
+newFrame <- rbind(masculino1, masculino2)
+temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
+final <- temp[with(temp, order(V2)),]
+
+temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs1 <- unlist(lapply(temp1, '[[', 1))
+final$bairro <- neigs1
+
+dadosSub <- final[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+ggplot(novosDados, aes(y=V3.Masculino1, x=V3.Masculino2, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Masculino2")+ylab("QScore Masculino1")+geom_abline(intercept=0, colour="red")
+
+ggplot(novosDados, aes(y=V3.Masculino1, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Masculino 1")+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(novosDados, aes(y=V3.Masculino2, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Masculino 2")+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+```

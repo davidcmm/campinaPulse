@@ -309,7 +309,7 @@ python preparaHTML.py allCentroOrd.dat intersectionAllCentro.dat > allCentroOrdI
 grep "centro" allCentroOrdInter.dat > tmp.dat
 mv tmp.dat allCentroOrdInter.dat
 mv question.html questionAllCentro.html
-python preparaHTML.py firsNotCentroOrd.dat intersectionAllCentro.dat > allNotCentroOrdInter.dat 
+python preparaHTML.py allNotCentroOrd.dat intersectionAllCentro.dat > allNotCentroOrdInter.dat 
 grep "centro" allNotCentroOrdInter.dat > tmp.dat
 mv tmp.dat allNotCentroOrdInter.dat
 mv question.html questionAllNotCentro.html
@@ -457,6 +457,7 @@ mv rgbQScore*.dat inputCorrelacaoRegressao100/
 
 for file in `ls all*OrdInter.dat` ; do 
 	sed -i "s/https:\/\/contribua.org\/bairros\/norte\///g" $file 
+	sed -i "s/https:\/\/contribua.org\/bairros\/oeste\///g" $file
 done
 Rscript combinaEntradas.R
 python combinaEntradas.py temp.dat entradaGrupos.dat

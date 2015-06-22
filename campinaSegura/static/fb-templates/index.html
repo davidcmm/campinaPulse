@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<!-- Le styles -->
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+	rel="stylesheet">
+<link href="css/fonts/stylesheet.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+
+<!-- Le javascript -->
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/pybossa.js"></script>
+
+<style type="text/css">
+.container {
+	width: 940px;
+}
+
+#task-template {
+	min-height: 500px;
+}
+
+#task-long-description {
+	min-height: 500px;
+}
+
+.logo {
+	margin-right: 31px;
+}
+</style>
+
+</head>
+<body>
+	<header>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse"> <span class="icon-bar"></span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span>
+				</a> <a class="brand" href="/pybossa" target="_blank"><img
+					src="img/default_logo.png" alt="PyBossa"></a>
+				<div class="nav-collapse collapse">
+					<ul id="nav-buttons" class="nav">
+						<li><a href="/pybossa/account/" target="_blank">Comunidade</a></li>
+						<li><a href="/pybossa/app/category/featured/" target="_blank">Aplica&ccedil;&otilde;es</a></li>
+						<li><a href="/pybossa/about" target="_blank">Sobre</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	</header>
+
+	<div id="task-long-description" class="container">
+		<div class="well">
+			<div id="long-description-info" style="height: 165px;">
+				<div style="width: 200px; float: left; margin-right: 25px;">
+					<img class="img-polaroid"
+						src="http://www.malaguetanoticias.com/wp-content/uploads/2014/02/campina-Grande-PB.jpg">
+				</div>
+				<span
+					style="font-size: 28px; line-height: 26px; float: left; font-weight: bold; margin-top: 48px;">Como
+					&eacute; Campina? </span> <a class="btn btn-primary pull-right"
+					style="margin-top: 40px; padding: 14px; font-size: 16px;"
+					onclick="startAuthentication()"><i class="icon-thumbs-up"
+					style="color: white; width: 20px;"></i> Comece a contribuir agora!</a>
+			</div>
+			<div id="long-description-content"></div>
+		</div>
+	</div>
+
+	<div id="task-template" class="container" style="display: none; width: 1020px;"></div>
+	<div id="task-tutorial" class="container"></div>
+
+	<footer>
+	<div class="container">
+		<div class="row">
+			<div class="logo" style="float: left;">
+				<a href="http://www.lsd.ufcg.edu.br/" target="_blank"><img
+					src="img/lsdlogo.png"></a>
+			</div>
+			<div class="span3 logo">
+				<a href="http://citizencyberscience.net/"><img
+					src="img/ccc.png"></a>
+			</div>
+			<div class="span3 logo">
+              <a href="http://okfn.org/"><img src="img/okf.png"></a>
+          	</div>
+          	<div class="span3 logo">
+              <a href="http://dev.pybossa.com/"><img src="img/pybossa.png"></a>
+          	</div>
+		</div>
+	</div>
+	</footer>
+
+	<!--Facebook Login Code-->
+	<div id="fb-root"></div>
+	<script type="text/javascript" charset="utf-8">
+		var fb_permissions;
+		var fb_app_id;
+		
+		function getRandomInt(min, max) {
+		    return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		function initFacebookSDK(app_id, permissions) {
+			fb_app_id = app_id;
+			fb_permissions = {
+				'scope' : permissions
+			};
+
+			// Load the SDK asynchronously
+			(function(d) {
+				var js, id = 'facebook-jssdk', ref = d
+						.getElementsByTagName('script')[0];
+				if (d.getElementById(id)) {
+					return;
+				}
+				js = d.createElement('script');
+				js.id = id;
+				js.async = true;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				ref.parentNode.insertBefore(js, ref);
+			}(document));
+		}
+
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId : fb_app_id,
+				status : false, // check login status
+				cookie : true, // enable cookies to allow the server to access the session
+				xfbml : true
+			});
+		};
+
+		function handleAuthChange(response) {
+			if (response.status === 'connected' && !successfullyLogged) {
+				processLogin(response.authResponse);
+			} else if (response.status === 'not_authorized') {
+				FB.login(handleAuthChange, fb_permissions);
+			} else {
+				FB.login(handleAuthChange, fb_permissions);
+			}
+		}
+
+		function processLogin(authResponse) {
+			$.ajax(
+					{
+						url : "https://graph.facebook.com/me?access_token="
+								+ authResponse.accessToken,
+						dataType : 'json'
+					}).pipe(
+					function(response) {
+						var authData = {
+							'facebook_user_id' : response.id,
+							'email' : response.email,
+							'name' : response.first_name.toLowerCase() + "." + response.last_name.toLocaleLowerCase() + "." + getRandomInt(1,10),
+							'full_name' : response.name
+						};
+
+						pybossa.authenticateFacebookUser(authData, function(
+								answer) {
+							console.log(answer);
+							successfullyLogged = true;
+							FB.Event.subscribe('auth.authResponseChange',
+									handleAuthChange);
+							checkUserProgress();
+							showTaskTemplate();
+						});
+					});
+		}
+
+		function startAuthentication() {
+			FB.getLoginStatus(handleAuthChange);
+		}
+	</script>
+
+	<!-- PyBossa Application Template Load -->
+	<script type="text/javascript" charset="utf-8">
+		var app_shortname;
+		var successfullyLogged = false;
+
+		$.getJSON("fb_config.json", function(json) {
+			app_shortname = json.shortname;
+			fb_app_id = json.app_id;
+			pybossa.setEndpoint(json.endpoint);
+			initFacebookSDK(json.app_id, json.facebook_permissions_type);
+		});
+
+		$("#long-description-content").load("long_description.html");
+
+		function checkUserProgress() {
+			pybossa.userProgress(app_shortname).done(function(data) {
+				var numOfTaskRunDone = data.done;
+				if (numOfTaskRunDone == 0) {
+					loadTutorial();
+				}
+			});
+		}
+
+		function loadTutorial() {
+			$("#task-tutorial").load("tutorial.html", function() {
+				$("#startContrib").on("click", function(evt) {
+					evt.preventDefault();
+					$("#modal").modal("hide");
+				})
+			});
+		}
+
+		function showTaskTemplate() {
+			$("#task-long-description").hide();
+			$("#task-template").show();
+
+			$("#task-template").load("template.html", function() {
+				$("#task-content").show();
+			});
+		}
+	</script>
+</body>
+</html>

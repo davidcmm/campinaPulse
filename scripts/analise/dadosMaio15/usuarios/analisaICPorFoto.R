@@ -69,8 +69,8 @@ analyseIC <- function(file1, file2, type1, type2, shouldPlot=FALSE){
   icData1 <- apply(newdata1, 1, ic)
   icData2 <- apply(newdata2, 1, ic)
   
-  temp1 <- lapply(as.character(data1$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][6])
-  temp2 <- lapply(as.character(data2$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][6])
+  temp1 <- lapply(as.character(data1$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+  temp2 <- lapply(as.character(data2$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
   
   neigs1 <- unlist(lapply(temp1, '[[', 1))
   neigs2 <- unlist(lapply(temp2, '[[', 1))

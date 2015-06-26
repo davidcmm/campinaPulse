@@ -189,8 +189,8 @@ pergunta <- 'seguro?'
 
 osdados <- dados_pro_plot(dadosCopy, grupo1, grupo2, pergunta)
 
-w = 8
-h = 2.7
+w = 7
+h = 8
 pdf("casados-solteiros-seguro.pdf", width = w, height = h)
 ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) + 
   geom_point(alpha = 0.7, size=1.7) + 
@@ -198,7 +198,7 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap(. ~ bairro, ncol=1)
+  facet_wrap( ~ bairro, ncol=1)
   #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
 
@@ -209,7 +209,7 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap(. ~ bairro, ncol=1)
+  facet_wrap( ~ bairro, ncol=1)
 #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
 ```

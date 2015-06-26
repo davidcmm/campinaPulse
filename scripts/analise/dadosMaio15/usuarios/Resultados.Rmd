@@ -318,11 +318,13 @@ dadosSeg <- rbind(dadosSeg0, dadosSeg1, dadosSeg2)
 #dadosSeg$countSingle <- dadosSeg$countSingle + dadosSeg$countDivorced + dadosSeg$countWidower
 
 print(">>>> Agrad")
-regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countHighSchool + countGraduated + countMaster + countSingle + countMarried + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosAgrad)
+#regAgrad <- lm(qscore ~ scale(countYoung) + scale(countOld) + scale(countMale) + scale(countMClass) + scale(countHighSchool) + scale(countGraduated) + scale(countMaster) + scale(countSingle) + scale(countMarried) + scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosAgrad)
+regAgrad <- lm(qscore ~ scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + bairro, data=dadosAgrad)
 texreg(regAgrad)
 
 print(">>>> Seg")
-regSeg <- lm(qscore ~ countYoung + countOld + countMale + countMClass + countGraduated + countMaster + countSingle + countMarried + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosSeg)
+#regSeg <- lm(qscore ~ scale(countYoung) + scale(countOld) + scale(countMale) + scale(countMClass) + scale(countGraduated) + scale(countMaster) + scale(countSingle) + scale(countMarried) + scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosSeg)
+regSeg <- lm(qscore ~ scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + bairro, data=dadosSeg)
 texreg(regSeg)
 
 source('sjPlot/R/sjPlotLinreg.R')
@@ -333,29 +335,10 @@ library("sjPlot")
 library("sjmisc")
 
 sjp.setTheme(axis.title.size = 1.0, axis.textsize = 1.0, legend.size = .8, geom.label.size = 3.5, legend.pos = "left", title.align = "center", legend.inside = FALSE, geom.label.angle = 0)
-#axisLabels.y=c("Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais","Horizontais")
-sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
-#, axisLabels.y=c("Mulher", "Jovem", "Adulto", "Cla. Baixa", "Cla. Média Alta", "Cla. Alta", "Mestrado", "Doutorado", "Casado", "Divorciado", "Viúvo", "Conh. Liberdade", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais")
-sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
-
-print(">>>> Agrad")
-regAgrad <- lm(qscore ~ countYoung + countOld + countMale + countFemale + countMClass + countMHighClass + countHighSchool + countGraduated + countMaster + countPHD + countSingle + countMarried + countDivorced + countWidower + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + red + green + blue + diag + vert + hor, data=dadosAgrad)
-texreg(regAgrad)
-
-print(">>>> Seg")
-regSeg <- lm(qscore ~ countYoung + countOld + countMale + countFemale + countLowClass + countMLowClass + countMClass + countMHighClass + countHighClass + countHighSchool + countGraduated + countMaster + countPHD + countSingle + countMarried + countDivorced + countWidower + countKnowsCenter + countKnowsLiberdade + countKnowsCatole + red + green + blue + diag + vert + hor, data=dadosSeg)
-texreg(regSeg)
-
-source('sjPlot/R/sjPlotOdds.R')
-source('sjPlot/R/helpfunctions.R')
-source('sjPlot/R/sjPlotSetTheme.R')
-library("ggplot2")
-library("sjPlot")
-library("sjmisc")
-
-sjp.setTheme(axis.title.size = .85, axis.textsize = .85, legend.size = .8, geom.label.size = 3.5)
-sjp.lm(regAgrad, title="Regressão Agradável", sort.est=FALSE)
-sjp.lm(regSeg, title="Regressão Seguro", sort.est=FALSE)
+#sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+#sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
 ```
 
 ## Tabela com Modelos para Agradavel

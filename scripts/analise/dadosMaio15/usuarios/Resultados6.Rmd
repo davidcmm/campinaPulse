@@ -4,9 +4,11 @@ output: pdf_document
 ---
 
 #Homens x Mulheres
+## Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(ggplot2)
 library(gridExtra)
+source('analisaICPorFoto.R')
 
 facet_names <- list(
   'agrad%C3%A1vel?'="Agradável",
@@ -31,10 +33,10 @@ facet_labeller <- function(variable,value){
 #       axis.ticks = element_blank()
 #     )
 
-
 dados <- read.table("geral.dat", header=TRUE)
 
 dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
 ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) 
@@ -52,35 +54,343 @@ ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point
 
 #grid.arrange(plot_top, empty, plot1, plot_right, ncol=2, nrow=2, widths=c(4, 1), heights=c(1, 4))
 
-
 #ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) + geom_rug(col="darkred",alpha=.7)
 
 ```
 
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+temp <- dados
+
+#Intervalo de confiança por ponto
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+#Extraindo apenas os dados para plots
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+
+#Criando subconjuntos para homens e mulheres
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS <- dadosCeS[with(dadosCeS, order(grupo, V3)), ]
+
+
+dadosCeS$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMF <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para homens e mulheres
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:40), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMF <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
 #Casado x Solteiro
+## Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Casado, x=V3.Solteiro, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro")+ylab("QScore Casado")+geom_abline(intercept=0, colour="red")
 ```
 
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para casados e solteiros
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:39), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosSC <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para casados e solteiros
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:39), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosSC <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
 #Media x Baixa
+##Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Baixa, x=V3.Media, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Media")+ylab("QScore Baixa")+geom_abline(intercept=0, colour="red")
 ```
 
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para baixa e media
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:40), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMB <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para baixa e media
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Media' | dadosCopy$grupo == 'Baixa') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:40), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMB <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
 #Jovem x Adulto
+##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Jovem, x=V3.Adulto, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Adulto")+ylab("QScore Jovem")+geom_abline(intercept=0, colour="red")
 ```
 
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para jovens e adultos
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:18), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:35), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:28), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosJA <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para homens e mulheres
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Jovem' | dadosCopy$grupo == 'Adulto') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:38), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:34), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:31), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosJA <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
 #Medio x Pos
+##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Pos, x=V3.Medio, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Medio")+ylab("QScore Pos")+geom_abline(intercept=0, colour="red")
+```
+
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para medio e pós
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:24), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:35), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMP <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para homens e mulheres
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Medio' | dadosCopy$grupo == 'Pos') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:33), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:35), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosMP <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE, alternative = "g")
 ```
 
 #Agradavel x Seguranca
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-novosDados <- reshape(dadosSub, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue" ,"bairro"), direction="wide")
+dadosG <- dadosSub[dadosSub$grupo == 'Geral',]
+
+novosDados <- reshape(dadosG, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue" ,"bairro"), direction="wide")
 
 library(plyr)
 novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?"="Seguro"))

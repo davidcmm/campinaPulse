@@ -54,15 +54,15 @@ def parseUserData(lines, filterLines, outputFileNameAgra, outputFileNameSeg):
 		outputFile.write(str(userID)+"\t")
 		for task in currentTasks:
 			if not task in usersTasksMatrixAgra[userID].keys():
-				outputFile.write("NA\t")
+				outputFile.write("SR\t")
 			else:
 				value = usersTasksMatrixAgra[userID][task]
 				if value == 'NotKnown':
-					outputFile.write(str(0)+"\t")				
+					outputFile.write(str("NotKnown")+"\t")				
 				elif value == 'Left':
-					outputFile.write(str(1)+"\t")				
+					outputFile.write(str("Left")+"\t")				
 				elif value == 'Right':
-					outputFile.write(str(2)+"\t")
+					outputFile.write(str("Right")+"\t")
 		outputFile.write("\n")
 	outputFile.close()
 	
@@ -80,15 +80,15 @@ def parseUserData(lines, filterLines, outputFileNameAgra, outputFileNameSeg):
 		outputFile.write(str(userID)+"\t")
 		for task in currentTasks:
 			if not task in usersTasksMatrixSeg[userID].keys():
-				outputFile.write("NA\t")
+				outputFile.write("SR\t")
 			else:
 				value = usersTasksMatrixSeg[userID][task]
 				if value == 'NotKnown':
-					outputFile.write(str(0)+"\t")				
+					outputFile.write(str("NotKnown")+"\t")				
 				elif value == 'Left':
-					outputFile.write(str(1)+"\t")				
+					outputFile.write(str("Left")+"\t")				
 				elif value == 'Right':
-					outputFile.write(str(2)+"\t")
+					outputFile.write(str("Right")+"\t")
 		outputFile.write("\n")
 	outputFile.close()
 

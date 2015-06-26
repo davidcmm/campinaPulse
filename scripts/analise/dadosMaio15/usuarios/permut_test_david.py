@@ -71,10 +71,10 @@ def ptest(df, name_g1, name_g2, pergunta, bairro=None, num_permut=100000):
     
     return (name_g1, name_g2, pergunta), actual, np.array(pvals), functions
 
-bairro = 'centro'
+bairro = 'catole'
 
-df = pd.read_csv('geral.dat', sep=' ', encoding='utf8')
-df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1, inplace=True)
+df = pd.read_csv('geral2.dat', sep=' ', encoding='utf8')
+df = df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
 
 all_res = []
 

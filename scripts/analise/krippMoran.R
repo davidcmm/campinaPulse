@@ -3,51 +3,62 @@
 library(irr)
 library(ape)
 
-args <- commandArgs(trailingOnly = TRUE)
-
 #Kripp
-krippAlpha <- function () {
-	dadosAgra <- read.table("consenseMatrixAgra.dat", header=TRUE, row.names=1)
-	dadosSeg <- read.table("consenseMatrixSeg.dat", header=TRUE, row.names=1)
+krippAlpha <- function (agra, seg) {
+	
+	dadosAgra <- read.table(agra, header=TRUE, row.names=1)
+	dadosSeg <- read.table(seg, header=TRUE, row.names=1)
 	matrizAgra <- data.matrix(dadosAgra)
 	matrizSeg <- data.matrix(dadosSeg)
 
-	kripp.alpha(matrizAgra, method="nominal")
-	kripp.alpha(matrizSeg, method="nominal")
+	res <- kripp.alpha(matrizAgra, method="nominal")
+	res1 <- kripp.alpha(matrizSeg, method="nominal")
+	print (">>> Agra")
+	print (res)
+	print (">>> Seg")
+	print (res1)
 }
 
 
 #Moran I
-moranI <- function () {
-	agra <- args[2]
-	seg <- args[3]
-
-	data<-read.table(agra, sep="+", header=F)
-	ozone.dists <- as.matrix(dist(cbind(ozone$V5, ozone$V4)))
-
-	ozone.dists.inv <- 1/(1+ozone.dists)
-	diag(ozone.dists.inv) <- 0
+moranI <- function (agra, seg) {
 	
-	print(">> Agradavel")
-	Moran.I(ozone$V3, ozone.dists.inv)
+	data <- read.table(agra, sep="+", header=F)
+	data.dists <- as.matrix(dist(cbind(data$V5, data$V4)))
 
-	data<-read.table(seg, sep="+", header=F)
-	ozone.dists <- as.matrix(dist(cbind(ozone$V5, ozone$V4)))
-
-	ozone.dists.inv <- 1/(1+ozone.dists)
-	diag(ozone.dists.inv) <- 0
+	data.dists.inv <- 1/(1+data.dists)
+	diag(data.dists.inv) <- 0
 	
-	print(">> Seguro")
-	Moran.I(ozone$V3, ozone.dists.inv)
+	print(">> Agradavel observed expected p.value")
+	result <- Moran.I(data$V3, data.dists.inv)
+	zScore <- (result$observed - result$expected) / result$sd
+	print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
+
+	data <- read.table(seg, sep="+", header=F)
+	data.dists <- as.matrix(dist(cbind(data$V5, data$V4)))
+
+	data.dists.inv <- 1/(1+data.dists)
+	diag(data.dists.inv) <- 0
+	
+	print(">> Seguro observed expected p.value")
+	result <- Moran.I(data$V3, data.dists.inv)
+	zScore <- (result$observed - result$expected) / result$sd
+	print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
 }
 
-execute <- args[1]
+args <- commandArgs(trailingOnly = TRUE)
 
-if (execute == 'both'){
-	krippAlpha()
-	moranI()	
-} else if (execute == 'moran') {
-	moranI()
-} else if (execute == 'kripp') {
-	krippAlpha()
+if (length(args) > 1){
+  execute <- args[1]
+  agra <- args[2]
+  seg <- args[3]
+  
+  if (execute == 'both'){
+  	krippAlpha(agra, seg)
+  	moranI(agra, seg)	
+  } else if (execute == 'moran') {
+  	moranI(agra, seg)
+  } else if (execute == 'kripp') {
+  	krippAlpha(agra, seg)
+  }
 }

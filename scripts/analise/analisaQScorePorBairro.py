@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
 
 	#Writing outputFile with qscores and rgb
-	#outputFile = open("meanQScoreAgrad.dat","w")
+	outputFile = open("meanNeigAgra.dat","w")
 	#print "Agrad"
 	#print "bairro\tmedia\tdesvio\tmenor\tmaior"
 	for district in districtDic[possibleQuestions[0]].keys():
@@ -51,13 +51,13 @@ if __name__ == "__main__":
 		stDeviation = np.std(qscores)
 		conf_int = stats.norm.interval(0.95, loc=mean, scale=stDeviation)
 
-		#print district+"\t"+str(mean)+"\t"+str(stDeviation)+"\t"+str(conf_int[0])+"\t"+str(conf_int[1])
+		outputFile.write(district+"\t"+str(mean)+"\t"+str(stDeviation)+"\t"+str(conf_int[0])+"\t"+str(conf_int[1])+"\n")
 		for qscore in qscores:		
 			print "agra\t" + district + "\t" + str(qscore)
-	#outputFile.close()
+	outputFile.close()
 
 	#Writing outputFile with qscores and rgb
-	#outputFile = open("meanQScoreSeg.dat","w")
+	outputFile = open("meanNeigSeg.dat","w")
 	#print "Seg"
 	#print "bairro\tmedia\tdesvio\tmenor\tmaior"
 	for district in districtDic[possibleQuestions[1]].keys():
@@ -66,10 +66,10 @@ if __name__ == "__main__":
 		stDeviation = np.std(qscores)
 		conf_int = stats.norm.interval(0.95, loc=mean, scale=stDeviation)
 
-		#print district+"\t"+str(mean)+"\t"+str(stDeviation)+"\t"+str(conf_int[0])+"\t"+str(conf_int[1])
+		outputFile.write(district+"\t"+str(mean)+"\t"+str(stDeviation)+"\t"+str(conf_int[0])+"\t"+str(conf_int[1])+"\n")
 		for qscore in qscores:
 			print "seg\t"+district + "\t" + str(qscore)
-	#outputFile.close(),
+	outputFile.close()
 
 
 		

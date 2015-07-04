@@ -129,10 +129,12 @@ calculateTTests <- function(file1, file2, output1, output2, shouldPlot=FALSE){
         pdf(paste("boxplot", output1, ".pdf"), paper="special")
         #boxplot(data1$V3, main=paste("Boxplot", output1), col=color)
         ggplot(data1, aes(y=data1$V3, x=c(output1)))+geom_boxplot()
+        dev.off()
         
         pdf(paste("boxplot", output2, ".pdf"), paper="special")
         #boxplot(data2$V3, main=paste("Boxplot", output2), col=color)
         ggplot(data2, aes(y=data2$V3, x=c(output2)))+geom_boxplot()
+        dev.off()
         
         #Verifying if data is normal
         pdf(paste("norm", output1, "-", output2, ".pdf"), paper="special")
@@ -143,8 +145,8 @@ calculateTTests <- function(file1, file2, output1, output2, shouldPlot=FALSE){
         
         qqnorm(data2$V3)
         qqline(data2$V3)
-        
         dev.off()
+        
     }
 }
 

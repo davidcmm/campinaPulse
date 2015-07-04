@@ -39,7 +39,7 @@ dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "
 
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
-ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) 
+ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red"))
 
 #plot_top <- ggplot(novosDados, aes(V3.Feminino, fill=bairro)) + 
 #  geom_density(alpha=.5) + 
@@ -140,13 +140,13 @@ dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteir
 dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
 
 dadosCeS$NV2 <- rep(c(1:39), each=2)
-ggplot(dadosCeS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black") + theme_bw()
+ggplot(dadosCeS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black") + theme_bw() + theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 dadosLiS$NV2 <- rep(c(1:36), each=2)
-ggplot(dadosLiS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black") + theme_bw()
+ggplot(dadosLiS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 dadosCaS$NV2 <- rep(c(1:32), each=2)
-ggplot(dadosCaS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé")+ geom_line(colour="black") + theme_bw()
+ggplot(dadosCaS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé")+ geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 #Nazareno
 library(dplyr)
@@ -230,21 +230,28 @@ wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TR
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 #Criando subconjuntos para casados e solteiros
 dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosCeA$bairro <- "Centro"
 dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosLiA$bairro <- "Liberdade"
 dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+dadosCaA$bairro <- "Catolé"
 
 
 dadosCeA$NV2 <- rep(c(1:39), each=2)
 #dadosCeA$NV2 <- reorder(dadosCeA$V2, dadosCeA$V3)
 
-ggplot(dadosCeA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black")+ theme_bw()+theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+ggplot(dadosCeA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black")+ theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 dadosLiA$NV2 <- rep(c(1:36), each=2)
-ggplot(dadosLiA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black")+ theme_bw()
+ggplot(dadosLiA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black")+ theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 
 dadosCaA$NV2 <- rep(c(1:32), each=2)
-ggplot(dadosCaA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + geom_line(colour="black") + theme_bw()
+ggplot(dadosCaA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
+
+novo <- rbind(dadosCeA, dadosLiA, dadosCaA)
+
+ggplot(novo, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text=element_text(size=16)) + facet_wrap(~bairro, ncol=1)
 ```
 
 ##Wilcoxon Signed Ranked (Pareado) - Agradavel
@@ -461,7 +468,7 @@ novosDados <- reshape(dadosG, timevar="V1", idvar=c("V2", "grupo", "diag", "hor"
 library(plyr)
 novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?"="Seguro"))
 
-ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point()+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")
+ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point()+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")+theme_bw()+theme(axis.text=element_text(size=16), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title=element_text(size=16))
 ```
 
 #Solteiro x Solteiro
@@ -549,7 +556,7 @@ dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?' & dadosSub$grupo != 'CCentro' & d
 
 ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
@@ -570,16 +577,16 @@ dadosSubS$grupo <- factor(dadosSubS$grupo, levels = c('Media', 'Baixa', 'Casado'
 
 ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
 
 ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
 
 ```

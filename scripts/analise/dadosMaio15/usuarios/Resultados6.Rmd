@@ -1,10 +1,10 @@
 ---
-title: "Análise Comparativa Grupos"
+title: "Análise Comparativa Grupos - IHC 2015"
 output: pdf_document
 ---
 
-#Homens x Mulheres
-## Qscores x Qscores
+#Geral
+##IC Seguro
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(ggplot2)
 library(gridExtra)
@@ -19,6 +19,58 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
+dados <- read.table("geral.dat", header=TRUE)
+
+dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "setor")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
+
+temp <- dados
+
+#Intervalo de confiança por ponto
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+#Extraindo apenas os dados para plots
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
+
+#Criando subconjuntos para homens e mulheres
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Geral') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:20), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:18), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:16), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para homens e mulheres
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:20), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:18), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:16), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+#Homens x Mulheres
+## Qscores x Qscores
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 #empty <- ggplot()+geom_point(aes(1,1), colour="white") +
 #     theme(                              
 #       plot.background = element_blank(), 
@@ -33,13 +85,9 @@ facet_labeller <- function(variable,value){
 #       axis.ticks = element_blank()
 #     )
 
-dados <- read.table("geral.dat", header=TRUE)
-
-dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
 ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) 
+
+ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=setor))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red")) 
 
 #plot_top <- ggplot(novosDados, aes(V3.Feminino, fill=bairro)) + 
 #  geom_density(alpha=.5) + 
@@ -183,11 +231,25 @@ dados_pro_plot <- function(data, grupo1, grupo2, pergunta){
   dados_CS_S.l
 }
 
+facet_names_bairro <- list(
+  'catole?'="Catolé",
+  'liberdade'="Liberdade",
+  'centro' = "Centro"
+)
+
+facet_labeller_bairro <- function(variable,value){
+  return(facet_names_bairro[value])
+}
+
 grupo1 <- 'Casado'
 grupo2 <- 'Solteiro'
 pergunta <- 'seguro?'
 
 osdados <- dados_pro_plot(dadosCopy, grupo1, grupo2, pergunta)
+osdados$bairro <- as.character(osdados$bairro)
+osdados$bairro[osdados$bairro == "catole"] <- "Catolé"
+osdados$bairro[osdados$bairro == "liberdade"] <- "Liberdade"
+osdados$bairro[osdados$bairro == "centro"] <- "Centro"
 
 w = 7
 h = 8
@@ -198,7 +260,7 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap( ~ bairro, ncol=1)
+  facet_wrap( ~ bairro, ncol=1)+theme_bw()
   #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
 
@@ -209,7 +271,7 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap( ~ bairro, ncol=1)
+  facet_wrap( ~ bairro, ncol=1)+theme_bw()
 #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
 ```
@@ -237,14 +299,13 @@ dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteir
 dadosCeA$NV2 <- rep(c(1:39), each=2)
 #dadosCeA$NV2 <- reorder(dadosCeA$V2, dadosCeA$V3)
 
-ggplot(dadosCeA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black")+ theme_bw()+theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+ggplot(dadosCeA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + geom_line(colour="black")+ theme_bw()+theme(axis.text=element_text(size=9), axis.title=element_text(size=14), legend.text = element_text(size=14), legend.title = element_text(size=14))
 
 dadosLiA$NV2 <- rep(c(1:36), each=2)
-ggplot(dadosLiA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black")+ theme_bw()
-
+ggplot(dadosLiA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black")+ theme_bw()+theme(axis.text=element_text(size=9), axis.title=element_text(size=14), legend.text = element_text(size=14), legend.title = element_text(size=14))
 
 dadosCaA$NV2 <- rep(c(1:32), each=2)
-ggplot(dadosCaA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + geom_line(colour="black") + theme_bw()
+ggplot(dadosCaA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + geom_line(colour="black") + theme_bw()+theme(axis.text=element_text(size=9), axis.title=element_text(size=14), legend.text = element_text(size=14), legend.title = element_text(size=14))
 ```
 
 ##Wilcoxon Signed Ranked (Pareado) - Agradavel
@@ -456,12 +517,21 @@ wilcox.test(dadosMP$V3.Medio, dadosMP$V3.Pos, paired = TRUE, conf.int = TRUE, al
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 dadosG <- dadosSub[dadosSub$grupo == 'Geral',]
 
+dadosG$bairro <- as.character(dadosG$bairro)
+dadosG$bairro[dadosG$bairro == "catole"] <- "Catolé"
+dadosG$bairro[dadosG$bairro == "liberdade"] <- "Liberdade"
+dadosG$bairro[dadosG$bairro == "centro"] <- "Centro"
+
 novosDados <- reshape(dadosG, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue" ,"bairro"), direction="wide")
 
 library(plyr)
 novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?"="Seguro"))
 
-ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point()+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")
+w = 8
+h = 7
+pdf("agraXseg.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
 ```
 
 #Solteiro x Solteiro

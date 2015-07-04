@@ -43,11 +43,15 @@ general$grupo <- "Geral"
 #Reading images characteristics
 segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=TRUE)
 
+#Reading IBGE sectors
+ibge <- read.table("setores_censitarios.dat", header=TRUE)
+
 newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, baixa, medio, pos, nliberdade,
       liberdade, ncatole, catole, ncentro, centro, general)
 
 temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
-final <- temp[with(temp, order(V2)),]
+temp1 <- merge(temp, ibge, by.x = "V2", by.y = "foto")
+final <- temp1[with(temp1, order(V2)),]
 
 temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
 neigs1 <- unlist(lapply(temp1, '[[', 1))

@@ -52,11 +52,16 @@ newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, b
 temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
 temp1 <- merge(temp, ibge, by.x = "V2", by.y = "foto")
 final <- temp1[with(temp1, order(V2)),]
+final2 <- temp[with(temp, order(V2)),]
 
 temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
 neigs1 <- unlist(lapply(temp1, '[[', 1))
 final$bairro <- neigs1
 
-write.table(final, file="geral.dat", sep=" ", quote=FALSE, row.names=FALSE)
+temp <- lapply(as.character(final2$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs2 <- unlist(lapply(temp, '[[', 1))
+final2$bairro <- neigs2
 
+write.table(final, file="geral.dat", sep=" ", quote=FALSE, row.names=FALSE)
+write.table(final2, file="geralRank.dat", sep=" ", quote=FALSE, row.names=FALSE)
 

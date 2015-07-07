@@ -21,9 +21,9 @@ facet_labeller <- function(variable,value){
 
 dados <- read.table("geral.dat", header=TRUE)
 
-dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "setor")]
+dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
 
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
 temp <- dados
 
@@ -33,9 +33,9 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Extraindo apenas os dados para plots
-dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
 
-#Criando subconjuntos para homens e mulheres
+#Criando subconjunto
 dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
 dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Geral') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
 dadosCaS <- dadosCopy[(dadosCopy$grupo == 'Geral' ) & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
@@ -85,11 +85,14 @@ ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) +
 #       axis.ticks = element_blank()
 #     )
 
-dados <- read.table("geral.dat", header=TRUE)
+hom <- dadosSub[(dadosSub$grupo == 'Masculino'),] 
+mul <- dadosSub[(dadosSub$grupo == 'Feminino'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.Masculino - novosHomMul$V3.Feminino
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
 
-dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 
 ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red"))
 
@@ -181,7 +184,16 @@ wilcox.test(dadosMF$V3.Feminino, dadosMF$V3.Masculino, paired = TRUE, conf.int =
 #Casado x Solteiro
 ## Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-ggplot(novosDados, aes(y=V3.Casado, x=V3.Solteiro, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro")+ylab("QScore Casado")+geom_abline(intercept=0, colour="red")
+#ggplot(novosDados, aes(y=V3.Casado, x=V3.Solteiro, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro")+ylab("QScore Casado")+geom_abline(intercept=0, colour="red")
+
+hom <- dadosSub[(dadosSub$grupo == 'Casado'),] 
+mul <- dadosSub[(dadosSub$grupo == 'Solteiro'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.Casado - novosHomMul$V3.Solteiro
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
+
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 ```
 
 ##IC Seguro
@@ -336,6 +348,15 @@ wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TR
 ##Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Baixa, x=V3.Media, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Media")+ylab("QScore Baixa")+geom_abline(intercept=0, colour="red")
+
+hom <- dadosSub[(dadosSub$grupo == 'Media'),] 
+mul <- dadosSub[(dadosSub$grupo == 'Baixa'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.Media - novosHomMul$V3.Baixa
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
+
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 ```
 
 ##IC Seguro
@@ -400,6 +421,15 @@ wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, 
 ##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Jovem, x=V3.Adulto, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Adulto")+ylab("QScore Jovem")+geom_abline(intercept=0, colour="red")
+
+hom <- dadosSub[(dadosSub$grupo == 'Jovem'),] 
+mul <- dadosSub[(dadosSub$grupo == 'Adulto'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.Jovem - novosHomMul$V3.Adulto
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
+
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 ```
 
 ##IC Seguro
@@ -464,6 +494,15 @@ wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE,
 ##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 ggplot(novosDados, aes(y=V3.Pos, x=V3.Medio, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Medio")+ylab("QScore Pos")+geom_abline(intercept=0, colour="red")
+
+hom <- dadosSub[(dadosSub$grupo == 'Medio'),] 
+mul <- dadosSub[(dadosSub$grupo == 'Pos'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.Medio - novosHomMul$V3.Pos
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
+
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 ```
 
 ##IC Seguro

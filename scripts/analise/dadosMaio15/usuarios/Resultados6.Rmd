@@ -115,16 +115,6 @@ ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point
 
 ##IC Seguro
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-temp <- dados
-
-#Intervalo de confiança por ponto
-qscoreSim <- temp [ c(4:103) ]
-icData <- apply(qscoreSim, 1, ic)
-temp$distance <- icData
-
-#Extraindo apenas os dados para plots
-dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-
 #Criando subconjuntos para homens e mulheres
 dadosCeS <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
 dadosLiS <- dadosCopy[(dadosCopy$grupo == 'Masculino' | dadosCopy$grupo == 'Feminino') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
@@ -209,17 +199,27 @@ ggplot(dadosCeS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_poin
 dadosLiS$NV2 <- rep(c(1:36), each=2)
 ggplot(dadosLiS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
-dadosCaS$NV2 <- rep(c(1:32), each=2)
+dadosCaS$NV2 <- rep(c(1:33), each=2)
 ggplot(dadosCaS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé")+ geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 #Nazareno
 library(dplyr)
 library(reshape2)
-dadosCopy <- select(dadosCopy, V2, V1, V3, grupo, bairro)
+
+dados <- read.table("geralRank.dat", header=TRUE)
+dadosCopy2 <- dados
+
+#Intervalo de confiança por ponto
+# <nazareno> Não estou usando por agora.
+qscoreSim <- dadosCopy2 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+dadosCopy2$distance <- icData
+
+dadosCopy2 <- select(dadosCopy2, V2, V1, V3, grupo, bairro)
 
 dados_pro_plot <- function(data, grupo1, grupo2, pergunta){
-  grupos_e_pergunta.index <- (data$grupo == grupo1 | dadosCopy$grupo == grupo2) & dadosCopy$V1==pergunta
-  dados_CS_S.l <- dadosCopy[grupos_e_pergunta.index,]
+  grupos_e_pergunta.index <- (data$grupo == grupo1 | dadosCopy2$grupo == grupo2) & dadosCopy2$V1==pergunta
+  dados_CS_S.l <- dadosCopy2[grupos_e_pergunta.index,]
   names(dados_CS_S.l) <- c("Local", "Pergunta", "QScore", "grupo", "bairro")
   
   # Qscore > rank
@@ -261,7 +261,7 @@ grupo1 <- 'Casado'
 grupo2 <- 'Solteiro'
 pergunta <- 'seguro?'
 
-osdados <- dados_pro_plot(dadosCopy, grupo1, grupo2, pergunta)
+osdados <- dados_pro_plot(dadosCopy2, grupo1, grupo2, pergunta)
 osdados$bairro <- as.character(osdados$bairro)
 osdados$bairro[osdados$bairro == "catole"] <- "Catolé"
 osdados$bairro[osdados$bairro == "liberdade"] <- "Liberdade"
@@ -276,9 +276,19 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap( ~ bairro, ncol=1)+theme_bw()
+  facet_wrap( ~ bairro, ncol=1)+theme_bw() + theme(axis.text=element_text(size=16), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text= element_text(size=16))
   #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
+
+grupo1 <- 'Casado'
+grupo2 <- 'Solteiro'
+pergunta <- 'agrad%C3%A1vel?'
+
+osdados <- dados_pro_plot(dadosCopy2, grupo1, grupo2, pergunta)
+osdados$bairro <- as.character(osdados$bairro)
+osdados$bairro[osdados$bairro == "catole"] <- "Catolé"
+osdados$bairro[osdados$bairro == "liberdade"] <- "Liberdade"
+osdados$bairro[osdados$bairro == "centro"] <- "Centro"
 
 pdf("casados-solteiros-agradavel.pdf", width = w, height = h)
 ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) + 
@@ -287,7 +297,7 @@ ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) +
   xlab("Local") + 
   ylab("Comparação de Rankings") + 
   scale_y_reverse(limits = c(39, 1)) + 
-  facet_wrap( ~ bairro, ncol=1)+theme_bw()
+  facet_wrap( ~ bairro, ncol=1)+theme_bw()+ theme(axis.text=element_text(size=16), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text= element_text(size=16))
 #scale_x_discrete(breaks=seq(1, 36, by=5))
 dev.off()
 ```
@@ -686,8 +696,14 @@ dadosSubA <- dadosSub[dadosSub$V1 == 'agrad%C3%A1vel?' & (dadosSub$grupo == 'Med
 
 dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?'  & (dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro' | dadosSub$grupo == 'Medio' | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa' | dadosSub$grupo == 'Jovem' | dadosSub$grupo == 'Adulto') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'catole'),]
 
-dadosSubA$grupo <- factor(dadosSubA$grupo, levels = c('Media', 'Baixa', 'Feminino', 'Masculino', 'Medio', 'Pos')) 
-dadosSubS$grupo <- factor(dadosSubS$grupo, levels = c('Media', 'Baixa', 'Casado', 'Solteiro', 'Medio', 'Pos', 'Jovem', 'Adulto')) 
+dadosSubA$grupo <- as.character(dadosSubA$grupo)
+dadosSubA$bairro <- as.character(dadosSubA$bairro)
+dadosSubA$grupo[dadosSubA$grupo == "Media"] <- "Média"
+dadosSubA$grupo[dadosSubA$grupo == "Medio"] <- "Médio"
+dadosSubA$grupo[dadosSubA$grupo == "Pos"] <- "Pós"
+dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
+dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
+dadosSubA$grupo <- factor(dadosSubA$grupo, levels = c('Média', 'Baixa', 'Feminino', 'Masculino', 'Médio', 'Pós')) 
 
 ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 
@@ -695,6 +711,15 @@ ggplot(dadosSubA, aes(y=V3, x = bairro)) +
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
+
+dadosSubS$grupo <- as.character(dadosSubS$grupo)
+dadosSubS$bairro <- as.character(dadosSubS$bairro)
+dadosSubS$grupo[dadosSubS$grupo == "Media"] <- "Média"
+dadosSubS$grupo[dadosSubS$grupo == "Medio"] <- "Médio"
+dadosSubS$grupo[dadosSubS$grupo == "Pos"] <- "Pós"
+dadosSubS$bairro[dadosSubS$bairro == "centro"] <- "Centro"
+dadosSubS$bairro[dadosSubS$bairro == "catole"] <- "Catolé"
+dadosSubS$grupo <- factor(dadosSubS$grupo, levels = c('Média', 'Baixa', 'Casado', 'Solteiro', 'Médio', 'Pós', 'Jovem', 'Adulto')) 
 
 ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 

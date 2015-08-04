@@ -199,14 +199,14 @@ ggplot(dadosCeS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_poin
 dadosLiS$NV2 <- rep(c(1:36), each=2)
 ggplot(dadosLiS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
-dadosCaS$NV2 <- rep(c(1:33), each=2)
+dadosCaS$NV2 <- rep(c(1:32), each=2)
 ggplot(dadosCaS, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé")+ geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16))
 
 #Nazareno
 library(dplyr)
 library(reshape2)
 
-dados <- read.table("geralRank.dat", header=TRUE)
+#dados <- read.table("geralRank.dat", header=TRUE)
 dadosCopy2 <- dados
 
 #Intervalo de confiança por ponto
@@ -500,6 +500,79 @@ wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE,
 wilcox.test(dadosJA$V3.Jovem, dadosJA$V3.Adulto, paired = TRUE, conf.int = TRUE, alternative = "g")
 ```
 
+#Menor med x Maior Med
+##QScores x QScores
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ggplot(novosDados, aes(y=V3.MenorMed, x=V3.MaiorMed, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Maior median")+ylab("QScore menor median")+geom_abline(intercept=0, colour="red")
+
+hom <- dadosSub[(dadosSub$grupo == 'MenorMed'),] 
+mul <- dadosSub[(dadosSub$grupo == 'MaiorMed'),] 
+temp <- rbind(hom, mul)
+novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosHomMul$distancia <- novosHomMul$V3.MenorMed - novosHomMul$V3.MaiorMed
+novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
+
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
+```
+
+##IC Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para jovens e adultos
+dadosCeS <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'centro',]
+dadosLiS <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'liberdade',]
+dadosCaS <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='seguro?' & dadosCopy$bairro == 'catole',]
+
+dadosCeS$NV2 <- rep(c(1:40), each=2)
+ggplot(dadosCeS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiS$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaS$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaS, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosJA <- novosDados[novosDados$V1 == 'seguro?',]
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
+##IC Agradavel
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Criando subconjuntos para homens e mulheres
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'MenorMed' | dadosCopy$grupo == 'MaiorMed') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+
+dadosCeA$NV2 <- rep(c(1:40), each=2)
+ggplot(dadosCeA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosLiA$NV2 <- rep(c(1:36), each=2)
+ggplot(dadosLiA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade") + scale_x_discrete(breaks=seq(1, 36, by=5))
+
+dadosCaA$NV2 <- rep(c(1:32), each=2)
+ggplot(dadosCaA, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_x_discrete(breaks=seq(1, 36, by=5))
+```
+
+##Wilcoxon Signed Ranked (Pareado) - Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosJA <- novosDados[novosDados$V1 == 'agrad%C3%A1vel?',]
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE)
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE, alternative = "l")
+
+wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = TRUE, alternative = "g")
+```
+
 #Medio x Pos
 ##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
@@ -595,81 +668,6 @@ ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point(alpha =
 dev.off()
 ```
 
-#Solteiro x Solteiro
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-solteiro1 <- read.table("allSolteiroOrdInter1.dat")
-solteiro2 <- read.table("allSolteiroOrdInter2.dat")
-
-solteiro1$grupo <- "Solteiro1"
-solteiro2$grupo <- "Solteiro2"
-
-segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=TRUE)
-newFrame <- rbind(solteiro1, solteiro2)
-temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
-final <- temp[with(temp, order(V2)),]
-
-temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
-neigs1 <- unlist(lapply(temp1, '[[', 1))
-final$bairro <- neigs1
-
-dadosSub <- final[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-ggplot(novosDados, aes(y=V3.Solteiro1, x=V3.Solteiro2, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Solteiro2")+ylab("QScore Solteiro1")+geom_abline(intercept=0, colour="red")
-
-ggplot(novosDados, aes(y=V3.Solteiro1, x = bairro)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
-  theme_bw()+ xlab("") + ggtitle("Solteiro 1")+
-  ylab("QScore")+ylim(2, 8)+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
-
-ggplot(novosDados, aes(y=V3.Solteiro2, x = bairro)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
-  theme_bw()+ xlab("") +facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
-  ylab("QScore")+ylim(2, 8)+ggtitle("Solteiro 2")+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
-```
-
-#Homens x Homens
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-masculino1 <- read.table("allMasculinoOrdInter1.dat")
-masculino2 <- read.table("allMasculinoOrdInter2.dat")
-
-masculino1$grupo <- "Masculino1"
-masculino2$grupo <- "Masculino2"
-
-segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=TRUE)
-newFrame <- rbind(masculino1, masculino2)
-temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
-final <- temp[with(temp, order(V2)),]
-
-temp1 <- lapply(as.character(final$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
-neigs1 <- unlist(lapply(temp1, '[[', 1))
-final$bairro <- neigs1
-
-dadosSub <- final[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-ggplot(novosDados, aes(y=V3.Masculino1, x=V3.Masculino2, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Masculino2")+ylab("QScore Masculino1")+geom_abline(intercept=0, colour="red")
-
-ggplot(novosDados, aes(y=V3.Masculino1, x = bairro)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
-  theme_bw()+ xlab("") + ggtitle("Masculino 1")+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
-  ylab("QScore")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
-
-ggplot(novosDados, aes(y=V3.Masculino2, x = bairro)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
-  theme_bw()+ xlab("") + ggtitle("Masculino 2")+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+
-  ylab("QScore")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
-```
 
 
 # Boxplots por grupos e bairros
@@ -728,4 +726,323 @@ ggplot(dadosSubS, aes(y=V3, x = bairro)) +
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
 
+```
+
+
+# Distribuições dos dados por grupo - agradável
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library("stats")
+
+print("Jov x Adu Centro Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Jovem" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Adulto" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi Centro Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Baixa" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Media" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem Centro Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Masculino" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Feminino" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt Centro Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Casado" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Solteiro" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Medio x Pos Centro Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Medio" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Pos" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Jov x Adu catole Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Jovem" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Adulto" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi catole Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Baixa" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Media" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem catole Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Masculino" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Feminino" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt catole Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Casado" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Solteiro" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt catole Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Medio" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Pos" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Jov x Adu liberdade Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Jovem" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Adulto" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi liberdade Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Baixa" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Media" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem liberdade Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Masculino" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Feminino" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt liberdade Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Casado" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Solteiro" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt liberdade Agrad")
+grupo1 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Medio" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Pos" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+```
+
+# Distribuições dos dados por grupo - seguranca
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library("stats")
+
+print("Jov x Adu Centro Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Jovem" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Adulto" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi Centro Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Baixa" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Media" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem Centro Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Masculino" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Feminino" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt Centro Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Casado" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Solteiro" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Medio x Pos Centro Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Medio" & dados$bairro == "centro", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Pos" & dados$bairro == "centro", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Jov x Adu catole Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Jovem" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Adulto" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi catole Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Baixa" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Media" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem catole Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Masculino" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Feminino" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt catole Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Casado" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Solteiro" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt catole Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Medio" & dados$bairro == "catole", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Pos" & dados$bairro == "catole", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Jov x Adu liberdade Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Jovem" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Adulto" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Bai x Medi liberdade Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Baixa" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Media" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Masc x Fem liberdade Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Masculino" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Feminino" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt liberdade Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Casado" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Solteiro" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+
+print("Cas x Solt liberdade Seg")
+grupo1 <- dados[dados$V1 == "seguro?" & dados$grupo == "Medio" & dados$bairro == "liberdade", ]
+grupo2 <- dados[dados$V1 == "seguro?" & dados$grupo == "Pos" & dados$bairro == "liberdade", ]
+dados1 <- grupo1[,c(3)]
+dados2 <- grupo2[,c(3)]
+ks.test(dados1, dados2)
+```
+
+# Dispersão por foto
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+agrad <- dados[dados$V1 == "agrad%C3%A1vel?" & dados$grupo == "Media", ]
+seg <- dados[dados$V1 == "seguro?" & dados$grupo == "Media", ]
+agrad <- agrad[,c(1, 3:103)]
+seg <- seg[,c(1, 3:103)]
+
+agrad <- agrad[with(agrad, order(V2)), ]
+seg <- seg[with(agrad, order(V2)), ]
+
+pdf("fotosMaiorDispersaoMed.pdf", width=10,height=8)
+
+#First 30 photos
+agrad2 <- reshape(agrad[c(1:30),], varying=2:102, v.names="Score", timevar="foto", times=names(agrad)[2:102], idvar="ID", direction="long")
+seg2 <- reshape(seg[c(1:30),], varying=2:102, v.names="Score", timevar="foto", times=names(seg)[2:102], idvar="ID", direction="long")
+
+ggplot(agrad2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Agrad 1:30") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+ggplot(seg2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Seg 1:30") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+#Second 30 photos
+agrad2 <- reshape(agrad[c(31:60),], varying=2:102, v.names="Score", timevar="foto", times=names(agrad)[2:102], idvar="ID", direction="long")
+seg2 <- reshape(seg[c(31:60),], varying=2:102, v.names="Score", timevar="foto", times=names(seg)[2:102], idvar="ID", direction="long")
+
+ggplot(agrad2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Agrad 31:60") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+ggplot(seg2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Seg 31:60") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+#Third 30 photos
+agrad2 <- reshape(agrad[c(61:90),], varying=2:102, v.names="Score", timevar="foto", times=names(agrad)[2:102], idvar="ID", direction="long")
+seg2 <- reshape(seg[c(61:90),], varying=2:102, v.names="Score", timevar="foto", times=names(seg)[2:102], idvar="ID", direction="long")
+
+ggplot(agrad2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Agrad 61:90") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+ggplot(seg2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Seg 61:90") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+#Last 30 photos
+agrad2 <- reshape(agrad[c(91:108),], varying=2:102, v.names="Score", timevar="foto", times=names(agrad)[2:102], idvar="ID", direction="long")
+seg2 <- reshape(seg[c(91:108),], varying=2:102, v.names="Score", timevar="foto", times=names(seg)[2:102], idvar="ID", direction="long")
+
+ggplot(agrad2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Agrad 91:108") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+ggplot(seg2, aes(y=Score, x = V2)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 1, alpha = 0.6) + 
+  theme_bw()+ xlab("") + ggtitle("Seg 91:108") + 
+  ylab("Disp. QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=9), axis.title=element_text(size=14))
+
+dev.off()
+
+#Sorting all images and groups by standard deviation
+dados$desvio <- apply(dados[,c(3:103)], 1, sd)
+dados <- dados[with(dados, order(-desvio)), ]
+
+sink("fotosDispersaoGeral.dat")
+print(paste(dados$V1, dados$grupo, dados$V2, dados$V3, dados$desvio))
+dev.off()
 ```

@@ -75,7 +75,7 @@ def ptest(df, name_g1, name_g2, pergunta, bairro=None, setor=None, num_permut=10
     return (name_g1, name_g2, pergunta), actual, np.array(pvals), functions
 
 
-df = pd.read_csv('geral2.dat', sep=' ', encoding='utf8')
+df = pd.read_csv('geralSetores.dat', sep=' ', encoding='utf8')
 df = df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
 
 #for bairro in ['catole', 'centro', 'liberdade']:
@@ -96,6 +96,9 @@ df = df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
 #	all_res.append(ptest(df, 'Medio', 'Pos', 'agradavel?', bairro=bairro))
 #	all_res.append(ptest(df, 'Medio', 'Pos', 'seguro?', bairro=bairro))
 #
+#	all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', bairro=bairro))
+#	all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'seguro?', bairro=bairro))
+#
 #	print ">>>> Bairro: ", bairro
 #	for r in all_res:
 #	    print r[0]
@@ -104,25 +107,29 @@ df = df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
 #		print 'pval', r[2][i]
 #		print
 #	    print '--'
-#
+
 
 for setor in ['25040090500004', '250400905000013', '250400905000060', '250400905000062', '250400905000095', '250400905000089']:
 	all_res = []
+#
+#	all_res.append(ptest(df, 'Masculino', 'Feminino', 'agradavel?', setor=setor))
+#	all_res.append(ptest(df, 'Masculino', 'Feminino', 'seguro?', setor=setor))
+#
+#	all_res.append(ptest(df, 'Jovem', 'Adulto', 'agradavel?', setor=setor))
+#	all_res.append(ptest(df, 'Jovem', 'Adulto', 'seguro?', setor=setor))
+#
+#	all_res.append(ptest(df, 'Solteiro', 'Casado', 'agradavel?', setor=setor))
+#	all_res.append(ptest(df, 'Solteiro', 'Casado', 'seguro?', setor=setor))
+#
+#	all_res.append(ptest(df, 'Baixa', 'Media', 'agradavel?', setor=setor))
+#	all_res.append(ptest(df, 'Baixa', 'Media', 'seguro?', setor=setor))
+#
+#	all_res.append(ptest(df, 'Medio', 'Pos', 'agradavel?', setor=setor))
+#	all_res.append(ptest(df, 'Medio', 'Pos', 'seguro?', setor=setor))
+#
+        all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', setor=setor))
+	all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'seguro?', setor=setor))
 
-	all_res.append(ptest(df, 'Masculino', 'Feminino', 'agradavel?', setor=setor))
-	all_res.append(ptest(df, 'Masculino', 'Feminino', 'seguro?', setor=setor))
-
-	all_res.append(ptest(df, 'Jovem', 'Adulto', 'agradavel?', setor=setor))
-	all_res.append(ptest(df, 'Jovem', 'Adulto', 'seguro?', setor=setor))
-
-	all_res.append(ptest(df, 'Solteiro', 'Casado', 'agradavel?', setor=setor))
-	all_res.append(ptest(df, 'Solteiro', 'Casado', 'seguro?', setor=setor))
-
-	all_res.append(ptest(df, 'Baixa', 'Media', 'agradavel?', setor=setor))
-	all_res.append(ptest(df, 'Baixa', 'Media', 'seguro?', setor=setor))
-
-	all_res.append(ptest(df, 'Medio', 'Pos', 'agradavel?', setor=setor))
-	all_res.append(ptest(df, 'Medio', 'Pos', 'seguro?', setor=setor))
 
 	print ">>>> Setor: ", setor
 	for r in all_res:

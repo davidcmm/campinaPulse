@@ -359,7 +359,7 @@ def evaluateVotePerIteration(lines, outputFileNames):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com execuções das tarefas> <bootstrap samples - used in all votes>"
+		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes>"
 		sys.exit(1)
 	
 	if len(sys.argv) > 2:

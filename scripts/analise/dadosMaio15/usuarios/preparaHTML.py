@@ -60,7 +60,7 @@ if __name__ == "__main__":
 			if photo in currentFilter:
 				results[question].append(photo+" "+qscore)
 				#print question+"\t"+photo+"\t"+qscore				
-				#print line.strip('\n')
+				print line.strip('\n')
 		else:
 			results[question].append(photo+" "+qscore)
 

@@ -3,48 +3,87 @@
 
 import sys
 from sets import Set
+import numpy
 
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
 
+def compare(item1, item2):
+    info1 = abs(float(item1.split(" ")[2]) - float(item1.split(" ")[3]))
+    info2 = abs(float(item2.split(" ")[2]) - float(item2.split(" ")[3]))
+    if info1 < info2:
+	return -1
+    elif info1 > info2:
+	return 1
+    else:
+	return 0
+
 def completePhoto(photo):
 	if 'liberdade' in photo or 'catole' in photo:
-		print photo+" oeste"
+		#print photo+" oeste"
 		return "oeste/"+photo
 	if "centro" in photo:
-		print photo+" norte"
+		#print photo+" norte"
 		return "norte/"+photo
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com fotos, grupos, questoes e diferencas> <arquivo com qscores por grupos>"
+		print "Uso: <arquivo com fotos, grupos, questoes e diferencas> <arquivo com qscores por grupos> <arquivo com fotos, questao, qscore e desvio>"
 		sys.exit(1)
 	
 	dataFile = open(sys.argv[1], 'r')
 	geralFile = open(sys.argv[2], 'r')
+	dispersionFile = open(sys.argv[3], 'r')
 
 	outputFile = open("questionDiferencas.html", 'w')
 	outputFile2 = open("questionDiferencasPorVisao.html", 'w')
+	outputFile3 = open("questionDiferencasPorDispersao.html", 'w')
 	
-	linesDiferencas = dataFile.readlines()
+	linesDiferences = dataFile.readlines()
 	linesGeral = geralFile.readlines()
+	linesDisp = dispersionFile.readlines()
 
 	results = {'Hom\tMul\n' : [], 'Cas\tSol\n' : [], 'Med\tBaixa\n' : [], 'Jov\tAdu\n' : [], 'Medio\tPos\n' : []}
-	groups = {'Masculino' : {}, 'Feminino' : {}, 'Media' : {}, 'Baixa' : {}, 'Jovem' : {}, 'Adulto' : {}, 'Medio' : {}, 'Pos' : {}}
-	
+	groups = {'Masculino' : {}, 'Feminino' : {}, 'Media' : {}, 'Baixa' : {}, 'Jovem' : {}, 'Adulto' : {}, 'Medio' : {}, 'Pos' : {}, 'Geral' : {}}
+	disp = {possibleQuestions[0] : {}, possibleQuestions[1]: {}}
+	dispPhotosOrder = {possibleQuestions[0] : [], possibleQuestions[1]: []}	
+
+	#Reading images with bigger dispersion per question
+	for i in range(0, len(linesDisp)):
+		data = linesDisp[i].split(" ")
+		question = data[1].strip("\" ")
+		group = data[2].strip()
+		photo = data[3].strip()
+		qscore = data[4].strip()
+		sd = data[5].strip()
+
+		#disp[question][photo] = position + " "
+		if group == "Feminino":
+			disp[question][photo] = str(i) + " " + question + " " + group + " " + photo + " " + str(qscore) + " " + str(sd)
+			dispPhotosOrder[question].append(photo)
+
+
 	#Reading images with bigger differences, per group, for different visions
 	for line in linesGeral[1:]:
 		data = line.split(" ")
-		photo = data[0]
-		question = data[1]
+		photo = data[0].strip()
+		question = data[1].strip()
 		qscore = float(data[2])
-		group = data[103]
+		group = data[103].strip()
 
 		if group in groups.keys():
 			if not groups[group].has_key(photo):
 				groups[group][photo] = {}
 			groups[group][photo][question] = qscore
 
+		#Complementing dispersion info
+		#if disp[question].has_key(photo) and group == "Geral":
+		#	values = []
+		#	for i in range(3, 103):
+		#		values.append(float(data[i]))
+		#	disp[question][photo] += str(qscore)+" "+str(numpy.std(values))+" "
+
+	#Writing html for differences according to photo angle
 	counter = 0
 	outputFile2.write("<body style=\"overflow:scroll\">\n");
 	for group in groups.keys():
@@ -52,35 +91,56 @@ if __name__ == "__main__":
 		photos.sort()
 
 		outputFile2.write("<h2>"+group+"</h2>")
-		outputFile2.write("<table>\n")
-		outputFile2.write("<tr>\n")
 
-		for i in range(0, len(photos)-1):
-			current = ''.join(photos[i].replace("__", "+").replace("_", "+").split("+")[:-1])
-			next = ''.join(photos[i+1].replace("__", "+").replace("_", "+").split("+")[:-1])
+		questions = ["agrad%C3%A1vel?", "seguro?"]
 
-			if current == next:
-			
-				for question in groups[group][photos[i]]:
-					if groups[group][photos[i+1]].has_key(question):
-						questionCurrent = groups[group][photos[i]][question]
-						questionNext = groups[group][photos[i+1]][question]	
+		for question in questions:
+			outputFile2.write("<h3>"+question+"</h3>")
+			outputFile2.write("<table>\n")
+			outputFile2.write("<tr>\n")
+			writeDataList = []
 
-						if abs(questionCurrent - questionNext) > 1.0:
-							photoUrl = completePhoto(photos[i])
-							photoUrl2 = completePhoto(photos[i+1])
+			#Selecting photos to show!
+			for i in range(0, len(photos)-1):
+				current = ''.join(photos[i].replace("__", "+").replace("_", "+").split("+")[:-1])
+				next = ''.join(photos[i+1].replace("__", "+").replace("_", "+").split("+")[:-1])
 
-							outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
-							outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl2+"\" width=\"400\" height=\"300\"></td>\n")
-							outputFile2.write("<td>"+photos[i]+" "+photos[i+1]+" "+question+" "+str(questionCurrent)+" "+str(questionNext)+"</td>\n")		
+				if current == next:
+					#for question in groups[group][photos[i]]:
+						if groups[group][photos[i+1]].has_key(question) and groups[group][photos[i]].has_key(question):
+							questionCurrent = groups[group][photos[i]][question]
+							questionNext = groups[group][photos[i+1]][question]
 
-							counter += 1
+							if abs(questionCurrent - questionNext) > 1.0:
+								#photoUrl = completePhoto(photos[i])
+								#photoUrl2 = completePhoto(photos[i+1])
 
-							if counter % 2 == 0:
-								outputFile2.write("</tr>\n")
-								outputFile2.write("<tr>\n")
-		outputFile2.write("</tr>\n")
-		outputFile2.write("</table>")
+								#outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
+								#outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl2+"\" width=\"400\" height=\"300\"></td>\n")
+								#outputFile2.write("<td>"+photos[i]+" "+photos[i+1]+" "+str(questionCurrent)+" "+str(questionNext)+"</td>\n")		
+								writeDataList.append(photos[i]+" "+photos[i+1]+" "+str(questionCurrent)+" "+str(questionNext))
+								#counter += 1
+
+								#if counter % 2 == 0:
+									#outputFile2.write("</tr>\n")
+									#outputFile2.write("<tr>\n")
+			#Building html elements to show photos			
+			writeDataList = sorted(writeDataList, compare)	
+			for i in range(0, len(writeDataList)-1):		
+				data = writeDataList[i].split(" ")
+				photoUrl = completePhoto(data[0])
+				photoUrl2 = completePhoto(data[1])
+
+				outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
+				outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl2+"\" width=\"400\" height=\"300\"></td>\n")
+				outputFile2.write("<td>"+data[0]+" "+data[1]+" "+str(data[2])+" "+str(data[3])+"</td>\n")		
+				counter += 1
+				if counter % 2 == 0:
+					outputFile2.write("</tr>\n")
+					outputFile2.write("<tr>\n")
+
+			outputFile2.write("</tr>\n")
+			outputFile2.write("</table>")
 
 	outputFile2.write("</body>\n")
 
@@ -88,7 +148,7 @@ if __name__ == "__main__":
 	counter = 0
 	group = ""
 	for i in range(0, 55):
-		line = linesDiferencas[i]
+		line = linesDiferences[i]
 		if counter == 11:
 			counter = 0
 
@@ -104,7 +164,7 @@ if __name__ == "__main__":
 			results[group].append(photo+" "+diferenca+" "+questao)
 			counter = counter + 1
 
-	#Writing html
+	#Writing html for differences according groups differences
 	outputFile.write("<body style=\"overflow:scroll\">\n");
 	counter = 0
 	for group, items in results.iteritems():
@@ -126,8 +186,35 @@ if __name__ == "__main__":
 
 		outputFile.write("</tr>\n")
 		outputFile.write("</table>")
-	outputFile.write("</body>\n")	
+	outputFile.write("</body>\n")
+
+	#Writing html for differences according to photo qscores dispersion
+	outputFile3.write("<body style=\"overflow:scroll\">\n");
+	counter = 0
+	for question in disp.keys():
+		photosOfQuestion = disp[question].keys()
+		outputFile3.write("<h2>"+question+"</h2>")
+		
+		outputFile3.write("<table>\n")
+		outputFile3.write("<tr>\n")
+		for photo in dispPhotosOrder[question]:
+			if photo in photosOfQuestion:
+				currentData = disp[question][photo]
+				photoUrl = completePhoto(photo)
+			
+				outputFile3.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
+				outputFile3.write("<td>"+ currentData +"</td>\n")
+				counter += 1
+
+				if counter % 3 == 0:
+					outputFile3.write("</tr>\n")
+					outputFile3.write("<tr>\n")
+
+		outputFile3.write("</tr>\n")
+		outputFile3.write("</table>")
+	outputFile3.write("</body>\n")	
 
 	dataFile.close()
 	outputFile.close()
 	outputFile2.close()
+	outputFile3.close()

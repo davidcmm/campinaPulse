@@ -81,6 +81,31 @@ normalizedKendallTauDistance <- function(file1,file2){
   print (normalized)
 }
 
+normalizedKendallTauDistance2 <- function(rank1,rank2){
+  # Computes normalized kendall tau distance
+  #
+  # Args:
+  #   x: One of two vectors whose distance is to be calculated.
+  #   y: The other vector. x and y must have the same length, greater than one,
+  #     with no missing values.
+  # 
+  # Returns:
+  #   The normalized Kendall tau distance 
+  #
+  # Based on http://en.wikipedia.org/wiki/Kendall_tau_distance
+  matriz <- merge(rank1, rank2, by="V2")
+  
+  x <- matriz$V3.x
+  y <- matriz$V3.y
+  
+  tau = numberOfInversions(order(x)[rank(y)])
+  nItens = length(x)
+  maxNumberOfInverstions <- (nItens*(nItens-1))/2
+  normalized = tau/maxNumberOfInverstions
+
+  print (normalized)
+}
+
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) > 1){

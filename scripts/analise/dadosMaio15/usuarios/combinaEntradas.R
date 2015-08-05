@@ -46,8 +46,11 @@ segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=T
 #Reading IBGE sectors
 ibge <- read.table("setores_censitarios.dat", header=TRUE)
 
-newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, baixa, medio, pos, nliberdade,
-      liberdade, ncatole, catole, ncentro, centro, general)
+#newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, baixa, medio, pos, nliberdade,
+#      liberdade, ncatole, catole, ncentro, centro, general)
+newFrame <- rbind(nliberdade, liberdade, ncatole, catole, ncentro, centro)
+novo <- lapply(as.character(newFrame$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
+newFrame$V2 <- unlist(lapply(novo, '[[', 1))
 
 temp <- merge(newFrame, segRGB[,c("foto", "red", "green", "blue", "hor", "vert", "diag")], by.x="V2", by.y="foto")
 temp1 <- merge(temp, ibge, by.x = "V2", by.y = "foto")

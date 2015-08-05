@@ -48,7 +48,7 @@ if __name__ == "__main__":
 	disp = {possibleQuestions[0] : {}, possibleQuestions[1]: {}}
 	dispPhotosOrder = {possibleQuestions[0] : [], possibleQuestions[1]: []}	
 
-	#Reading images with bigger dispersion per question
+	#Reading images qscore and sd per group and question 
 	for i in range(0, len(linesDisp)):
 		data = linesDisp[i].split(" ")
 		question = data[1].strip("\" ")
@@ -63,18 +63,18 @@ if __name__ == "__main__":
 			dispPhotosOrder[question].append(photo)
 
 
-	#Reading images with bigger differences, per group, for different visions
+	#Reading images general information and qscores
 	for line in linesGeral[1:]:
 		data = line.split(" ")
 		photo = data[0].strip()
 		question = data[1].strip()
-		qscore = float(data[2])
+		qscores = [float(x) for x in data[2:103]]
 		group = data[103].strip()
 
 		if group in groups.keys():
 			if not groups[group].has_key(photo):
 				groups[group][photo] = {}
-			groups[group][photo][question] = qscore
+			groups[group][photo][question] = qscores
 
 		#Complementing dispersion info
 		#if disp[question].has_key(photo) and group == "Geral":
@@ -108,22 +108,15 @@ if __name__ == "__main__":
 				if current == next:
 					#for question in groups[group][photos[i]]:
 						if groups[group][photos[i+1]].has_key(question) and groups[group][photos[i]].has_key(question):
-							questionCurrent = groups[group][photos[i]][question]
-							questionNext = groups[group][photos[i+1]][question]
+							questionCurrent = groups[group][photos[i]][question][0]
+							questionNext = groups[group][photos[i+1]][question][0]
 
+							#Photos with qscore difference greater than 1.0
 							if abs(questionCurrent - questionNext) > 1.0:
-								#photoUrl = completePhoto(photos[i])
-								#photoUrl2 = completePhoto(photos[i+1])
+								sd = numpy.std(groups[group][photos[i]][question])
+								sd2 = numpy.std(groups[group][photos[i+1]][question])
+								writeDataList.append(photos[i]+" "+photos[i+1]+" "+str(questionCurrent) + " " + str(questionCurrent + (sd/100) * 1.959964) + " " + str(questionCurrent - (sd/100) * 1.959964) + " " + str(questionNext) + " " + str(questionNext + (sd2/100) * 1.959964) + " " + str(questionNext - (sd2/100) * 1.959964))
 
-								#outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
-								#outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl2+"\" width=\"400\" height=\"300\"></td>\n")
-								#outputFile2.write("<td>"+photos[i]+" "+photos[i+1]+" "+str(questionCurrent)+" "+str(questionNext)+"</td>\n")		
-								writeDataList.append(photos[i]+" "+photos[i+1]+" "+str(questionCurrent)+" "+str(questionNext))
-								#counter += 1
-
-								#if counter % 2 == 0:
-									#outputFile2.write("</tr>\n")
-									#outputFile2.write("<tr>\n")
 			#Building html elements to show photos			
 			writeDataList = sorted(writeDataList, compare)	
 			for i in range(0, len(writeDataList)-1):		
@@ -133,7 +126,7 @@ if __name__ == "__main__":
 
 				outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl+"\" width=\"400\" height=\"300\"></td>\n")
 				outputFile2.write("<td><img src=\"https://contribua.org/bairros/"+photoUrl2+"\" width=\"400\" height=\"300\"></td>\n")
-				outputFile2.write("<td>"+data[0]+" "+data[1]+" "+str(data[2])+" "+str(data[3])+"</td>\n")		
+				outputFile2.write("<td>"+str(data)+"</td>\n")		
 				counter += 1
 				if counter % 2 == 0:
 					outputFile2.write("</tr>\n")
@@ -215,6 +208,8 @@ if __name__ == "__main__":
 	outputFile3.write("</body>\n")	
 
 	dataFile.close()
+	geralFile.close()
+	dispersionFile.close()
 	outputFile.close()
 	outputFile2.close()
 	outputFile3.close()

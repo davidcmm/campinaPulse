@@ -183,7 +183,7 @@ novosHomMul <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor",
 novosHomMul$distancia <- novosHomMul$V3.Casado - novosHomMul$V3.Solteiro
 novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
 
-print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
+print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", " ", novosHomMul[0:10,]$V3.Casado, " ", novosHomMul[0:10,]$V3.Solteiro, " ", novosHomMul[0:10,]$V1))
 ```
 
 ##IC Seguro
@@ -663,9 +663,15 @@ novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?
 
 w = 8
 h = 7
-pdf("agraXseg.pdf", width = w, height = h)
+#pdf("agraXseg.pdf", width = w, height = h)
+jpeg("agraXseg.jpg")
 ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
 dev.off()
+
+cor.test(novosDados$"V3.seguro?", novosDados$"V3.agrad%C3%A1vel?", method="kendall")
+cor.test(novosDados$"V3.seguro?", novosDados$"V3.agrad%C3%A1vel?", method="pearson")
+cor.test(novosDados$"V3.seguro?", novosDados$"V3.agrad%C3%A1vel?", method="spearman")
+
 ```
 
 
@@ -1046,3 +1052,136 @@ sink("fotosDispersaoGeral.dat")
 print(paste(dados$V1, dados$grupo, dados$V2, dados$V3, dados$desvio))
 dev.off()
 ```
+
+
+# Correlação entre dados do IBGE e QScores dos setores
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+
+dad <- read.table("/local/david/pos/Doutorado/Projetos de Tese/2014.3/IBGE/EXCEL/Entorno01_PB.csv", sep=",", header=T)
+novosDados <- data.frame(setor=dad$Cod_setor, bairro=dad$Nome_do_bairro, iluminacao=(dad$V008+dad$V010+dad$V012)/dad$V001, pavimentacao=(dad$V014+dad$V016+dad$V018)/dad$V001, calcada=(dad$V020+dad$V022+dad$V024)/dad$V001, arborizacao=(dad$V044+dad$V046+dad$V048)/dad$V001)
+
+#Dados do ibge por setor
+catole = subset(novosDados, bairro == 'Catolé')
+centro = subset(novosDados, bairro == 'Centro de Campina Grande')
+liberdade = subset(novosDados, bairro == 'Liberdade')
+setores <- rbind(catole[catole$setor == 250400905000060,], catole[catole$setor == 250400905000062,], centro[centro$setor == 250400905000004,], centro[centro$setor == 250400905000013,], liberdade[liberdade$setor == 250400905000095,], liberdade[liberdade$setor == 250400905000089,])
+
+allDataSetores <- read.table("geralSetores.dat", header=TRUE)
+
+#Qscores por setor para agradavel
+cat1 <- allDataSetores[allDataSetores$setor == 250400905000060 & allDataSetores$V1 == "agradavel?" & allDataSetores$grupo == "Geral",]
+cat2 <- allDataSetores[allDataSetores$setor == 250400905000062 & allDataSetores$V1 == "agradavel?"  & allDataSetores$grupo == "Geral",]
+cen1 <- allDataSetores[allDataSetores$setor == 25040090500004 & allDataSetores$V1 == "agradavel?"  & allDataSetores$grupo == "Geral",]
+cen2 <- allDataSetores[allDataSetores$setor == 250400905000013 & allDataSetores$V1 == "agradavel?"  & allDataSetores$grupo == "Geral",]
+lib1 <- allDataSetores[allDataSetores$setor == 250400905000089 & allDataSetores$V1 == "agradavel?"  & allDataSetores$grupo == "Geral",]
+lib2 <- allDataSetores[allDataSetores$setor == 250400905000095 & allDataSetores$V1 == "agradavel?"  & allDataSetores$grupo == "Geral",]
+
+#Qscore médio por setor
+setores$qscore = 0
+setores[setores$setor == 250400905000060,]$qscore = mean(cat1$V3)
+setores[setores$setor == 250400905000062,]$qscore = mean(cat2$V3)
+setores[setores$setor == 250400905000004,]$qscore = mean(cen1$V3)
+setores[setores$setor == 250400905000013,]$qscore = mean(cen2$V3)
+setores[setores$setor == 250400905000089,]$qscore = mean(lib1$V3)
+setores[setores$setor == 250400905000095,]$qscore = mean(lib2$V3)
+
+# cat1$iluminacao <- setores[setores$setor == 250400905000060,]$iluminacao
+# cat1$arborizacao <- setores[setores$setor == 250400905000060,]$arborizacao
+# cat1$pavimentacao <- setores[setores$setor == 250400905000060,]$pavimentacao
+# cat1$calcada <- setores[setores$setor == 250400905000060,]$calcada
+# cat2$iluminacao <- setores[setores$setor == 250400905000062,]$iluminacao
+# cat2$arborizacao <- setores[setores$setor == 250400905000062,]$arborizacao
+# cat2$pavimentacao <- setores[setores$setor == 250400905000062,]$pavimentacao
+# cat2$calcada <- setores[setores$setor == 250400905000062,]$calcada
+# cen1$iluminacao <- setores[setores$setor == 250400905000004,]$iluminacao
+# cen1$arborizacao <- setores[setores$setor == 250400905000004,]$arborizacao
+# cen1$pavimentacao <- setores[setores$setor == 250400905000004,]$pavimentacao
+# cen1$calcada <- setores[setores$setor == 250400905000004,]$calcada
+# cen2$iluminacao <- setores[setores$setor == 250400905000013,]$iluminacao
+# cen2$arborizacao <- setores[setores$setor == 250400905000013,]$arborizacao
+# cen2$pavimentacao <- setores[setores$setor == 250400905000013,]$pavimentacao
+# cen2$calcada <- setores[setores$setor == 250400905000013,]$calcada
+# lib1$iluminacao <- setores[setores$setor == 250400905000089,]$iluminacao
+# lib1$arborizacao <- setores[setores$setor == 250400905000089,]$arborizacao
+# lib1$pavimentacao <- setores[setores$setor == 250400905000089,]$pavimentacao
+# lib1$calcada <- setores[setores$setor == 250400905000089,]$calcada
+# lib2$iluminacao <- setores[setores$setor == 250400905000095,]$iluminacao
+# lib2$arborizacao <- setores[setores$setor == 250400905000095,]$arborizacao
+# lib2$pavimentacao <- setores[setores$setor == 250400905000095,]$pavimentacao
+# lib2$calcada <- setores[setores$setor == 250400905000095,]$calcada
+
+cor.test(setores$qscore, setores$iluminacao, method="spearman")
+cor.test(setores$qscore, setores$pavimentacao, method="spearman")
+cor.test(setores$qscore, setores$calcada, method="spearman")
+cor.test(setores$qscore, setores$arborizacao, method="spearman")
+
+cor.test(setores$qscore, setores$iluminacao, method="pearson")
+cor.test(setores$qscore, setores$pavimentacao, method="pearson")
+cor.test(setores$qscore, setores$calcada, method="pearson")
+cor.test(setores$qscore, setores$arborizacao, method="pearson")
+
+cor.test(setores$qscore, setores$iluminacao, method="kendall")
+cor.test(setores$qscore, setores$pavimentacao, method="kendall")
+cor.test(setores$qscore, setores$calcada, method="kendall")
+cor.test(setores$qscore, setores$arborizacao, method="kendall")
+
+#Qscores por setor para seguro
+cat1 <- allDataSetores[allDataSetores$setor == 250400905000060 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+cat2 <- allDataSetores[allDataSetores$setor == 250400905000062 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+cen1 <- allDataSetores[allDataSetores$setor == 25040090500004 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+cen2 <- allDataSetores[allDataSetores$setor == 250400905000013 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+lib1 <- allDataSetores[allDataSetores$setor == 250400905000089 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+lib2 <- allDataSetores[allDataSetores$setor == 250400905000095 & allDataSetores$V1 == "seguro?"& allDataSetores$grupo == "Geral",]
+
+#Qscore médio por setor
+setores$qscore = 0
+setores[setores$setor == 250400905000060,]$qscore = mean(cat1$V3)
+setores[setores$setor == 250400905000062,]$qscore = mean(cat2$V3)
+setores[setores$setor == 250400905000004,]$qscore = mean(cen1$V3)
+setores[setores$setor == 250400905000013,]$qscore = mean(cen2$V3)
+setores[setores$setor == 250400905000089,]$qscore = mean(lib1$V3)
+setores[setores$setor == 250400905000095,]$qscore = mean(lib2$V3)
+
+cor.test(setores$qscore, setores$iluminacao, method="spearman")
+cor.test(setores$qscore, setores$pavimentacao, method="spearman")
+cor.test(setores$qscore, setores$calcada, method="spearman")
+cor.test(setores$qscore, setores$arborizacao, method="spearman")
+
+cor.test(setores$qscore, setores$iluminacao, method="pearson")
+cor.test(setores$qscore, setores$pavimentacao, method="pearson")
+cor.test(setores$qscore, setores$calcada, method="pearson")
+cor.test(setores$qscore, setores$arborizacao, method="pearson")
+
+cor.test(setores$qscore, setores$iluminacao, method="kendall")
+cor.test(setores$qscore, setores$pavimentacao, method="kendall")
+cor.test(setores$qscore, setores$calcada, method="kendall")
+cor.test(setores$qscore, setores$arborizacao, method="kendall")
+
+#Dados Polícia + Setores
+setores$crimes <- 0
+setores[setores$setor == 250400905000060,]$crimes = 4
+setores[setores$setor == 250400905000062,]$crimes = 1
+setores[setores$setor == 250400905000004,]$crimes = 2
+setores[setores$setor == 250400905000013,]$crimes = 8
+setores[setores$setor == 250400905000089,]$crimes = 6
+setores[setores$setor == 250400905000095,]$crimes = 21
+
+cor.test(setores$qscore, setores$crimes, method="spearman")
+cor.test(setores$crimes, setores$pavimentacao, method="spearman")
+cor.test(setores$crimes, setores$calcada, method="spearman")
+cor.test(setores$crimes, setores$arborizacao, method="spearman")
+cor.test(setores$crimes, setores$iluminacao, method="spearman")
+
+cor.test(setores$qscore, setores$crimes, method="pearson")
+cor.test(setores$crimes, setores$pavimentacao, method="pearson")
+cor.test(setores$crimes, setores$calcada, method="pearson")
+cor.test(setores$crimes, setores$arborizacao, method="pearson")
+cor.test(setores$crimes, setores$iluminacao, method="pearson")
+
+cor.test(setores$qscore, setores$crimes, method="kendall")
+cor.test(setores$crimes, setores$pavimentacao, method="kendall")
+cor.test(setores$crimes, setores$calcada, method="kendall")
+cor.test(setores$crimes, setores$arborizacao, method="kendall")
+cor.test(setores$crimes, setores$iluminacao, method="kendall")
+```
+

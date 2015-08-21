@@ -1,0 +1,49 @@
+---
+title: "Teste"
+output: pdf_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+library(ggplot2)
+library(gridExtra)
+source('analisaICPorFoto.R')
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Agradável",
+  'seguro?'="Seguro"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
+dados <- read.table("geral.dat", header=TRUE)
+
+dadosSub <- dados[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+temp <- dados
+
+#Intervalo de confiança por ponto
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+#Extraindo apenas os dados para plots
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+
+ggplot(novosDados, aes(y=V3.MenorMed, x=V3.MaiorMed, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Maior median")+ylab("QScore menor median")+geom_abline(intercept=0, colour="red")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

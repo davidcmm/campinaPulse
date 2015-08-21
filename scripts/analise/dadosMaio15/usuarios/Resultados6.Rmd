@@ -11,8 +11,8 @@ library(gridExtra)
 source('analisaICPorFoto.R')
 
 facet_names <- list(
-  'agrad%C3%A1vel?'="Agradável",
-  'seguro?'="Seguro"
+  'agrad%C3%A1vel?'="Pleasant",
+  'seguro?'="Safeness"
 )
 
 facet_labeller <- function(variable,value){
@@ -94,7 +94,20 @@ novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
 
 print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", novosHomMul[0:10,]$V1))
 
-ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Feminino")+ylab("QScore Masculino")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red"))
+agrad <- novosDados[novosDados$V1 == "agradavel?",]
+seg <- novosDados[novosDados$V1 == "seguro?",]
+cor.test(agrad$V3.Masculino, agrad$V3.Feminino, method = "spearman")
+cor.test(agrad$V3.Masculino, agrad$V3.Feminino, method = "pearson")
+cor.test(agrad$V3.Masculino, agrad$V3.Feminino, method = "kendall")
+cor.test(seg$V3.Masculino, seg$V3.Feminino, method = "spearman")
+cor.test(seg$V3.Masculino, seg$V3.Feminino, method = "pearson")
+cor.test(seg$V3.Masculino, seg$V3.Feminino, method = "kendall")
+
+w = 10
+h = 7
+pdf("homXmul.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=V3.Masculino, x=V3.Feminino, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Women")+ylab("QScore Men")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red"))+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
 
 #plot_top <- ggplot(novosDados, aes(V3.Feminino, fill=bairro)) + 
 #  geom_density(alpha=.5) + 
@@ -184,6 +197,21 @@ novosHomMul$distancia <- novosHomMul$V3.Casado - novosHomMul$V3.Solteiro
 novosHomMul <- novosHomMul[with(novosHomMul, order(-abs(distancia), V2)), ]
 
 print(paste(novosHomMul[0:10,]$V2, " ", novosHomMul[0:10,]$bairro, " ", novosHomMul[0:10,]$distancia, " ", " ", novosHomMul[0:10,]$V3.Casado, " ", novosHomMul[0:10,]$V3.Solteiro, " ", novosHomMul[0:10,]$V1))
+
+agrad <- novosDados[novosDados$V1 == "agradavel?",]
+seg <- novosDados[novosDados$V1 == "seguro?",]
+cor.test(agrad$V3.Solteiro, agrad$V3.Casado, method = "spearman")
+cor.test(agrad$V3.Solteiro, agrad$V3.Casado, method = "pearson")
+cor.test(agrad$V3.Solteiro, agrad$V3.Casado, method = "kendall")
+cor.test(seg$V3.Solteiro, seg$V3.Casado, method = "spearman")
+cor.test(seg$V3.Solteiro, seg$V3.Casado, method = "pearson")
+cor.test(seg$V3.Solteiro, seg$V3.Casado, method = "kendall")
+
+w = 10
+h = 7
+pdf("solXcas.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=V3.Solteiro, x=V3.Casado, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Married")+ylab("QScore Single")+geom_abline(intercept=0, colour="red")+scale_fill_manual(values = c("orange", "purple", "red"))+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
 ```
 
 ##IC Seguro
@@ -282,20 +310,23 @@ dev.off()
 
 grupo1 <- 'Casado'
 grupo2 <- 'Solteiro'
-pergunta <- 'agrad%C3%A1vel?'
+pergunta <- 'agradavel?'
 
 osdados <- dados_pro_plot(dadosCopy2, grupo1, grupo2, pergunta)
 osdados$bairro <- as.character(osdados$bairro)
+osdados$grupo <- as.character(osdados$grupo)
 osdados$bairro[osdados$bairro == "catole"] <- "Catolé"
 osdados$bairro[osdados$bairro == "liberdade"] <- "Liberdade"
 osdados$bairro[osdados$bairro == "centro"] <- "Centro"
+osdados$grupo[osdados$grupo == "Casado"] <- "Married"
+osdados$grupo[osdados$grupo == "Solteiro"] <- "Single"
 
 pdf("casados-solteiros-agradavel.pdf", width = w, height = h)
 ggplot(osdados, aes(x=index, y = rank, colour=grupo, fill = grupo)) + 
   geom_point(alpha = 0.7, size=1.7) + 
   geom_line(aes(group = index), colour = "grey80") + 
-  xlab("Local") + 
-  ylab("Comparação de Rankings") + 
+  xlab("Place") + 
+  ylab("Rankings Comparison") + 
   scale_y_reverse(limits = c(39, 1)) + 
   facet_wrap( ~ bairro, ncol=1)+theme_bw()+ theme(axis.text=element_text(size=16), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text= element_text(size=16))
 #scale_x_discrete(breaks=seq(1, 36, by=5))
@@ -317,11 +348,11 @@ wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TR
 ##IC Agradavel
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 #Criando subconjuntos para casados e solteiros
-dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'centro',]
+dadosCeA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agradavel?' & dadosCopy$bairro == 'centro',]
 dadosCeA$bairro <- "Centro"
-dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'liberdade',]
+dadosLiA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agradavel?' & dadosCopy$bairro == 'liberdade',]
 dadosLiA$bairro <- "Liberdade"
-dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agrad%C3%A1vel?' & dadosCopy$bairro == 'catole',]
+dadosCaA <- dadosCopy[(dadosCopy$grupo == 'Casado' | dadosCopy$grupo == 'Solteiro') & dadosCopy$V1=='agradavel?' & dadosCopy$bairro == 'catole',]
 dadosCaA$bairro <- "Catolé"
 
 
@@ -339,7 +370,15 @@ ggplot(dadosCaA, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_poin
 
 novo <- rbind(dadosCeA, dadosLiA, dadosCaA)
 
-ggplot(novo, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text=element_text(size=16)) + facet_wrap(~bairro, ncol=1)
+novo$grupo <- as.character(novo$grupo)
+novo$grupo[novo$grupo == "Casado"] <- "Married"
+novo$grupo[novo$grupo == "Solteiro"] <- "Single"
+
+w = 7
+h = 8
+pdf("casados-solteiros-IC-agrad.pdf", width = w, height = h)
+ggplot(novo, aes(reorder(NV2, V3), V3, colour=grupo, group=NV2)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Place") + ylab("QScore") + ggtitle("") + geom_line(colour="black") + theme_bw()+ theme(axis.text=element_text(size=9), axis.title=element_text(size=16), legend.text = element_text(size=16), legend.title = element_text(size=16), title = element_text(size=16), strip.text=element_text(size=16)) + facet_wrap(~bairro, ncol=1)
+dev.off()
 ```
 
 ##Wilcoxon Signed Ranked (Pareado) - Agradavel
@@ -357,7 +396,20 @@ wilcox.test(dadosSC$V3.Solteiro, dadosSC$V3.Casado, paired = TRUE, conf.int = TR
 #Media x Baixa
 ##Qscores x Qscores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-ggplot(novosDados, aes(y=V3.Baixa, x=V3.Media, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Media")+ylab("QScore Baixa")+geom_abline(intercept=0, colour="red")
+agrad <- novosDados[novosDados$V1 == "agradavel?",]
+seg <- novosDados[novosDados$V1 == "seguro?",]
+cor.test(agrad$V3.Baixa, agrad$V3.Media, method = "spearman")
+cor.test(agrad$V3.Baixa, agrad$V3.Media, method = "pearson")
+cor.test(agrad$V3.Baixa, agrad$V3.Media, method = "kendall")
+cor.test(seg$V3.Baixa, seg$V3.Media, method = "spearman")
+cor.test(seg$V3.Baixa, seg$V3.Media, method = "pearson")
+cor.test(seg$V3.Baixa, seg$V3.Media, method = "kendall")
+
+w = 10
+h = 7
+pdf("baiXmed.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=V3.Baixa, x=V3.Media, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore High income")+ylab("QScore Low income")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
 
 hom <- dadosSub[(dadosSub$grupo == 'Media'),] 
 mul <- dadosSub[(dadosSub$grupo == 'Baixa'),] 
@@ -430,7 +482,20 @@ wilcox.test(dadosMB$V3.Media, dadosMB$V3.Baixa, paired = TRUE, conf.int = TRUE, 
 #Jovem x Adulto
 ##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-ggplot(novosDados, aes(y=V3.Jovem, x=V3.Adulto, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Adulto")+ylab("QScore Jovem")+geom_abline(intercept=0, colour="red")
+agrad <- novosDados[novosDados$V1 == "agradavel?",]
+seg <- novosDados[novosDados$V1 == "seguro?",]
+cor.test(agrad$V3.Jovem, agrad$V3.Adulto, method = "spearman")
+cor.test(agrad$V3.Jovem, agrad$V3.Adulto, method = "pearson")
+cor.test(agrad$V3.Jovem, agrad$V3.Adulto, method = "kendall")
+cor.test(seg$V3.Jovem, seg$V3.Adulto, method = "spearman")
+cor.test(seg$V3.Jovem, seg$V3.Adulto, method = "pearson")
+cor.test(seg$V3.Jovem, seg$V3.Adulto, method = "kendall")
+
+w = 10
+h = 7
+pdf("jovXadu.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=V3.Jovem, x=V3.Adulto, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Adult")+ylab("QScore Young")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
 
 hom <- dadosSub[(dadosSub$grupo == 'Jovem'),] 
 mul <- dadosSub[(dadosSub$grupo == 'Adulto'),] 
@@ -576,7 +641,22 @@ wilcox.test(dadosJA$V3.MenorMed, dadosJA$V3.MaiorMed, paired = TRUE, conf.int = 
 #Medio x Pos
 ##QScores x QScores
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-ggplot(novosDados, aes(y=V3.Pos, x=V3.Medio, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Medio")+ylab("QScore Pos")+geom_abline(intercept=0, colour="red")
+agrad <- novosDados[novosDados$V1 == "agradavel?",]
+seg <- novosDados[novosDados$V1 == "seguro?",]
+cor.test(agrad$V3.Pos, agrad$V3.Medio, method = "spearman")
+cor.test(agrad$V3.Pos, agrad$V3.Medio, method = "pearson")
+cor.test(agrad$V3.Pos, agrad$V3.Medio, method = "kendall")
+cor.test(seg$V3.Pos, seg$V3.Medio, method = "spearman")
+cor.test(seg$V3.Pos, seg$V3.Medio, method = "pearson")
+cor.test(seg$V3.Pos, seg$V3.Medio, method = "kendall")
+
+w = 10
+h = 7
+pdf("medXpos.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=V3.Pos, x=V3.Medio, colour=bairro))+geom_point()+facet_grid(. ~V1, shrink=TRUE, labeller = facet_labeller)+xlab("QScore Low Education")+ylab("QScore High Education")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
+
+
 
 hom <- dadosSub[(dadosSub$grupo == 'Medio'),] 
 mul <- dadosSub[(dadosSub$grupo == 'Pos'),] 
@@ -659,13 +739,13 @@ dadosG$bairro[dadosG$bairro == "centro"] <- "Centro"
 novosDados <- reshape(dadosG, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue" ,"bairro"), direction="wide")
 
 library(plyr)
-novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="agradavel", "V3.seguro?"="Seguro"))
+novosDados <- rename(novosDados, c("V3.agradavel?"="Pleasant", "V3.seguro?"="Safe"))
 
-w = 8
-h = 7
-#pdf("agraXseg.pdf", width = w, height = h)
-jpeg("agraXseg.jpg")
-ggplot(novosDados, aes(y=agradavel, x=Seguro, colour=bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Seguro")+ylab("QScore Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+w = 5
+h = 4
+pdf("agraXseg.pdf", width = w, height = h)
+#jpeg("agraXseg.jpg")
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safeness")+ylab("QScore Pleasant")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
 dev.off()
 
 cor.test(novosDados$"V3.seguro?", novosDados$"V3.agrad%C3%A1vel?", method="kendall")

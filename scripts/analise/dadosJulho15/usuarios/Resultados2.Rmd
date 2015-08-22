@@ -1,0 +1,430 @@
+---
+title: "IC por Ponto, KrippAlpha e Kendall"
+output: pdf_document
+---
+
+# Intervalos de Confiança por Ponto Geográfico Analisado
+
+## Solteiros x Casados
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('analisaICPorFoto.R')
+library(ggplot2)
+
+file1 <- "allSolteiroOrdInter.dat"
+file2 <- "allCasadoOrdInter.dat"
+type1 <- "solteiro"
+type2 <- "casado"
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+
+```
+
+## Baixa x Media
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "allBaixaOrdInter.dat"
+file2 <- "allMediaOrdInter.dat"
+type1 <- "baixa"
+type2 <- "media"
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+```
+
+
+## Feminino x Masculino
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "allFemininoOrdInter.dat"
+file2 <- "allMasculinoOrdInter.dat"
+type1 <- "feminino"
+type2 <- "masculino"
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+```
+
+## Jovem x Adulto
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "allJovemOrdInter.dat"
+file2 <- "allAdultoOrdInter.dat"
+type1 <- "jovem"
+type2 <- "adulto"
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Centro")
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Liberdade")
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Location") + ylab("QScore") + ggtitle("Catolé") 
+```
+
+## Medio x Pos
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "allMedioOrdInter.dat"
+file2 <- "allPosOrdInter.dat"
+type1 <- "medio"
+type2 <- "pos"
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Agradável",
+  'seguro?'="Seguro"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
+analyseIC(file1, file2, type1, type2, shouldPlot=TRUE)
+ggplot(centro, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE, labeller=facet_labeller) + xlab("Local") + ylab("QScore") + ggtitle("Centro") + scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
+
+    ggplot(liberdade, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Liberdade")+ scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
+
+    ggplot(catole, aes(x=photo, y=mean, colour=type)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=inf, ymax=sup)) + facet_grid(. ~ques, shrink=TRUE) + xlab("Local") + ylab("QScore") + ggtitle("Catolé") + scale_colour_discrete(name="Grupo", breaks=c("medio", "pos"), labels=c("Menor educ.", "Maior educ."))
+```
+
+# Krippendorf
+
+## Geral
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('krippMoran.R')
+
+file1 <- "consense100/consenseMatrixAgra.dat"
+file2 <- "consense100/consenseMatrixSeg.dat"
+krippAlpha(file1, file2)
+```
+
+## Adulto
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraAdulto.dat"
+file2 <- "consense100/consenseMatrixSegAdulto.dat"
+krippAlpha(file1, file2)
+```
+
+## Jovem
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraJovem.dat"
+file2 <- "consense100/consenseMatrixSegJovem.dat"
+krippAlpha(file1, file2)
+```
+
+
+## Baixa
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraBaixa.dat"
+file2 <- "consense100/consenseMatrixSegBaixa.dat"
+krippAlpha(file1, file2)
+```
+
+## Media
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraMedia.dat"
+file2 <- "consense100/consenseMatrixSegMedia.dat"
+krippAlpha(file1, file2)
+```
+
+## Feminino
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraFeminino.dat"
+file2 <- "consense100/consenseMatrixSegFeminino.dat"
+krippAlpha(file1, file2)
+```
+
+## Masculino
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraMasculino.dat"
+file2 <- "consense100/consenseMatrixSegMasculino.dat"
+krippAlpha(file1, file2)
+```
+
+## Solteiro
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraSolteiro.dat"
+file2 <- "consense100/consenseMatrixSegSolteiro.dat"
+krippAlpha(file1, file2)
+```
+
+## Casado
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraCasado.dat"
+file2 <- "consense100/consenseMatrixSegCasado.dat"
+krippAlpha(file1, file2)
+```
+
+## Medio
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraMedio.dat"
+file2 <- "consense100/consenseMatrixSegMedio.dat"
+krippAlpha(file1, file2)
+```
+
+## Pos
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "consense100/consenseMatrixAgraPos.dat"
+file2 <- "consense100/consenseMatrixSegPos.dat"
+krippAlpha(file1, file2)
+```
+# Kendall
+
+## Geral
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('kendallDistance.R')
+
+file1 <- "kendall100/agradGeralAll.dat"
+file2 <- "kendall100/segGeralAll.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Casado x Solteiro 
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllCasado.dat"
+file2 <- "kendall100/kendallAgradAllSolteiro.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllCasado.dat"
+file2 <- "kendall100/kendallSegAllSolteiro.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Casado x Geral e Solteiro x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllCasado.dat"
+file2 <- "kendall100/kendallAgradAllGeralCasado.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllSolteiro.dat"
+file2 <- "kendall100/kendallAgradAllGeralCasado.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllCasado.dat"
+file2 <- "kendall100/kendallSegAllGeralCasado.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllSolteiro.dat"
+file2 <- "kendall100/kendallSegAllGeralCasado.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Baixa x Media
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllBaixa.dat"
+file2 <- "kendall100/kendallAgradAllMedia.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllBaixa.dat"
+file2 <- "kendall100/kendallSegAllMedia.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Baixa x Geral e Media x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllBaixa.dat"
+file2 <- "kendall100/kendallAgradAllGeralBaixa.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllMedia.dat"
+file2 <- "kendall100/kendallAgradAllGeralBaixa.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllBaixa.dat"
+file2 <- "kendall100/kendallSegAllGeralBaixa.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllMedia.dat"
+file2 <- "kendall100/kendallSegAllGeralBaixa.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Feminino x Masculino
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllFeminino.dat"
+file2 <- "kendall100/kendallAgradAllMasculino.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllFeminino.dat"
+file2 <- "kendall100/kendallSegAllMasculino.dat"
+normalizedKendallTauDistance(file1, file2)
+
+rank1Parc <- rank1[,c("V2","V3")]
+rank1Parc$tipo <- "Feminino"
+rank1Parc$posicao <- 1:104
+rank2Parc <- rank2[,c("V2","V3")]
+rank2Parc$tipo <- "Masculino"
+rank2Parc$posicao <- 1:104
+
+rankTotal <- merge(rank1Parc, rank2Parc, by="V2")
+
+ggplot(rankTotal, aes(y=posicao.y, x=posicao.x, colour="red")) + geom_point() + ggtitle("Diferenças de posições entre fotos") + theme_bw()+ xlab("Posição no ranking Feminino") + ylab("Posição no ranking Masculino")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(rankTotal, aes(y=posicao.y-posicao.x, x=posicao.x, colour="red")) + geom_point() + ggtitle("") + theme_bw()+ xlab("Posição no Ranking Feminino") + ylab("Posição Masculino - Posição Feminino")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ scale_x_continuous(breaks=seq(1,104, 9))+ theme(legend.position="none")
+
+```
+
+## Feminino x Geral e Masculino x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllFeminino.dat"
+file2 <- "kendall100/kendallAgradAllGeralFeminino.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllMasculino.dat"
+file2 <- "kendall100/kendallAgradAllGeralFeminino.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllFeminino.dat"
+file2 <- "kendall100/kendallSegAllGeralFeminino.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllMasculino.dat"
+file2 <- "kendall100/kendallSegAllGeralFeminino.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Jovem x Adulto
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllJovem.dat"
+file2 <- "kendall100/kendallAgradAllAdulto.dat"
+normalizedKendallTauDistance(file1, file2)
+
+rank1Parc <- rank1[,c("V2","V3")]
+rank1Parc$tipo <- "Jovem"
+rank1Parc$posicao <- 1:103
+rank2Parc <- rank2[,c("V2","V3")]
+rank2Parc$tipo <- "Adulto"
+rank2Parc$posicao <- 1:103
+
+rankTotal <- merge(rank1Parc, rank2Parc, by="V2")
+
+ggplot(rankTotal, aes(y=posicao.y, x=posicao.x, colour="red")) + geom_point() + ggtitle("Diferenças de posições entre fotos") + theme_bw()+ xlab("Posição no ranking Jovem") + ylab("Posição no ranking Adulto")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+ggplot(rankTotal, aes(y=posicao.y-posicao.x, x=posicao.x, colour="red")) + geom_point() + ggtitle("") + theme_bw()+ xlab("Posição no Ranking Jovem") + ylab("Posição Adulto - Posição Jovem")+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ scale_x_continuous(breaks=seq(1,104, 9))+ theme(legend.position="none")
+
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllJovem.dat"
+file2 <- "kendall100/kendallSegAllAdulto.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Jovem x Geral e Adulto x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllJovem.dat"
+file2 <- "kendall100/kendallAgradAllGeralJovem.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllAdulto.dat"
+file2 <- "kendall100/kendallAgradAllGeralJovem.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllJovem.dat"
+file2 <- "kendall100/kendallSegAllGeralJovem.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllAdulto.dat"
+file2 <- "kendall100/kendallSegAllGeralJovem.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Medio x Pos
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllMedio.dat"
+file2 <- "kendall100/kendallAgradAllPos.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllMedio.dat"
+file2 <- "kendall100/kendallSegAllPos.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Medio x Geral e Pos x Geral
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllMedio.dat"
+file2 <- "kendall100/kendallAgradAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallAgradAllPos.dat"
+file2 <- "kendall100/kendallAgradAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllMedio.dat"
+file2 <- "kendall100/kendallSegAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+
+file1 <- "kendall100/kendallSegAllPos.dat"
+file2 <- "kendall100/kendallSegAllGeralMedio.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Centro x Not Centro
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllCentro.dat"
+file2 <- "kendall100/kendallAgradAllNotCentro.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllCentro.dat"
+file2 <- "kendall100/kendallSegAllNotCentro.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Catole x Not Catole
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgradAllCatole.dat"
+file2 <- "kendall100/kendallAgradAllNotCatole.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllCatole.dat"
+file2 <- "kendall100/kendallSegAllNotCatole.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+
+## Liberdade x Not Liberdade
+### Agradável
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallAgraAllLiberdade.dat"
+file2 <- "kendall100/kendallAgraAllNotLiberdade.dat"
+normalizedKendallTauDistance(file1, file2)
+```
+### Seguranca
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+file1 <- "kendall100/kendallSegAllLiberdade.dat"
+file2 <- "kendall100/kendallSegAllNotLiberdade.dat"
+normalizedKendallTauDistance(file1, file2)
+```

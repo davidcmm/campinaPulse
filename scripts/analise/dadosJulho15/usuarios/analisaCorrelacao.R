@@ -1,0 +1,187 @@
+#!/bin/Rscript
+# Analyses QScore versus color and amount of lines using Spearman and Kendall
+
+calculateTests <- function(file1, file2, shouldPlot=FALSE) {
+  
+    dataAgrad <<- read.table(file1, header=TRUE)
+    
+    print("Agradável")
+    #Spearman, analise do rho  > 0,90 a 1,0 indica correlação muito forte; +- 0,70 a +- 0,90 indica correlação forte; +- 0,50 a +- 0,70 moderada
+    print("Spearman red (p.value rho)")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$red, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman green")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$green, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman blue")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$blue, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman diag")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$diag, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman hor")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$hor, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman ver")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$ver, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    
+    print("Kendall red")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$red, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall green")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$green, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall blue")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$blue, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall diag")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$diag, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall hor")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$hor, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall ver")
+    res <- cor.test(dataAgrad$qscore, dataAgrad$ver, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    
+    if (shouldPlot){
+        pdf(file=paste(file1, "histAgrad", ".pdf"), paper="special")
+        par(mfrow = c(4,2))
+        hist(dataAgrad$qscore, prob=TRUE, main="QScore")
+        hist(dataAgrad$red, prob=TRUE, main="Red")
+        hist(dataAgrad$green, prob=TRUE, main="Green")
+        hist(dataAgrad$blue, prob=TRUE, main="Blue")
+        hist(dataAgrad$diag, prob=TRUE, main="Diag")
+        hist(dataAgrad$hor, prob=TRUE, main="Hor")
+        hist(dataAgrad$ver, prob=TRUE, main="Ver")
+    
+        pdf(file=paste(file1,"boxAgrad", ".pdf"), paper="special")
+        #par(mfrow = c(4,2))
+        boxplot(dataAgrad$qscore, prob=TRUE, main=paste("QScore ", file1))
+        #boxplot(dataAgrad$red, prob=TRUE, main="Red")
+        #boxplot(dataAgrad$green, prob=TRUE, main="Green")
+        #boxplot(dataAgrad$blue, prob=TRUE, main="Blue")
+        #boxplot(dataAgrad$diag, prob=TRUE, main="Diag")
+        #boxplot(dataAgrad$hor, prob=TRUE, main="Hor")
+        #boxplot(dataAgrad$ver, prob=TRUE, main="Ver")
+        
+        pdf(file=paste(file1, "qqplotsAgrad", ".pdf"), paper="special")
+        par(mfrow = c(4,2))
+        qqnorm(dataAgrad$qscore, main="QScore");qqline(dataAgrad$qscore)
+        qqnorm(dataAgrad$red, main="Red");qqline(dataAgrad$red)
+        qqnorm(dataAgrad$green, main="Green");qqline(dataAgrad$green)
+        qqnorm(dataAgrad$blue, main="Blue");qqline(dataAgrad$blue)
+        qqnorm(dataAgrad$diag, main="Diag");qqline(dataAgrad$diag)
+        qqnorm(dataAgrad$hor, main="Hor");qqline(dataAgrad$hor)
+        qqnorm(dataAgrad$ver, main="Ver");qqline(dataAgrad$ver)
+        
+        pdf(file=paste(file1, "plotsAgrad", ".pdf"), paper="special")
+        par(mfrow = c(3,2))
+        plot(dataAgrad$red, dataAgrad$qscore, main="Red")
+        plot(dataAgrad$green, dataAgrad$qscore, main="Green")
+        plot(dataAgrad$blue, dataAgrad$qscore, main="Blue")
+        plot(dataAgrad$diag, dataAgrad$qscore, main="Diag")
+        plot(dataAgrad$hor, dataAgrad$qscore, main="Hor")
+        plot(dataAgrad$ver, dataAgrad$qscore, main="Ver")
+        
+        dev.off()
+    }
+    
+    
+    #Segurança
+    dataSeg <<- read.table(file2, header=TRUE)
+    
+    print("Segurança")
+    #Spearman, analise do rho  > 0,90 a 1,0 indica correlação muito forte; +- 0,70 a +- 0,90 indica correlação forte; +- 0,50 a +- 0,70 moderada
+    print("Spearman red (p.value rho)")
+    res <- cor.test(dataSeg$qscore, dataSeg$red, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman green")
+    res <- cor.test(dataSeg$qscore, dataSeg$green, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman blue")
+    res <- cor.test(dataSeg$qscore, dataSeg$blue, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman diag")
+    res <- cor.test(dataSeg$qscore, dataSeg$diag, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman hor")
+    res <- cor.test(dataSeg$qscore, dataSeg$hor, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Spearman ver")
+    res <- cor.test(dataSeg$qscore, dataSeg$ver, method="spearman")
+    print(paste(res$p.value, " ", res$estimate))
+    
+    print("Kendall red")
+    res <- cor.test(dataSeg$qscore, dataSeg$red, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall green")
+    res <- cor.test(dataSeg$qscore, dataSeg$green, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall blue")
+    res <- cor.test(dataSeg$qscore, dataSeg$blue, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall diag")
+    res <- cor.test(dataSeg$qscore, dataSeg$diag, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall hor")
+    res <- cor.test(dataSeg$qscore, dataSeg$hor, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    print("Kendall ver")
+    res <- cor.test(dataSeg$qscore, dataSeg$ver, method="kendall")
+    print(paste(res$p.value, " ", res$estimate))
+    
+    if (shouldPlot){
+        pdf(file=paste(file2, "histSeg", ".pdf"), paper="special")
+        par(mfrow = c(4,2))
+        hist(dataSeg$qscore, prob=TRUE, main="QScore")
+        hist(dataSeg$red, prob=TRUE, main="Red")
+        hist(dataSeg$green, prob=TRUE, main="Green")
+        hist(dataSeg$blue, prob=TRUE, main="Blue")
+        hist(dataSeg$diag, prob=TRUE, main="Diag")
+        hist(dataSeg$hor, prob=TRUE, main="Hor")
+        hist(dataSeg$ver, prob=TRUE, main="Ver")
+        
+        pdf(file=paste(file2, "boxSeg", ".pdf"), paper="special")
+        #par(mfrow = c(4,2))
+        boxplot(dataSeg$qscore, prob=TRUE, main=paste("QScore ", file2))
+        #boxplot(dataSeg$red, prob=TRUE, main="Red")
+        #boxplot(dataSeg$green, prob=TRUE, main="Green")
+        #boxplot(dataSeg$blue, prob=TRUE, main="Blue")
+        #boxplot(dataSeg$diag, prob=TRUE, main="Diag")
+        #boxplot(dataSeg$hor, prob=TRUE, main="Hor")
+        #boxplot(dataSeg$ver, prob=TRUE, main="Ver")
+        
+        pdf(file=paste(file2, "qqplotsSeg", ".pdf"), paper="special")
+        par(mfrow = c(4,2))
+        qqnorm(dataSeg$qscore, main="QScore");qqline(dataSeg$qscore)
+        qqnorm(dataSeg$red, main="Red");qqline(dataSeg$red)
+        qqnorm(dataSeg$green, main="Green");qqline(dataSeg$green)
+        qqnorm(dataSeg$blue, main="Blue");qqline(dataSeg$blue)
+        qqnorm(dataSeg$diag, main="Diag");qqline(dataSeg$diag)
+        qqnorm(dataSeg$hor, main="Hor");qqline(dataSeg$hor)
+        qqnorm(dataSeg$ver, main="Ver");qqline(dataSeg$ver)
+        
+        pdf(file=paste(file2, "plotsSeg", ".pdf"), paper="special")
+        par(mfrow = c(3,2))
+        plot(dataSeg$red, dataSeg$qscore, main="Red")
+        plot(dataSeg$green, dataSeg$qscore, main="Green")
+        plot(dataSeg$blue, dataSeg$qscore, main="Blue")
+        plot(dataSeg$diag, dataSeg$qscore, main="Diag")
+        plot(dataSeg$hor, dataSeg$qscore, main="Hor")
+        plot(dataSeg$ver, dataSeg$qscore, main="Ver")
+        
+        dev.off()
+    }
+}
+
+args <- commandArgs(trailingOnly = TRUE)
+
+if (length(args) > 1){
+  file1 <- args[1]
+  file2 <- args[2]
+  
+  calculateTests(file1, file2, TRUE) 
+}
+

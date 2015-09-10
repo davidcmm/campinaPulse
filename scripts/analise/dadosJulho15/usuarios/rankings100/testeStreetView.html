@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Street View side-by-side</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map, #pano {
+        float: left;
+        height: 100%;
+        width: 45%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="pano"></div>
+    <script>
+
+function initialize() {
+  //var fenway = {lat: , lng: };
+  var boundbox = new google.maps.LatLngBounds();
+  boundbox.extend(new google.maps.LatLng(-7.224488, -35.880278));
+  boundbox.extend(new google.maps.LatLng(-7.222317, -35.879720));
+
+  var map = new google.maps.Map(document.getElementById('map'), {
+    center: boundbox.getCenter(),
+    zoom: 14
+  });
+
+  
+  var panorama = new google.maps.StreetViewPanorama(
+      document.getElementById('pano'), {
+        position: boundbox.getCenter(),
+        pov: {
+          heading: 34,
+          pitch: 10
+        },
+        scrollwheel: true,
+	zoomControl: true,
+	clickToGo: true,
+	linksControl: false
+      });
+  map.setStreetView(panorama);
+
+ //google.maps.event.addListener(panorama, 'position_changed', function(event) {
+ //   clickedLocation = event.latLng;
+ //   lat = clickedLocation.lat();
+  //  long = clickedLocation.lng();
+//
+ //   print("I am an alert box! " + lat + " "  + long);
+  //  
+  //});
+
+}
+
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initialize">
+    </script>
+  </body>
+</html>

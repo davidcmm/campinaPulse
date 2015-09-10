@@ -44,11 +44,11 @@ ggplot(centroData, aes(y=centroData$V3, x=c(""))) + geom_boxplot() + geom_point(
 ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output3))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
 
 catoleData$bairro <- "Catolé"
-catoleData$questao <- "Agradável"
+catoleData$questao <- "Pleasant"
 centroData$bairro <- "Centro"
-centroData$questao <- "Agradável"
+centroData$questao <- "Pleasant"
 liberdadeData$bairro <- "Liberdade"
-liberdadeData$questao <- "Agradável"
+liberdadeData$questao <- "Pleasant"
 
 #os3 <- rbind(catoleData, centroData, liberdadeData)
 #ggplot(os3, aes(y=V3, x = bairro)) + 
@@ -93,7 +93,7 @@ liberdadeDataSeg <- data1
 
 ### Catole x Liberdade
 ```{r, echo=FALSE, fig.show='asis', fig.width=3}
-calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+calculateTTests(catole, liberdade, output1, output3, TRUE)
 ```
 
 ### Normalidade Catole, Centro, Liberdade
@@ -105,19 +105,23 @@ ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot()+ geom_poi
 
 
 catoleDataSeg$bairro <- "Catolé"
-catoleDataSeg$questao <- "Seguro"
+catoleDataSeg$questao <- "Safeness"
 centroDataSeg$bairro <- "Centro"
-centroDataSeg$questao <- "Seguro"
+centroDataSeg$questao <- "Safeness"
 liberdadeDataSeg$bairro <- "Liberdade"
-liberdadeDataSeg$questao <- "Seguro"
+liberdadeDataSeg$questao <- "Safeness"
 
 os3 <- rbind(catoleData, centroData, liberdadeData, catoleDataSeg, centroDataSeg, liberdadeDataSeg)
+w = 8
+h = 7
+pdf("boxGeral.pdf", width = w, height = h)
 ggplot(os3, aes(y=V3, x = bairro)) + 
   geom_boxplot() + 
   geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ questao)
+dev.off()
 
 qqnorm(catoleData$V3)
 qqline(catoleData$V3)

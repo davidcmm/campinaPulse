@@ -6,7 +6,7 @@ if [ $# -lt 1 ]; then
         exit 1
 fi
 
-python extractLatLong.py $*
+python extractLatLongSHP.py $*
 
 for file in *.out ; do 
 	echo $file 

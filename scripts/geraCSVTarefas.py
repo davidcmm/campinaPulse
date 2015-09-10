@@ -27,7 +27,7 @@ def createCSV(photos):
     file.close()
 
 if __name__ == "__main__":
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
 	print "Uso: <numero de tarefas a serem geradas>"
 	sys.exit(1)
 

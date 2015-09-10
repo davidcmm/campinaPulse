@@ -27,7 +27,7 @@ from sets import Set
 
 def escolhe_pontos():
     leste = [[]]
-    leste[0] = glob.glob('/home/david/Universidade/doutorado/leste/josep/*.jpg')
+    #leste[0] = glob.glob('/home/david/Universidade/doutorado/leste/josep/*.jpg')
 	
     oeste = [[], []]
     oeste[0] = glob.glob('/home/david/Universidade/doutorado/oeste/liberdade/*.jpg')
@@ -42,7 +42,7 @@ def escolhe_pontos():
     #sul[0] = glob.glob('/home/david/Universidade/doutorado/sul/bodocongo/*.jpg')
     #sul[1] = glob.glob('/home/david/Universidade/doutorado/sul/prata/*.jpg')
 
-    leste[0] = recupera_lugar_unico(leste[0])
+    #leste[0] = recupera_lugar_unico(leste[0])
     oeste[0] = recupera_lugar_unico(oeste[0])
     oeste[1] = recupera_lugar_unico(oeste[1])
     norte[0] = recupera_lugar_unico(norte[0])
@@ -62,25 +62,24 @@ def escolhe_pontos():
 
     #return [random.sample(leste[0], 12), random.sample(oeste[0], 12), random.sample(oeste[1], 12), random.sample(norte[0], 12), random.sample(norte[1], 12), random.sample(norte[2], 12), random.sample(sul[0], 12), random.sample(sul[1], 12)]
     resultado = []
-    resultado.append(leste[0])
+    #resultado.append(leste[0])
     resultado.append(oeste[0])
     resultado.append(oeste[1])
     resultado.append(norte[0])
     return resultado
 
 def escolhe_fotos(pontos):
-    print pontos
+    #print pontos
     todasFotos = []
     for listaBairro in pontos:
 	for ponto in listaBairro:
 		fotos = glob.glob(ponto+'*.jpg')       	   
-		print "Fotos " + str(fotos) + " " + str(ponto)
+		#print "Fotos " + str(fotos) + " " + str(ponto)
 		#escolhida = random.choice(fotos)
 		#print "Escolhida " + str(escolhida)
 		#todasFotos.append(escolhida)
 		for foto in fotos:
 			todasFotos.append(foto)
-		#todasFotos.append(ponto)
     return todasFotos
 		
 
@@ -100,14 +99,15 @@ def get_photos_votes(size="big"):
     urlPadrao = "http://socientize.lsd.ufcg.edu.br/bairros/"
     
     pontos = escolhe_pontos()
-    todasFotos = escolhe_fotos(pontos)
+    todasFotos = escolhe_fotos(pontos)[0:10]
+    print str(todasFotos)
 
     # For each photo ID create its direct URL according to its size:
     # big, medium, small (or thumbnail) + Flickr page hosting the photo
     photos = []
     paresSorteados = []
     contagemPorFoto = {}
-    participacaoPorFoto = 25 #expected 66 * 5
+    participacaoPorFoto = 6 #expected 66 * 5
     soma = 0
     fotosOriginais = list(todasFotos)
     
@@ -141,7 +141,7 @@ def get_photos_votes(size="big"):
 
 	#Par de fotos já foi sorteado ou foto2 já atingiu a cota mínima!
 	if (foto2 in todasFotos and cont2 >= participacaoPorFoto) or [foto1, foto2] in paresSorteados or [foto2, foto1] in paresSorteados:
-		print "Pulando com " + str(foto1) + " " + str(foto2) + str(cont) + " " + str(cont2)
+		#print "Pulando com " + str(foto1) + " " + str(foto2) + str(cont) + " " + str(cont2)
 		continue
 	else:
 		#Criando tarefa
@@ -160,7 +160,7 @@ def get_photos_votes(size="big"):
 			todasFotos.remove(foto1)
 		if cont2 >= participacaoPorFoto and foto2 in todasFotos:
 			todasFotos.remove(foto2)
-		print "Sorteou : " + str(element) + str(len(todasFotos))
+		#print "Sorteou : " + str(element) + str(len(todasFotos))
 
     print ">>> Returning with "+str(participacaoPorFoto)+ " " + str(soma)
     return photos

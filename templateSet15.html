@@ -1,7 +1,3 @@
-<head>
-  <meta charset="UTF-8">
-</head>
-
 <style>    
   .streetViewChoice {
       cursor: pointer;
@@ -162,19 +158,21 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">Seu desempenho!</h4>
           </div>
-          <div class="modal-body" style="overflow: auto;height: 500px;">
+
+          <div class="modal-body" style="overflow: auto;height: 50%;">
             <div id="d0" class="modal-body" style="display:none">
 	      <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: #3ACABB"></span> tarefas! Será que algum amigo seu pode nos ajudar também? Compartilhe!
               </p>
-	     <a href="https://www.facebook.com/sharer/sharer.php?u=https://contribua.org/pybossa/project/comoecampina" target="_blank" class="share-icons" 	title="Compartilhe no Facebook"><img src="https://contribua.org/aguanossa/images/facebook.png" /></a>  <!-- https://developers.facebook.com/docs/javascript/reference/FB.ui https://developers.facebook.com/docs/sharing/webmasters#markup -->
-            <br> 
-            <a href="http://twitter.com/share?text=Ajude%20a%20melhorar%20Campina%20avaliando%20fotos%20da%20cidade%21&url=https://contribua.org/pybossa/project/comoecampina" target="_blank" class="share-icons" title="Compartilhe no Twitter"><img src="https://contribua.org/aguanossa/images/twitter.png" /></a>
-
+	     <p align="Center"><a href="https://www.facebook.com/sharer/sharer.php?u=https://contribua.org/pybossa/project/comoecampina" target="_blank" class="share-icons" 	title="Compartilhe no Facebook"><img src="https://contribua.org/aguanossa/images/facebook.png" /> Compartilhe no Facebook!</a> </p>  <!-- https://developers.facebook.com/docs/javascript/reference/FB.ui https://developers.facebook.com/docs/sharing/webmasters#markup -->
+            <p align="Center">
+            <a href="http://twitter.com/share?text=Ajude%20a%20gerara%20informaçãoa%20paraa%20melhorar%20Campina%20avaliando%20fotos%20da%20cidade%21&url=https://contribua.org/pybossa/project/comoecampina" target="_blank" class="share-icons" title="Compartilhe no Twitter"><img src="https://contribua.org/aguanossa/images/twitter.png"/> Compartilhe no Twitter!</a> </p>
             </div>
           </div>
+
           <div class="modal-footer">
             <button id="startContrib3" type="button" class="btn btn-primary" data-dismiss="modal">Continue!</button>
           </div>
+
         </div>
       </div>
     </div>
@@ -355,7 +353,7 @@ task.
 
   <!-- Feedback items for the user -->
   <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
-  <!-- <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: #3ACABB"></span> tarefas <!-- de -->
+  <!--<p>Você já completou <span id="done2" class="label label-info" style="background: #3ACABB"></span> tarefas <!-- de -->
   <!-- Progress bar for the user -->
   <!-- <span id="total" class="label label-inverse"></span></p> -->
   <!--<div class="progress progress-striped" style="background: LightGray">
@@ -400,6 +398,9 @@ task.
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 
 <script charset="UTF-8">
+  //Adding head elements
+  $('head').append('<meta charset="UTF-8">'); 
+  
   //Google autocomplete
   var cityInput = document.getElementById('autocomplete');
   var autocomplete = new google.maps.places.Autocomplete(cityInput);
@@ -766,7 +767,7 @@ function loadProfileProgress(filled) {
   //$("#progress2").tooltip({ 'placement' : 'right' });  		
 }
 
-function showPraiseAndShare(){
+function showPraiseAndShare(data){
     $('#praise').attr("color", "Red");
     if (data.done == 165) {
       $("#praise").text("Você já é um mestre nisso!");        
@@ -781,7 +782,6 @@ function showPraiseAndShare(){
     } else if (data.done == 15) {
       $("#praise").text("Parabéns!");
     } 
-    //$("#praise").addClass("mybadge");
 
     if (data.done == 15 || data.done == 35 || data.done == 55 || data.done == 75 || data.done == 105 || data.done == 165){
 	    $("#modal3").modal('show');
@@ -797,20 +797,21 @@ function showPraiseAndShare(){
 
 //Loading user progress in terms of tasks performed  
 function loadUserProgress() {
-  pybossa.userProgress('comoecampina').done(function(data){
+  pybossa.userProgress('comoecampinav2').done(function(data){
     var pct = Math.round((data.done*100)/300);//data.total
     //$("#progress").css("width", pct.toString() +"%");
     // $("#progress").attr("title", pct.toString() + "% das tarefas!");      
 
     //$("#total").text(data.total);
     $("#done").text(data.done);
+    //$("#done").text(data.done);
     //data.done != 0 && data.done % 10 == 0        
     if (data.done != 0 && data.done % 10 == 0 ) {        
       askForMoreInfo = true;          
     }
 
     //Choosing praise and presenting share button!
-    showPraiseAndShare();
+    showPraiseAndShare(data);
   });
 }
 
@@ -982,7 +983,7 @@ pybossa.presentTask(function(task, deferred) {
   }
 });
 
-pybossa.run('comoecampina');
-pybossa.getJogo('comoecampina');
+pybossa.run('comoecampinav2');
+//pybossa.getJogo('comoecampinav2');
 //pybossa.run('Campinav2');
 </script>

@@ -1,0 +1,253 @@
+---
+title: "RoyalSociety"
+output: pdf_document
+---
+
+#Homens e Mulheres
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library(ggplot2)
+library(gridExtra)
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Pleasant",
+  'seguro?'="Safeness"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
+dados <- read.table("geral2.dat", header=TRUE)
+
+#Intervalo de confiança por ponto
+temp <- dados
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+#Subset of columns
+dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Copia com todos os dados
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+
+#Separando homens e mulheres
+grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='agradavel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='agradavel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-hom-mul-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-agrad.dat", sep = "\t")
+
+#Separando homens e mulheres
+grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-hom-mul-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-seg.dat", sep = "\t")
+```
+
+
+#Jovens e Adultos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando jovens e adultos
+grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='agradavel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='agradavel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-jov-adu-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-agrad.dat", sep = "\t")
+
+#Separando jovens e adultos
+grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-jov-adu-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-seg.dat", sep = "\t")
+```
+
+#Casados e Solteiros
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='agradavel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='agradavel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-cas-sol-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-agrad.dat", sep = "\t")
+
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-cas-sol-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
+```
+
+#Baixa renda e Media renda
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='agradavel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='agradavel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-bai-med-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-agrad.dat", sep = "\t")
+
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+#Modelo
+sink("reg-bai-med-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-seg.dat", sep = "\t")
+```

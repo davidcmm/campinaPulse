@@ -256,20 +256,51 @@ write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "re
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(dplyr)
 
+substituiURL <- function(dadosPorGrupo){
+    localData <- lapply(as.character(dadosPorGrupo$image_url), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
+    local <- unlist(lapply(localData, '[[', 1))
+    return(local)
+}
+
 #Lendo resultados do CrowdFlower
 dadosg1 <- read.csv("regressao100/g1.csv")
+dadosg1$image_url <- substituiURL(dadosg1)
+
 dadosg2 <- read.csv("regressao100/g2.csv")
+dadosg2$image_url <- substituiURL(dadosg2)
+
 dadosg3 <- read.csv("regressao100/g3.csv")
+dadosg3$image_url <- substituiURL(dadosg3)
+
 dadosg4 <- read.csv("regressao100/g4.csv")
+dadosg4$image_url <- substituiURL(dadosg4)
+
 dadosg5 <- read.csv("regressao100/g5.csv")
+dadosg5$image_url <- substituiURL(dadosg5)
+
 dadosg6 <- read.csv("regressao100/g6.csv")
+dadosg6$image_url <- substituiURL(dadosg6)
+
 dadosg7 <- read.csv("regressao100/g7.csv")
+dadosg7$image_url <- substituiURL(dadosg7)
+
 dadosg8 <- read.csv("regressao100/g8.csv")
+dadosg8$image_url <- substituiURL(dadosg8)
+
 dadosg9 <- read.csv("regressao100/g9.csv")
+dadosg9$image_url <- substituiURL(dadosg9)
+
 dadosg10 <- read.csv("regressao100/g10.csv")
+dadosg10$image_url <- substituiURL(dadosg10)
+
 dadosg11 <- read.csv("regressao100/g11.csv")
+dadosg11$image_url <- substituiURL(dadosg11)
+
 dadosg12 <- read.csv("regressao100/g12.csv")
+dadosg12$image_url <- substituiURL(dadosg12)
+
 dadosg13 <- read.csv("regressao100/g13.csv")
+dadosg13$image_url <- substituiURL(dadosg13)
 
 #Agrupando por imagem e por questao - G1
 by_image <- group_by(dadosg1, image_url)
@@ -381,6 +412,10 @@ groupedData13 <- summarise(by_image,
   q2_right = mean(question2__right_side, na.rm = TRUE))
 
 #Regressao?
+temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
+
 
 #Correlacao?
+
+
 ```

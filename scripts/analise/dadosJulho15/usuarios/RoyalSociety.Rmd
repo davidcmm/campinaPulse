@@ -251,3 +251,136 @@ sink()
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-seg.dat", sep = "\t")
 ```
+
+#Elementos urbanos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library(dplyr)
+
+#Lendo resultados do CrowdFlower
+dadosg1 <- read.csv("regressao100/g1.csv")
+dadosg2 <- read.csv("regressao100/g2.csv")
+dadosg3 <- read.csv("regressao100/g3.csv")
+dadosg4 <- read.csv("regressao100/g4.csv")
+dadosg5 <- read.csv("regressao100/g5.csv")
+dadosg6 <- read.csv("regressao100/g6.csv")
+dadosg7 <- read.csv("regressao100/g7.csv")
+dadosg8 <- read.csv("regressao100/g8.csv")
+dadosg9 <- read.csv("regressao100/g9.csv")
+dadosg10 <- read.csv("regressao100/g10.csv")
+dadosg11 <- read.csv("regressao100/g11.csv")
+dadosg12 <- read.csv("regressao100/g12.csv")
+dadosg13 <- read.csv("regressao100/g13.csv")
+
+#Agrupando por imagem e por questao - G1
+by_image <- group_by(dadosg1, image_url)
+groupedData1 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE),
+  q3 = mean(question3, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G2
+by_image <- group_by(dadosg2, image_url)
+groupedData2 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE),
+  q3 = mean(question3, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G3
+by_image <- group_by(dadosg3, image_url)
+groupedData3 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE),
+  q3 = mean(question3, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G4
+by_image <- group_by(dadosg4, image_url)
+groupedData4 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2 = mean(question2 na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G5
+by_image <- group_by(dadosg5, image_url)
+groupedData5 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2 = mean(question2, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G6
+by_image <- group_by(dadosg6, image_url)
+groupedData6 <- summarise(by_image,
+  count = n(),
+  q1_left = mean(question1__left_side, na.rm = TRUE),
+  q1_right = mean(question1__right_side, na.rm = TRUE),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G7
+by_image <- group_by(dadosg7, image_url)
+groupedData7 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2 = mean(question2, na.rm = TRUE),
+  q3_left = mean(question3__left_side, na.rm = TRUE),
+  q3_right = mean(question3__right_side, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G8
+by_image <- group_by(dadosg8, image_url)
+groupedData8 <- summarise(by_image,
+  count = n(),
+  q1 = table(question1),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G9
+by_image <- group_by(dadosg9, image_url)
+groupedData9 <- summarise(by_image,
+  count = n(),
+  q1_left = mean(question1__left_side, na.rm = TRUE),
+  q1_right = mean(question1__right_side, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G10
+by_image <- group_by(dadosg10, image_url)
+groupedData10 <- summarise(by_image,
+  count = n(),
+  q1 = table(question1),
+  q2 = mean(question2, na.rm = TRUE),
+  q3 = mean(question3, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G11
+by_image <- group_by(dadosg11, image_url)
+groupedData11 <- summarise(by_image,
+  count = n(),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE),
+  q3_left = mean(question3__left_side, na.rm = TRUE),
+  q3_right = mean(question3__right_side, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G12
+by_image <- group_by(dadosg12, image_url)
+groupedData12 <- summarise(by_image,
+  count = n(),
+  q1 = mean(question1, na.rm = TRUE),
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE),
+  q3 = mean(question3, na.rm = TRUE))
+
+#Agrupando por imagem e por questao - G13
+by_image <- group_by(dadosg13, image_url)
+groupedData13 <- summarise(by_image,
+  count = n(),
+  q1_left = mean(question1__left_side, na.rm = TRUE),
+  q1_right = mean(question1__right_side, na.rm = TRUE)
+  q2_left = mean(question2__left_side, na.rm = TRUE),
+  q2_right = mean(question2__right_side, na.rm = TRUE))
+
+#Regressao?
+
+#Correlacao?
+```

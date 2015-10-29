@@ -7,6 +7,8 @@ output: pdf_document
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(ggplot2)
 library(gridExtra)
+library(dplyr)
+source('analisaICPorFoto.R')
 
 facet_names <- list(
   'agrad%C3%A1vel?'="Pleasant",
@@ -50,11 +52,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
 #Modelo
-sink("reg-hom-mul-agrad.txt")
+#sink("reg-hom-mul-agrad.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-agrad.dat", sep = "\t")
@@ -76,11 +80,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
 #Modelo
-sink("reg-hom-mul-seg.txt")
+#sink("reg-hom-mul-seg.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-seg.dat", sep = "\t")
@@ -106,11 +112,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
 #Modelo
-sink("reg-jov-adu-agrad.txt")
+#sink("reg-jov-adu-agrad.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-agrad.dat", sep = "\t")
@@ -132,11 +140,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
 #Modelo
-sink("reg-jov-adu-seg.txt")
+#sink("reg-jov-adu-seg.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-seg.dat", sep = "\t")
@@ -161,11 +171,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
 #Modelo
-sink("reg-cas-sol-agrad.txt")
+#sink("reg-cas-sol-agrad.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-agrad.dat", sep = "\t")
@@ -187,11 +199,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
 #Modelo
-sink("reg-cas-sol-seg.txt")
+#sink("reg-cas-sol-seg.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
@@ -216,11 +230,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
 #Modelo
-sink("reg-bai-med-agrad.txt")
+#sink("reg-bai-med-agrad.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-agrad.dat", sep = "\t")
@@ -242,11 +258,13 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
 #Modelo
-sink("reg-bai-med-seg.txt")
+#sink("reg-bai-med-seg.txt")
 texreg(regAgrad)
 summary(regAgrad)
-sink()
+#sink()
 
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-seg.dat", sep = "\t")
@@ -259,7 +277,7 @@ library(dplyr)
 substituiURL <- function(dadosPorGrupo){
     localData <- lapply(as.character(dadosPorGrupo$image_url), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
     local <- unlist(lapply(localData, '[[', 1))
-    return(local)
+    return (local)
 }
 
 #Lendo resultados do CrowdFlower
@@ -275,14 +293,14 @@ dadosg3$image_url <- substituiURL(dadosg3)
 dadosg4 <- read.csv("regressao100/g4.csv")
 dadosg4$image_url <- substituiURL(dadosg4)
 
-dadosg5 <- read.csv("regressao100/g5.csv")
-dadosg5$image_url <- substituiURL(dadosg5)
+# dadosg5 <- read.csv("regressao100/g5.csv")
+# dadosg5$image_url <- substituiURL(dadosg5)
 
 dadosg6 <- read.csv("regressao100/g6.csv")
 dadosg6$image_url <- substituiURL(dadosg6)
 
-dadosg7 <- read.csv("regressao100/g7.csv")
-dadosg7$image_url <- substituiURL(dadosg7)
+# dadosg7 <- read.csv("regressao100/g7.csv")
+# dadosg7$image_url <- substituiURL(dadosg7)
 
 dadosg8 <- read.csv("regressao100/g8.csv")
 dadosg8$image_url <- substituiURL(dadosg8)
@@ -293,129 +311,655 @@ dadosg9$image_url <- substituiURL(dadosg9)
 dadosg10 <- read.csv("regressao100/g10.csv")
 dadosg10$image_url <- substituiURL(dadosg10)
 
-dadosg11 <- read.csv("regressao100/g11.csv")
-dadosg11$image_url <- substituiURL(dadosg11)
+# dadosg11 <- read.csv("regressao100/g11.csv")
+# dadosg11$image_url <- substituiURL(dadosg11)
 
 dadosg12 <- read.csv("regressao100/g12.csv")
 dadosg12$image_url <- substituiURL(dadosg12)
 
-dadosg13 <- read.csv("regressao100/g13.csv")
-dadosg13$image_url <- substituiURL(dadosg13)
+# dadosg13 <- read.csv("regressao100/g13.csv")
+# dadosg13$image_url <- substituiURL(dadosg13)
+
+#Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
+geraValores <- function(lista, question, desvios){
+   desvio = sd(lista, na.rm = TRUE)
+   #Apenas 1 valor
+   if (is.na(desvio) & question == "1"){ 
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "1l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "1r"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2r"){
+      print ("Entrei 2r")
+      print (desvio)
+      print(lista)
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3r"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else{
+     return (mean(lista, na.rm = TRUE))
+   }
+}
 
 #Agrupando por imagem e por questao - G1
 by_image <- group_by(dadosg1, image_url)
+# groupedData1 <- summarise(by_image,
+#   count = n(),
+#   q1 = mean(question1, na.rm = TRUE),
+#   sdq1 = sd(question1, na.rm = TRUE),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   sdq2_left = sd(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE),
+#   sdq2_right = sd(question2__right_side, na.rm = TRUE),
+#   q3 = mean(question3, na.rm = TRUE),
+#   sdq3 = sd(question3, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
 groupedData1 <- summarise(by_image,
   count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE),
-  q3 = mean(question3, na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
 
 #Agrupando por imagem e por questao - G2
 by_image <- group_by(dadosg2, image_url)
+# groupedData2 <- summarise(by_image,
+#   count = n(),
+#   q1 = mean(question1, na.rm = TRUE),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE),
+#   q3 = mean(question3, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
 groupedData2 <- summarise(by_image,
   count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE),
-  q3 = mean(question3, na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
 
 #Agrupando por imagem e por questao - G3
 by_image <- group_by(dadosg3, image_url)
+# groupedData3 <- summarise(by_image,
+#   count = n(),
+#   q1_left = mean(question1__left_side, na.rm = TRUE),
+#   q1_right = mean(question1__right_side, na.rm = TRUE),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE),
+#   q3_left = mean(question3__left_side, na.rm = TRUE),
+#   q3_right = mean(question3__right_side, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
 groupedData3 <- summarise(by_image,
   count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE),
-  q3 = mean(question3, na.rm = TRUE))
+  q1_left = geraValores(question1__left_side, "1l", desvios),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3_left = geraValores(question3__left_side, "3l", desvios),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
 
 #Agrupando por imagem e por questao - G4
 by_image <- group_by(dadosg4, image_url)
+# groupedData4 <- summarise(by_image,
+#   count = n(),
+#   q1 = mean(question1, na.rm = TRUE),
+#   q2 = mean(question2, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE))
 groupedData4 <- summarise(by_image,
   count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2 = mean(question2 na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios)
+  #sdq2 = sd(question2, na.rm = TRUE) 
+  )
 
 #Agrupando por imagem e por questao - G5
-by_image <- group_by(dadosg5, image_url)
-groupedData5 <- summarise(by_image,
-  count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2 = mean(question2, na.rm = TRUE))
+# by_image <- group_by(dadosg5, image_url)
+# # groupedData5 <- summarise(by_image,
+# #   count = n(),
+# #   q1 = mean(question1, na.rm = TRUE),
+# #   q2 = mean(question2, na.rm = TRUE))
+# desvios <- summarise (by_image, 
+#                   sd1 = sd(question1, na.rm = TRUE),
+#                   sd2 = sd(question2, na.rm = TRUE))
+# groupedData5 <- summarise(by_image,
+#   count = n(),
+#   q1 = geraValores(question1, "1", desvios),
+#   #sdq1 = sd(question1, na.rm = TRUE),
+#   q2 = geraValores(question2, "2", desvios)
+#   #sdq2 = sd(question2, na.rm = TRUE) 
+#   )
 
 #Agrupando por imagem e por questao - G6
 by_image <- group_by(dadosg6, image_url)
+# groupedData6 <- summarise(by_image,
+#   count = n(),
+#   q1_left = mean(question1__left_side, na.rm = TRUE),
+#   q1_right = mean(question1__right_side, na.rm = TRUE),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
 groupedData6 <- summarise(by_image,
   count = n(),
-  q1_left = mean(question1__left_side, na.rm = TRUE),
-  q1_right = mean(question1__right_side, na.rm = TRUE),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE))
+  q1_left = geraValores(question1__left_side, "1l", desvios),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+  )
+
 
 #Agrupando por imagem e por questao - G7
-by_image <- group_by(dadosg7, image_url)
-groupedData7 <- summarise(by_image,
-  count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2 = mean(question2, na.rm = TRUE),
-  q3_left = mean(question3__left_side, na.rm = TRUE),
-  q3_right = mean(question3__right_side, na.rm = TRUE))
+# by_image <- group_by(dadosg7, image_url)
+# # groupedData7 <- summarise(by_image,
+# #   count = n(),
+# #   q1 = mean(question1, na.rm = TRUE),
+# #   q2 = mean(question2, na.rm = TRUE),
+# #   q3_left = mean(question3__left_side, na.rm = TRUE),
+# #   q3_right = mean(question3__right_side, na.rm = TRUE))
+# desvios <- summarise (by_image, 
+#                   sd1 = sd(question1, na.rm = TRUE),
+#                   sd2 = sd(question2, na.rm = TRUE),
+#                   sd3l = sd(question3__left_side, na.rm = TRUE),
+#                   sd3r = sd(question3__right_side, na.rm = TRUE) )
+# groupedData7 <- summarise(by_image,
+#   count = n(),
+#   q1 = geraValores(question1, "1", desvios),
+#   #sdq1 = sd(question1, na.rm = TRUE),
+#   q2 = geraValores(question2, "2", desvios),
+#   #sdq2 = sd(question2, na.rm = TRUE),
+#   q3_left = geraValores(question3__left_side, "3l", desvios),
+#   #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+#   q3_right = geraValores(question3__right_side, "3r", desvios)
+#   #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+#   )
 
 #Agrupando por imagem e por questao - G8
 by_image <- group_by(dadosg8, image_url)
+# groupedData8 <- summarise(by_image,
+#   count = n(),
+#   q1 = table(question1),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
 groupedData8 <- summarise(by_image,
   count = n(),
-  q1 = table(question1),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2_right_side, "2r", desvios)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE)  
+  )
 
 #Agrupando por imagem e por questao - G9
 by_image <- group_by(dadosg9, image_url)
+# groupedData9 <- summarise(by_image,
+#   count = n(),
+#   q1_left = mean(question1__left_side, na.rm = TRUE),
+#   q1_right = mean(question1__right_side, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE) )
 groupedData9 <- summarise(by_image,
   count = n(),
-  q1_left = mean(question1__left_side, na.rm = TRUE),
-  q1_right = mean(question1__right_side, na.rm = TRUE))
+  q1_left = geraValores(question1__left_side, "1l", desvios),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios)
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE)  
+  )
 
 #Agrupando por imagem e por questao - G10
 by_image <- group_by(dadosg10, image_url)
+# groupedData10 <- summarise(by_image,
+#   count = n(),
+#   q1 = table(question1),
+#   q2 = mean(question2, na.rm = TRUE),
+#   q3 = mean(question3, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
 groupedData10 <- summarise(by_image,
   count = n(),
-  q1 = table(question1),
-  q2 = mean(question2, na.rm = TRUE),
-  q3 = mean(question3, na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios),
+  #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
 
 #Agrupando por imagem e por questao - G11
-by_image <- group_by(dadosg11, image_url)
-groupedData11 <- summarise(by_image,
-  count = n(),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE),
-  q3_left = mean(question3__left_side, na.rm = TRUE),
-  q3_right = mean(question3__right_side, na.rm = TRUE))
+# by_image <- group_by(dadosg11, image_url)
+# # groupedData11 <- summarise(by_image,
+# #   count = n(),
+# #   q2_left = mean(question2__left_side, na.rm = TRUE),
+# #   q2_right = mean(question2__right_side, na.rm = TRUE),
+# #   q3_left = mean(question3__left_side, na.rm = TRUE),
+# #   q3_right = mean(question3__right_side, na.rm = TRUE))
+# desvios <- summarise (by_image, 
+#                   sd2l = sd(question2__left_side, na.rm = TRUE),
+#                   sd2r = sd(question2__right_side, na.rm = TRUE),
+#                   sd3l = sd(question3__left_side, na.rm = TRUE),
+#                   sd3r = sd(question3__right_side, na.rm = TRUE) )
+# groupedData11 <- summarise(by_image,
+#   count = n(),
+#   q2_left = geraValores(question2__left_side, "2l", desvios),
+#   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+#   q2_right = geraValores(question2__right_side, "2r", desvios),
+#   #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+#   q3_left = geraValores(question3__left_side, "3l", desvios),
+#   #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+#   q3_right = geraValores(question3__right_side, "3r", desvios)
+#   #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+#   )
 
 #Agrupando por imagem e por questao - G12
 by_image <- group_by(dadosg12, image_url)
+# groupedData12 <- summarise(by_image,
+#   count = n(),
+#   q1 = mean(question1, na.rm = TRUE),
+#   q2_left = mean(question2__left_side, na.rm = TRUE),
+#   q2_right = mean(question2__right_side, na.rm = TRUE),
+#   q3 = mean(question3, na.rm = TRUE))
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
 groupedData12 <- summarise(by_image,
   count = n(),
-  q1 = mean(question1, na.rm = TRUE),
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE),
-  q3 = mean(question3, na.rm = TRUE))
+  q1 = geraValores(question1, "1", desvios),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2_left = geraValores(question2__left_side, "2l", desvios),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
+
 
 #Agrupando por imagem e por questao - G13
-by_image <- group_by(dadosg13, image_url)
-groupedData13 <- summarise(by_image,
-  count = n(),
-  q1_left = mean(question1__left_side, na.rm = TRUE),
-  q1_right = mean(question1__right_side, na.rm = TRUE)
-  q2_left = mean(question2__left_side, na.rm = TRUE),
-  q2_right = mean(question2__right_side, na.rm = TRUE))
+# by_image <- group_by(dadosg13, image_url)
+# # groupedData13 <- summarise(by_image,
+# #   count = n(),
+# #   q1_left = mean(question1__left_side, na.rm = TRUE),
+# #   q1_right = mean(question1__right_side, na.rm = TRUE),
+# #   q2_left = mean(question2__left_side, na.rm = TRUE),
+# #   q2_right = mean(question2__right_side, na.rm = TRUE))
+# desvios <- summarise (by_image, 
+#                   sd1l = sd(question1__left_side, na.rm = TRUE),
+#                   sd1r = sd(question1__right_side, na.rm = TRUE),
+#                   sd2l = sd(question2__left_side, na.rm = TRUE),
+#                   sd2r = sd(question2__right_side, na.rm = TRUE) )
+# groupedData13 <- summarise(by_image,
+#   count = n(),
+#   q1_left = geraValores(question1__left_side, "1l", desvios),
+#   #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+#   q1_right = geraValores(question1__right_side, "1r", desvios),
+#   #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+#   q2_left = geraValores(question2__left_side, "2l", desvios),
+#   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+#   q2_right = geraValores(question2__right_side, "2r", desvios)
+#   #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+#   )
 
-#Regressao?
+
+#Renomeando colunas por grupos
+renomeiaGrupos <- function(dadosPorGrupo, listaColunas, idGrupo) {
+    for (coluna in listaColunas){
+        colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- paste(idGrupo, coluna, sep="")
+    }
+    return(dadosPorGrupo)
+}
+
+groupedData1 <- renomeiaGrupos(groupedData1, c("q1", "q2_left", "q2_right", "q3", "count"), "g1")
+groupedData2 <- renomeiaGrupos(groupedData2, c("q1", "q2_left", "q2_right", "q3", "count"), "g2")
+groupedData3 <- renomeiaGrupos(groupedData3, c("q1_left", "q1_right", "q2_left", "q2_right", "q3_left", "q3_right", "count"), "g3")
+groupedData4 <- renomeiaGrupos(groupedData4, c("q1", "q2", "count"), "g4")
+# groupedData5 <- renomeiaGrupos(groupedData5, c("q1", "q2", "count"), "g5")
+groupedData6 <- renomeiaGrupos(groupedData6, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g6")
+# groupedData7 <- renomeiaGrupos(groupedData7, c("q1", "q2", "q3_left", "q3_right", "count"), "g7")
+groupedData8 <- renomeiaGrupos(groupedData8, c("q1", "q2_left", "q2_right", "count"), "g8")
+groupedData9 <- renomeiaGrupos(groupedData9, c("q1_left", "q1_right", "count"), "g9")
+groupedData10 <- renomeiaGrupos(groupedData10, c("q1", "q2", "q3", "count"), "g10")
+# groupedData11 <- renomeiaGrupos(groupedData11, c("q2_left", "q2_right", "q3_left", "q3_right", "count"), "g11")
+groupedData12 <- renomeiaGrupos(groupedData12, c("q1", "q2_left", "q2_right", "q3", "count"), "g12")
+# groupedData13 <- renomeiaGrupos(groupedData13, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g13")
+
+#Combinando dados QScores com elementos urbanos
+# temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
+# temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData3, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData4, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData5, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData6, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData7, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData8, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData9, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData10, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData12, by.x="image_url", by.y="image_url")
+# temp <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
 temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
-
+temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
+temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
+temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
+#temp5 <- merge(temp, groupedData5, by.x="image_url", by.y="image_url")
+temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
+#temp7 <- merge(temp, groupedData7, by.x="image_url", by.y="image_url")
+temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
+temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
+temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
+#temp11 <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
+temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
+#temp13 <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
 
 #Correlacao?
+calculaCorrelacoes <- function (listaDados, colunaQScore, questao) {
+    temp = listaDados[[1]]
+    dadosAtuais <- temp[(temp$V1 == questao),] 
+    
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q3, na.action = na.exclude)
+    
+    temp2 = listaDados[[2]]
+    dadosAtuais <- temp2[(temp2$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q3, na.action = na.exclude)
+    
+    temp3 = listaDados[[3]]
+    dadosAtuais <- temp3[(temp3$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_right, na.action = na.exclude)
+    
+    temp4 = listaDados[[4]]
+    dadosAtuais <- temp4[(temp4$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q2, na.action = na.exclude)
+    
+    temp5 = listaDados[[5]]
+    # dadosAtuais <- temp5[(temp5$V1 == questao),] 
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q1, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q2, na.action = na.exclude)
+    
+    temp6 = listaDados[[6]]
+    dadosAtuais <- temp6[(temp6$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_right, na.action = na.exclude)
+    
+    temp7 = listaDados[[7]]
+    # dadosAtuais <- temp7[(temp7$V1 == questao),] 
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q1, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q2, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_left, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_right, na.action = na.exclude)
+    
+    temp8 = listaDados[[8]]
+    dadosAtuais <- temp8[(temp8$V1 == questao),] 
+    #cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_right, na.action = na.exclude)
+    
+    temp9 = listaDados[[9]]
+    dadosAtuais <- temp9[(temp9$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_right, na.action = na.exclude)
+    
+    temp10 = listaDados[[10]]
+    dadosAtuais <- temp10[(temp10$V1 == questao),] 
+    #cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q2, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q3, na.action = na.exclude)
+    
+    temp11 = listaDados[[11]]
+    # dadosAtuais <- temp11[(temp11$V1 == questao),] 
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_left, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_right, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_left, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_right, na.action = na.exclude)
+    
+    temp12 = listaDados[[12]]
+    dadosAtuais <- temp12[(temp12$V1 == questao),] 
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q1, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_left, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_right, na.action = na.exclude)
+    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q3, na.action = na.exclude)
+    
+    temp13 = listaDados[[13]]
+    # dadosAtuais <- temp13[(temp13$V1 == questao),] 
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_left, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_right, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_left, na.action = na.exclude)
+    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_right, na.action = na.exclude)
+}
 
+sink("correlacao.dat")
+print("Agradavel")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Geral", 'agradavel?')
+sink()
 
+agrad <- temp[(temp$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g1q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g1q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g1q2_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g1q3, na.action = na.exclude)
+
+agrad <- temp2[(temp2$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g2q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g2q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g2q2_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g2q3, na.action = na.exclude)
+
+agrad <- temp3[(temp3$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g3q1_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g3q1_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g3q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g3q2_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g3q3_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g3q3_right, na.action = na.exclude)
+
+agrad <- temp4[(temp4$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g4q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g4q2, na.action = na.exclude)
+
+# agrad <- temp5[(temp5$V1 == 'agradavel?'),] 
+# cor.test(agrad$V3.Geral, agrad$g5q1, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g5q2, na.action = na.exclude)
+
+agrad <- temp6[(temp6$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g6q1_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g6q1_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g6q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g6q2_right, na.action = na.exclude)
+
+# agrad <- temp7[(temp7$V1 == 'agradavel?'),] 
+# cor.test(agrad$V3.Geral, agrad$g7q1, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g7q2, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g7q3_left, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g7q3_right, na.action = na.exclude)
+
+agrad <- temp8[(temp8$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g8q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g8q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g8q2_right, na.action = na.exclude)
+
+agrad <- temp9[(temp9$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g9q1_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g9q1_right, na.action = na.exclude)
+
+agrad <- temp10[(temp10$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g10q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g10q2, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g10q3, na.action = na.exclude)
+
+# agrad <- temp11[(temp11$V1 == 'agradavel?'),] 
+# cor.test(agrad$V3.Geral, agrad$g11q2_left, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g11q2_right, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g11q3_left, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g11q3_right, na.action = na.exclude)
+
+agrad <- temp12[(temp12$V1 == 'agradavel?'),] 
+cor.test(agrad$V3.Geral, agrad$g12q1, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g12q2_left, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g12q2_right, na.action = na.exclude)
+cor.test(agrad$V3.Geral, agrad$g12q3, na.action = na.exclude)
+
+# agrad <- temp13[(temp13$V1 == 'agradavel?'),] 
+# cor.test(agrad$V3.Geral, agrad$g13q1_left, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g13q1_right, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g13q2_left, na.action = na.exclude)
+# cor.test(agrad$V3.Geral, agrad$g13q2_right, na.action = na.exclude)
+
+print("Segurança")
+seg <- temp[(temp$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g1q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g1q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g1q2_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g1q3, na.action = na.exclude)
+
+seg <- temp2[(temp2$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g2q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g2q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g2q2_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g2q3, na.action = na.exclude)
+
+seg <- temp3[(temp3$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g3q1_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g3q1_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g3q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g3q2_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g3q3_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g3q3_right, na.action = na.exclude)
+
+seg <- temp4[(temp4$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g4q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g4q2, na.action = na.exclude)
+
+# seg <- temp5[(temp5$V1 == 'seguro?'),] 
+# cor.test(seg$V3.Geral, seg$g5q1, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g5q2, na.action = na.exclude)
+
+seg <- temp6[(temp6$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g6q1_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g6q1_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g6q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g6q2_right, na.action = na.exclude)
+
+# seg <- temp7[(temp7$V1 == 'seguro?'),] 
+# cor.test(seg$V3.Geral, seg$g7q1, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g7q2, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g7q3_left, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g7q3_right, na.action = na.exclude)
+
+seg <- temp8[(temp8$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g8q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g8q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g8q2_right, na.action = na.exclude)
+
+seg <- temp9[(temp9$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g9q1_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g9q1_right, na.action = na.exclude)
+
+seg <- temp10[(temp10$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g10q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g10q2, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g10q3, na.action = na.exclude)
+
+# seg <- temp11[(temp11$V1 == 'seguro?'),] 
+# cor.test(seg$V3.Geral, seg$g11q2_left, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g11q2_right, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g11q3_left, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g11q3_right, na.action = na.exclude)
+
+seg <- temp12[(temp12$V1 == 'seguro?'),] 
+cor.test(seg$V3.Geral, seg$g12q1, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g12q2_left, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g12q2_right, na.action = na.exclude)
+cor.test(seg$V3.Geral, seg$g12q3, na.action = na.exclude)
+
+# seg <- temp13[(temp13$V1 == 'seguro?'),] 
+# cor.test(seg$V3.Geral, seg$g13q1_left, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g13q1_right, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g13q2_left, na.action = na.exclude)
+# cor.test(seg$V3.Geral, seg$g13q2_right, na.action = na.exclude)
+sink()
+
+#Regressao?
+#regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$g1q1 + agrad$g1q2_left + agrad$g1q2_right + agrad$g1q3 + agrad$g2q1 + agrad$g2q2_left + agrad$g2q2_right + agrad$g2q3 + agrad$g3q1_left + agrad$g3q1_right + agrad$g3q2_left + agrad$g3q2_right + agrad$g3q3_left + agrad$g3q3_right + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1_left + agrad$g6q1_right + agrad$g6q2_left + agrad$g6q2_right + agrad$g7q1 + agrad$g7q2 + agrad$g7q3_left + agrad$g7q3_right + agrad$g8q1 + agrad$g8q2_left + agrad$g8q2_right + agrad$g9q1_left + agrad$g9q1_right + agrad$g10q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q2_left + agrad$g11q2_right + agrad$g11q3_left + agrad$g11q3_right + agrad$g12q1 + agrad$g12q2_left + agrad$g12q2_right + agrad$g12q3 + agrad$g13q1_left + agrad$g13q1_right + agrad$g13q2_left + agrad$g13q2_right, na.action = na.exclude)
+#summary(regGeralAgrad)
+
+#regGeralSeg <- lm(seg$V3.Geral ~ seg$g1q1 + seg$g1q2_left + seg$g1q2_right + seg$g1q3 + seg$g2q1 + seg$g2q2_left + seg$g2q2_right + seg$g2q3 + seg$g3q1_left + seg$g3q1_right + seg$g3q2_left + seg$g3q2_right + seg$g3q3_left + seg$g3q3_right + seg$g4q1 + seg$g4q2 + seg$g5q1 + seg$g5q2 + seg$g6q1_left + seg$g6q1_right + seg$g6q2_left + seg$g6q2_right + seg$g7q1 + seg$g7q2 + seg$g7q3_left + seg$g7q3_right + seg$g8q1 + seg$g8q2_left + seg$g8q2_right + seg$g9q1_left + seg$g9q1_right + seg$g10q1 + seg$g10q2 + seg$g10q3 + seg$g11q2_left + seg$g11q2_right + seg$g11q3_left + seg$g11q3_right + seg$g12q1 + seg$g12q2_left + seg$g12q2_right + seg$g12q3 + seg$g13q1_left + seg$g13q1_right + seg$g13q2_left + seg$g13q2_right, na.action = na.exclude)
 ```

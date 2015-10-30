@@ -1,0 +1,1021 @@
+<head>
+<meta charset="UTF-8">
+</head>
+
+<style>    
+    .streetViewChoice {  cursor: pointer;  border: 3px solid #fff;}
+    .streetViewChoice:hover, .streetViewChoice.hovered {  cursor: pointer;  border: 3px solid #FF4500;}
+    .streetViewChoice:focus {
+        outline: none;
+    }
+  
+    .streetViewChoice2 {  cursor: pointer;  border: 3px solid #fff;}
+    .streetViewChoice2:hover, .streetViewChoice2.hovered {  cursor: pointer;  border: 3px solid #1E90FF;}
+  .streetViewChoice2:focus {
+        outline: none;
+    }
+  
+  .choice_button {
+	  width: 50px;
+	  height: 50px;
+	  line-height: 50px;
+	  font-size: 30px;
+	  font-weight: bold;
+	  color: #4E4E4E;
+	  background-color: #CFCFCF;
+	  text-align: center;
+	  border-radius: 4px;
+	  border: 2px solid #fff;
+	  margin-top: 20px;
+	  -webkit-transition: color,border 0.2s ease-in;
+	  -moz-transition: color,border 0.2s ease-in;
+	  -o-transition: color,border 0.2s ease-in;
+	  transition: color,border 0.2s ease-in;
+	  -moz-user-select: none;
+	  -webkit-user-select: none;
+  }
+  
+  .choice_button:hover {
+	  border: 2px solid #000000;
+	  text-decoration: none;
+	  color: black;
+  }
+  .choice_button:focus {
+        outline: none;
+    }
+  .mybadge {
+    	color: #fff !important;
+        background-color: #959595;
+        border: 1px solid #959595;
+        margin: 0 3px 3px 0;
+        padding: 0 6px 0 3px;
+        display: inline-block;
+        text-decoration: none;
+        white-space: nowrap;
+        line-height: 24px;
+        border-radius: 6px;
+    }  
+  .badge1, .badge2, .badge3 {
+    display: inline-block;
+    width: 6px;
+    height: 11px;
+    overflow: hidden;
+    line-height: inherit;
+    background-position: -40px -1034px;
+    vertical-align: text-bottom;
+    margin: 0 1px 1px 3px;
+  }  
+</style>
+
+<div class="row">
+    <!-- Success and Error Messages for the user --> 
+    <div class="span6 offset2" style="height:50px">
+        <div id="success" class="alert alert-success" style="display:none;">
+            <a class="close">×</a>
+            <strong>Ótimo!</strong> Sua resposta foi salva
+        </div>
+        <div id="loading" class="alert alert-info" style="display:none;">
+            <a class="close">×</a>
+            Carregando próxima tarefa...
+        </div>
+        <div id="taskcompleted" class="alert alert-info" style="display:none;">
+            <strong>Tarefa completada!</strong> Obrigado!
+        </div>
+        <div id="finish" class="alert alert-success" style="display:none;">
+            <strong>Parabéns!</strong> Você completou todas as tarefas!
+            <br/>
+            <div class="alert-actions">
+              <a class="btn small" href="/pybossa">Volte</a>
+              <a class="btn small" href="pybossa/app/category/thinking/">ou, Veja outras aplicações</a>
+            </div>
+        </div>
+        <div id="error" class="alert alert-error" style="display:none;">
+            <a class="close">×</a>
+            <strong>Erro!</strong> Algo errado, entre em contato com os administradores
+        </div>
+    </div> <!-- End Success and Error Messages for the user -->
+</div> <!-- End of Row -->
+
+<div class="row">
+  <div class="span12"> <!-- Tutorial indicating how application works! -->
+    <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Instruções Como é Campina?</h4>
+          </div>
+          <div class="modal-body" style="overflow: auto;height: 500px;">
+            <div id="m0" class="modal-body style="display:none">
+
+	      <p> Duas fotos da cidade de Campina Grande, Paraíba, serão apresentadas lado a lado: </p>
+              <div class="row skeleton"> 
+                <div class="col-xs-6 col-lg-6 text-center"> 
+                  <img src="https://contribua.org/bairros/oeste/liberdade/Rua_Acre__635_270.jpg" class="img-polaroid" style="width:250px; height:200px"/>
+                </div>
+                <div class="col-xs-6 col-lg-6 text-center">                
+                  <img src="https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg" class="img-polaroid" style="width:250px; height:200px"/>
+                </div>
+              </div>
+              <br>
+              <p> Para cada par de fotos você poderá responder a uma das seguintes questões: </p>
+              <ul>
+                <li> Qual local lhe parece mais<font color="DodgerBlue"> seguro? </font> </li>
+                <li> Que local lhe parece mais <font color="OrangeRed"> agradável? </font> </li>
+              </ul>
+              <p> Cada pergunta é apresentada em uma cor diferente de modo a facilitar sua percepção quando a pergunta for alterada! </p>
+              <p> Para responder a pergunta basta clicar em uma das fotos ou na seta que indica o lado da foto escolhida! Analise bem cada uma das imagens de modo a escolher aquela que melhor responde à pergunta apresentada. </p>
+              <p> <font color="Red">Importante! </font> Se você não conseguir escolher a foto que melhor responde à pergunta basta clicar no botão <img src="https://contribua.org/icones/botao2.jpg" />.</p>
+              <p> A cada 10 questões respondidas, nós iremos lhe fazer algumas perguntas sobre seu perfil! Ajude-nos a conhecer um pouco mais sobre você! </p>      
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Tente!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+   </div>
+</div>
+
+<div class="row skeleton"> <!-- Start Skeleton Row-->
+    <div class="span12">
+        <div id="modal" class="modal hide fade">
+            <div id="0" class="modal-body" style="display:none">
+             <!--   <p>Qual local lhe parece mais ...?</p>
+		    
+              <form>
+              <div id="aspect">
+               <table cellpadding="5px" cellspacing="10px">
+                 <tr>
+                   <td>
+                     <input type="radio" name="aspe" id="beautiful" value="1"/>
+                     <label for="beautiful"><img src="https://socientize.lsd.ufcg.edu.br/icones/beleza/beleza.jpg" alt="bonito" title="bonito" style="width:170px"/></label>
+                   </td>
+                   
+                   <td>
+                     <input type="radio" name="aspe" id="secure" value="2"/>
+                     <label for="secure"><img src="https://socientize.lsd.ufcg.edu.br/icones/seguranca/seguranca.jpg" alt="seguro" title="seguro" style="width:170px"/></label>
+                   </td>  
+                 </tr>
+                 <tr>
+                   <td>
+                     <input type="radio" name="aspe" id="unique" value="3"/>
+                     <label for="unique"><img src="https://socientize.lsd.ufcg.edu.br/icones/unicidade/unique.jpeg" alt="único" title="único" style="width:200px"/></label>
+                   </td>
+                   
+                   <td>
+                     <input type="radio" name="aspe" id="rich" value="4"/>
+		         		<label for="rich"><img src="https://socientize.lsd.ufcg.edu.br/icones/riqueza/tio-patinhas-690f8.jpg" alt="rico" title="rico" style="width:170px"/></label>
+                   </td>  
+                 </tr> 
+              </table> 	  
+            </div>
+           </form>   -->
+	</div>
+    <div id="1" class="modal-body">
+      <div class="row">
+        <h2 align="center"> <img src="https://contribua.org/icones/profile.jpg"  style="width: 21px; height: 32px"/> Conte-nos um pouco mais sobre você!</h2>       
+      </div>
+      
+      <p> Preenchimento do seu perfil </p> 
+      
+	  <div class="progress progress-striped">
+        <div id="progress2" title="#" class="bar" style="width: 0%;background: yellowgreen"></div>
+      </div>
+      <div class="css3-tabstrip">
+       <ul>
+          <li>
+              <input type="radio" name="css3-tabstrip-0" checked="checked" id="css3-tabstrip-0-0" /><label for="css3-tabstrip-0-0">Dados Pessoais</label>
+              <div>
+                  <form id="eventInsForm" accept-charset="UTF-8">  
+                    <h3> Idade: </h3><input name="user1" id="userage" type="number" min="1" max="120" step="1" value="0"/><br>  
+                    <h3> Sexo: </h3> 
+                  <select name="user2" id="usersex">  
+                      <option>Masculino</option>  
+                      <option>Feminino</option>  				
+                  </select> <br>
+              <h3>Estado Civil: </h3>
+                  <select name="user7" id="userrel">  
+                      <option>Casado</option>  
+                      <option selected>Solteiro</option>  
+                      <option>Divorciado</option>				
+                      <option>Viúvo</option>				
+                  </select> <br>
+              <h3>Classe Social (renda mensal): </h3>
+                  <select name="user3" id="userclass"> <!-- http://blog.thiagorodrigo.com.br/index.php/faixas-salariais-classe-social-abep-ibge?blog=5 --> 
+                      <option>Alta (R$ 14.500 ou mais)</option>  
+                      <option>Média Alta (R$ 7.250 a R$ 14.499,99)</option>  
+                      <option selected>Média (R$ 2.900 a R$ 7.249,99)</option>  
+                      <option>Média Baixa (R$ 1.450 a R$ 2.899,99)</option>  
+                      <option>Baixa (até R$ 1.449,99)</option>  
+                  </select> <br> 
+                  <h3>Qual seu grau de formação? </h3>
+                  <select name="user4" id="usereduc">  
+                      <option>Doutorado</option>  
+                      <option>Mestrado</option>  
+                      <option selected>Graduação</option>  
+                      <option>Ensino Médio</option>  
+                      <option>Ensino Fundamental</option>  
+                  </select> <br> 
+                  <h3>Moro em (cidade):</h3> <input id="autocomplete" placeholder="Digite aqui" type="text"/> <br>
+             <h3> Há quanto tempo mora na cidade? (em anos)</h3> <input name="user6" id="usercitytime" type="number" min="1" max="120" step="1" value="0"/>
+              </form>
+              </div>
+          </li>
+            <li><input type="radio" name="css3-tabstrip-0" id="css3-tabstrip-0-2" /><label for="css3-tabstrip-0-2">Bairros que Frequento</label>
+              <div>
+                <h3> Quais desses bairros você frequenta?</h3> 
+                  <form id="eventInsForm3" accept-charset="UTF-8"> 
+             <fieldset class="group"> 
+               <label for="cb3"><input name="group1" type="checkbox" id="cen" value="cen" /> Centro</label>
+               <label for="cb17"><input name="group2" type="checkbox" id="jpi" value="jpi" /> José Pinheiro</label>
+               <label for="cb28"><input name="group3" type="checkbox" id="lib" value="lib" /> Liberdade</label>
+				<label for="cb22"><input name="group4" type="checkbox" id="cat" value="cat" /> Catolé</label>
+                    </fieldset>  
+			<!-- <fieldset class="group"> 
+				<legend>Bairros da Zona Norte</legend> -->
+				<!--<label for="cb1"><input name="group1" type="checkbox" id="jta" value="jta" /> Jardim Tavares</label>
+				<label for="cb5"><input name="group1" type="checkbox" id="abr" value="abr" /> Alto Branco</label>-->
+				<!-- <label for="cb3"><input name="group1" type="checkbox" id="cen" value="cen" /> Centro</label> -->
+				<!--<label for="cb2"><input name="group1" type="checkbox" id="lau" value="lau" /> Lauritzen</label> 
+				<label for="cb4"><input name="group1" type="checkbox" id="bna" value="bna" /> Bairro das Nações</label>
+
+				<label for="cb6"><input name="group1" type="checkbox" id="pal" value="pal" /> Palmeira</label>
+				<label for="cb7"><input name="group1" type="checkbox" id="con" value="con" /> Conceição</label>
+				<label for="cb8"><input name="group1" type="checkbox" id="msa" value="msa" /> Monte Santo</label>
+				<label for="cb9"><input name="group1" type="checkbox" id="lou" value="lou" /> Louzeiro</label>
+				<label for="cb10"><input name="group1" type="checkbox" id="jer" value="jer" /> Jeremias</label>
+				<label for="cb11"><input name="group1" type="checkbox" id="cui" value="cui" /> Cuités</label>
+				<label for="cb12"><input name="group1" type="checkbox" id="ara" value="ara" /> Araxá</label>
+				<label for="cb13"><input name="group1" type="checkbox" id="jco" value="jco" /> Jardim Continental</label>-->
+			<!-- </fieldset> 
+			<fieldset class="group"> 
+				<legend>Bairros da Zona Leste</legend>
+				<label for="cb17"><input name="group2" type="checkbox" id="jpi" value="jpi" /> José Pinheiro</label> -->
+				<!--<label for="cb14"><input name="group2" type="checkbox" id="mir" value="mir" /> Mirante</label>
+				<label for="cb15"><input name="group2" type="checkbox" id="san" value="san" /> Santo Antônio</label> 
+				<label for="cb16"><input name="group2" type="checkbox" id="cbr" value="cbr" /> Castelo Branco</label>
+				<label for="cb18"><input name="group2" type="checkbox" id="mca" value="mca" /> Monte Castelo</label>
+				<label for="cb19"><input name="group2" type="checkbox" id="vca" value="vca" /> Vila Cabral</label>
+				<label for="cb20"><input name="group2" type="checkbox" id="nbr" value="nbr" /> Nova Brasília</label>-->
+			<!-- </fieldset>
+			<fieldset class="group"> 
+				<legend>Bairros da Zona Oeste</legend>
+				<label for="cb28"><input name="group3" type="checkbox" id="lib" value="lib" /> Liberdade</label>
+				<label for="cb22"><input name="group3" type="checkbox" id="cat" value="cat" /> Catolé</label>  -->
+				<!--<label for="cb21"><input name="group3" type="checkbox" id="ita" value="ita" /> Itararé</label>
+				<label for="cb23"><input name="group3" type="checkbox" id="sca" value="sca" /> Sandra Cavalcante</label>
+				<label for="cb24"><input name="group3" type="checkbox" id="sjo" value="sjo" /> São José</label>
+				<label for="cb25"><input name="group3" type="checkbox" id="jpa" value="jpa" /> Jardim Paulistano</label>
+				<label for="cb26"><input name="group3" type="checkbox" id="tam" value="tam" /> Tambor</label>
+				<label for="cb27"><input name="group3" type="checkbox" id="pme" value="pme" /> Presidente Médici</label>
+
+				<label for="cb29"><input name="group3" type="checkbox" id="cru" value="cru" /> Cruzeiro</label>
+				<label for="cb30"><input name="group3" type="checkbox" id="tre" value="tre" /> Três Irmãs</label>
+				<label for="cb31"><input name="group3" type="checkbox" id="est" value="est" /> Estação Velha</label>-->
+			<!-- </fieldset> -->
+			<!--<fieldset class="group"> 
+				<legend>Bairros da Zona Sul</legend>
+				<label for="cb36"><input name="group4" type="checkbox" id="pra" value="pra" /> Prata</label> 
+				<label for="cb42"><input name="group4" type="checkbox" id="bod" value="bod" /> Bodocongó</label>-->
+				<!--<label for="cb35"><input name="group4" type="checkbox" id="uni" value="uni" /> Universitário</label>
+				<label for="cb37"><input name="group4" type="checkbox" id="bvi" value="bvi" /> Bela Vista</label>
+				<label for="cb38"><input name="group4" type="checkbox" id="din" value="din" /> Dinamérica</label>
+				<label for="cb39"><input name="group4" type="checkbox" id="cen" value="cen" /> Centenário</label>
+				<label for="cb40"><input name="group4" type="checkbox" id="jqu" value="jqu" /> Jardim Quarenta</label>
+				<label for="cb41"><input name="group4" type="checkbox" id="scr" value="scr" /> Santa Cruz</label>
+				<label for="cb43"><input name="group4" type="checkbox" id="sro" value="sro" /> Santa Rosa</label>
+				<label for="cb44"><input name="group4" type="checkbox" id="mal" value="mal" /> Malvinas</label>
+				<label for="cb45"><input name="group4" type="checkbox" id="nbo" value="nbo" /> Novo Bodocongó</label>
+				<label for="cb33"><input name="group4" type="checkbox" id="dis" value="dis" /> Distrito Industrial</label>
+				<label for="cb46"><input name="group4" type="checkbox" id="vel" value="vel" /> Velame</label>
+				<label for="cb34"><input name="group4" type="checkbox" id="bci" value="bci" /> Bairro das Cidades</label>-->
+			<!-- </fieldset> -->
+                 </form>
+              </div>
+          </li>
+        </ul>
+      </div>
+    </div> 
+	<div class="modal-footer">
+             <a id="startContrib" href="#" class="btn btn-primary" style="display:none"><i class="icon-thumbs-up"></i> Continuar!</a>
+        </div>
+   </div>  
+ </div>
+</div>
+
+<!--<div class="row skeleton">
+  <div class="span12">
+      <button id="changeQuest" class="btn btn-primary btn-medium" value='change' style="width: 20%; margin-left: 80%" ><i class="icon icon-white icon-question-sign"></i> Alterar pergunta</button>
+  </div>
+</div> -->
+
+<div class="row skeleton">
+  <div class="span12">
+    <!-- <h1 style="width: 500px; position: relative; left: 30%; margin-left: -70px;">Qual local lhe parece mais</h1> <h1 style="width: 100px; position: relative; left: 30%; margin-left: -70px;"> <font color=”red”> seguro? </font> </h1> -->
+    <p align="center"> <font size="6" id="questCommon">Qual local lhe parece mais</font> <font size="6" id="question" style="position: relative; margin-left: 5px;" color="DodgerBlue">  </font> </p>
+  </div>
+</div>
+<br>
+<!--
+    Task DOM for loading the Flickr Images
+    It uses the class="skeleton" to identify the elements that belong to the
+    task.
+-->
+<div id="photos" class="skeleton"> <!-- Start Skeleton Row-->
+  <div class="row">
+    <div class="col-xs-6 col-lg-6 text-center"><!-- Start of Photo DIV (column) -->
+        <a id="photo-link" href="#">
+            <img id="photo" src="https://img339.imageshack.us/img339/9017/loadingo.png">
+        </a>
+    </div><!-- End of Photo DIV (columnt) -->
+    <div class="col-xs-6 col-lg-6 text-center"><!-- Start of Photo DIV (column) -->
+        <a id="photo-link2" href="#">
+            <img id="photo2" src="https://img339.imageshack.us/img339/9017/loadingo.png">
+        </a>
+    </div><!-- End of Photo DIV (columnt) -->
+  </div>
+</div><!-- End of Skeleton Row -->
+
+<!--<div class="row skeleton"> 
+   <br>  
+   <div class="span12 ">
+      <div id="answer"> 
+       <button id="notknown" class="choice_button" value='NotKnown' style="width: 15%; margin-left: 45%; margin-right: 40%" ><i class="icon icon-white"></i> = </button>
+         
+     </div>
+  </div>
+</div> -->
+<div class="skeleton"> <!-- Start Skeleton Row-->
+  <div class="row">
+    <!-- Start of Question and Submission DIV (column) -->
+      <div id="answer" style="padding-top: 3%;"> <!-- Start DIV for the submission buttons -->
+        <!-- If the user clicks this button, the saved answer will be value="yes"-->
+        <!-- <button class="btn btn-answer" value='Left'><i class="icon icon-white"></i>Local da esquerda</button> -->
+        <!-- If the user clicks this button, the saved answer will be value="no"-->
+         <!-- <button class="btn btn-answer" value='Right'><i class="icon icon-white"></i>Local da direita</button> -->
+        <!-- If the user clicks this button, the saved answer will be value="NotKnown"-->
+        <div class="col-xs-4">
+          <button type="button" id="left" class="btn btn-primary btn-lg" value='left' style="width: 100%;"><span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span></button>
+        </div>
+        <div class="col-xs-4">
+          <button type="button" id="notknown" class="btn btn-primary btn-lg" value='NotKnown' style="width: 100%;"><strong>=</strong></button>
+        </div>
+        <div class="col-xs-4">
+          <button type="button" id="right" class="btn btn-primary btn-lg" value='right' style="width: 100%;"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></button>
+        </div>
+      </div><!-- End of DIV for the submission buttons -->
+  </div><!-- End of Skeleton Row -->
+</div>
+
+<div class="row skeleton"> <!-- Start Skeleton Row-->
+    <div class="span6 "><!-- Start of Question and Submission DIV (column) -->
+      <br>
+        
+        <!-- Feedback items for the user -->
+        <!-- <p>Você está na tarefa: <span id="task-id" class="label label-warning">#</span></p> -->
+      <p><span id="praise"></span> Você já completou <span id="done" class="label label-info" style="background: yellowgreen"></span> tarefas <!-- de -->
+        <!-- Progress bar for the user -->
+        <!-- <span id="total" class="label label-inverse"></span></p> -->
+        <!--<div class="progress progress-striped" style="background: LightGray">
+            <div id="progress" rel="tooltip" title="#" class="bar" style="width: 0%; background: yellowgreen"></div>
+        </div>-->
+        <!-- 
+            This application uses Disqus to allow users to provide some feedback.
+            The next section includes a button that when a user clicks on it will
+            load the comments, if any, for the given task
+        -->
+        <!-- <div id="disqus_show_btn" style="margin-top:5px;"> -->
+            <!-- <button class="btn btn-primary btn-large btn-disqus" onclick="loadDisqus()"><i class="icon-comments"></i> Show comments</button> -->
+            <!-- <button class="btn btn-large btn-disqus" onclick="loadDisqus()" style="display:none"><i class="icon-comments"></i> Hide comments</button> -->
+        <!-- </div> --><!-- End of Disqus Button section -->
+        <!-- Disqus thread for the given task -->
+        <!-- <div id="disqus_thread" style="margin-top:5px;display:none"></div> -->
+    </div><!-- End of Question and Submission DIV (column) -->
+    </div><!-- End of Skeleton Row -->
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    function loadDisqus() {
+    $("#disqus_thread").toggle();
+    $(".btn-disqus").toggle();
+    var disqus_shortname = 'pybossa'; // required: replace example with your forum shortname
+    //var disqus_identifier = taskId;
+    var disqus_developer = 1;
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    }
+
+</script>
+
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+
+<script charset="UTF-8">
+//Google autocomplete
+var cityInput = document.getElementById('autocomplete');
+var autocomplete = new google.maps.places.Autocomplete(cityInput);
+var pacContainerInitialized = false; 
+$('#autocomplete').keypress(function() { 
+  if (!pacContainerInitialized) { 
+    $('.pac-container').css('z-index', '10000'); 
+    pacContainerInitialized = true;  
+  } 
+}); 
+  
+ 
+//Showing application tutorial
+function showTutorial(action) {
+	//Checking if tutorial should be presented or not
+	var cookiesData = document.cookie.split(";");
+  
+    var showTutorial = "";
+    for (i=cookiesData.length-1; i >= 0; i--){
+      var currentData = cookiesData[i].split("=");
+      if(currentData[0].trim() == "tutorial"){
+        showTutorial = currentData[1];
+        break;
+      } 
+    }  
+	
+	if (showTutorial.length > 0 && showTutorial.toLowerCase() == "false"){
+		return;
+	}else{
+		$("#modal2").modal('show');
+		$("#m0").show();
+		$('#startContrib2').show();
+		$('#startContrib2').off('click').on('click', function(evt) {
+			$("#startContrib2").hide();
+			$("#m0").hide();
+			$("#modal2").modal('hide');
+
+			//Setting cookies to not show tutorial again
+			var date = new Date();
+			date.setTime(date.getTime() + (2 * 60 * 1000));
+			var expires = date.toUTCString();          
+			document.cookie = "tutorial=false;path=/;domain=contribua.org;expires="+expires+";";
+        	});		
+	} 
+}
+
+showTutorial();
+  
+//Making buttons to hover images!  
+var button = $("#notknown")
+button.mouseover(function () {
+  	$("#photo").addClass("hovered");
+    $("#photo2").addClass("hovered");
+} );
+button.mouseout(function () {
+  	$("#photo").removeClass("hovered");
+    $("#photo2").removeClass("hovered");
+} );
+
+var lbutton = $("#left")
+lbutton.mouseover(function () {
+  	$("#photo").addClass("hovered");
+    
+} );
+lbutton.mouseout(function () {
+  	$("#photo").removeClass("hovered");
+    
+} );
+  
+var rbutton = $("#right")
+rbutton.mouseover(function () {
+  	$("#photo2").addClass("hovered");
+    
+} );
+rbutton.mouseout(function () {
+  	$("#photo2").removeClass("hovered");
+    
+} );
+  
+
+  //General configuration
+endpoint = "/pybossa";
+pybossa.setEndpoint(endpoint);  
+
+var showQuestionOptions = true;
+var step = 0;
+
+var askForMoreInfo = false;
+var userDataToSave = "";  
+  
+
+//Retrieving user profile from previous task execution. URL request to http://socientize.lsd.ufcg.edu.br/pybossa/api/taskrun?app_id=APPID&user_id=USERID&offset=0&limit=100
+function getUserData(userID, appID){
+	var userData = "";
+    var finishTime;
+	var shouldBreak = false;
+	var offset = 0;	
+
+	while (!shouldBreak) {
+		$.ajax({
+		url: "https://contribua.org/pybossa/api/taskrun?app_id="+appID+"&user_id="+userID+"&offset="+offset+"&limit=100",
+		async: false,
+		dataType: 'json',
+		success: function(data) {
+ 			
+			var i;
+			if(data.length == 0){
+				shouldBreak = true;
+			}else{
+               //alert(data[0]);
+				for (i = 0; i < data.length; i++) {
+					var initIndex = data[i].info.indexOf("{");
+                  	var currentFinishTime = new Date(data[i].finish_time);
+                    
+					if(initIndex > -1){
+						var endIndex = data[i].info.indexOf("}");
+						var currentData = data[i].info.substring(initIndex, endIndex+1);
+						if (finishTime == null || currentFinishTime > finishTime) {
+							userData = currentData;
+                            finishTime = currentFinishTime;
+						}
+						
+					}
+				}
+			}
+						
+		}    
+		});
+		offset += 100;	
+	}
+
+	
+	return userData;
+}
+  
+function retrieveNeighborhoods(){
+	var neighborhoods = "";
+	//Retrieving north zone 
+	var group = document.getElementsByName("group1");
+	for (i=0; i < group.length ; i++){
+		if(group[i].checked){
+			neighborhoods += group[i].value+";";
+		}
+	}
+	//Retrieving east zone 
+	group = document.getElementsByName("group2");
+	for (i=0; i < group.length ; i++){
+		if(group[i].checked){
+			neighborhoods += group[i].value+";";
+		}
+	}
+	//Retrieving west zone 
+	group = document.getElementsByName("group3");
+	for (i=0; i < group.length ; i++){
+		if(group[i].checked){
+			neighborhoods += group[i].value+";";
+		}
+	}
+	//Retrieving south zone 
+	group = document.getElementsByName("group4");
+	for (i=0; i < group.length ; i++){
+		if(group[i].checked){
+			neighborhoods += group[i].value+";";
+		}
+	}
+	if (neighborhoods.length == 0){
+      		return neighborhoods;
+  	}
+	return neighborhoods.substr(0, neighborhoods.length-1);
+}   
+
+//Showing profile form containg previous information provided  
+function showForm(userID, appID){
+  var show = false;
+  var totalProgress = 0;
+  var userData = getUserData(userID, appID);
+    
+  if (userData.length == 0) {	
+	show = true;   
+	loadProfileProgress(0);
+	
+	$('#startContrib').off('click').on('click', function(evt) {
+		//Save captured user data!
+		var age = document.getElementById('userage').value;
+		var userClass = document.getElementById('userclass').value;
+		var userEduc = document.getElementById('usereduc').value;
+		var userCity = document.getElementById('autocomplete').value;
+		var userCityTime = document.getElementById('usercitytime').value;          
+		var userSex = document.getElementById('usersex').value;
+		var userRel = document.getElementById('userrel').value;
+
+		//User visiting neighborhoods
+		var neighborhoods = retrieveNeighborhoods();
+
+      userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
+		$("#startContrib").hide();
+		$("#0").hide();
+		$("#1").hide();
+		$("#modal").modal('hide');
+		
+        });
+  } else {
+	userData = userData.substring(1, userData.length-1);
+	var currentData = userData.split("|");
+
+        var currentValue = currentData[0].split("=")[1]; 
+        var userAge = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Age " + userAge);
+        
+     currentValue = currentData[1].split("=")[1];  
+	var userSex = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Sex " + userSex);
+     currentValue = currentData[2].split("=")[1];  
+        var userClass = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Class " + userClass);
+     currentValue = currentData[3].split("=")[1];  
+        var userDegree = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Deg " + userDegree);
+     currentValue = currentData[4].split("=")[1];  
+        var userCity = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("City " + userCity);
+     currentValue = currentData[5].split("=")[1];  
+	var userCityTime = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Tim " + userCityTime);
+     currentValue = currentData[6].split("=")[1];  
+	var userRel = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Rel " + userRel);
+     
+    if(currentData.length >= 8){
+		currentValue = currentData[7].split("=")[1];  
+	}else{
+		currentValue = null;
+	} 
+	var userNeigh = ((typeof currentValue == undefined || currentValue == null) ? "" : currentValue);
+    //alert("Neigh " + userNeigh);   
+	if (!(userAge.length > 0 && userClass.length > 0 && userDegree.length > 0 && userCity.length > 0 && userCityTime.length > 0 && userSex.length > 0 && userRel.length > 0 && userNeigh.length > 0)){
+			
+		show = true;
+                
+		//Setting values already given in the form!
+		$("#userage").val(userAge);
+		$("#autocomplete").val(userCity);
+		$("#usercitytime").val(userCityTime);
+		
+		totalProgress += ((userAge.length > 0) ? 1 : 0);
+		totalProgress += ((userCity.length > 0) ? 1 : 0);
+		totalProgress += ((userCityTime.length > 0) ? 1 : 0);
+
+		if(userClass.length > 0){
+			var classField  = document.getElementById('userclass');
+			if(classField){
+				for(var i=0; i < classField.options.length; i++) { 
+					if(classField.options[i].value == userClass) { 
+					  classField.options[i].selected = true;
+					  totalProgress += 1;
+					  break;
+					}
+				}
+			}
+		}
+          
+		if(userSex.length > 0){
+			var classField  = document.getElementById('usersex');
+			if(classField){
+				for(var i=0; i < classField.options.length; i++) { 
+					if(classField.options[i].value == userSex) { 
+					  classField.options[i].selected = true;
+					  totalProgress += 1;
+					  break;
+					}
+				}
+			}
+		}
+			
+		if(userDegree.length > 0){
+			var degreeField  = document.getElementById('usereduc');
+			if(degreeField){
+				for(var i=0; i < degreeField.options.length; i++) { 
+					if(degreeField.options[i].value == userDegree) { 
+					degreeField.options[i].selected = true;
+					totalProgress += 1;
+					break;
+					}
+				}
+			}
+		}
+      
+        	if(userRel.length > 0){
+			var userRelField  = document.getElementById('userrel');
+			if(userRelField){
+				for(var i=0; i < userRelField.options.length; i++) { 
+					if(userRelField.options[i].value == userRel) { 
+					userRelField.options[i].selected = true;
+					totalProgress += 1;
+					break;
+					}
+				}
+			}
+		}
+
+		
+      
+        //Loading user neighborhodds already informed
+      	var neighborhoodsFilled = 0;
+		if (userNeigh.length > 0){
+			var neighborhoods = userNeigh.split(";");	
+          //alert(neighborhoods);
+			for (i=0; i < neighborhoods.length ; i++){
+				neighborhoodsFilled += 1;
+              //alert(neighborhoods[i]);
+              	document.getElementById(neighborhoods[i]).checked = true;
+			}
+		 }
+      		if(neighborhoodsFilled > 0){
+          		totalProgress += 1;
+      		}
+		
+		//Loading user profile progress!      	
+		loadProfileProgress(totalProgress);
+             
+		//Asking for other values!
+		$('#startContrib').off('click').on('click', function(evt) {
+			//Save captured user data!
+			var age = document.getElementById('userage').value;
+			var userClass = document.getElementById('userclass').value;
+			var userEduc = document.getElementById('usereduc').value;
+			var userCity = document.getElementById('autocomplete').value;
+			var userCityTime = document.getElementById('usercitytime').value;          
+			var userSex = document.getElementById('usersex').value;
+			var userRel = document.getElementById('userrel').value;
+
+			          
+			//User visiting neighborhoods
+			var neighborhoods = retrieveNeighborhoods();
+
+			userDataToSave = "{age="+age+"|sex="+userSex+"|class="+userClass+"|educ="+userEduc+"|city="+userCity+"|time="+userCityTime+"|rel="+userRel+"|neig="+neighborhoods+"} ";
+
+			$("#startContrib").hide();
+			$("#0").hide();
+			$("#1").hide();
+			$("#modal").modal('hide');
+              });
+                   	
+	   }
+  }
+  
+  if(show){
+	//alert("Estou habilitando");
+	$("#startContrib").show();
+	$("#1").show();
+	return show;
+  }
+} 	 
+
+//Retrieving user id
+function verifyUserData(appID) {
+     var show = false;
+     $.ajax({
+	  url: "https://contribua.org/pybossa/account/currentUserInfo",
+	  async: false,
+	  dataType: 'json',
+	  success: function(data) {        
+	     show = showForm(data.info, appID);        
+	  }    
+     });
+     return show;
+}
+
+//Loading user progress in terms of profile completion in current application
+function loadProfileProgress(filled) {
+        var pct = Math.round((filled/9)*100);
+  //alert(pct);
+        $("#progress2").css("width", pct.toString() +"%");
+        $("#progress2").attr("title", pct.toString() + "% do perfil está completo!");
+        //$("#progress2").tooltip({ 'placement' : 'right' });  		
+}
+
+//Loading user progress in terms of tasks performed  
+function loadUserProgress() {
+    pybossa.userProgress('comoecampina').done(function(data){
+      var pct = Math.round((data.done*100)/300);//data.total
+      //$("#progress").css("width", pct.toString() +"%");
+      // $("#progress").attr("title", pct.toString() + "% das tarefas!");      
+        
+      //$("#total").text(data.total);
+        $("#done").text(data.done);
+      	        
+        if (data.done != 0 && data.done % 10 == 0) {        
+			askForMoreInfo = true;          
+		}
+      
+      //Choosing praise
+      if (data.done > 160) {
+        $("#praise").text("Você já é um mestre nisso!");        
+      }else if (data.done > 110){
+        $("#praise").text("Você já é quase um mestre nisso!");        
+      } else if (data.done > 70) {
+        $("#praise").text("Excepcional!");
+      } else if (data.done > 40) {     
+        $("#praise").text("Muito Bom!");
+      } else if (data.done > 20) {
+        $("#praise").text("Bom!");
+      } else if (data.done > 10) {
+        $("#praise").text("Parabéns!");
+      } 
+      //$("#praise").addClass("mybadge");
+    });
+
+}
+
+//Loading task information
+pybossa.taskLoaded(function(task, deferred) {
+    if ( !$.isEmptyObject(task) ) {
+      	var photosEnv = document.getElementById("photos");
+      photosEnv.setAttribute("style", "width:auto !important");//screen.width*0.72+"px
+      
+        // load image from flickr
+        var left = $('<img />');
+        left.load(function() {
+            // continue as soon as the image is loaded
+            deferred.resolve(task);
+        });
+        left.attr('src', task.info.url_c);
+      	left.attr('id', "photo");
+      //left.addClass('streetViewChoice');
+        left.attr('style',"width: 100%;")
+        task.info.left = left;
+
+        var right = $('<img />');
+        right.load(function() {
+            // continue as soon as the image is loaded
+            deferred.resolve(task);
+        });
+        right.attr('src', task.info.url_a);
+      	right.attr('id', "photo2");      
+      //right.addClass('streetViewChoice');
+        right.attr('style',"width: 100%;")
+        task.info.right = right;      
+      
+    }
+    else {
+        deferred.resolve(task);
+    }
+});
+
+//Presenting a task to the user
+pybossa.presentTask(function(task, deferred) {
+    if ( !$.isEmptyObject(task) ) {
+        loadUserProgress();
+      
+	  //At each 10 questions answered check user profile information      
+      if (askForMoreInfo){
+	      step = 1;
+	      askForMoreInfo = false;
+          
+	      if(verifyUserData(task.app_id)){
+            //alert("Estou habilitando 2");
+              $("#modal").modal('show');
+	      }
+	  }
+      
+          
+      $('#photo-link').html('').append(task.info.left);      
+      $('#photo-link2').html('').append(task.info.right);      
+      $('#task-id').html(task.id);
+  
+      //Changing question color and size
+      document.getElementById("questCommon").setAttribute("size", Math.round(0.004166667 * screen.width));
+      document.getElementById("question").setAttribute("size", Math.round(0.004166667 * screen.width));
+      
+      if(screen.width <= 480){
+        document.getElementById("questCommon").setAttribute("style", "margin-left: 0px;");
+        document.getElementById("question").setAttribute("style", "margin-left: 0px;");      
+      }
+      
+      var question = decodeURIComponent(task.info.question).split(" ")[5];
+      $('#question').html(question);
+      if (question[0] == "s"){
+			$('#question').attr("color", "DodgerBlue");
+            $('#photo2').addClass('streetViewChoice2');
+        $('#photo').addClass('streetViewChoice2');
+	    }else{
+            $('#question').attr("color", "OrangeRed");
+             $('#photo2').addClass('streetViewChoice');
+          $('#photo').addClass('streetViewChoice');
+		}
+
+      var perguntaAResponder = task.info.question;
+        
+      //Left image chosen
+      $('#photo').off('click').on('click', function(evt) {
+        
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+		
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";        
+      });
+      
+      //Left image chosen
+      $('#left').off('click').on('click', function(evt) {
+        
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Left" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+		
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";  
+        var photo = $("#photo");
+        photo.removeClass("hovered")
+        
+      });
+      
+      
+      
+      //Right image chosen
+      $('#photo2').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+        
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+      });
+      
+      
+      //Right image chosen
+      $('#right').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "Right" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+        
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";
+        var photo = $("#photo2");
+        photo.removeClass("hovered");
+      });
+      
+      
+             
+      //User could not choose an image!      
+      $('#notknown').off('click').on('click', function(evt) {
+        var question = perguntaAResponder;
+        var answerToSave = userDataToSave+String(question) + " " + "NotKnown" + " " + String(task.info.url_c) + " " + String(task.info.url_a);
+        
+        pybossa.saveTask(task.id, answerToSave).done(function() {
+          deferred.resolve();
+        });
+        $("#loading").fadeIn(500);
+        if ($("#disqus_thread").is(":visible")) {
+          $('#disqus_thread').toggle();
+          $('.btn-disqus').toggle();
+        }
+        userDataToSave = "";  
+        var photo = $("#photo");
+        photo.removeClass("hovered")
+        photo = $("#photo2");
+        photo.removeClass("hovered")
+        
+      });
+      $("#loading").hide();
+    }
+    else {
+        $(".skeleton").hide();
+        $("#loading").hide();
+        $("#finish").fadeIn(500);
+    }
+  
+});
+
+  pybossa.run('comoecampina');
+  //pybossa.run('Campinav2');
+</script>
+

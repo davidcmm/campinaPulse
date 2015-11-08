@@ -359,8 +359,45 @@ geraValores <- function(lista, question, desvios){
    }
 }
 
+#Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
+geraValores <- function(lista, question, desvios){
+   desvio = sd(lista)
+   #Apenas 1 valor
+   if (is.na(desvio) & question == "1"){ 
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "1l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "1r"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "2r"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3l"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3l, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3r"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3r, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else if (is.na(desvio) & question == "3"){
+      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3, na.rm = TRUE), n = 3)
+      return (mean(valores))
+   } else{
+     return (mean(lista, na.rm = TRUE))
+   }
+}
+
 #Agrupando por imagem e por questao - G1
 by_image <- group_by(dadosg1, image_url)
+=======
 # groupedData1 <- summarise(by_image,
 #   count = n(),
 #   q1 = mean(question1, na.rm = TRUE),
@@ -387,6 +424,7 @@ groupedData1 <- summarise(by_image,
   q3 = geraValores(question3, "3", desvios)
   #sdq3 = sd(question3, na.rm = TRUE) 
   )
+
 
 #Agrupando por imagem e por questao - G2
 by_image <- group_by(dadosg2, image_url)

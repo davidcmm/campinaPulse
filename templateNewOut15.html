@@ -1,0 +1,470 @@
+<link rel="stylesheet" href="https://contribuatestes.lsd.ufcg.edu.br/wikilibras-static/fonts/cg.css">
+<style>
+	body {
+		background-color: #334759;
+		background-image: linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E), 
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E);
+		background-size:80px 140px;
+		background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+	}
+	p.title-cg {
+		font-size: 28px;
+		line-height: 75px;
+		text-transform: uppercase;
+		color: #fff;
+	}
+	@media(max-width: 768px) {
+		p.title-cg {
+			font-size: 22px;
+			line-height: 32px;
+		}
+	}
+	strong.up {
+		color: #2ecc71;
+	}
+	strong.down {
+		color: #e74c3c;
+	}
+	div#skeleton {
+		margin-bottom: 20px;
+	}
+	div#skeleton .col-xs-6 {
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+	div.div-thumbnail:hover {
+		cursor: pointer;
+	}
+	img.img-thumbnail {
+		border-color: #fff;
+	}
+	img.img-safety-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-safety-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	img.img-nice-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-nice-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	div.score {
+		margin-top: 20px;
+		margin-bottom: 10px;
+	}
+	div.separator {
+		height: 23px;
+	}
+	.btn-rounded {
+	    position: relative;
+	    top: -25px;
+	    width: 100px;
+	    height: 100px;
+		border-radius: 50%;
+	    margin-bottom: -50px;
+	    font-size: 28px;
+	    z-index: 1;
+	    background-color: #2980b9;
+	    border: solid 6px #fff;
+	    transition: all 1s;
+	    color: #fff;
+	}
+	.btn-rounded:hover {
+	    background-color: #3498db;
+	    border: solid 6px #fff;
+	}
+	span.icon-cg {
+		font-size: 7em;
+	    transition: all 0.5s;
+	    color: #fff;
+	}
+	span.icon-cg-up {
+		font-size: 5em;
+		color: #2ecc71;
+	}
+	span.icon-cg-up-lg {
+		font-size: 4em;
+		color: #2ecc71;
+	}
+	span.icon-cg-down {
+		font-size: 5em;
+		color: #e74c3c;
+	}
+	span.icon-cg-down-lg {
+		font-size: 4em;
+		color: #e74c3c;
+	}
+	@media(max-width: 768px) {
+		span.icon-cg-down-lg,
+		span.icon-cg-up-lg {
+			font-size: 3em;
+			line-height: 67px;
+		}
+	}
+	div.icon-wrapper {
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		top: 50%;
+		margin-top: -45px;
+		margin-left: -15px;
+	}
+	@media(max-width: 768px) {
+		div.icon-wrapper {
+			margin-left: -5px;
+		}
+	}
+	.alert {
+		position: fixed;
+		z-index: 999;
+		right: 20px;
+	}
+	.modal p {
+		font-size: 14px;
+		line-height: 16px;
+	}
+	.modal-header {
+		padding: 0;
+	}
+	.modal-header .close {
+		position: absolute;
+		top: 5px;
+		right: 8px;
+		color: #fff;
+		opacity: 1;
+	}
+	.modal-header img {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+	@media (min-width: 768px) {
+		.modal-sm {
+		  width: 450px;
+		}
+	}
+	.carousel-indicators {
+		bottom: 0;
+		margin-bottom: 0;
+	}
+	.carousel-indicators li {
+		border-color: #34495E;
+	}
+	.carousel-indicators .active {
+		background-color: #34495E;
+	}
+</style>
+
+<div ng-app="CampinaApp" ng-controller="MainController as MainCtrl">
+	<!-- Success and Error Messages for the user -->
+	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<span class="glyphicon glyphicon-ok"></span><strong> Sua resposta foi salva!</strong>
+	</div>
+	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+		Carregando próxima tarefa...
+	</div>
+	<div id="finish" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<strong>Parabéns! Você completou todas as tarefas!</strong>
+		<br/>
+		<div class="alert-actions">
+			<a class="btn btn-primary" href="/pybossa">Voltar</a>
+			<a class="btn btn-primary" href="pybossa/project/category/thinking/">Ver outros projetos</a>
+		</div>
+	</div>
+	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+		<strong>Ops! Algo errado.</strong>
+		<br/>
+		<div class="alert-actions">
+			<a class="btn btn-danger" href="/pybossa/project/newcomoecampina/newtask">Recarregar</a>
+		</div>
+	</div>
+	<!-- End Success and Error Messages for the user -->
+
+	<!-- Tutorial -->
+	<div id="modalTutorial" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
+	  <div class="modal-dialog modal-sm">
+	    <div class="modal-content" ng-init="tab = 1">
+		  <!-- tab1 -->
+	      <div id="tab1" ng-show="tab === 1">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="http://www.planktonportal.org/images/plankton-tutorial-1.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p><strong>Bem vindo ao "Como é Campina?"</strong></p>
+		      	<p>Nesse projeto, você sera apresentado a imagens de Campina Grande onde voce occoncini fromage frais fromage frais goat goat cheeseburger monterey jack hard cheese. Brie swiss bavarian bergkase reed leicester.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 2">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab1 -->
+		  <!-- tab2 -->
+	      <div id="tab2" ng-show="tab === 2">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="http://www.planktonportal.org/images/plankton-tutorial-2.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p><strong>Escolha o lugar mais agradável</strong></p>
+		      	<p>Cheese and wine pecorino macaroni cheese. Cheeseburger cheesecake cheesy feet cheesecake mascarpone cottage cheese jarlsberg macaroni cheese.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 3">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab2 -->
+		  <!-- tab3 -->
+	      <div id="tab3" ng-show="tab === 3">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="http://www.planktonportal.org/images/plankton-tutorial-3.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p><strong>Escolha o lugar mais seguro</strong></p>
+		      	<p>Smelly cheese st. agur bluue cheese cheesy feet. Pepper jack taleggio dolcelatte chalk and cheese port-salut ricotta caerphilly stinking bishop.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar">Começar</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab3 -->
+
+	      <div class="modal-footer">
+	      	<ol class="carousel-indicators">
+				<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
+				<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
+				<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
+			</ol>
+	      </div>
+
+	    </div>
+	  </div>
+	</div>
+	<!-- END Tutorial -->
+
+	<!-- Task skeleton -->
+	<div id="skeleton">
+		<div class="score">
+			<div class="row" ng-show="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-safety-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais seguro</strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-safety-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos seguro</strong>?</p>
+					</div>
+				</div>
+			</div>
+			<div class="row" ng-hide="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-nice-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais agradável</strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-nice-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos agradável</strong>?</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div
+				id="imgA"
+				class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+				ng-click="select(task.info.taskinfo__url_a)">
+				<div class="icon-wrapper">
+					<span
+						class="icon-cg"
+						ng-class="isSelectedIcon(task.info.taskinfo__url_a)"></span>
+				</div>
+				<img
+					class="img-thumbnail" width="100%" alt=""
+					ng-src="{{task.info.taskinfo__url_a}}"
+					ng-class="isSelected(task.info.taskinfo__url_a)">
+			</div>
+			<div
+				id="imgB"
+				class="col-xs-6 col-lg-5 div-thumbnail"
+				ng-click="select(task.info.taskinfo__url_b)">
+				<div class="icon-wrapper">
+					<span
+						class="icon-cg"
+						ng-class="isSelectedIcon(task.info.taskinfo__url_b)"></span>
+				</div>
+				<img
+					class="img-thumbnail" width="100%" alt=""
+					ng-src="{{task.info.taskinfo__url_b}}"
+					ng-class="isSelected(task.info.taskinfo__url_b)">
+			</div>
+		</div>
+		<div class="separator text-center">
+			<button
+				id="btn-answer"
+				class="btn btn-rounded"
+				ng-show="readyToAnswer()"
+				ng-click="saveTask()"><span class="glyphicon glyphicon-ok"></span></button>
+		</div>
+		<div class="row">
+			<div
+				id="imgC"
+				class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+				ng-click="select(task.info.taskinfo__url_c)">
+				<div class="icon-wrapper">
+					<span
+						class="icon-cg"
+						ng-class="isSelectedIcon(task.info.taskinfo__url_c)"></span>
+				</div>
+				<img
+					class="img-thumbnail" width="100%" alt=""
+					ng-src="{{task.info.taskinfo__url_c}}"
+					ng-class="isSelected(task.info.taskinfo__url_c)">
+			</div>
+			<div
+				id="imgD"
+				class="col-xs-6 col-lg-5 div-thumbnail"
+				ng-click="select(task.info.taskinfo__url_d)">
+				<div class="icon-wrapper">
+					<span
+						class="icon-cg"
+						ng-class="isSelectedIcon(task.info.taskinfo__url_d)"></span>
+				</div>
+				<img
+					class="img-thumbnail" width="100%" alt=""
+					ng-src="{{task.info.taskinfo__url_d}}"
+					ng-class="isSelected(task.info.taskinfo__url_d)">
+			</div>
+		</div>
+	</div>
+	<!-- END Task skeleton -->
+</div>
+<!-- ALL -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+<script>
+	var apiUrl = 'https://contribuatestes.lsd.ufcg.edu.br/pybossa/api/';
+	var projectId = '565';
+	// var apiUrl = 'http://localhost:5000/api/';
+	// var projectId = '6';
+	var app = angular.module('CampinaApp', []);
+	app.controller('MainController', ['$scope', '$http', function($scope, $http) {
+		var showTutorial = function() {
+			$('#modalTutorial').modal();
+		}
+		var newTask = function() {
+			console.log('Loading task...');
+			$('#loading').fadeIn();
+			$http.get(apiUrl+'project/'+projectId+'/newtask')
+				.then(function(response) {
+					// Checks if theres no more tasks for the user
+					if (typeof response.data.id != 'undefined') {
+						$('#loading').hide();
+						$scope.task = response.data;
+						console.log('Loaded task '+$scope.task.id+' '+$scope.task.info.taskinfo__question);
+						$scope.answer = {
+							question: $scope.task.info.taskinfo__question,
+							theMost: '',
+							theLess: ''
+						}
+						$scope.selectingTheMost = function() {
+							return ($scope.answer.theMost === '' && $scope.answer.theLess === '');
+						}
+						$scope.selectingTheLess = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess === '');
+						}
+						$scope.readyToAnswer = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess !== '');
+						}
+						$scope.isSelectingSafety = function() {
+							return ($scope.task.info.taskinfo__question === 'seguro');
+						}
+						$scope.isSelected = function(answer) {
+							return {
+								'img-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'img-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'img-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'img-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+						$scope.isSelectedIcon = function(answer) {
+							return {
+								'icon-cg-up iconcg-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'icon-cg-up iconcg-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+						$scope.select = function(answer) {
+							if ($scope.selectingTheMost()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theMost = answer;
+								}
+							} else if ($scope.selectingTheLess()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theLess = answer;
+								}
+							} else {
+								$scope.answer.theLess = '';
+							}
+						}
+						// Save task
+						$scope.saveTask = function() {
+							var taskrun = {
+								'project_id': $scope.task.project_id,
+								'task_id': $scope.task.id,
+								'info': $scope.answer
+							};
+							taskrun = JSON.stringify(taskrun);
+								$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+									console.log('Saved!');
+									$("#skeleton").fadeOut(0);
+									$("#success").fadeIn();
+									// After save, calls a new task again
+									newTask();
+									$("#skeleton").fadeIn(1000);
+									setTimeout(function() { $("#success").fadeOut() }, 1000);
+								}, function saveTaskErrorCallback(response) {
+									$('#error').show();
+								});
+						}
+					} else {
+						$('#skeleton').hide();
+						$('#finish').show();
+					}
+				}, function newTaskErrorCallback(response) {
+					console.log('Request failed');
+					$('#error').show();
+					$('#skeleton').hide();
+				});
+		}
+		newTask();
+		showTutorial();
+	}]);
+</script>

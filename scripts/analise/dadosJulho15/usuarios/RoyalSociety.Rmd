@@ -718,244 +718,164 @@ temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
 #temp13 <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
 
 #Correlacao?
-calculaCorrelacoes <- function (listaDados, colunaQScore, questao) {
+calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
+    sink(arquivo)
+    print(questao)
+  
     temp = listaDados[[1]]
     dadosAtuais <- temp[(temp$V1 == questao),] 
-    
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q3, na.action = na.exclude)
+    res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q1, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_left, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_right, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q3, na.action = na.exclude)
+   print(res)
     
     temp2 = listaDados[[2]]
     dadosAtuais <- temp2[(temp2$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q3, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q1, na.action = na.exclude)
+       print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_left, na.action = na.exclude)
+       print(res)
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_right, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q3, na.action = na.exclude)
+      print(res)
     
     temp3 = listaDados[[3]]
     dadosAtuais <- temp3[(temp3$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_right, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_left, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_right, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_left, na.action = na.exclude)
+      print(res)
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_right, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_left, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_right, na.action = na.exclude)
+      print(res)
     
     temp4 = listaDados[[4]]
     dadosAtuais <- temp4[(temp4$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q2, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q1, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q2, na.action = na.exclude)
+      print(res)
     
     temp5 = listaDados[[5]]
     # dadosAtuais <- temp5[(temp5$V1 == questao),] 
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q1, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q2, na.action = na.exclude)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q1, na.action = na.exclude)
+      #print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q2, na.action = na.exclude)
+      #print(res)
     
     temp6 = listaDados[[6]]
     dadosAtuais <- temp6[(temp6$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_right, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_left, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_right, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_left, na.action = na.exclude)
+      print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_right, na.action = na.exclude)
+      print(res)
     
     temp7 = listaDados[[7]]
     # dadosAtuais <- temp7[(temp7$V1 == questao),] 
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q1, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q2, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_left, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_right, na.action = na.exclude)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q1, na.action = na.exclude)
+#       print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q2, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_left, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_right, na.action = na.exclude)
+#     print(res)
     
     temp8 = listaDados[[8]]
     dadosAtuais <- temp8[(temp8$V1 == questao),] 
-    #cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_right, na.action = na.exclude)
+    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q1, na.action = na.exclude)
+#     print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_left, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_right, na.action = na.exclude)
+    print(res)
     
     temp9 = listaDados[[9]]
     dadosAtuais <- temp9[(temp9$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_right, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_left, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_right, na.action = na.exclude)
+    print(res)
     
     temp10 = listaDados[[10]]
     dadosAtuais <- temp10[(temp10$V1 == questao),] 
-    #cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q2, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q3, na.action = na.exclude)
+    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q1, na.action = na.exclude)
+#     print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q2, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q3, na.action = na.exclude)
+    print(res)
     
     temp11 = listaDados[[11]]
     # dadosAtuais <- temp11[(temp11$V1 == questao),] 
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_left, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_right, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_left, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_right, na.action = na.exclude)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_left, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_right, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_left, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_right, na.action = na.exclude)
+#     print(res)
     
     temp12 = listaDados[[12]]
     dadosAtuais <- temp12[(temp12$V1 == questao),] 
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q1, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_left, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_right, na.action = na.exclude)
-    cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q3, na.action = na.exclude)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q1, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_left, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_right, na.action = na.exclude)
+    print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q3, na.action = na.exclude)
+    print(res)
     
     temp13 = listaDados[[13]]
     # dadosAtuais <- temp13[(temp13$V1 == questao),] 
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_left, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_right, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_left, na.action = na.exclude)
-    # cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_right, na.action = na.exclude)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_left, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_right, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_left, na.action = na.exclude)
+#     print(res)
+    # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_right, na.action = na.exclude)
+#     print(res)
+    sink()
 }
 
-sink("correlacao.dat")
-print("Agradavel")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Geral", 'agradavel?')
-sink()
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Geral", 'agradavel?', "correlacao-agrad.dat")
 
-agrad <- temp[(temp$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g1q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g1q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g1q2_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g1q3, na.action = na.exclude)
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Feminino", 'agradavel?', "correlacao-agrad-fem.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Jovem", 'agradavel?', "correlacao-agrad-jov.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Adulto", 'agradavel?', "correlacao-agrad-adu.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Casado", 'agradavel?', "correlacao-agrad-cas.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Solteiro", 'agradavel?', "correlacao-agrad-sol.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Baixa", 'agradavel?', "correlacao-agrad-bai.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Media", 'agradavel?', "correlacao-agrad-med.dat")
 
-agrad <- temp2[(temp2$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g2q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g2q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g2q2_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g2q3, na.action = na.exclude)
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Geral", 'seguro?', "correlacao-seg.dat")
 
-agrad <- temp3[(temp3$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g3q1_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g3q1_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g3q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g3q2_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g3q3_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g3q3_right, na.action = na.exclude)
-
-agrad <- temp4[(temp4$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g4q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g4q2, na.action = na.exclude)
-
-# agrad <- temp5[(temp5$V1 == 'agradavel?'),] 
-# cor.test(agrad$V3.Geral, agrad$g5q1, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g5q2, na.action = na.exclude)
-
-agrad <- temp6[(temp6$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g6q1_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g6q1_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g6q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g6q2_right, na.action = na.exclude)
-
-# agrad <- temp7[(temp7$V1 == 'agradavel?'),] 
-# cor.test(agrad$V3.Geral, agrad$g7q1, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g7q2, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g7q3_left, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g7q3_right, na.action = na.exclude)
-
-agrad <- temp8[(temp8$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g8q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g8q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g8q2_right, na.action = na.exclude)
-
-agrad <- temp9[(temp9$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g9q1_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g9q1_right, na.action = na.exclude)
-
-agrad <- temp10[(temp10$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g10q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g10q2, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g10q3, na.action = na.exclude)
-
-# agrad <- temp11[(temp11$V1 == 'agradavel?'),] 
-# cor.test(agrad$V3.Geral, agrad$g11q2_left, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g11q2_right, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g11q3_left, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g11q3_right, na.action = na.exclude)
-
-agrad <- temp12[(temp12$V1 == 'agradavel?'),] 
-cor.test(agrad$V3.Geral, agrad$g12q1, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g12q2_left, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g12q2_right, na.action = na.exclude)
-cor.test(agrad$V3.Geral, agrad$g12q3, na.action = na.exclude)
-
-# agrad <- temp13[(temp13$V1 == 'agradavel?'),] 
-# cor.test(agrad$V3.Geral, agrad$g13q1_left, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g13q1_right, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g13q2_left, na.action = na.exclude)
-# cor.test(agrad$V3.Geral, agrad$g13q2_right, na.action = na.exclude)
-
-print("Segurança")
-seg <- temp[(temp$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g1q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g1q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g1q2_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g1q3, na.action = na.exclude)
-
-seg <- temp2[(temp2$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g2q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g2q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g2q2_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g2q3, na.action = na.exclude)
-
-seg <- temp3[(temp3$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g3q1_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g3q1_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g3q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g3q2_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g3q3_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g3q3_right, na.action = na.exclude)
-
-seg <- temp4[(temp4$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g4q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g4q2, na.action = na.exclude)
-
-# seg <- temp5[(temp5$V1 == 'seguro?'),] 
-# cor.test(seg$V3.Geral, seg$g5q1, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g5q2, na.action = na.exclude)
-
-seg <- temp6[(temp6$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g6q1_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g6q1_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g6q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g6q2_right, na.action = na.exclude)
-
-# seg <- temp7[(temp7$V1 == 'seguro?'),] 
-# cor.test(seg$V3.Geral, seg$g7q1, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g7q2, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g7q3_left, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g7q3_right, na.action = na.exclude)
-
-seg <- temp8[(temp8$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g8q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g8q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g8q2_right, na.action = na.exclude)
-
-seg <- temp9[(temp9$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g9q1_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g9q1_right, na.action = na.exclude)
-
-seg <- temp10[(temp10$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g10q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g10q2, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g10q3, na.action = na.exclude)
-
-# seg <- temp11[(temp11$V1 == 'seguro?'),] 
-# cor.test(seg$V3.Geral, seg$g11q2_left, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g11q2_right, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g11q3_left, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g11q3_right, na.action = na.exclude)
-
-seg <- temp12[(temp12$V1 == 'seguro?'),] 
-cor.test(seg$V3.Geral, seg$g12q1, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g12q2_left, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g12q2_right, na.action = na.exclude)
-cor.test(seg$V3.Geral, seg$g12q3, na.action = na.exclude)
-
-# seg <- temp13[(temp13$V1 == 'seguro?'),] 
-# cor.test(seg$V3.Geral, seg$g13q1_left, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g13q1_right, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g13q2_left, na.action = na.exclude)
-# cor.test(seg$V3.Geral, seg$g13q2_right, na.action = na.exclude)
-sink()
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Masculino", 'seguro?', "correlacao-seg-masc.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Feminino", 'seguro?', "correlacao-seg-fem.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Jovem", 'seguro?', "correlacao-seg-jov.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Adulto", 'seguro?', "correlacao-seg-adu.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Casado", 'seguro?', "correlacao-seg-cas.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Solteiro", 'seguro?', "correlacao-seg-sol.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Baixa", 'seguro?', "correlacao-seg-bai.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, data.frame(), temp6, data.frame(), temp8, temp9, temp10, data.frame(), temp12, data.frame()), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
 
 #Regressao?
 #regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$g1q1 + agrad$g1q2_left + agrad$g1q2_right + agrad$g1q3 + agrad$g2q1 + agrad$g2q2_left + agrad$g2q2_right + agrad$g2q3 + agrad$g3q1_left + agrad$g3q1_right + agrad$g3q2_left + agrad$g3q2_right + agrad$g3q3_left + agrad$g3q3_right + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1_left + agrad$g6q1_right + agrad$g6q2_left + agrad$g6q2_right + agrad$g7q1 + agrad$g7q2 + agrad$g7q3_left + agrad$g7q3_right + agrad$g8q1 + agrad$g8q2_left + agrad$g8q2_right + agrad$g9q1_left + agrad$g9q1_right + agrad$g10q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q2_left + agrad$g11q2_right + agrad$g11q3_left + agrad$g11q3_right + agrad$g12q1 + agrad$g12q2_left + agrad$g12q2_right + agrad$g12q3 + agrad$g13q1_left + agrad$g13q1_right + agrad$g13q2_left + agrad$g13q2_right, na.action = na.exclude)

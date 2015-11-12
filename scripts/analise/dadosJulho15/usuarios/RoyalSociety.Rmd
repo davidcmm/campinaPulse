@@ -322,82 +322,42 @@ dadosg12$image_url <- substituiURL(dadosg12)
 
 #Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
 geraValores <- function(lista, question, desvios){
-   desvio = sd(lista, na.rm = TRUE)
-   #Apenas 1 valor
-   if (is.na(desvio) & question == "1"){ 
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "1l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "1r"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2r"){
-      print ("Entrei 2r")
-      print (desvio)
-      print(lista)
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3r"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else{
+#    desvio = sd(lista)
+#    #Apenas 1 valor
+#    if (is.na(desvio) & question == "1"){ 
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "1l"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1l, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "1r"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1r, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "2"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "2l"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2l, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "2r"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2r, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "3l"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3l, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "3r"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3r, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else if (is.na(desvio) & question == "3"){
+#       valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3, na.rm = TRUE), n = 3)
+#       return (mean(valores))
+#    } else{
      return (mean(lista, na.rm = TRUE))
-   }
-}
-
-#Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
-geraValores <- function(lista, question, desvios){
-   desvio = sd(lista)
-   #Apenas 1 valor
-   if (is.na(desvio) & question == "1"){ 
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "1l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "1r"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd1r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "2r"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd2r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3l"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3l, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3r"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3r, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else if (is.na(desvio) & question == "3"){
-      valores = rnorm(mean = mean(lista, na.rm = TRUE), sd = mean(desvios$sd3, na.rm = TRUE), n = 3)
-      return (mean(valores))
-   } else{
-     return (mean(lista, na.rm = TRUE))
-   }
+#   }
 }
 
 #Agrupando por imagem e por questao - G1
 by_image <- group_by(dadosg1, image_url)
-=======
 # groupedData1 <- summarise(by_image,
 #   count = n(),
 #   q1 = mean(question1, na.rm = TRUE),
@@ -763,133 +723,133 @@ calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
     temp = listaDados[[1]]
     dadosAtuais <- temp[(temp$V1 == questao),] 
     res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q1, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g1q1"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_left, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g1q2_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_right, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g1q2_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q3, na.action = na.exclude)
-   print(res)
+    print(paste(res$estimate, res$p.value, "g1q3"))
     
     temp2 = listaDados[[2]]
     dadosAtuais <- temp2[(temp2$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q1, na.action = na.exclude)
-       print(res)
+    print(paste(res$estimate, res$p.value, "g2q1"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_left, na.action = na.exclude)
-       print(res)
+       print(paste(res$estimate, res$p.value, "g2q2_left"))
   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g2q2_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q3, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g2q3"))
     
     temp3 = listaDados[[3]]
     dadosAtuais <- temp3[(temp3$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_left, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q1_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q1_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_left, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q2_left"))
   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q2_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_left, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q3_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g3q3_right"))
     
     temp4 = listaDados[[4]]
     dadosAtuais <- temp4[(temp4$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q1, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g4q1"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g4q2, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g4q2"))
     
     temp5 = listaDados[[5]]
     # dadosAtuais <- temp5[(temp5$V1 == questao),] 
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q1, na.action = na.exclude)
-      #print(res)
+      #print(paste(res$estimate, res$p.value, "g5q1"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g5q2, na.action = na.exclude)
-      #print(res)
+      #print(paste(res$estimate, res$p.value, "g5q2"))
     
     temp6 = listaDados[[6]]
     dadosAtuais <- temp6[(temp6$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_left, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g6q1_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g6q1_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_left, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g6q2_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_right, na.action = na.exclude)
-      print(res)
+      print(paste(res$estimate, res$p.value, "g6q2_right"))
     
     temp7 = listaDados[[7]]
     # dadosAtuais <- temp7[(temp7$V1 == questao),] 
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q1, na.action = na.exclude)
-#       print(res)
+#       print(paste(res$estimate, res$p.value, "g7q1"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q2, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g7q2"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_left, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g7q3_left"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_right, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g7q3_right"))
     
     temp8 = listaDados[[8]]
     dadosAtuais <- temp8[(temp8$V1 == questao),] 
     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q1, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g8q1"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_left, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g8q2_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_right, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g8q2_right"))
     
     temp9 = listaDados[[9]]
     dadosAtuais <- temp9[(temp9$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_left, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g9q1_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_right, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g9q1_right"))
     
     temp10 = listaDados[[10]]
     dadosAtuais <- temp10[(temp10$V1 == questao),] 
     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q1, na.action = na.exclude)
 #     print(res)
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q2, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g10q2"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g10q3, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g10q3"))
     
     temp11 = listaDados[[11]]
     # dadosAtuais <- temp11[(temp11$V1 == questao),] 
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_left, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g11q2_left"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_right, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g11q2_right"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_left, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g11q3_left"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_right, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g11q3_right"))
     
     temp12 = listaDados[[12]]
     dadosAtuais <- temp12[(temp12$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q1, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g12q1"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_left, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g12q2_left"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_right, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g12q2_right"))
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q3, na.action = na.exclude)
-    print(res)
+    print(paste(res$estimate, res$p.value, "g12q3"))
     
     temp13 = listaDados[[13]]
     # dadosAtuais <- temp13[(temp13$V1 == questao),] 
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_left, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g13q1_left"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_right, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g13q1_right"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_left, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g13q2_left"))
     # res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_right, na.action = na.exclude)
-#     print(res)
+#     print(paste(res$estimate, res$p.value, "g13q2_right"))
     sink()
 }
 

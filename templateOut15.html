@@ -483,7 +483,7 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-10 col-lg-offset-1 text-right">
-				<a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1">Tutorial</a>
+				<a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
 			</div>
 		</div>
 	</div>
@@ -499,7 +499,7 @@ var previousProfilesData = JSON.parse(previousProfiles);
 
 	var apiUrl = 'https://contribua.org/pybossa/api/';
 	var projectId = '556';
-	var formProfileStep = 10;
+	var formProfileStep = 1;
 	var app = angular.module('CampinaApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.userProgress = {
@@ -705,6 +705,7 @@ var previousProfilesData = JSON.parse(previousProfiles);
 						// Save task
 						$scope.saveTask = function() {
 							if ($scope.shouldSaveProfile === true) {
+								$scope.userProfile.city = document.getElementById("usercity").value;
 								$scope.answer.userProfile = $scope.userProfile;
 								$scope.shouldSaveProfile = false;
 							}

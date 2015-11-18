@@ -52,6 +52,57 @@ dadosg12$image_url <- substituiURL(dadosg12)
 dadosg13 <- read.csv("regressao100/g13.csv")
 dadosg13$image_url <- substituiURL(dadosg13)
 
+#Somando esquerda e direita
+somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+    dados1[is.na(dados1)] <- 0
+    dados2[is.na(dados2)] <- 0
+    
+    soma = dados1 + dados2
+    desvios = (desvio1 + desvio2)/2
+    
+    
+    desvio = sd(soma)
+    if (is.na(desvio)){ 
+        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+        valores <- ifelse(valores < 0, 0, valores)
+        valores <- ifelse(valores > uplimit, uplimit, valores)
+        return (mean(valores))
+    }else{
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+    }
+}
+
+#Somando esquerda e direita
+mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+    for (i in length(dados1)){
+       if(is.na(dados1[i])){
+         dados1[i] <- dados2[i]
+       }
+       if(is.na(dados2[i])){
+         dados2[i] <- dados1[i]
+       }
+    }
+    
+    soma = (dados1 + dados2) / 2
+    desvios = (desvio1 + desvio2)/2
+    
+    
+    desvio = sd(soma)
+    if (is.na(desvio)){ 
+        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+        valores <- ifelse(valores < 0, 0, valores)
+        valores <- ifelse(valores > uplimit, uplimit, valores)
+        return (mean(valores))
+    }else{
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+    }
+}
+
+
 #Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
 geraValores <- function(lista, question, desvios, uplimit){
    desvio = sd(lista)
@@ -128,18 +179,13 @@ geraValores <- function(lista, question, desvios, uplimit){
    }
 }
 
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
 #Agrupando por imagem e por questao - G1
 by_image <- group_by(dadosg1, image_url)
-# groupedData1 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   sdq1 = sd(question1, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   sdq2_left = sd(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE),
-#   sdq2_right = sd(question2__right_side, na.rm = TRUE),
-#   q3 = mean(question3, na.rm = TRUE),
-#   sdq3 = sd(question3, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2l = sd(question2__left_side, na.rm = TRUE),
@@ -149,6 +195,7 @@ groupedData1 <- summarise(by_image,
   count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
   q2_left = geraValores(question2__left_side, "2l", desvios, 100),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 100),
@@ -159,12 +206,6 @@ groupedData1 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G2
 by_image <- group_by(dadosg2, image_url)
-# groupedData2 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE),
-#   q3 = mean(question3, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2l = sd(question2__left_side, na.rm = TRUE),
@@ -174,6 +215,7 @@ groupedData2 <- summarise(by_image,
   count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 200),
   q2_left = geraValores(question2__left_side, "2l", desvios, 100),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 100),
@@ -184,14 +226,6 @@ groupedData2 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G3
 by_image <- group_by(dadosg3, image_url)
-# groupedData3 <- summarise(by_image,
-#   count = n(),
-#   q1_left = mean(question1__left_side, na.rm = TRUE),
-#   q1_right = mean(question1__right_side, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE),
-#   q3_left = mean(question3__left_side, na.rm = TRUE),
-#   q3_right = mean(question3__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
                   sd1r = sd(question1__right_side, na.rm = TRUE),
@@ -201,14 +235,17 @@ desvios <- summarise (by_image,
                   sd3r = sd(question3__right_side, na.rm = TRUE) )
 groupedData3 <- summarise(by_image,
   count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 5),
   q1_left = geraValores(question1__left_side, "1l", desvios, 5),
   #sdq1_left = sd(question1__left_side, na.rm = TRUE),
   q1_right = geraValores(question1__right_side, "1r", desvios, 5),
   #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 5),
   q2_left = geraValores(question2__left_side, "2l", desvios, 5),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 5),
   #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 5),
   q3_left = geraValores(question3__left_side, "3l", desvios, 5),
   #sdq3_left = sd(question3__left_side, na.rm = TRUE),
   q3_right = geraValores(question3__right_side, "3r", desvios, 5)
@@ -217,10 +254,6 @@ groupedData3 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G4
 by_image <- group_by(dadosg4, image_url)
-# groupedData4 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   q2 = mean(question2, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2 = sd(question2, na.rm = TRUE))
@@ -234,10 +267,6 @@ groupedData4 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G5
 by_image <- group_by(dadosg5, image_url)
-# groupedData5 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   q2 = mean(question2, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2 = sd(your_answer_is, na.rm = TRUE))
@@ -251,12 +280,6 @@ groupedData5 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G6
 by_image <- group_by(dadosg6, image_url)
-# groupedData6 <- summarise(by_image,
-#   count = n(),
-#   q1_left = mean(question1__left_side, na.rm = TRUE),
-#   q1_right = mean(question1__right_side, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
                   sd1r = sd(question1__right_side, na.rm = TRUE),
@@ -264,10 +287,12 @@ desvios <- summarise (by_image,
                   sd2r = sd(question2__right_side, na.rm = TRUE) )
 groupedData6 <- summarise(by_image,
   count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 1),
   q1_left = geraValores(question1__left_side, "1l", desvios, 1),
   #sdq1_left = sd(question1__left_side, na.rm = TRUE),
   q1_right = geraValores(question1__right_side, "1r", desvios, 1),
   #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
   q2_left = geraValores(question2__left_side, "2l", desvios, 1),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 1)
@@ -277,12 +302,6 @@ groupedData6 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G7
 by_image <- group_by(dadosg7, image_url)
-# groupedData7 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   q2 = mean(question2, na.rm = TRUE),
-#   q3_left = mean(question3__left_side, na.rm = TRUE),
-#   q3_right = mean(question3__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2 = sd(question2, na.rm = TRUE),
@@ -294,6 +313,7 @@ groupedData7 <- summarise(by_image,
   #sdq1 = sd(question1, na.rm = TRUE),
   q2 = geraValores(question2, "2", desvios, 1),
   #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 1),
   q3_left = geraValores(question3__left_side, "3l", desvios, 1),
   #sdq3_left = sd(question3__left_side, na.rm = TRUE),
   q3_right = geraValores(question3__right_side, "3r", desvios, 1)
@@ -302,11 +322,6 @@ groupedData7 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G8
 by_image <- group_by(dadosg8, image_url)
-# groupedData8 <- summarise(by_image,
-#   count = n(),
-#   q1 = table(question1),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2l = sd(question2__left_side, na.rm = TRUE),
@@ -316,27 +331,26 @@ desvios <- summarise (by_image,
                   )
 groupedData8 <- summarise(by_image,
   count = n(),
-  q1 = geraValores(question1, "1", desvios, 1),
+  q1 = Mode(question1),
   #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2_right_side, desvios$sd2l, desvios$sd2r, 40),
   q2_left = geraValores(question2__left_side, "2l", desvios, 20),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2_right_side, "2r", desvios, 20),
   #sdq2_right = sd(question2__right_side, na.rm = TRUE)  
-  q3_left = geraValores(question2__left_side, "3l", desvios, 20),
-  q3_right = geraValores(question2_right_side, "3r", desvios, 20)
+  q3 = somaValores(question3__left_side, question3_right_side, desvios$sd3l, desvios$sd3r, 40),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 20),
+  q3_right = geraValores(question3_right_side, "3r", desvios, 20)
   )
 
 #Agrupando por imagem e por questao - G9
 by_image <- group_by(dadosg9, image_url)
-# groupedData9 <- summarise(by_image,
-#   count = n(),
-#   q1_left = mean(question1__left_side, na.rm = TRUE),
-#   q1_right = mean(question1__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
                   sd1r = sd(question1__right_side, na.rm = TRUE) )
 groupedData9 <- summarise(by_image,
   count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 200),
   q1_left = geraValores(question1__left_side, "1l", desvios, 200),
   #sdq1_left = sd(question1__left_side, na.rm = TRUE),
   q1_right = geraValores(question1__right_side, "1r", desvios, 200)
@@ -345,11 +359,6 @@ groupedData9 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G10
 by_image <- group_by(dadosg10, image_url)
-# groupedData10 <- summarise(by_image,
-#   count = n(),
-#   q1 = table(question1),
-#   q2 = mean(question2, na.rm = TRUE),
-#   q3 = mean(question3, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2 = sd(question2, na.rm = TRUE),
@@ -366,12 +375,6 @@ groupedData10 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G11
 by_image <- group_by(dadosg11, image_url)
-# groupedData11 <- summarise(by_image,
-#   count = n(),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE),
-#   q3_left = mean(question3__left_side, na.rm = TRUE),
-#   q3_right = mean(question3__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd2l = sd(question2__left_side, na.rm = TRUE),
                   sd2r = sd(question2__right_side, na.rm = TRUE),
@@ -379,10 +382,12 @@ desvios <- summarise (by_image,
                   sd3r = sd(question3__right_side, na.rm = TRUE) )
 groupedData11 <- summarise(by_image,
   count = n(),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
   q2_left = geraValores(question2__left_side, "2l", desvios, 10),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 10),
   #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = somaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 80),
   q3_left = geraValores(question3__left_side, "3l", desvios, 40),
   #sdq3_left = sd(question3__left_side, na.rm = TRUE),
   q3_right = geraValores(question3__right_side, "3r", desvios, 40)
@@ -391,12 +396,6 @@ groupedData11 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G12
 by_image <- group_by(dadosg12, image_url)
-# groupedData12 <- summarise(by_image,
-#   count = n(),
-#   q1 = mean(question1, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE),
-#   q3 = mean(question3, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
                   sd2l = sd(question2__left_side, na.rm = TRUE),
@@ -406,6 +405,7 @@ groupedData12 <- summarise(by_image,
   count = n(),
   q1 = geraValores(question1, "1", desvios, 10),
   #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
   q2_left = geraValores(question2__left_side, "2l", desvios, 10),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 10),
@@ -417,12 +417,6 @@ groupedData12 <- summarise(by_image,
 
 #Agrupando por imagem e por questao - G13
 by_image <- group_by(dadosg13, image_url)
-# groupedData13 <- summarise(by_image,
-#   count = n(),
-#   q1_left = mean(question1__left_side, na.rm = TRUE),
-#   q1_right = mean(question1__right_side, na.rm = TRUE),
-#   q2_left = mean(question2__left_side, na.rm = TRUE),
-#   q2_right = mean(question2__right_side, na.rm = TRUE))
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
                   sd1r = sd(question1__right_side, na.rm = TRUE),
@@ -430,10 +424,12 @@ desvios <- summarise (by_image,
                   sd2r = sd(question2__right_side, na.rm = TRUE) )
 groupedData13 <- summarise(by_image,
   count = n(),
+  q1 = somaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 30),
   q1_left = geraValores(question1__left_side, "1l", desvios, 10),
   #sdq1_left = sd(question1__left_side, na.rm = TRUE),
   q1_right = geraValores(question1__right_side, "1r", desvios, 15),
   #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
   q2_left = geraValores(question2__left_side, "2l", desvios, 1),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 1)
@@ -449,19 +445,19 @@ renomeiaGrupos <- function(dadosPorGrupo, listaColunas, idGrupo) {
     return(dadosPorGrupo)
 }
 
-groupedData1 <- renomeiaGrupos(groupedData1, c("q1", "q2_left", "q2_right", "q3", "count"), "g1")
-groupedData2 <- renomeiaGrupos(groupedData2, c("q1", "q2_left", "q2_right", "q3", "count"), "g2")
-groupedData3 <- renomeiaGrupos(groupedData3, c("q1_left", "q1_right", "q2_left", "q2_right", "q3_left", "q3_right", "count"), "g3")
+groupedData1 <- renomeiaGrupos(groupedData1, c("q1", "q2", "q2_left", "q2_right", "q3", "count"), "g1")
+groupedData2 <- renomeiaGrupos(groupedData2, c("q1", "q2", "q2_left", "q2_right", "q3", "count"), "g2")
+groupedData3 <- renomeiaGrupos(groupedData3, c("q1","q1_left", "q1_right", "q2","q2_left", "q2_right", "q3","q3_left", "q3_right", "count"), "g3")
 groupedData4 <- renomeiaGrupos(groupedData4, c("q1", "q2", "count"), "g4")
 groupedData5 <- renomeiaGrupos(groupedData5, c("q1", "q2", "count"), "g5")
-groupedData6 <- renomeiaGrupos(groupedData6, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g6")
-groupedData7 <- renomeiaGrupos(groupedData7, c("q1", "q2", "q3_left", "q3_right", "count"), "g7")
-groupedData8 <- renomeiaGrupos(groupedData8, c("q1", "q2_left", "q2_right", "q3_left", "q3_right", "count"), "g8")
-groupedData9 <- renomeiaGrupos(groupedData9, c("q1_left", "q1_right", "count"), "g9")
+groupedData6 <- renomeiaGrupos(groupedData6, c("q1","q1_left", "q1_right", "q2", "q2_left", "q2_right", "count"), "g6")
+groupedData7 <- renomeiaGrupos(groupedData7, c("q1", "q2", "q3","q3_left", "q3_right", "count"), "g7")
+groupedData8 <- renomeiaGrupos(groupedData8, c("q1", "q2","q2_left", "q2_right", "q3","q3_left", "q3_right", "count"), "g8")
+groupedData9 <- renomeiaGrupos(groupedData9, c("q1","q1_left", "q1_right", "count"), "g9")
 groupedData10 <- renomeiaGrupos(groupedData10, c("q1", "q2", "q3", "count"), "g10")
-groupedData11 <- renomeiaGrupos(groupedData11, c("q2_left", "q2_right", "q3_left", "q3_right", "count"), "g11")
-groupedData12 <- renomeiaGrupos(groupedData12, c("q1", "q2_left", "q2_right", "q3", "count"), "g12")
-groupedData13 <- renomeiaGrupos(groupedData13, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g13")
+groupedData11 <- renomeiaGrupos(groupedData11, c("q2", "q2_left", "q2_right", "q3","q3_left", "q3_right", "count"), "g11")
+groupedData12 <- renomeiaGrupos(groupedData12, c("q1", "q2", "q2_left", "q2_right", "q3", "count"), "g12")
+groupedData13 <- renomeiaGrupos(groupedData13, c("q1","q1_left", "q1_right", "q2", "q2_left", "q2_right", "count"), "g13")
 
 #Combinando dados QScores com elementos urbanos
 temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
@@ -644,11 +640,306 @@ calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, 
 calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'seguro?', "correlacao-seg-bai.dat")
 calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
 
-#Regressao?
-#regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$g1q1 + agrad$g1q2_left + agrad$g1q2_right + agrad$g1q3 + agrad$g2q1 + agrad$g2q2_left + agrad$g2q2_right + agrad$g2q3 + agrad$g3q1_left + agrad$g3q1_right + agrad$g3q2_left + agrad$g3q2_right + agrad$g3q3_left + agrad$g3q3_right + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1_left + agrad$g6q1_right + agrad$g6q2_left + agrad$g6q2_right + agrad$g7q1 + agrad$g7q2 + agrad$g7q3_left + agrad$g7q3_right + agrad$g8q1 + agrad$g8q2_left + agrad$g8q2_right + agrad$g9q1_left + agrad$g9q1_right + agrad$g10q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q2_left + agrad$g11q2_right + agrad$g11q3_left + agrad$g11q3_right + agrad$g12q1 + agrad$g12q2_left + agrad$g12q2_right + agrad$g12q3 + agrad$g13q1_left + agrad$g13q1_right + agrad$g13q2_left + agrad$g13q2_right, na.action = na.exclude)
-#summary(regGeralAgrad)
+#Resumo por bairros
+temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs1 <- unlist(lapply(temp1, '[[', 1))
+novosDados$bairro <- neigs1
 
-#regGeralSeg <- lm(seg$V3.Geral ~ seg$g1q1 + seg$g1q2_left + seg$g1q2_right + seg$g1q3 + seg$g2q1 + seg$g2q2_left + seg$g2q2_right + seg$g2q3 + seg$g3q1_left + seg$g3q1_right + seg$g3q2_left + seg$g3q2_right + seg$g3q3_left + seg$g3q3_right + seg$g4q1 + seg$g4q2 + seg$g5q1 + seg$g5q2 + seg$g6q1_left + seg$g6q1_right + seg$g6q2_left + seg$g6q2_right + seg$g7q1 + seg$g7q2 + seg$g7q3_left + seg$g7q3_right + seg$g8q1 + seg$g8q2_left + seg$g8q2_right + seg$g9q1_left + seg$g9q1_right + seg$g10q1 + seg$g10q2 + seg$g10q3 + seg$g11q2_left + seg$g11q2_right + seg$g11q3_left + seg$g11q3_right + seg$g12q1 + seg$g12q2_left + seg$g12q2_right + seg$g12q3 + seg$g13q1_left + seg$g13q1_right + seg$g13q2_left + seg$g13q2_right, na.action = na.exclude)
+colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+
+#Centro
+centro <- filter(allData, bairro == "centro")
+sink("centro-summary.dat")
+mean(centro$g1q1, na.rm = TRUE)
+mean(centro$g1q2_left, na.rm = TRUE)
+mean(centro$g1q2_right, na.rm = TRUE)
+mean(centro$g1q3, na.rm = TRUE)
+mean(centro$g2q1, na.rm = TRUE)
+mean(centro$g2q2_left, na.rm = TRUE)
+mean(centro$g2q2_right, na.rm = TRUE)
+mean(centro$g2q3, na.rm = TRUE)
+mean(centro$g3q1_left, na.rm = TRUE)
+mean(centro$g3q1_right, na.rm = TRUE)
+mean(centro$g3q2_left, na.rm = TRUE)
+mean(centro$g3q2_right, na.rm = TRUE)
+mean(centro$g3q3_left, na.rm = TRUE)
+mean(centro$g3q3_right, na.rm = TRUE)
+mean(centro$g4q1, na.rm = TRUE)
+mean(centro$g4q2, na.rm = TRUE)
+mean(centro$g5q1, na.rm = TRUE)
+mean(centro$g5q2, na.rm = TRUE)
+mean(centro$g6q1_left, na.rm = TRUE)
+mean(centro$g6q1_right, na.rm = TRUE)
+mean(centro$g6q2_left, na.rm = TRUE)
+mean(centro$g6q2_right, na.rm = TRUE)
+mean(centro$g7q1, na.rm = TRUE)
+mean(centro$g7q2, na.rm = TRUE)
+mean(centro$g7q3_left, na.rm = TRUE)
+mean(centro$g7q3_right, na.rm = TRUE)
+mean(centro$g8q2_left, na.rm = TRUE)
+mean(centro$g8q2_right, na.rm = TRUE)
+mean(centro$g8q3_left, na.rm = TRUE)
+mean(centro$g8q3_right, na.rm = TRUE)
+mean(centro$g9q1_left, na.rm = TRUE)
+mean(centro$g9q1_right, na.rm = TRUE)
+mean(centro$g10q2, na.rm = TRUE)
+mean(centro$g10q3, na.rm = TRUE)
+mean(centro$g11q2_left, na.rm = TRUE)
+mean(centro$g11q2_right, na.rm = TRUE)
+mean(centro$g11q3_left, na.rm = TRUE)
+mean(centro$g11q3_right, na.rm = TRUE)
+mean(centro$g12q1, na.rm = TRUE)
+mean(centro$g12q2_left, na.rm = TRUE)
+mean(centro$g12q2_right, na.rm = TRUE)
+mean(centro$g12q3, na.rm = TRUE)
+mean(centro$g13q1_left, na.rm = TRUE)
+mean(centro$g13q1_right, na.rm = TRUE)
+mean(centro$g13q2_left, na.rm = TRUE)
+mean(centro$g13q2_right, na.rm = TRUE)
+sink()
+
+#Catole
+catole <- filter(allData, bairro == "catole")
+sink("catole-summary.dat")
+mean(catole$g1q1, na.rm = TRUE)
+mean(catole$g1q2_left, na.rm = TRUE)
+mean(catole$g1q2_right, na.rm = TRUE)
+mean(catole$g1q3, na.rm = TRUE)
+mean(catole$g2q1, na.rm = TRUE)
+mean(catole$g2q2_left, na.rm = TRUE)
+mean(catole$g2q2_right, na.rm = TRUE)
+mean(catole$g2q3, na.rm = TRUE)
+mean(catole$g3q1_left, na.rm = TRUE)
+mean(catole$g3q1_right, na.rm = TRUE)
+mean(catole$g3q2_left, na.rm = TRUE)
+mean(catole$g3q2_right, na.rm = TRUE)
+mean(catole$g3q3_left, na.rm = TRUE)
+mean(catole$g3q3_right, na.rm = TRUE)
+mean(catole$g4q1, na.rm = TRUE)
+mean(catole$g4q2, na.rm = TRUE)
+mean(catole$g5q1, na.rm = TRUE)
+mean(catole$g5q2, na.rm = TRUE)
+mean(catole$g6q1_left, na.rm = TRUE)
+mean(catole$g6q1_right, na.rm = TRUE)
+mean(catole$g6q2_left, na.rm = TRUE)
+mean(catole$g6q2_right, na.rm = TRUE)
+mean(catole$g7q1, na.rm = TRUE)
+mean(catole$g7q2, na.rm = TRUE)
+mean(catole$g7q3_left, na.rm = TRUE)
+mean(catole$g7q3_right, na.rm = TRUE)
+mean(catole$g8q2_left, na.rm = TRUE)
+mean(catole$g8q2_right, na.rm = TRUE)
+mean(catole$g8q3_left, na.rm = TRUE)
+mean(catole$g8q3_right, na.rm = TRUE)
+mean(catole$g9q1_left, na.rm = TRUE)
+mean(catole$g9q1_right, na.rm = TRUE)
+mean(catole$g10q2, na.rm = TRUE)
+mean(catole$g10q3, na.rm = TRUE)
+mean(catole$g11q2_left, na.rm = TRUE)
+mean(catole$g11q2_right, na.rm = TRUE)
+mean(catole$g11q3_left, na.rm = TRUE)
+mean(catole$g11q3_right, na.rm = TRUE)
+mean(catole$g12q1, na.rm = TRUE)
+mean(catole$g12q2_left, na.rm = TRUE)
+mean(catole$g12q2_right, na.rm = TRUE)
+mean(catole$g12q3, na.rm = TRUE)
+mean(catole$g13q1_left, na.rm = TRUE)
+mean(catole$g13q1_right, na.rm = TRUE)
+mean(catole$g13q2_left, na.rm = TRUE)
+mean(catole$g13q2_right, na.rm = TRUE)
+sink()
+
+#Liberdade
+liberdade <- filter(allData, bairro == "liberdade")
+sink("liberdade-summary.dat")
+mean(liberdade$g1q1, na.rm = TRUE)
+mean(liberdade$g1q2_left, na.rm = TRUE)
+mean(liberdade$g1q2_right, na.rm = TRUE)
+mean(liberdade$g1q3, na.rm = TRUE)
+mean(liberdade$g2q1, na.rm = TRUE)
+mean(liberdade$g2q2_left, na.rm = TRUE)
+mean(liberdade$g2q2_right, na.rm = TRUE)
+mean(liberdade$g2q3, na.rm = TRUE)
+mean(liberdade$g3q1_left, na.rm = TRUE)
+mean(liberdade$g3q1_right, na.rm = TRUE)
+mean(liberdade$g3q2_left, na.rm = TRUE)
+mean(liberdade$g3q2_right, na.rm = TRUE)
+mean(liberdade$g3q3_left, na.rm = TRUE)
+mean(liberdade$g3q3_right, na.rm = TRUE)
+mean(liberdade$g4q1, na.rm = TRUE)
+mean(liberdade$g4q2, na.rm = TRUE)
+mean(liberdade$g5q1, na.rm = TRUE)
+mean(liberdade$g5q2, na.rm = TRUE)
+mean(liberdade$g6q1_left, na.rm = TRUE)
+mean(liberdade$g6q1_right, na.rm = TRUE)
+mean(liberdade$g6q2_left, na.rm = TRUE)
+mean(liberdade$g6q2_right, na.rm = TRUE)
+mean(liberdade$g7q1, na.rm = TRUE)
+mean(liberdade$g7q2, na.rm = TRUE)
+mean(liberdade$g7q3_left, na.rm = TRUE)
+mean(liberdade$g7q3_right, na.rm = TRUE)
+mean(liberdade$g8q2_left, na.rm = TRUE)
+mean(liberdade$g8q2_right, na.rm = TRUE)
+mean(liberdade$g8q3_left, na.rm = TRUE)
+mean(liberdade$g8q3_right, na.rm = TRUE)
+mean(liberdade$g9q1_left, na.rm = TRUE)
+mean(liberdade$g9q1_right, na.rm = TRUE)
+mean(liberdade$g10q2, na.rm = TRUE)
+mean(liberdade$g10q3, na.rm = TRUE)
+mean(liberdade$g11q2_left, na.rm = TRUE)
+mean(liberdade$g11q2_right, na.rm = TRUE)
+mean(liberdade$g11q3_left, na.rm = TRUE)
+mean(liberdade$g11q3_right, na.rm = TRUE)
+mean(liberdade$g12q1, na.rm = TRUE)
+mean(liberdade$g12q2_left, na.rm = TRUE)
+mean(liberdade$g12q2_right, na.rm = TRUE)
+mean(liberdade$g12q3, na.rm = TRUE)
+mean(liberdade$g13q1_left, na.rm = TRUE)
+mean(liberdade$g13q1_right, na.rm = TRUE)
+mean(liberdade$g13q2_left, na.rm = TRUE)
+mean(liberdade$g13q2_right, na.rm = TRUE)
+resink()
+
+#Confidence interval?
+t.test(centro$g13q1_left, na.action = na.rm )$conf.int
+
+#Regressao
+colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
+temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData3, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData4, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData5, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData6, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData7, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData8, by.x="image_url", by.y="image_url")
+temp<- merge(temp, groupedData9, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData10, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData12, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
+
+agrad <- filter(temp, V1 == "agradavel?")
+seg <- filter(temp, V1 == "seguro?")
+
+library(leaps)
+
+#Geral
+regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+
+#regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$g1q1 + agrad$g1q2 + agrad$g1q3 + agrad$g2q1 + agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q2 + agrad$g3q3 + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q1 + agrad$g7q2 + agrad$g7q3 + agrad$g8q2 + agrad$g8q3 + agrad$g9q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q2 + agrad$g11q3 + agrad$g12q1 + agrad$g12q2 + agrad$g12q3 + agrad$g13q1 + agrad$g13q2, na.action = na.exclude)
+regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$g1q1 + agrad$g1q3 + agrad$g2q1 + agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q2 + agrad$g3q3 + agrad$g4q1 + agrad$g4q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q1 + agrad$g7q2 + agrad$g7q3 + agrad$g8q1 + agrad$g8q3 + agrad$g9q1 + agrad$g10q3 + agrad$g11q3 + agrad$g12q1 + agrad$g12q3 + agrad$g13q1, na.action = na.exclude)
+summary(regGeralAgrad)
+
+#Homem x Mulher
+agrad.l <- agrad %>% 
+    do(arrange(., desc(V3.Masculino))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+
+regsubsetsAgrad.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2", )
+
+#regGeralAgrad <- lm(agrad$V3.Masculino - agrad$V3.Feminino ~ agrad$g1q1 + agrad$g2q1 + agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q2 + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q1 + agrad$g7q2 + agrad$g7q3 + agrad$g8q3 + agrad$g9q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q3 +  agrad$g12q3 + agrad$g13q1, na.action = na.exclude)
+print("##### Diferenca ranking Homem x Mulher - Pleasantness")
+regGeralAgrad <- lm(agrad.l$rank - agrad.l$index ~ agrad.l$g1q2 + agrad.l$g1q3 + agrad.l$g2q2 + agrad.l$g3q1 + agrad.l$g3q2 + agrad.l$g3q3 + agrad.l$g4q2 + agrad.l$g5q1 + agrad.l$g5q2 + agrad.l$g6q1 + agrad.l$g7q1 + agrad.l$g7q2 + agrad.l$g7q3 + agrad.l$g8q2 + agrad.l$g9q1 + agrad.l$g10q2 + agrad.l$g10q3 + agrad.l$g11q2 +  agrad.l$g12q1 +  agrad.l$g12q2 + agrad.l$g13q1 + agrad.l$g13q2, na.action = na.exclude)
+summary(regGeralAgrad)
+
+#Jovem x Adulto
+agrad.l <- agrad %>% 
+    do(arrange(., desc(V3.Jovem))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
+
+regsubsetsAgrad.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking Jovem x Adulto - Pleasantness")
+#regGeralAgrad <- lm(agrad$V3.Jovem - agrad$V3.Adulto ~ agrad$g1q1 + agrad$g1q2 + agrad$g1q3 +  agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q3 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q2 + agrad$g7q3 + agrad$g8q2 + agrad$g9q1 + agrad$g10q2 + agrad$g10q3 +   agrad$g12q2 + agrad$g12q3 + agrad$g13q1, na.action = na.exclude)
+regGeralAgrad <- lm(agrad.l$rank - agrad.l$index ~ agrad.l$g1q2 + agrad.l$g1q3 +  agrad.l$g2q2 + agrad.l$g2q3 + agrad.l$g3q1 + agrad.l$g3q2 + agrad.l$g3q3 + agrad.l$g5q1 + agrad.l$g5q2 + agrad.l$g6q1 + agrad.l$g6q2 + agrad.l$g7q1 + agrad.l$g7q3 + agrad.l$g8q2 + agrad.l$g8q3 + agrad.l$g10q2 + agrad.l$g11q2 + agrad.l$g11q3 +   agrad.l$g12q1 + agrad.l$g12q3 + agrad.l$g13q1 + agrad.l$g13q2, na.action = na.exclude)
+summary(regGeralAgrad)
+
+#Casado x Solteiro
+agrad.l <- agrad %>% 
+    do(arrange(., desc(V3.Casado))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
+
+regsubsetsAgrad.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking Casado x Solteiro - Pleasantness")
+regGeralAgrad <- lm(agrad.l$rank - agrad.l$index ~ agrad.l$g1q1 + agrad.l$g1q2 + agrad.l$g1q3 +  agrad.l$g2q1 +  agrad.l$g2q2 + agrad.l$g2q3 + agrad.l$g3q1 + agrad.l$g3q3 + agrad.l$g4q1 + agrad.l$g4q2 + agrad.l$g5q1 + agrad.l$g6q1 + agrad.l$g7q1 + agrad.l$g7q2 + agrad.l$g7q3 + agrad.l$g8q3 + agrad.l$g9q1 + agrad.l$g10q3 + agrad.l$g11q3  + agrad.l$g12q1 + agrad.l$g12q3 + agrad.l$g13q1, na.action = na.exclude)
+summary(regGeralAgrad)
+
+#Baixa renda x Media renda
+agrad.l <- agrad %>% 
+    do(arrange(., desc(V3.Baixa))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+
+regsubsetsAgrad.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking baixa x media - Pleasantness")
+regGeralAgrad <- lm(agrad.l$rank - agrad.l$index ~ agrad.l$g1q2 + agrad.l$g1q3 +  agrad.l$g2q2 + agrad.l$g2q3 + agrad.l$g3q2 + agrad.l$g3q3 + agrad.l$g4q2 + agrad.l$g5q1 + agrad.l$g5q2 + agrad.l$g6q1 + agrad.l$g6q2 +  agrad.l$g7q3 + agrad.l$g8q2 + agrad.l$g8q3 + agrad.l$g9q1 + agrad.l$g10q2 + agrad.l$g10q3 + agrad.l$g11q3 +   agrad.l$g12q1 + agrad.l$g12q2 + agrad.l$g13q1 + agrad.l$g13q2, na.action = na.exclude)
+summary(regGeralAgrad)
+
+#Geral Seguranca
+regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = seg, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+
+regGeralSeg <- lm(seg$V3.Geral ~ seg$g1q1 + seg$g1q3 + seg$g2q1 + seg$g2q2 + seg$g2q3 + seg$g3q1 + seg$g3q2 + seg$g3q3 + seg$g4q1 + seg$g4q2 + seg$g6q1 + seg$g6q2 + seg$g7q1 + seg$g7q2 + seg$g7q3 + seg$g8q1 + seg$g8q3 + seg$g9q1 + seg$g10q3 + seg$g11q3 + seg$g12q1 + seg$g12q3 + seg$g13q1, na.action = na.exclude)
+summary(regGeralSeg)
+
+#Homem x Mulher
+seg.l <- seg %>% 
+    do(arrange(., desc(V3.Masculino))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+
+regsubsetsSeg.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
+
+#regGeralAgrad <- lm(agrad$V3.Masculino - agrad$V3.Feminino ~ agrad$g1q1 + agrad$g2q1 + agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q2 + agrad$g4q1 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q1 + agrad$g7q2 + agrad$g7q3 + agrad$g8q3 + agrad$g9q1 + agrad$g10q2 + agrad$g10q3 + agrad$g11q3 +  agrad$g12q3 + agrad$g13q1, na.action = na.exclude)
+print("##### Diferenca ranking Homem x Mulher - Safety")
+regGeralSeg <- lm(seg.l$rank - seg.l$index ~ seg.l$g1q1 + seg.l$g1q2 + seg.l$g1q3 + seg.l$g2q1 + seg.l$g2q3 + seg.l$g4q1 + seg.l$g4q2 + seg.l$g5q1 + seg.l$g7q1 + seg.l$g7q2 + seg.l$g7q3 + seg.l$g8q2 + seg.l$g8q3 + seg.l$g9q1 + seg.l$g10q2 + seg.l$g11q2 + seg.l$g11q3 +  seg.l$g12q1 +  seg.l$g12q2 + seg.l$g13q1 + seg.l$g13q2, na.action = na.exclude)
+summary(regGeralSeg)
+
+#Jovem x Adulto
+seg.l <- seg %>% 
+    do(arrange(., desc(V3.Jovem))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
+
+regsubsetsSeg.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking Jovem x Adulto - Safety")
+#regGeralAgrad <- lm(agrad$V3.Jovem - agrad$V3.Adulto ~ agrad$g1q1 + agrad$g1q2 + agrad$g1q3 +  agrad$g2q2 + agrad$g2q3 + agrad$g3q1 + agrad$g3q3 + agrad$g4q2 + agrad$g5q1 + agrad$g5q2 + agrad$g6q1 + agrad$g6q2 + agrad$g7q2 + agrad$g7q3 + agrad$g8q2 + agrad$g9q1 + agrad$g10q2 + agrad$g10q3 +   agrad$g12q2 + agrad$g12q3 + agrad$g13q1, na.action = na.exclude)
+regGeralSeg <- lm(seg.l$rank - seg.l$index ~ seg.l$g1q3 + seg.l$g2q3 + seg.l$g3q1 + seg.l$g3q2 + seg.l$g4q1 + seg.l$g4q2 + seg.l$g5q1 + seg.l$g6q1 + seg.l$g7q1 + seg.l$g7q2 + seg.l$g7q3 + seg.l$g8q2 + seg.l$g8q3 + seg.l$g9q1 + seg.l$g10q2 + seg.l$g10q3 + seg.l$g11q2 + seg.l$g11q3 + seg.l$g12q1 + seg.l$g12q2 + seg.l$g12q3 + seg.l$g13q2, na.action = na.exclude)
+summary(regGeralSeg)
+
+#Casado x Solteiro
+seg.l <- seg %>% 
+    do(arrange(., desc(V3.Casado))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
+
+regsubsetsSeg.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking Casado x Solteiro - Safety")
+regGeralSeg <- lm(seg.l$rank - seg.l$index ~ scale(seg.l$g1q1) + scale(seg.l$g2q2) + scale(seg.l$g2q3) +scale( seg.l$g3q1) + scale(seg.l$g3q2) + scale(seg.l$g3q3) + scale(seg.l$g4q1) + scale(seg.l$g4q2) + scale(seg.l$g5q1) + scale(seg.l$g5q2) + scale(seg.l$g6q2) + scale(seg.l$g7q1) + scale(seg.l$g7q3) + scale(seg.l$g8q2) + scale(seg.l$g9q1) + scale(seg.l$g10q2) + scale(seg.l$g10q3) + scale(seg.l$g11q2) + scale(seg.l$g11q3)  + scale(seg.l$g12q1) + scale(seg.l$g12q2) + scale(seg.l$g12q3), na.action = na.exclude)
+summary(regGeralSeg)
+
+#Baixa renda x Media renda
+seg.l <- seg %>% 
+    do(arrange(., desc(V3.Baixa))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+
+regsubsetsSeg.out <<- regsubsets(rank - index ~ g1q1 + g1q2 + g1q3 + g2q1 + g2q2 + g2q3 + g3q1 + g3q2 + g3q3 + g4q1 + g4q2 + g5q1 + g5q2 + g6q1 + g6q2 + g7q1 + g7q2 + g7q3 + g8q2 + g8q3 + g9q1 + g10q2 + g10q3 + g11q2 + g11q3 + g12q1 + g12q2 + g12q3 + g13q1 + g13q2, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+print("##### Diferenca ranking baixa x media - Safety")
+regGeralSeg <- lm(seg.l$rank - seg.l$index ~ seg.l$g1q2 + seg.l$g1q3 +  seg.l$g2q2 + seg.l$g2q3 + seg.l$g3q2 + seg.l$g3q3 + seg.l$g4q2 + seg.l$g5q1 + seg.l$g5q2 + seg.l$g6q1 + seg.l$g6q2 +  seg.l$g7q3 + seg.l$g8q2 + seg.l$g8q3 + seg.l$g9q1 + seg.l$g10q2 + seg.l$g10q3 + seg.l$g11q3 +   seg.l$g12q1 + seg.l$g12q2 + seg.l$g13q1 + seg.l$g13q2, na.action = na.exclude)
+summary(regGeralSeg)
+
 ```
 
 
@@ -692,6 +983,11 @@ temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Masculino)
+sd(novosgrupo1grupo2$V3.Feminino)
+sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
+
 #Regressao
 library(texreg)
 
@@ -701,6 +997,9 @@ novosgrupo1grupo2$residuals <- regAgrad$residuals
 novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
 
 plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
 
@@ -727,6 +1026,11 @@ temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Masculino)
+sd(novosgrupo1grupo2$V3.Feminino)
+sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
+
 #Regressao
 library(texreg)
 
@@ -736,6 +1040,9 @@ novosgrupo1grupo2$residuals <- regAgrad$residuals
 novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
 
 plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
 
@@ -859,6 +1166,9 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
 plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
 
 #Modelo
@@ -905,6 +1215,14 @@ texreg(regAgrad)
 summary(regAgrad)
 #sink()
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Casado)
+sd(novosgrupo1grupo2$V3.Solteiro)
+sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
 #Fotos, QScores e resíduos
 write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-agrad.dat", sep = "\t")
 
@@ -922,6 +1240,11 @@ temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Casado)
+sd(novosgrupo1grupo2$V3.Solteiro)
+sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
+
 #Regressao
 library(texreg)
 
@@ -933,6 +1256,9 @@ novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
 
 plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
 
 #Modelo
 #sink("reg-cas-sol-seg.txt")
@@ -960,6 +1286,11 @@ temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Baixa)
+sd(novosgrupo1grupo2$V3.Media)
+sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
+
 #Regressao
 library(texreg)
 
@@ -969,6 +1300,9 @@ novosgrupo1grupo2$residuals <- regAgrad$residuals
 novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
 
 plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
 
@@ -998,6 +1332,12 @@ temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Baixa)
+sd(novosgrupo1grupo2$V3.Media)
+sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
+
+
 #Regressao
 library(texreg)
 
@@ -1007,6 +1347,9 @@ novosgrupo1grupo2$residuals <- regAgrad$residuals
 novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
 
 novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
 
 plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
 

@@ -239,7 +239,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 			photo2 = data['theLess'].strip(' \t\n\r"')
 
 			taskDef = tasksDefinitions[taskID]
-			photos = Set([taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"'))
+			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
 			photos.remove(photo1)
 			photos.remove(photo2)
 
@@ -272,7 +272,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 			votes[question][photo1][photo4].add(left)
 			votes[question][photo2][photo3].add(right)
 			votes[question][photo2][photo4].add(right)
-			votes[question][photo3][photo4].add(notknown)
+			votes[question][photo3][photo4].add(notKnown)
 
 			allPhotos.add(photo1)
 			allPhotos.add(photo2)
@@ -420,7 +420,7 @@ def readTasksDefinitions(linesTasks):
 	for line in linesTasks:
 		data = line.split("+")
 		taskID = data[0].strip(' \t\n\r')
-		currentDef = json.loads(data[7].strip(' \t\n\r'))
+		currentDef = json.loads(data[7].strip(' \t\n\r\"'))
 
 		tasksDef[taskID] = currentDef
 	

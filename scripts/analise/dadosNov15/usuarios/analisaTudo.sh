@@ -29,19 +29,19 @@ python selectRunPerUsers.py run.csv notcatole.dat > runNotCatole.csv
 python selectRunPerUsers.py run.csv notcentro.dat > runNotCentro.csv
 python selectRunPerUsers.py run.csv notliberdade.dat > runNotLiberdade.csv
 
-mv alta.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat medio.dat posgrad.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
+mv media.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat medio.dat posgrad.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
 #Analisa QScores
-python analisaQScore.py run.csv 100
+python analisaQScore.py run.csv 100 tasksDef.csv
 
 python analisaQScore.py runAdulto.csv 100 tasksDef.csv
 mv all.dat allAdulto.dat
 python analisaQScore.py runJovem.csv 100 tasksDef.csv
 mv all.dat allJovem.dat
-python analisaQScore.py runMenorMed.csv 100 tasksDef.csv
-mv all.dat allMenorMedian.dat
-python analisaQScore.py runMaiorMed.csv 100 tasksDef.csv
-mv all.dat allMaiorMedian.dat
+#python analisaQScore.py runMenorMed.csv 100 tasksDef.csv
+#mv all.dat allMenorMedian.dat
+#python analisaQScore.py runMaiorMed.csv 100 tasksDef.csv
+#mv all.dat allMaiorMedian.dat
 python analisaQScore.py runSolteiro.csv 100 tasksDef.csv
 mv all.dat allSolteiro.dat
 python analisaQScore.py runCasado.csv 100 tasksDef.csv
@@ -106,7 +106,7 @@ mv streetsQScoresLatLong.dat streetsQScoresLatLongAllAdulto.dat
 grep "agrad%C3%A1vel?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongAgraAllAdulto.dat
 grep "seguro?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongSegAllAdulto.dat
 echo "Adulto" >> moranAll.dat
-Rscript krippMoran.R moran streetsQScoresLatLongAgraAllAdulto.dat streetsQScoresLatLongSegAllAdulto.dat >> moranAll.dat
+Rscript krippMoran.R mor	an streetsQScoresLatLongAgraAllAdulto.dat streetsQScoresLatLongSegAllAdulto.dat >> moranAll.dat
 
 
 ./processInputLatLong.sh allJovem.dat
@@ -198,7 +198,7 @@ python preparaHTML.py all_ordenado.dat
 python preparaHTML.py allJovemOrd.dat intersectionAllJovemAdulto.dat > allJovemOrdInter.dat 
 mv question.html questionAllJovem.html
 python preparaHTML.py allAdultoOrd.dat intersectionAllJovemAdulto.dat > allAdultoOrdInter.dat 
-	mv question.html questionAllAdulto.html
+mv question.html questionAllAdulto.html
 
 #python preparaHTML.py allMenorMedianOrd.dat intersectionAllMenorMaiorMedian.dat > allMenorMedianOrdInter.dat 
 #mv question.html questionAllMenorMedian.html
@@ -328,7 +328,6 @@ mkdir inputCorrelacaoRegressao100
 mv rgbQScore*.dat inputCorrelacaoRegressao100/
 
 #Combina todos os arquivos de entrada em um arquivo para análise
-
 for file in `ls all*OrdInter.dat` ; do 
 	sed -i "s/https:\/\/contribua.org\/bairros\/norte\///g" $file 
 	sed -i "s/https:\/\/contribua.org\/bairros\/oeste\///g" $file

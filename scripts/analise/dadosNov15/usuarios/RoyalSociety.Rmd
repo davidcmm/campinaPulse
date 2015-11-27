@@ -2,7 +2,42 @@
 title: "RoyalSociety"
 output: pdf_document
 ---
-#Elementos urbanos
+
+#Reading data
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+source('analisaICPorFoto.R')
+
+facet_names <- list(
+  'agrad%C3%A1vel?'="Pleasantness",
+  'seguro?'="Safety"
+)
+
+facet_labeller <- function(variable,value){
+  return(facet_names[value])
+}
+
+dados <- read.table("geral.dat", header=TRUE)
+
+#Intervalo de confiança por ponto
+temp <- dados
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+#Subset of columns
+dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Copia com todos os dados
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+```
+
+
+#Urban Elements
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(dplyr)
 library(texreg)
@@ -193,7 +228,7 @@ desvios <- summarise (by_image,
                   sd2r = sd(question2__right_side, na.rm = TRUE),
                   sd3 = sd(question3, na.rm = TRUE) )
 groupedData1 <- summarise(by_image,
-  count = n(),
+  #count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
   q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
@@ -483,350 +518,349 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 
 #Combinando dados QScores com elementos urbanos
-temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
-temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
-temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
-temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
-temp5 <- merge(novosDados, groupedData5, by.x="V2", by.y="image_url")
-temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
-temp7 <- merge(novosDados, groupedData7, by.x="V2", by.y="image_url")
-temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
-temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
-temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
-temp11 <- merge(novosDados, groupedData11, by.x="V2", by.y="image_url")
-temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
-temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
+# temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
+# temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
+# temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
+# temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
+# temp5 <- merge(novosDados, groupedData5, by.x="V2", by.y="image_url")
+# temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
+# temp7 <- merge(novosDados, groupedData7, by.x="V2", by.y="image_url")
+# temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
+# temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
+# temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
+# temp11 <- merge(novosDados, groupedData11, by.x="V2", by.y="image_url")
+# temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
+# temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
 #colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
 #Correlacao? FIXME: names of columns!
-calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
-    sink(arquivo)
-    print(questao)
-  
-    temp = listaDados[[1]]
-    dadosAtuais <- temp[(temp$V1 == questao),] 
-    res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_wid, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "street_wid"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "sidewalk_wid_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "sidewalk_wid_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$public_art, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "public_art"))
-    
-    temp2 = listaDados[[2]]
-    dadosAtuais <- temp2[(temp2$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_cars, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "mov_cars"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_left, na.action = na.exclude)
-       print(paste(res$estimate, res$p.value, "park_cars_left"))
-  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "park_cars_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_ciclyst, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "mov_ciclyst"))
-    
-    temp3 = listaDados[[3]]
-    dadosAtuais <- temp3[(temp3$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_left, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "debris_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "debris_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_left, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "pavement_left"))
-  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "pavement_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_left, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "landscape_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "landscape_right"))
-    
-    temp4 = listaDados[[4]]
-    dadosAtuais <- temp4[(temp4$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$courtyards, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "courtyards"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$major_landsc, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "major_landsc"))
-    
-    temp5 = listaDados[[5]]
-    dadosAtuais <- temp5[(temp5$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_ident, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "build_ident"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_nrectan, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "build_nrectan"))
-    
-    temp6 = listaDados[[6]]
-    dadosAtuais <- temp6[(temp6$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_left, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "prop_street_wall_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "prop_street_wall_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_left, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "prop_wind_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_right, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "prop_wind_right"))
-    
-    temp7 = listaDados[[7]]
-    dadosAtuais <- temp7[(temp7$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$long_sight, na.action = na.exclude)
-      print(paste(res$estimate, res$p.value, "long_sight"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_ahead, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_sky_ahead"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_sky_across_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_sky_across_right"))
-    
-    temp8 = listaDados[[8]]
-    dadosAtuais <- temp8[(temp8$V1 == questao),] 
-    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$graffiti, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "graffiti"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "trees_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "trees_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "small_planters_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "small_planters_right"))
-    
-    temp9 = listaDados[[9]]
-    dadosAtuais <- temp9[(temp9$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "build_height_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "build_height_right"))
-    
-    temp10 = listaDados[[10]]
-    dadosAtuais <- temp10[(temp10$V1 == questao),] 
-    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_diff_ages, na.action = na.exclude)
-#     print(res)
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$diff_build, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "diff_build"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_hist_build, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_hist_build"))
-    
-    temp11 = listaDados[[11]]
-    dadosAtuais <- temp11[(temp11$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "outdoor_table_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "outdoor_table_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "street_furnit_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "street_furnit_right"))
-    
-    temp12 = listaDados[[12]]
-    dadosAtuais <- temp12[(temp12$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$basic_col, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "basic_col"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "lights_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "lights_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$accent_col, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "accent_col"))
-    
-    temp13 = listaDados[[13]]
-    dadosAtuais <- temp13[(temp13$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "people_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "people_right"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_left, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_active_use_left"))
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_right, na.action = na.exclude)
-    print(paste(res$estimate, res$p.value, "prop_active_use_right"))
-    sink()
-}
-
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'agradavel?', "correlacao-agrad.dat")
-
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'agradavel?', "correlacao-agrad-fem.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Jovem", 'agradavel?', "correlacao-agrad-jov.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4,temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Adulto", 'agradavel?', "correlacao-agrad-adu.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Casado", 'agradavel?', "correlacao-agrad-cas.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Solteiro", 'agradavel?', "correlacao-agrad-sol.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'agradavel?', "correlacao-agrad-bai.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4,temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'agradavel?', "correlacao-agrad-med.dat")
-
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'seguro?', "correlacao-seg.dat")
-
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'seguro?', "correlacao-seg-masc.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'seguro?', "correlacao-seg-fem.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Jovem", 'seguro?', "correlacao-seg-jov.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Adulto", 'seguro?', "correlacao-seg-adu.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Casado", 'seguro?', "correlacao-seg-cas.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Solteiro", 'seguro?', "correlacao-seg-sol.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'seguro?', "correlacao-seg-bai.dat")
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
-
-#Resumo por bairros
-temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
-neigs1 <- unlist(lapply(temp1, '[[', 1))
-novosDados$bairro <- neigs1
-
-colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-
-#FIXME: names of columns
-#Centro
-centro <- filter(allData, bairro == "centro")
-sink("centro-summary.dat")
-mean(centro$street_wid, na.rm = TRUE)
-mean(centro$sidewalk_wid_left, na.rm = TRUE)
-mean(centro$sidewalk_wid_right, na.rm = TRUE)
-mean(centro$public_art, na.rm = TRUE)
-mean(centro$mov_cars, na.rm = TRUE)
-mean(centro$park_cars_left, na.rm = TRUE)
-mean(centro$park_cars_right, na.rm = TRUE)
-mean(centro$mov_ciclyst, na.rm = TRUE)
-mean(centro$debris_left, na.rm = TRUE)
-mean(centro$debris_right, na.rm = TRUE)
-mean(centro$pavement_left, na.rm = TRUE)
-mean(centro$pavement_right, na.rm = TRUE)
-mean(centro$landscape_left, na.rm = TRUE)
-mean(centro$landscape_right, na.rm = TRUE)
-mean(centro$courtyards, na.rm = TRUE)
-mean(centro$major_landsc, na.rm = TRUE)
-mean(centro$build_ident, na.rm = TRUE)
-mean(centro$build_nrectan, na.rm = TRUE)
-mean(centro$prop_street_wall_left, na.rm = TRUE)
-mean(centro$prop_street_wall_right, na.rm = TRUE)
-mean(centro$prop_wind_left, na.rm = TRUE)
-mean(centro$prop_wind_right, na.rm = TRUE)
-mean(centro$long_sight, na.rm = TRUE)
-mean(centro$prop_sky_ahead, na.rm = TRUE)
-mean(centro$prop_sky_across_left, na.rm = TRUE)
-mean(centro$prop_sky_across_right, na.rm = TRUE)
-mean(centro$trees_left, na.rm = TRUE)
-mean(centro$trees_right, na.rm = TRUE)
-mean(centro$small_planters_left, na.rm = TRUE)
-mean(centro$small_planters_right, na.rm = TRUE)
-mean(centro$build_height_left, na.rm = TRUE)
-mean(centro$build_height_right, na.rm = TRUE)
-mean(centro$diff_build, na.rm = TRUE)
-mean(centro$prop_hist_build, na.rm = TRUE)
-mean(centro$outdoor_table_left, na.rm = TRUE)
-mean(centro$outdoor_table_right, na.rm = TRUE)
-mean(centro$street_furnit_left, na.rm = TRUE)
-mean(centro$street_furnit_right, na.rm = TRUE)
-mean(centro$basic_col, na.rm = TRUE)
-mean(centro$lights_left, na.rm = TRUE)
-mean(centro$lights_right, na.rm = TRUE)
-mean(centro$accent_col, na.rm = TRUE)
-mean(centro$people_left, na.rm = TRUE)
-mean(centro$people_right, na.rm = TRUE)
-mean(centro$prop_active_use_left, na.rm = TRUE)
-mean(centro$prop_active_use_right, na.rm = TRUE)
-sink()
-
-#Catole
-catole <- filter(allData, bairro == "catole")
-sink("catole-summary.dat")
-mean(catole$street_wid, na.rm = TRUE)
-mean(catole$sidewalk_wid_left, na.rm = TRUE)
-mean(catole$sidewalk_wid_right, na.rm = TRUE)
-mean(catole$public_art, na.rm = TRUE)
-mean(catole$mov_cars, na.rm = TRUE)
-mean(catole$park_cars_left, na.rm = TRUE)
-mean(catole$park_cars_right, na.rm = TRUE)
-mean(catole$mov_ciclyst, na.rm = TRUE)
-mean(catole$debris_left, na.rm = TRUE)
-mean(catole$debris_right, na.rm = TRUE)
-mean(catole$pavement_left, na.rm = TRUE)
-mean(catole$pavement_right, na.rm = TRUE)
-mean(catole$landscape_left, na.rm = TRUE)
-mean(catole$landscape_right, na.rm = TRUE)
-mean(catole$courtyards, na.rm = TRUE)
-mean(catole$major_landsc, na.rm = TRUE)
-mean(catole$build_ident, na.rm = TRUE)
-mean(catole$build_nrectan, na.rm = TRUE)
-mean(catole$prop_street_wall_left, na.rm = TRUE)
-mean(catole$prop_street_wall_right, na.rm = TRUE)
-mean(catole$prop_wind_left, na.rm = TRUE)
-mean(catole$prop_wind_right, na.rm = TRUE)
-mean(catole$long_sight, na.rm = TRUE)
-mean(catole$prop_sky_ahead, na.rm = TRUE)
-mean(catole$prop_sky_across_left, na.rm = TRUE)
-mean(catole$prop_sky_across_right, na.rm = TRUE)
-mean(catole$trees_left, na.rm = TRUE)
-mean(catole$trees_right, na.rm = TRUE)
-mean(catole$small_planters_left, na.rm = TRUE)
-mean(catole$small_planters_right, na.rm = TRUE)
-mean(catole$build_height_left, na.rm = TRUE)
-mean(catole$build_height_right, na.rm = TRUE)
-mean(catole$diff_build, na.rm = TRUE)
-mean(catole$prop_hist_build, na.rm = TRUE)
-mean(catole$outdoor_table_left, na.rm = TRUE)
-mean(catole$outdoor_table_right, na.rm = TRUE)
-mean(catole$street_furnit_left, na.rm = TRUE)
-mean(catole$street_furnit_right, na.rm = TRUE)
-mean(catole$basic_col, na.rm = TRUE)
-mean(catole$lights_left, na.rm = TRUE)
-mean(catole$lights_right, na.rm = TRUE)
-mean(catole$accent_col, na.rm = TRUE)
-mean(catole$people_left, na.rm = TRUE)
-mean(catole$people_right, na.rm = TRUE)
-mean(catole$prop_active_use_left, na.rm = TRUE)
-mean(catole$prop_active_use_right, na.rm = TRUE)
-sink()
-
-#Liberdade
-liberdade <- filter(allData, bairro == "liberdade")
-sink("liberdade-summary.dat")
-mean(liberdade$street_wid, na.rm = TRUE)
-mean(liberdade$sidewalk_wid_left, na.rm = TRUE)
-mean(liberdade$sidewalk_wid_right, na.rm = TRUE)
-mean(liberdade$public_art, na.rm = TRUE)
-mean(liberdade$mov_cars, na.rm = TRUE)
-mean(liberdade$park_cars_left, na.rm = TRUE)
-mean(liberdade$park_cars_right, na.rm = TRUE)
-mean(liberdade$mov_ciclyst, na.rm = TRUE)
-mean(liberdade$debris_left, na.rm = TRUE)
-mean(liberdade$debris_right, na.rm = TRUE)
-mean(liberdade$pavement_left, na.rm = TRUE)
-mean(liberdade$pavement_right, na.rm = TRUE)
-mean(liberdade$landscape_left, na.rm = TRUE)
-mean(liberdade$landscape_right, na.rm = TRUE)
-mean(liberdade$courtyards, na.rm = TRUE)
-mean(liberdade$major_landsc, na.rm = TRUE)
-mean(liberdade$build_ident, na.rm = TRUE)
-mean(liberdade$build_nrectan, na.rm = TRUE)
-mean(liberdade$prop_street_wall_left, na.rm = TRUE)
-mean(liberdade$prop_street_wall_right, na.rm = TRUE)
-mean(liberdade$prop_wind_left, na.rm = TRUE)
-mean(liberdade$prop_wind_right, na.rm = TRUE)
-mean(liberdade$long_sight, na.rm = TRUE)
-mean(liberdade$prop_sky_ahead, na.rm = TRUE)
-mean(liberdade$prop_sky_across_left, na.rm = TRUE)
-mean(liberdade$prop_sky_across_right, na.rm = TRUE)
-mean(liberdade$trees_left, na.rm = TRUE)
-mean(liberdade$trees_right, na.rm = TRUE)
-mean(liberdade$small_planters_left, na.rm = TRUE)
-mean(liberdade$small_planters_right, na.rm = TRUE)
-mean(liberdade$build_height_left, na.rm = TRUE)
-mean(liberdade$build_height_right, na.rm = TRUE)
-mean(liberdade$diff_build, na.rm = TRUE)
-mean(liberdade$prop_hist_build, na.rm = TRUE)
-mean(liberdade$outdoor_table_left, na.rm = TRUE)
-mean(liberdade$outdoor_table_right, na.rm = TRUE)
-mean(liberdade$street_furnit_left, na.rm = TRUE)
-mean(liberdade$street_furnit_right, na.rm = TRUE)
-mean(liberdade$basic_col, na.rm = TRUE)
-mean(liberdade$lights_left, na.rm = TRUE)
-mean(liberdade$lights_right, na.rm = TRUE)
-mean(liberdade$accent_col, na.rm = TRUE)
-mean(liberdade$people_left, na.rm = TRUE)
-mean(liberdade$people_right, na.rm = TRUE)
-mean(liberdade$prop_active_use_left, na.rm = TRUE)
-mean(liberdade$prop_active_use_right, na.rm = TRUE)
-resink()
-
-#Confidence interval?
-t.test(centro$people_left, na.action = na.rm )$conf.int
+# calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
+#     sink(arquivo)
+#     print(questao)
+#   
+#     temp = listaDados[[1]]
+#     dadosAtuais <- temp[(temp$V1 == questao),] 
+#     res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_wid, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "street_wid"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "sidewalk_wid_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "sidewalk_wid_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$public_art, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "public_art"))
+#     
+#     temp2 = listaDados[[2]]
+#     dadosAtuais <- temp2[(temp2$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_cars, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "mov_cars"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_left, na.action = na.exclude)
+#        print(paste(res$estimate, res$p.value, "park_cars_left"))
+#   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "park_cars_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_ciclyst, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "mov_ciclyst"))
+#     
+#     temp3 = listaDados[[3]]
+#     dadosAtuais <- temp3[(temp3$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_left, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "debris_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "debris_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_left, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "pavement_left"))
+#   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "pavement_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_left, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "landscape_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "landscape_right"))
+#     
+#     temp4 = listaDados[[4]]
+#     dadosAtuais <- temp4[(temp4$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$courtyards, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "courtyards"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$major_landsc, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "major_landsc"))
+#     
+#     temp5 = listaDados[[5]]
+#     dadosAtuais <- temp5[(temp5$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_ident, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "build_ident"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_nrectan, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "build_nrectan"))
+#     
+#     temp6 = listaDados[[6]]
+#     dadosAtuais <- temp6[(temp6$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_left, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "prop_street_wall_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "prop_street_wall_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_left, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "prop_wind_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_right, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "prop_wind_right"))
+#     
+#     temp7 = listaDados[[7]]
+#     dadosAtuais <- temp7[(temp7$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$long_sight, na.action = na.exclude)
+#       print(paste(res$estimate, res$p.value, "long_sight"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_ahead, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_sky_ahead"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_sky_across_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_sky_across_right"))
+#     
+#     temp8 = listaDados[[8]]
+#     dadosAtuais <- temp8[(temp8$V1 == questao),] 
+#     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$graffiti, na.action = na.exclude)
+# #     print(paste(res$estimate, res$p.value, "graffiti"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "trees_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "trees_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "small_planters_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "small_planters_right"))
+#     
+#     temp9 = listaDados[[9]]
+#     dadosAtuais <- temp9[(temp9$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "build_height_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "build_height_right"))
+#     
+#     temp10 = listaDados[[10]]
+#     dadosAtuais <- temp10[(temp10$V1 == questao),] 
+#     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_diff_ages, na.action = na.exclude)
+# #     print(res)
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$diff_build, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "diff_build"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_hist_build, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_hist_build"))
+#     
+#     temp11 = listaDados[[11]]
+#     dadosAtuais <- temp11[(temp11$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "outdoor_table_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "outdoor_table_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "street_furnit_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "street_furnit_right"))
+#     
+#     temp12 = listaDados[[12]]
+#     dadosAtuais <- temp12[(temp12$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$basic_col, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "basic_col"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "lights_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "lights_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$accent_col, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "accent_col"))
+#     
+#     temp13 = listaDados[[13]]
+#     dadosAtuais <- temp13[(temp13$V1 == questao),] 
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "people_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "people_right"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_left, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_active_use_left"))
+#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_right, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "prop_active_use_right"))
+#     sink()
+# }
+# 
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'agradavel?', "correlacao-agrad.dat")
+# 
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'agradavel?', "correlacao-agrad-fem.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Jovem", 'agradavel?', "correlacao-agrad-jov.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4,temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Adulto", 'agradavel?', "correlacao-agrad-adu.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Casado", 'agradavel?', "correlacao-agrad-cas.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Solteiro", 'agradavel?', "correlacao-agrad-sol.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'agradavel?', "correlacao-agrad-bai.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4,temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'agradavel?', "correlacao-agrad-med.dat")
+# 
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'seguro?', "correlacao-seg.dat")
+# 
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'seguro?', "correlacao-seg-masc.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'seguro?', "correlacao-seg-fem.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Jovem", 'seguro?', "correlacao-seg-jov.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Adulto", 'seguro?', "correlacao-seg-adu.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Casado", 'seguro?', "correlacao-seg-cas.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Solteiro", 'seguro?', "correlacao-seg-sol.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'seguro?', "correlacao-seg-bai.dat")
+# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
+# 
+# #Resumo por bairros
+# temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+# neigs1 <- unlist(lapply(temp1, '[[', 1))
+# novosDados$bairro <- neigs1
+# 
+# colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
+# allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+# 
+# #Centro
+# centro <- filter(allData, bairro == "centro")
+# sink("centro-summary.dat")
+# mean(centro$street_wid, na.rm = TRUE)
+# mean(centro$sidewalk_wid_left, na.rm = TRUE)
+# mean(centro$sidewalk_wid_right, na.rm = TRUE)
+# mean(centro$public_art, na.rm = TRUE)
+# mean(centro$mov_cars, na.rm = TRUE)
+# mean(centro$park_cars_left, na.rm = TRUE)
+# mean(centro$park_cars_right, na.rm = TRUE)
+# mean(centro$mov_ciclyst, na.rm = TRUE)
+# mean(centro$debris_left, na.rm = TRUE)
+# mean(centro$debris_right, na.rm = TRUE)
+# mean(centro$pavement_left, na.rm = TRUE)
+# mean(centro$pavement_right, na.rm = TRUE)
+# mean(centro$landscape_left, na.rm = TRUE)
+# mean(centro$landscape_right, na.rm = TRUE)
+# mean(centro$courtyards, na.rm = TRUE)
+# mean(centro$major_landsc, na.rm = TRUE)
+# mean(centro$build_ident, na.rm = TRUE)
+# mean(centro$build_nrectan, na.rm = TRUE)
+# mean(centro$prop_street_wall_left, na.rm = TRUE)
+# mean(centro$prop_street_wall_right, na.rm = TRUE)
+# mean(centro$prop_wind_left, na.rm = TRUE)
+# mean(centro$prop_wind_right, na.rm = TRUE)
+# mean(centro$long_sight, na.rm = TRUE)
+# mean(centro$prop_sky_ahead, na.rm = TRUE)
+# mean(centro$prop_sky_across_left, na.rm = TRUE)
+# mean(centro$prop_sky_across_right, na.rm = TRUE)
+# mean(centro$trees_left, na.rm = TRUE)
+# mean(centro$trees_right, na.rm = TRUE)
+# mean(centro$small_planters_left, na.rm = TRUE)
+# mean(centro$small_planters_right, na.rm = TRUE)
+# mean(centro$build_height_left, na.rm = TRUE)
+# mean(centro$build_height_right, na.rm = TRUE)
+# mean(centro$diff_build, na.rm = TRUE)
+# mean(centro$prop_hist_build, na.rm = TRUE)
+# mean(centro$outdoor_table_left, na.rm = TRUE)
+# mean(centro$outdoor_table_right, na.rm = TRUE)
+# mean(centro$street_furnit_left, na.rm = TRUE)
+# mean(centro$street_furnit_right, na.rm = TRUE)
+# mean(centro$basic_col, na.rm = TRUE)
+# mean(centro$lights_left, na.rm = TRUE)
+# mean(centro$lights_right, na.rm = TRUE)
+# mean(centro$accent_col, na.rm = TRUE)
+# mean(centro$people_left, na.rm = TRUE)
+# mean(centro$people_right, na.rm = TRUE)
+# mean(centro$prop_active_use_left, na.rm = TRUE)
+# mean(centro$prop_active_use_right, na.rm = TRUE)
+# sink()
+# 
+# #Catole
+# catole <- filter(allData, bairro == "catole")
+# sink("catole-summary.dat")
+# mean(catole$street_wid, na.rm = TRUE)
+# mean(catole$sidewalk_wid_left, na.rm = TRUE)
+# mean(catole$sidewalk_wid_right, na.rm = TRUE)
+# mean(catole$public_art, na.rm = TRUE)
+# mean(catole$mov_cars, na.rm = TRUE)
+# mean(catole$park_cars_left, na.rm = TRUE)
+# mean(catole$park_cars_right, na.rm = TRUE)
+# mean(catole$mov_ciclyst, na.rm = TRUE)
+# mean(catole$debris_left, na.rm = TRUE)
+# mean(catole$debris_right, na.rm = TRUE)
+# mean(catole$pavement_left, na.rm = TRUE)
+# mean(catole$pavement_right, na.rm = TRUE)
+# mean(catole$landscape_left, na.rm = TRUE)
+# mean(catole$landscape_right, na.rm = TRUE)
+# mean(catole$courtyards, na.rm = TRUE)
+# mean(catole$major_landsc, na.rm = TRUE)
+# mean(catole$build_ident, na.rm = TRUE)
+# mean(catole$build_nrectan, na.rm = TRUE)
+# mean(catole$prop_street_wall_left, na.rm = TRUE)
+# mean(catole$prop_street_wall_right, na.rm = TRUE)
+# mean(catole$prop_wind_left, na.rm = TRUE)
+# mean(catole$prop_wind_right, na.rm = TRUE)
+# mean(catole$long_sight, na.rm = TRUE)
+# mean(catole$prop_sky_ahead, na.rm = TRUE)
+# mean(catole$prop_sky_across_left, na.rm = TRUE)
+# mean(catole$prop_sky_across_right, na.rm = TRUE)
+# mean(catole$trees_left, na.rm = TRUE)
+# mean(catole$trees_right, na.rm = TRUE)
+# mean(catole$small_planters_left, na.rm = TRUE)
+# mean(catole$small_planters_right, na.rm = TRUE)
+# mean(catole$build_height_left, na.rm = TRUE)
+# mean(catole$build_height_right, na.rm = TRUE)
+# mean(catole$diff_build, na.rm = TRUE)
+# mean(catole$prop_hist_build, na.rm = TRUE)
+# mean(catole$outdoor_table_left, na.rm = TRUE)
+# mean(catole$outdoor_table_right, na.rm = TRUE)
+# mean(catole$street_furnit_left, na.rm = TRUE)
+# mean(catole$street_furnit_right, na.rm = TRUE)
+# mean(catole$basic_col, na.rm = TRUE)
+# mean(catole$lights_left, na.rm = TRUE)
+# mean(catole$lights_right, na.rm = TRUE)
+# mean(catole$accent_col, na.rm = TRUE)
+# mean(catole$people_left, na.rm = TRUE)
+# mean(catole$people_right, na.rm = TRUE)
+# mean(catole$prop_active_use_left, na.rm = TRUE)
+# mean(catole$prop_active_use_right, na.rm = TRUE)
+# sink()
+# 
+# #Liberdade
+# liberdade <- filter(allData, bairro == "liberdade")
+# sink("liberdade-summary.dat")
+# mean(liberdade$street_wid, na.rm = TRUE)
+# mean(liberdade$sidewalk_wid_left, na.rm = TRUE)
+# mean(liberdade$sidewalk_wid_right, na.rm = TRUE)
+# mean(liberdade$public_art, na.rm = TRUE)
+# mean(liberdade$mov_cars, na.rm = TRUE)
+# mean(liberdade$park_cars_left, na.rm = TRUE)
+# mean(liberdade$park_cars_right, na.rm = TRUE)
+# mean(liberdade$mov_ciclyst, na.rm = TRUE)
+# mean(liberdade$debris_left, na.rm = TRUE)
+# mean(liberdade$debris_right, na.rm = TRUE)
+# mean(liberdade$pavement_left, na.rm = TRUE)
+# mean(liberdade$pavement_right, na.rm = TRUE)
+# mean(liberdade$landscape_left, na.rm = TRUE)
+# mean(liberdade$landscape_right, na.rm = TRUE)
+# mean(liberdade$courtyards, na.rm = TRUE)
+# mean(liberdade$major_landsc, na.rm = TRUE)
+# mean(liberdade$build_ident, na.rm = TRUE)
+# mean(liberdade$build_nrectan, na.rm = TRUE)
+# mean(liberdade$prop_street_wall_left, na.rm = TRUE)
+# mean(liberdade$prop_street_wall_right, na.rm = TRUE)
+# mean(liberdade$prop_wind_left, na.rm = TRUE)
+# mean(liberdade$prop_wind_right, na.rm = TRUE)
+# mean(liberdade$long_sight, na.rm = TRUE)
+# mean(liberdade$prop_sky_ahead, na.rm = TRUE)
+# mean(liberdade$prop_sky_across_left, na.rm = TRUE)
+# mean(liberdade$prop_sky_across_right, na.rm = TRUE)
+# mean(liberdade$trees_left, na.rm = TRUE)
+# mean(liberdade$trees_right, na.rm = TRUE)
+# mean(liberdade$small_planters_left, na.rm = TRUE)
+# mean(liberdade$small_planters_right, na.rm = TRUE)
+# mean(liberdade$build_height_left, na.rm = TRUE)
+# mean(liberdade$build_height_right, na.rm = TRUE)
+# mean(liberdade$diff_build, na.rm = TRUE)
+# mean(liberdade$prop_hist_build, na.rm = TRUE)
+# mean(liberdade$outdoor_table_left, na.rm = TRUE)
+# mean(liberdade$outdoor_table_right, na.rm = TRUE)
+# mean(liberdade$street_furnit_left, na.rm = TRUE)
+# mean(liberdade$street_furnit_right, na.rm = TRUE)
+# mean(liberdade$basic_col, na.rm = TRUE)
+# mean(liberdade$lights_left, na.rm = TRUE)
+# mean(liberdade$lights_right, na.rm = TRUE)
+# mean(liberdade$accent_col, na.rm = TRUE)
+# mean(liberdade$people_left, na.rm = TRUE)
+# mean(liberdade$people_right, na.rm = TRUE)
+# mean(liberdade$prop_active_use_left, na.rm = TRUE)
+# mean(liberdade$prop_active_use_right, na.rm = TRUE)
+# resink()
+# 
+# #Confidence interval?
+# t.test(centro$people_left, na.action = na.rm )$conf.int
 
 #Regressao
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
@@ -844,587 +878,612 @@ temp <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
 temp <- merge(temp, groupedData12, by.x="image_url", by.y="image_url")
 temp <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
 
-agrad <- filter(temp, V1 == "agradavel?")
+temp$area[temp$bairro == "centro"] <- "norte"
+temp$area[temp$bairro == "liberdade"] <- "oeste"
+temp$area[temp$bairro == "catole"] <- "oeste"
+
+agrad <- filter(temp, V1 == "agrad%C3%A1vel?")
 seg <- filter(temp, V1 == "seguro?")
+
+#Evaluates presence and coefficients for each picture
+calcDanieleCoeff <- function (data) {
+    data$diff <- data$rank - data$index
+    
+    data$streetW <- (data$street_wid * abs(data$diff)) / min(data$street_wid)
+    data$sidewalW <- (data$sidewalk_wid * abs(data$diff)) / min(data$sidewalk_wid)
+    data$buildHei <- (data$build_height * abs(data$diff)) / 1
+    
+    data$movCars <- (data$mov_cars * abs(data$diff)) / sum(data$mov_cars)
+    data$parkCars <- (data$park_cars * abs(data$diff)) / sum(data$park_cars)
+    data$movCicly <- (data$mov_ciclyst * abs(data$diff)) / sum(data$mov_ciclyst)
+    data$buildId <- (data$build_ident * abs(data$diff)) / sum(data$build_ident)
+    data$buildNRec <- (data$build_nrectan * abs(data$diff)) / sum(data$build_nrectan)
+    data$tree <- (data$trees * abs(data$diff)) / sum(data$trees)
+    data$smallPla <- (data$small_planters * abs(data$diff)) / sum(data$small_planters)
+    data$diffBuild <- (data$diff_build * abs(data$diff)) / sum(data$diff_build)
+    data$streeFur <- (data$street_furnit * abs(data$diff)) / sum(data$street_furnit)
+    data$basCol <- (data$basic_col * abs(data$diff)) / sum(data$basic_col)
+    data$ligh <- (data$lights * abs(data$diff)) / sum(data$lights)
+    data$accenCol <- (data$accent_col * abs(data$diff)) / sum(data$accent_col)
+    data$peop <- (data$people * abs(data$diff)) / sum(data$people)
+    
+    data$deb <- (data$debris * abs(data$diff)) / 1
+    data$pav <- (data$pavement * abs(data$diff)) / 1
+    data$land <- (data$landscape * abs(data$diff)) / 1
+    
+    data$propStreetWall <- (data$prop_street_wall * abs(data$diff)) #/ mean(data$prop_street_wall)
+    data$propWind <- (data$prop_wind * abs(data$diff))  #/ mean(data$prop_wind)
+    data$propSkyAhe <- (data$prop_sky_ahead * abs(data$diff)) #/ mean(data$prop_sky_ahead)
+    data$propSkyAc <- (data$prop_sky_across * abs(data$diff)) #/ mean(data$prop_sky_across)
+    data$propActiv <- (data$prop_active_use * abs(data$diff)) #/ mean(data$prop_active_use)
+    
+    data$graffiti <- as.character(data$graffiti)
+    data$graffiti[data$graffiti == "No"] <- 0
+    data$graffiti[data$graffiti == "Yes"] <- 1
+    data$graff <- (abs(data$diff)) / sum(as.integer(data$graffiti))
+    data$build_diff_ages <- as.character(data$build_diff_ages)
+    data$build_diff_ages[data$build_diff_ages == "No"] <- 0
+    data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
+    data$buildDiffAges <- (abs(data$diff)) / sum(as.integer(data$build_diff_ages))
+
+    return (data)
+}
+
+randomizeCoeff <- function (data) {
+    data$diff <- data$rank - data$index
+    differences <- sample(data$diff)
+    
+    data$streetW <- (data$street_wid * abs(differences[26])) / min(data$street_wid)
+    data$sidewalW <- (data$sidewalk_wid * abs(differences[1])) / min(data$sidewalk_wid)
+    data$buildHei <- (data$build_height * abs(differences[17])) / 1
+    
+    data$movCars <- (data$mov_cars * abs(differences[2])) / sum(data$mov_cars)
+    data$parkCars <- (data$park_cars * abs(differences[3])) / sum(data$park_cars)
+    data$movCicly <- (data$mov_ciclyst * abs(differences[4])) / sum(data$mov_ciclyst)
+    data$buildId <- (data$build_ident * abs(differences[8])) / sum(data$build_ident)
+    data$buildNRec <- (data$build_nrectan * abs(differences[9])) / sum(data$build_nrectan)
+    data$tree <- (data$trees * abs(differences[15])) / sum(data$trees)
+    data$smallPla <- (data$small_planters * abs(differences[16])) / sum(data$small_planters)
+    data$diffBuild <- (data$diff_build * abs(differences[19])) / sum(data$diff_build)
+    data$streeFur <- (data$street_furnit * abs(differences[20])) / sum(data$street_furnit)
+    data$basCol <- (data$basic_col * abs(differences[21])) / sum(data$basic_col)
+    data$ligh <- (data$lights * abs(differences[22])) / sum(data$lights)
+    data$accenCol <- (data$accent_col * abs(differences[23])) / sum(data$accent_col)
+    data$peop <- (data$people * abs(differences[24])) / sum(data$people)
+    
+    data$deb <- (data$debris * abs(differences[5])) / 1
+    data$pav <- (data$pavement * abs(differences[6])) / 1
+    data$land <- (data$landscape * abs(differences[7])) / 1
+    
+    data$propStreetWall <- (data$prop_street_wall * abs(differences[10])) #/ mean(data$prop_street_wall)
+    data$propWind <- (data$prop_wind * abs(differences[11])) #/ mean(data$prop_wind)
+    data$propSkyAhe <- (data$prop_sky_ahead * abs(differences[12])) #/ mean(data$prop_sky_ahead)
+    data$propSkyAc <- (data$prop_sky_across * abs(differences[13])) #/ mean(data$prop_sky_across)
+    data$propActiv <- (data$prop_active_use * abs(differences[25])) #/ mean(data$prop_active_use)
+    
+    data$graffiti <- as.character(data$graffiti)
+    data$graffiti[data$graffiti == "No"] <- 0
+    data$graffiti[data$graffiti == "Yes"] <- 1
+    data$graff <- (abs(differences[14])) / sum(as.integer(data$graffiti))
+    data$build_diff_ages <- as.character(data$build_diff_ages)
+    data$build_diff_ages[data$build_diff_ages == "No"] <- 0
+    data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
+    data$buildDiffAges <- (abs(differences[18])) / sum(as.integer(data$build_diff_ages))
+
+    return (data)
+}
+
 
 
 #Avaliando correlação das caracteristicas urbanas
-novo <- select(temp, street_wid, sidewalk_wid,public_art,mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
-
-correlacao <- cor(x = novo)
-library(lattice)
-rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
-levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
+# novo <- select(temp, street_wid, sidewalk_wid,public_art,mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
+# 
+# correlacao <- cor(x = novo)
+# library(lattice)
+# rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+# levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
 
 #Geral
-library(leaps)
-
-regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# library(leaps)
+# 
+# regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 
 #regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$street_wid + agrad$sidewalk_wid + agrad$public_art + agrad$mov_cars + agrad$park_cars + agrad$mov_ciclyst + agrad$debris + agrad$pavement + agrad$landscape + agrad$courtyards + agrad$major_landsc + agrad$build_ident + agrad$build_nrectan + agrad$prop_street_wall + agrad$prop_wind + agrad$long_sight + agrad$prop_sky_ahead + agrad$prop_sky_across + agrad$trees + agrad$small_planters + agrad$build_height + agrad$diff_build + agrad$prop_hist_build + agrad$outdoor_table + agrad$street_furnit + agrad$basic_col + agrad$lights + agrad$accent_col + agrad$people + agrad$prop_active_use, na.action = na.exclude)
-regGeralAgrad <- lm(V3.Geral ~ street_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + small_planters + build_height + prop_hist_build + street_furnit + basic_col + accent_col + people, na.action = na.exclude, data = agrad)
-texreg(regGeralAgrad)
-summary(regGeralAgrad)
+# regGeralAgrad <- lm(V3.Geral ~ street_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + small_planters + build_height + prop_hist_build + street_furnit + basic_col + accent_col + people, na.action = na.exclude, data = agrad)
+# texreg(regGeralAgrad)
+# summary(regGeralAgrad)
 
 #Homem x Mulher
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
-regsubsetsAgrad.out <<- regsubsets(V3.Masculino - V3.Feminino ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2", )
+agrad.l <- calcDanieleCoeff(agrad.l)
+```
 
-print("##### Diferenca ranking Homem x Mulher - Pleasantness")
-#regGeralAgrad <- lm(agrad.l$V3.Masculino - agrad.l$V3.Feminino ~ agrad.l$sidewalk_wid + agrad.l$mov_cars + agrad.l$pavement + agrad.l$landscape + agrad.l$courtyards + agrad.l$build_nrectan + agrad.l$prop_street_wall + agrad.l$graffiti + agrad.l$build_height + agrad.l$street_furnit + agrad.l$basic_col + agrad.l$accent_col + agrad.l$people + agrad.l$prop_active_use, na.action = na.exclude)
-regGeralAgrad <- lm(rank - index ~ street_wid + sidewalk_wid + mov_cars + landscape + courtyards + build_nrectan + prop_sky_across + graffiti + build_height + accent_col + prop_active_use, na.action = na.exclude, data = agrad.l)
-texreg(regGeralAgrad)
-summary(regGeralAgrad)
+## Men x Women - Pleasantness
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+# T test?
+
+iterations <- 20
+
+simulateCoefShuffle <- function(agrad.l, iterations){
+
+  cmov <- cpark <- ccic <- cbuiid <- cbuiNR <- ctree <- csmalP <- cdiffB <- cfur <- cbcol <- clig <- cacol <- cgraf <- cdiffA <- cdeb <- cpav <- clan <- cwall <- cwind <- cskyA <- cskyAc <- cstreet <- cside <- cbuiH <- 0
+  
+  for (i in seq(1, iterations)){
+  
+      agrad.l2 <- randomizeCoeff(agrad.l)
+      
+      res <- wilcox.test(agrad.l$movCars, agrad.l2$movCars, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cmov = cmov + 1
+      }
+      res <- wilcox.test(agrad.l$parkCars, agrad.l2$parkCars, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cpark = cpark + 1
+      }
+      res <- wilcox.test(agrad.l$movCicly, agrad.l2$movCicly, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         ccic = ccic + 1
+      }
+      res <- wilcox.test(agrad.l$buildId, agrad.l2$buildId, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cbuiid = cbuiid + 1
+      }
+      res <- wilcox.test(agrad.l$buildNRec, agrad.l2$buildNRec, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cbuiNR = cbuiNR + 1
+      }
+      res <- wilcox.test(agrad.l$tree, agrad.l2$tree, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         ctree = ctree + 1
+      }
+      res <- wilcox.test(agrad.l$smallPla, agrad.l2$smallPla, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         csmalP = csmalP + 1
+      }
+      res <- wilcox.test(agrad.l$diffBuild, agrad.l2$diffBuild, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cdiffB = cdiffB + 1
+      }
+      res <- wilcox.test(agrad.l$streeFur, agrad.l2$streeFur, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cfur = cfur + 1
+      }
+      res <- wilcox.test(agrad.l$basCol, agrad.l2$basCol, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cbcol = cbcol + 1
+      }
+      res <- wilcox.test(agrad.l$ligh, agrad.l2$ligh, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         clig = clig + 1
+      }
+      res <- wilcox.test(agrad.l$accenCol, agrad.l2$accenCol, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cacol = cacol + 1
+      }
+      
+      res <- wilcox.test(agrad.l$graff, agrad.l2$graff, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cgraf = cgraf + 1
+      }
+      res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$buildDiffAges, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cdiffA = cdiffA + 1
+      }
+      
+      res <- wilcox.test(agrad.l$deb, agrad.l2$deb, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cdeb = cdeb + 1
+      }
+      res <- wilcox.test(agrad.l$pav, agrad.l2$pav, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cpav = cpav + 1
+      }
+      res <- wilcox.test(agrad.l$land, agrad.l2$land, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         clan = clan + 1
+      }
+      
+      res <- wilcox.test(agrad.l$propStreetWall, agrad.l2$propStreetWall, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cwall = cwall + 1
+      }
+      res <- wilcox.test(agrad.l$propWind, agrad.l2$propWind, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cwind = cwind + 1
+      }
+      res <- wilcox.test(agrad.l$propSkyAhe, agrad.l2$propSkyAhe, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cskyA = cskyA + 1
+      }
+      res <- wilcox.test(agrad.l$propSkyAc, agrad.l2$propSkyAc, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cskyAc = cskyAc + 1
+      }
+      
+      res <- wilcox.test(agrad.l$streetW, agrad.l2$streetW, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cstreet = cstreet + 1
+      }
+      res <- wilcox.test(agrad.l$sidewalW, agrad.l2$sidewalW, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cside = cside + 1
+      }
+      res <- wilcox.test(agrad.l$buildHei, agrad.l2$buildHei, na.action = na.exclude, conf.int = TRUE)
+      if(res$p.value <= 0.05){
+         cbuiH = cbuiH + 1
+      }
+  }
+  
+  print(paste("Percent of p-values < 0.05 - mov cars", cmov / iterations))
+  print(paste("Percent of p-values < 0.05 - park cars", cpark / iterations))
+  print(paste("Percent of p-values < 0.05 - cyclists", ccic / iterations))
+  print(paste("Percent of p-values < 0.05 - build ident", cbuiid / iterations))
+  print(paste("Percent of p-values < 0.05 - build n rect", cbuiNR / iterations))
+  print(paste("Percent of p-values < 0.05 - trees", ctree / iterations))
+  print(paste("Percent of p-values < 0.05 - small planters", csmalP / iterations))
+  print(paste("Percent of p-values < 0.05 - diff buildings", cdiffB / iterations))
+  print(paste("Percent of p-values < 0.05 - furniture", cfur / iterations))
+  print(paste("Percent of p-values < 0.05 - bas col", cbcol / iterations))
+  print(paste("Percent of p-values < 0.05 - acce col", cacol / iterations))
+  print(paste("Percent of p-values < 0.05 - lig", clig / iterations))
+  print(paste("Percent of p-values < 0.05 - graffiti", cgraf / iterations))
+  print(paste("Percent of p-values < 0.05 - build diff ages", cdiffA / iterations))
+  print(paste("Percent of p-values < 0.05 - debris", cdeb / iterations))
+  print(paste("Percent of p-values < 0.05 - landscape", clan / iterations))
+  print(paste("Percent of p-values < 0.05 - pavement", cpav / iterations))
+  print(paste("Percent of p-values < 0.05 - prop street wall", cwall / iterations))
+  print(paste("Percent of p-values < 0.05 - window", cwind / iterations))
+  print(paste("Percent of p-values < 0.05 - prop sky ahead", cskyA / iterations))
+  print(paste("Percent of p-values < 0.05 - prop sky across", cskyAc / iterations))
+  print(paste("Percent of p-values < 0.05 - street width", cstreet / iterations))
+  print(paste("Percent of p-values < 0.05 - sidewalk width", cside / iterations))
+  print(paste("Percent of p-values < 0.05 - building height", cbuiH / iterations))
+
+}
+
+simulateCoefShuffle(agrad.l,iterations)
+
+library(knitr)
+novo <- select(agrad.l, image_url, area, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+novo$url <- sprintf('![](https://contribua.org/bairros/%s/%s)', novo$area, novo$image_url)
+kable(novo)
+
+#regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+#plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2", )
+
+#print("##### Diferenca ranking Homem x Mulher - Pleasantness")
+#regGeralAgrad <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# library(ggplot2)
+# plot(data = agrad.l, x = agrad.l$V3.Feminino, y = agrad.l$V3.Masculino)
+# ggplot(agrad.l, aes(y=V3.Feminino, x=V3.Masculino, colour=bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("Women")+ylab("Men")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+# 
+# #Imagens com maiores differencas no QScore
+# agrad.l$diff2 <- agrad.l$V3.Masculino - agrad.l$V3.Feminino
+# agrad2 <- arrange(agrad.l, -abs(diff2))
+# head(select(agrad2, diff2, image_url, V3.Masculino, V3.Feminino), n=5)
+# agrad2 <- arrange(agrad.l, -abs(diff))
+# head(select(agrad2, diff, rank, index, image_url, V3.Masculino, V3.Feminino), n=5)
+# 
+# 
+# regGeralAgrad <- lm(diff ~ street_wid + landscape + build_nrectan + long_sight + trees + small_planters + build_height + build_diff_ages + diff_build +  accent_col, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad)
+# 
+# regGeralAgrad <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad)
+
+```
+
+## Young x Adult - Pleasantness
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Jovem x Adulto
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
-agrad.l$diff <- agrad.l$rank - agrad.l$index
+agrad.l <- calcDanieleCoeff(agrad.l)
+simulateCoefShuffle(agrad.l,iterations)
 
-regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
 
-print("##### Diferenca ranking Jovem x Adulto - Pleasantness")
-#regGeralAgrad <- lm(agrad.l$V3.Jovem - agrad.l$V3.Adulto ~ agrad.l$street_wid + agrad.l$sidewalk_wid + agrad.l$public_art +  agrad.l$park_cars + agrad.l$mov_ciclyst + agrad.l$debris + agrad.l$landscape + agrad.l$major_landsc + agrad.l$build_ident + agrad.l$build_nrectan + agrad.l$prop_street_wall + agrad.l$prop_wind + agrad.l$prop_sky_ahead + agrad.l$prop_sky_across + agrad.l$trees + agrad.l$build_height + agrad.l$diff_build + agrad.l$prop_hist_build +   agrad.l$lights + agrad.l$accent_col + agrad.l$people, na.action = na.exclude)
-regGeralAgrad <- lm(diff ~ park_cars + landscape + build_ident + build_nrectan + long_sight + prop_sky_across + graffiti + diff_build + basic_col, na.action = na.exclude, data = agrad.l)
-texreg(regGeralAgrad)
-summary(regGeralAgrad)
+# regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsAgrad.out <<- regsubsets(V3.Jovem ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# #Random rows for cross-validating
+# subSample <- sample_n(agrad.l, 0.8 * nrow(agrad.l))
+# left <- anti_join(agrad.l, subSample)
+# regsubsetsAgrad.out <<- regsubsets(V3.Adulto ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = subSample, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsAgrad.out <<- regsubsets(V3.Adulto ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking Jovem x Adulto - Pleasantness")
+# regGeralAgrad <- lm(diff ~ sidewalk_wid + mov_cars + mov_ciclyst + pavement + courtyards + build_ident + prop_street_wall + prop_sky_across + build_height + build_diff_ages + outdoor_table + basic_col + accent_col, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad)
+# 
+# #QScores
+# regGeralAgrad <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+# regGeralAgrad <- lm(V3.Jovem ~ street_wid + debris + landscape + build_ident + prop_sky_across + graffiti + trees + basic_col, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# regGeralAgrad <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+# regGeralAgrad <- lm(V3.Adulto ~ street_wid + mov_cars + debris + landscape + prop_wind + prop_sky_across + graffiti + trees + diff_build + lights + accent_col, na.action = na.exclude, data = agrad.l)
+# 
+# #Cross-validating
+# regGeralAgrad <- lm(V3.Adulto ~ street_wid + mov_cars + debris + landscape + prop_wind + prop_sky_across + graffiti + trees + diff_build + lights + accent_col, na.action = na.exclude, data = agrad.l)
+# regGeralAgrad <- lm(V3.Adulto ~ sidewalk_wid + mov_cars + debris + landscape + build_ident + build_nrectan + prop_wind + prop_sky_across + trees + build_diff_ages + lights + accent_col, na.action = na.exclude, data = subSample)
+# regGeralAgrad <- lm(V3.Adulto ~ sidewalk_wid + mov_cars + debris + landscape + prop_wind + graffiti + trees + street_furnit + + accent_col, na.action = na.exclude, data = left)
+# 
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+
+```
+
+## Married x Single - Pleasantness
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Casado x Solteiro
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 
-agrad.l$diff <- agrad.l$rank - agrad.l$index
+agrad.l <- calcDanieleCoeff(agrad.l)
+simulateCoefShuffle(agrad.l,iterations)
 
-regsubsetsAgrad.out <<- regsubsets( diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti +  trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+# regsubsetsAgrad.out <<- regsubsets( diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti +  trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking Casado x Solteiro - Pleasantness")
+# 
+# #Imagens com maiores diferencas
+# agrad.l$diff2 <- agrad.l$V3.Casado - agrad.l$V3.Solteiro
+# agrad2 <- arrange(agrad.l, -abs(diff2))
+# head(select(agrad2, diff2, image_url, V3.Casado, V3.Solteiro), n=5)
+# agrad2 <- arrange(agrad.l, -abs(diff))
+# head(select(agrad2, diff, rank, index, image_url, V3.Casado, V3.Solteiro), n=5)
+# 
+# regGeralAgrad <- lm(diff ~ street_wid + mov_cars + build_ident + build_nrectan + prop_wind + long_sight + prop_sky_ahead + graffiti + trees + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad)
 
-print("##### Diferenca ranking Casado x Solteiro - Pleasantness")
-#regGeralAgrad <- lm(agrad.l$V3.Casado - agrad.l$V3.Solteiro ~ agrad.l$street_wid + agrad.l$sidewalk_wid + agrad.l$park_cars + agrad.l$mov_ciclyst + agrad.l$pavement + agrad.l$courtyards + agrad.l$build_ident + agrad.l$build_nrectan + agrad.l$prop_street_wall + agrad.l$prop_sky_ahead + agrad.l$prop_sky_across + agrad.l$graffiti + agrad.l$build_height + agrad.l$build_diff_ages + agrad.l$diff_build + agrad.l$street_furnit  + agrad.l$basic_col + agrad.l$lights + agrad.l$people, na.action = na.exclude)
-regGeralAgrad <- lm(diff ~ street_wid + park_cars + landscape + build_ident + build_nrectan + prop_street_wall + long_sight + prop_sky_ahead + graffiti + build_height + build_diff_ages + diff_build + street_furnit  + basic_col + lights + people, na.action = na.exclude, data = agrad.l)
-texreg(regGeralAgrad)
-summary(regGeralAgrad)
+```
+
+## Low x High income - Pleasantness
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Baixa renda x Media renda
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 
-agrad.l$diff <- agrad.l$rank - agrad.l$index
+#Danieles coefficients
+agrad.l <- calcDanieleCoeff(agrad.l)
+simulateCoefShuffle(agrad.l,iterations)
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
 
-regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
-
-print("##### Diferenca ranking baixa x media - Pleasantness")
-#regGeralAgrad <- lm(agrad.l$V3.Baixa - agrad.l$V3.Media ~ agrad.l$mov_ciclyst + agrad.l$build_ident + agrad.l$build_nrectan + agrad.l$prop_street_wall + agrad.l$prop_wind + agrad.l$long_sight + agrad.l$prop_sky_ahead + agrad.l$small_planters + agrad.l$build_diff_ages + agrad.l$diff_build  + agrad.l$outdoor_table + agrad.l$accent_col + agrad.l$people, na.action = na.exclude)
-regGeralAgrad <- lm(diff ~ park_cars + mov_ciclyst + debris + pavement + landscape + build_nrectan + long_sight + prop_sky_ahead + prop_sky_across + build_diff_ages + diff_build + outdoor_table + accent_col + people, na.action = na.exclude, data = agrad.l)
-texreg(regGeralAgrad)
-summary(regGeralAgrad)
+#Subset da diferenca dos rankings x features
+# regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# #Subset dos QScores x features
+# regsubsetsAgrad.out <<- regsubsets(V3.Baixa ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsAgrad.out <<- regsubsets(V3.Media ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking baixa x media - Pleasantness")
+# regGeralAgrad <- lm(diff ~ mov_ciclyst + build_nrectan + build_height + build_diff_ages +  street_furnit + people, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# print("##### QScores - Pleasantness")
+# regGeralAgrad <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# regGeralAgrad <- lm(V3.Baixa ~ debris + landscape + build_ident + build_nrectan + prop_sky_across + graffiti + trees + small_planters + lights + accent_col, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# regGeralAgrad <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+# regGeralAgrad <- lm(V3.Media ~ street_wid + mov_cars + mov_ciclyst + debris + landscape + prop_sky_across + graffiti + trees + lights + accent_col, na.action = na.exclude, data = agrad.l)
+# summary(regGeralAgrad)
+# texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
+  
 
 #Geral Seguranca
-regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regGeralSeg <- lm(seg$V3.Geral ~ seg$street_wid + seg$public_art + seg$mov_cars + seg$park_cars + seg$mov_ciclyst + seg$debris + seg$pavement + seg$landscape + seg$courtyards + seg$major_landsc + seg$prop_street_wall + seg$prop_wind + seg$long_sight + seg$prop_sky_ahead + seg$prop_sky_across + seg$graffiti + seg$small_planters + seg$build_height + seg$prop_hist_build + seg$street_furnit + seg$basic_col + seg$accent_col + seg$people, na.action = na.exclude)
+# summary(regGeralSeg)
 
-regGeralSeg <- lm(seg$V3.Geral ~ seg$street_wid + seg$public_art + seg$mov_cars + seg$park_cars + seg$mov_ciclyst + seg$debris + seg$pavement + seg$landscape + seg$courtyards + seg$major_landsc + seg$prop_street_wall + seg$prop_wind + seg$long_sight + seg$prop_sky_ahead + seg$prop_sky_across + seg$graffiti + seg$small_planters + seg$build_height + seg$prop_hist_build + seg$street_furnit + seg$basic_col + seg$accent_col + seg$people, na.action = na.exclude)
-summary(regGeralSeg)
+```
+
+## Men x Women - Safety
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Homem x Mulher
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
-seg.l$diff <- seg.l$rank - seg.l$index
+seg.l <- calcDanieleCoeff(seg.l)
+simulateCoefShuffle(seg.l,iterations)
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
 
-regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
+# regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = 20, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Masculino ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = 20, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Feminino ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = 20, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
+# 
+# print("##### Diferenca ranking Homem x Mulher - Safety")
+# #regGeralSeg <- lm(diff ~  park_cars + pavement + landscape + courtyards + build_ident + build_nrectan + prop_sky_ahead + small_planters + prop_hist_build + basic_col + people + prop_active_use, data = seg.l)
+# regGeralSeg <- lm(diff ~  pavement + landscape + build_ident + build_nrectan + prop_sky_ahead + graffiti + trees + small_planters + diff_build + prop_hist_build + basic_col + people , data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg)
+# regGeralSeg <- lm(diff ~  street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use , data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg)
+# 
+# #Imagens com maiores differencas no QScore
+# seg.l$diff2 <- seg.l$V3.Masculino - seg.l$V3.Feminino
+# seg2 <- arrange(seg.l, -abs(diff2))
+# head(select(seg2, diff2, image_url, V3.Masculino, V3.Feminino), n=5)
+# seg2 <- arrange(seg.l, -abs(diff))
+# head(select(seg2, diff, rank, index, image_url, V3.Masculino, V3.Feminino), n=5)
+# 
+# seg.l$graffiti <- as.character(seg.l$graffiti)
+# seg.l$graffiti[seg.l$graffiti == "No"] <- 0
+# seg.l$graffiti[seg.l$graffiti == "Yes"] <- 1
+# 
 
-#regGeralAgrad <- lm(seg.l$V3.Masculino - seg.l$V3.Feminino ~ seg.l$street_wid + seg.l$mov_cars + seg.l$park_cars + seg.l$mov_ciclyst + seg.l$debris + seg.l$pavement + seg.l$courtyards + seg.l$major_landsc + seg.l$build_ident + seg.l$build_nrectan + seg.l$prop_street_wall + seg.l$prop_wind + seg.l$long_sight + seg.l$prop_sky_ahead + seg.l$prop_sky_across + seg.l$small_planters + seg.l$build_height + seg.l$diff_build + seg.l$prop_hist_build + seg.l$street_furnit +  seg.l$accent_col + seg.l$people, na.action = na.exclude)
-print("##### Diferenca ranking Homem x Mulher - Safety")
-regGeralSeg <- lm(diff ~ street_wid + public_art + mov_cars + park_cars + debris + courtyards + build_ident + build_nrectan + prop_street_wall + prop_wind + prop_sky_across + small_planters + build_height + build_diff_ages + prop_hist_build + accent_col + people, na.action = na.exclude, data = seg.l)
-texreg(regGeralSeg)
-summary(regGeralSeg)
+#QScores
+# regGeralSeg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(V3.Masculino ~ sidewalk_wid + mov_cars + park_cars + debris + landscape + build_ident + prop_street_wall + prop_wind + prop_sky_across + graffiti + build_height + street_furnit + basic_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# regGeralSeg <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(V3.Feminino ~ mov_cars + park_cars + debris + landscape + build_ident + prop_wind + graffiti + trees + build_diff_ages + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+```
+
+## Young x Adult - Safety
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Jovem x Adulto
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
-seg.l$diff <- seg.l$rank - seg.l$index
+seg.l <- calcDanieleCoeff(seg.l)
+simulateCoefShuffle(seg.l,iterations)
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+# regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Jovem ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Adulto ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking Jovem x Adulto - Safety")
+# #regGeralSeg <- lm(diff ~ street_wid + sidewalk_wid + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(diff ~ pavement + landscape + build_ident + build_nrectan + prop_sky_ahead + graffiti + trees + small_planters + diff_build + basic_col + people, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg)
+# 
+# #QScores x features
+# regGeralSeg <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+# regGeralSeg <- lm(V3.Jovem ~ mov_cars + park_cars + debris + landscape + build_ident + prop_street_wall + prop_wind + prop_sky_ahead + graffiti + trees + build_height + basic_col + lights + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# regGeralSeg <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+# regGeralSeg <- lm(V3.Adulto ~ street_wid + mov_cars + park_cars + mov_ciclyst + debris + landscape + build_ident + prop_street_wall + prop_wind + prop_sky_across + graffiti + trees + diff_build + lights + people, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+```
 
-print("##### Diferenca ranking Jovem x Adulto - Safety")
-#regGeralAgrad <- lm(seg.l$V3.Jovem - seg.l$V3.Adulto ~ seg.l$street_wid + seg.l$sidewalk_wid + seg.l$public_art +  seg.l$park_cars + seg.l$mov_ciclyst + seg.l$debris + seg.l$landscape + seg.l$major_landsc + seg.l$build_ident + seg.l$build_nrectan + seg.l$prop_street_wall + seg.l$prop_wind + seg.l$prop_sky_ahead + seg.l$prop_sky_across + seg.l$trees + seg.l$build_height + seg.l$diff_build + seg.l$prop_hist_build +   seg.l$lights + seg.l$accent_col + seg.l$people, na.action = na.exclude)
-regGeralSeg <- lm(diff ~ street_wid + mov_cars + debris + pavement + landscape + courtyards + major_landsc + long_sight + graffiti + build_diff_ages + diff_build + lights, na.action = na.exclude, data = seg.l)
-texreg(regGeralSeg)
-summary(regGeralSeg)
+## Married x Single - Safety
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Casado x Solteiro
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 
-seg.l$diff <- seg.l$rank - seg.l$index
+seg.l <- calcDanieleCoeff(seg.l)
+simulateCoefShuffle(seg.l,iterations)
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+# regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking Casado x Solteiro - Safety")
+# #regGeralSeg <- lm(diff ~  street_wid + sidewalk_wid + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(diff ~  street_wid + sidewalk_wid + mov_cars + landscape + build_ident + prop_street_wall + prop_wind + prop_sky_ahead + prop_sky_across + graffiti + diff_build + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg)
+# 
+# #Imagens com maiores differencas no QScore
+# seg.l$diff2 <- seg.l$V3.Casado - seg.l$V3.Solteiro
+# seg2 <- arrange(seg.l, -abs(diff2))
+# head(select(seg2, diff2, image_url, V3.Casado, V3.Solteiro), n=5)
+# seg2 <- arrange(seg.l, -abs(diff))
+# head(select(seg2, diff, rank, index, image_url, V3.Casado, V3.Solteiro), n=5)
 
-regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+```
 
-print("##### Diferenca ranking Casado x Solteiro - Safety")
-#regGeralSeg <- lm(seg.l$V3.Casado - seg.l$V3.Solteiro ~ seg.l$public_art + seg.l$mov_cars + seg.l$debris + seg.l$courtyards + seg.l$major_landsc + seg.l$prop_street_wall + seg.l$prop_wind + seg.l$prop_sky_across + seg.l$prop_hist_build + seg.l$basic_col + seg.l$prop_active_use, na.action = na.exclude)
-regGeralSeg <- lm(diff ~ public_art + mov_cars + landscape + courtyards + major_landsc + prop_sky_across + prop_hist_build + basic_col, na.action = na.exclude, data = seg.l)
-texreg(regGeralSeg)
-summary(regGeralSeg)
+## Low x High income - Safety
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Baixa renda x Media renda
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 
-seg.l$diff <- seg.l$rank - seg.l$index
-
-regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
-
-print("##### Diferenca ranking baixa x media - Safety")
-#regGeralSeg <- lm(seg.l$V3.Baixa - seg.l$V3.Media ~ seg.l$sidewalk_wid + seg.l$mov_cars + seg.l$park_cars + seg.l$debris + seg.l$landscape + seg.l$courtyards + seg.l$prop_street_wall + seg.l$prop_wind + seg.l$long_sight + seg.l$trees + seg.l$small_planters + seg.l$build_height + seg.l$prop_hist_build + seg.l$basic_col + seg.l$people + seg.l$prop_active_use, na.action = na.exclude)
-regGeralSeg <- lm(diff ~ park_cars + debris + landscape + build_nrectan + prop_street_wall + build_diff_ages + prop_hist_build + street_furnit + lights + accent_col + prop_active_use, na.action = na.exclude, data = seg.l)
-texreg(regGeralSeg)
-summary(regGeralSeg)
-```
-
-
-
-#Homens e Mulheres
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-library(ggplot2)
-library(gridExtra)
-library(dplyr)
-source('analisaICPorFoto.R')
-
-facet_names <- list(
-  'agrad%C3%A1vel?'="Pleasant",
-  'seguro?'="Safeness"
-)
-
-facet_labeller <- function(variable,value){
-  return(facet_names[value])
-}
-
-dados <- read.table("geral2.dat", header=TRUE)
-
-#Intervalo de confiança por ponto
-temp <- dados
-qscoreSim <- temp [ c(4:103) ]
-icData <- apply(qscoreSim, 1, ic)
-temp$distance <- icData
-
-#Subset of columns
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Copia com todos os dados
-dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
-
-#Separando homens e mulheres
-grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='agradavel?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='agradavel?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Masculino)
-sd(novosgrupo1grupo2$V3.Feminino)
-sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-hom-mul-agrad.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-agrad.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-hom-mul-data-agrad.dat", sep = "\t")
-
-#Separando homens e mulheres
-grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='seguro?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='seguro?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Masculino)
-sd(novosgrupo1grupo2$V3.Feminino)
-sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-hom-mul-seg.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-seg.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-hom-mul-data-seg.dat", sep = "\t")
-```
-
-
-#Agradavel x Seguro
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.agradavel ~ V3.seguro, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-jov-adu-agrad.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.agradavel", "V3.seguro", "residuals", "residualsPos")], file="agrad-seg.dat", sep = "\t")
-
-```
-
-
-#Jovens e Adultos
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Separando jovens e adultos
-grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='agradavel?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='agradavel?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao?
-sd(novosgrupo1grupo2$V3.Jovem)
-sd(novosgrupo1grupo2$V3.Adulto)
-sd(novosgrupo1grupo2$V3.Jovem - novosgrupo1grupo2$V3.Adulto)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-mean(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-sum( (novosgrupo1grupo2$V3.Adulto - mean(novosgrupo1grupo2$V3.Adulto))**2 )
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-jov-adu-agrad.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-agrad.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-jov-adu-data-agrad.dat", sep = "\t")
-
-#Separando jovens e adultos
-grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='seguro?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='seguro?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Jovem)
-sd(novosgrupo1grupo2$V3.Adulto)
-sd(novosgrupo1grupo2$V3.Jovem - novosgrupo1grupo2$V3.Adulto)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-jov-adu-seg.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-seg.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-jov-adu-data-seg.dat", sep = "\t")
-```
-
-#Casados e Solteiros
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Separando casados e solteiros
-grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='agradavel?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='agradavel?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-cas-sol-agrad.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Casado)
-sd(novosgrupo1grupo2$V3.Solteiro)
-sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-agrad.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-cas-sol-data-agrad.dat", sep = "\t")
-
-#Separando casados e solteiros
-grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='seguro?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='seguro?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Casado)
-sd(novosgrupo1grupo2$V3.Solteiro)
-sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-#Modelo
-#sink("reg-cas-sol-seg.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-cas-sol-data-seg.dat", sep = "\t")
-```
-
-#Baixa renda e Media renda
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Separando casados e solteiros
-grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='agradavel?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='agradavel?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Baixa)
-sd(novosgrupo1grupo2$V3.Media)
-sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-bai-med-agrad.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-agrad.dat", sep = "\t")
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Baixa", "V3.Media", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-bai-med-data-agrad.dat", sep = "\t")
-
-#Separando casados e solteiros
-grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='seguro?' ),] 
-grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='seguro?'),] 
-temp <- rbind(grupo1, grupo2)
-
-novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-#Desvio padrao
-sd(novosgrupo1grupo2$V3.Baixa)
-sd(novosgrupo1grupo2$V3.Media)
-sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
-
-
-#Regressao
-library(texreg)
-
-regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
-
-novosgrupo1grupo2$residuals <- regAgrad$residuals
-novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
-
-novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
-
-sum(novosgrupo1grupo2$residuals)
-sum(novosgrupo1grupo2$residuals**2)
-
-plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
-
-#Modelo
-#sink("reg-bai-med-seg.txt")
-texreg(regAgrad)
-summary(regAgrad)
-#sink()
-
-#Fotos, QScores e resíduos
-write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-seg.dat", sep = "\t")
-
-#Fotos, QScores e elementos urbanos
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
-allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-allData <- allData[with(allData, order(-residualsPos)), ]
-
-write.table(allData[, c("image_url", "V3.Baixa", "V3.Media", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-bai-med-data-seg.dat", sep = "\t")
+seg.l <- calcDanieleCoeff(seg.l)
+simulateCoefShuffle(seg.l,iterations)
+select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+# regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Baixa ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# regsubsetsSeg.out <<- regsubsets(V3.Media ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+# plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+# 
+# print("##### Diferenca ranking baixa x media - Safety")
+# #regGeralSeg <- lm(diff ~ street_wid + sidewalk_wid + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(diff ~ sidewalk_wid + mov_cars + park_cars + build_nrectan + prop_wind + graffiti + build_height + build_diff_ages + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg)
+# 
+# #QScores x features
+# regGeralSeg <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(V3.Baixa ~ mov_cars + park_cars + debris + landscape + build_ident + prop_street_wall + prop_wind + prop_sky_across + graffiti + trees + street_furnit + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
+# 
+# regGeralSeg <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)
+# regGeralSeg <- lm(V3.Media ~ sidewalk_wid + mov_cars + park_cars + debris + landscape + build_ident + prop_street_wall + prop_sky_across + graffiti + trees + build_height + diff_build + lights + accent_col + people, na.action = na.exclude, data = seg.l)
+# summary(regGeralSeg)
+# texreg(regGeralSeg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
 

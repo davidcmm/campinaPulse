@@ -889,91 +889,326 @@ seg <- filter(temp, V1 == "seguro?")
 calcDanieleCoeff <- function (data) {
     data$diff <- data$rank - data$index
     
-    data$streetW <- (data$street_wid * abs(data$diff)) / min(data$street_wid)
-    data$sidewalW <- (data$sidewalk_wid * abs(data$diff)) / min(data$sidewalk_wid)
-    data$buildHei <- (data$build_height * abs(data$diff)) / 1
-    
-    data$movCars <- (data$mov_cars * abs(data$diff)) / sum(data$mov_cars)
-    data$parkCars <- (data$park_cars * abs(data$diff)) / sum(data$park_cars)
-    data$movCicly <- (data$mov_ciclyst * abs(data$diff)) / sum(data$mov_ciclyst)
-    data$buildId <- (data$build_ident * abs(data$diff)) / sum(data$build_ident)
-    data$buildNRec <- (data$build_nrectan * abs(data$diff)) / sum(data$build_nrectan)
-    data$tree <- (data$trees * abs(data$diff)) / sum(data$trees)
-    data$smallPla <- (data$small_planters * abs(data$diff)) / sum(data$small_planters)
-    data$diffBuild <- (data$diff_build * abs(data$diff)) / sum(data$diff_build)
-    data$streeFur <- (data$street_furnit * abs(data$diff)) / sum(data$street_furnit)
-    data$basCol <- (data$basic_col * abs(data$diff)) / sum(data$basic_col)
-    data$ligh <- (data$lights * abs(data$diff)) / sum(data$lights)
-    data$accenCol <- (data$accent_col * abs(data$diff)) / sum(data$accent_col)
-    data$peop <- (data$people * abs(data$diff)) / sum(data$people)
-    
-    data$deb <- (data$debris * abs(data$diff)) / 1
-    data$pav <- (data$pavement * abs(data$diff)) / 1
-    data$land <- (data$landscape * abs(data$diff)) / 1
-    
-    data$propStreetWall <- (data$prop_street_wall * abs(data$diff)) #/ mean(data$prop_street_wall)
-    data$propWind <- (data$prop_wind * abs(data$diff))  #/ mean(data$prop_wind)
-    data$propSkyAhe <- (data$prop_sky_ahead * abs(data$diff)) #/ mean(data$prop_sky_ahead)
-    data$propSkyAc <- (data$prop_sky_across * abs(data$diff)) #/ mean(data$prop_sky_across)
-    data$propActiv <- (data$prop_active_use * abs(data$diff)) #/ mean(data$prop_active_use)
+    data$movCars <- (data$mov_cars * (data$diff/107)) / sum(data$mov_cars)
+    data$parkCars <- (data$park_cars * (data$diff/107)) / sum(data$park_cars)
+    data$movCicly <- (data$mov_ciclyst * (data$diff/107)) / sum(data$mov_ciclyst)
+    data$buildId <- (data$build_ident * (data$diff/107)) / sum(data$build_ident)
+    data$buildNRec <- (data$build_nrectan * (data$diff/107)) / sum(data$build_nrectan)
+    data$tree <- (data$trees * (data$diff/107)) / sum(data$trees)
+    data$smallPla <- (data$small_planters * (data$diff/107)) / sum(data$small_planters)
+    data$diffBuild <- (data$diff_build * (data$diff/107)) / sum(data$diff_build)
+    data$streeFur <- (data$street_furnit * (data$diff/107)) / sum(data$street_furnit)
+    data$basCol <- (data$basic_col * (data$diff/107)) / sum(data$basic_col)
+    data$ligh <- (data$lights * (data$diff/107)) / sum(data$lights)
+    data$accenCol <- (data$accent_col * (data$diff/107)) / sum(data$accent_col)
+    data$peop <- (data$people * (data$diff/107)) / sum(data$people)
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
     data$graffiti[data$graffiti == "Yes"] <- 1
-    data$graff <- (abs(data$diff)) / sum(as.integer(data$graffiti))
+    data$graff <- (data$diff/107 * as.integer(data$graffiti)) / sum(as.integer(data$graffiti))
     data$build_diff_ages <- as.character(data$build_diff_ages)
     data$build_diff_ages[data$build_diff_ages == "No"] <- 0
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
-    data$buildDiffAges <- (abs(data$diff)) / sum(as.integer(data$build_diff_ages))
+    data$buildDiffAges <- (data$diff/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages))
 
+    #TODO fix formulas!
+#     data$streetW <- (data$street_wid * (data$diff/107)) / min(data$street_wid)
+#     data$sidewalW <- (data$sidewalk_wid * (data$diff/107)) / min(data$sidewalk_wid)
+#     data$buildHei <- (data$build_height * (data$diff/107)) / 1
+#     
+#     data$deb <- (data$debris * (data$diff/107)) / 1
+#     data$pav <- (data$pavement * (data$diff/107)) / 1
+#     data$land <- (data$landscape * (data$diff/107)) / 1
+#     
+#     data$propStreetWall <- (data$prop_street_wall * (data$diff/107)) #/ mean(data$prop_street_wall)
+#     data$propWind <- (data$prop_wind * (data$diff/107))  #/ mean(data$prop_wind)
+#     data$propSkyAhe <- (data$prop_sky_ahead * (data$diff/107)) #/ mean(data$prop_sky_ahead)
+#     data$propSkyAc <- (data$prop_sky_across * (data$diff/107)) #/ mean(data$prop_sky_across)
+#     data$propActiv <- (data$prop_active_use * (data$diff/107)) #/ mean(data$prop_active_use)
+    
     return (data)
 }
 
-randomizeCoeff <- function (data) {
-    data$diff <- data$rank - data$index
-    differences <- sample(data$diff)
+randomizeCoeff <- function (data, iterations) {
+    movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- deb <- pav <- land <- propStreetWall <- propWind <- propSkyAhe <- propActiv <- streetW <- sidewalW <- buildHei <- c()
     
-    data$streetW <- (data$street_wid * abs(differences[26])) / min(data$street_wid)
-    data$sidewalW <- (data$sidewalk_wid * abs(differences[1])) / min(data$sidewalk_wid)
-    data$buildHei <- (data$build_height * abs(differences[17])) / 1
+    graffiti <- as.character(data$graffiti)
+    graffiti[data$graffiti == "No"] <- 0
+    graffiti[data$graffiti == "Yes"] <- 1
+    build_diff_ages <- as.character(data$build_diff_ages)
+    build_diff_ages[data$build_diff_ages == "No"] <- 0
+    build_diff_ages[data$build_diff_ages == "yes"] <- 1
     
-    data$movCars <- (data$mov_cars * abs(differences[2])) / sum(data$mov_cars)
-    data$parkCars <- (data$park_cars * abs(differences[3])) / sum(data$park_cars)
-    data$movCicly <- (data$mov_ciclyst * abs(differences[4])) / sum(data$mov_ciclyst)
-    data$buildId <- (data$build_ident * abs(differences[8])) / sum(data$build_ident)
-    data$buildNRec <- (data$build_nrectan * abs(differences[9])) / sum(data$build_nrectan)
-    data$tree <- (data$trees * abs(differences[15])) / sum(data$trees)
-    data$smallPla <- (data$small_planters * abs(differences[16])) / sum(data$small_planters)
-    data$diffBuild <- (data$diff_build * abs(differences[19])) / sum(data$diff_build)
-    data$streeFur <- (data$street_furnit * abs(differences[20])) / sum(data$street_furnit)
-    data$basCol <- (data$basic_col * abs(differences[21])) / sum(data$basic_col)
-    data$ligh <- (data$lights * abs(differences[22])) / sum(data$lights)
-    data$accenCol <- (data$accent_col * abs(differences[23])) / sum(data$accent_col)
-    data$peop <- (data$people * abs(differences[24])) / sum(data$people)
+    for (i in seq(1, iterations)){#Creating shuffled values
     
-    data$deb <- (data$debris * abs(differences[5])) / 1
-    data$pav <- (data$pavement * abs(differences[6])) / 1
-    data$land <- (data$landscape * abs(differences[7])) / 1
+        differences <- sample(data$diff)
+        
+        movCars <- cbind(movCars, (data$mov_cars * differences[2]/107) / sum(data$mov_cars))
+        parkCars <- cbind(parkCars, (data$park_cars * differences[3]/107) / sum(data$park_cars))
+        movCicly <- cbind(movCicly, (data$mov_ciclyst * differences[4]/107) / sum(data$mov_ciclyst))
+        buildId <- cbind(buildId, (data$build_ident * differences[8])/107 / sum(data$build_ident))
+        buildNRec <- cbind(buildNRec,(data$build_nrectan * differences[9]/107) / sum(data$build_nrectan))
+        tree <- cbind(tree,(data$trees * differences[15]/107) / sum(data$trees))
+        smallPla <- cbind(smallPla,(data$small_planters * differences[16]/107) / sum(data$small_planters))
+        diffBuild <- cbind(diffBuild,(data$diff_build * differences[19]/107) / sum(data$diff_build))
+        streeFur <- cbind(streeFur, (data$street_furnit * differences[20]/107) / sum(data$street_furnit))
+        basCol <- cbind(basCol, (data$basic_col * differences[21]/107) / sum(data$basic_col))
+        ligh <- cbind(ligh, (data$lights * differences[22]/107) / sum(data$lights))
+        accenCol <- cbind(accenCol, (data$accent_col * differences[23]/107) / sum(data$accent_col))
+        peop <- cbind(peop, (data$people * differences[24]/107) / sum(data$people))
+        
+        graff <- cbind(graff, (differences[14]/107 * as.integer(data$graffiti)) / sum(as.integer(data$graffiti)))
+        buildDiffAges <- cbind(buildDiffAges, (differences[18]/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages)))
+        
+#         deb[i] <- (data$debris * differences[5]/107) / 1
+#         pav[i] <- (data$pavement * differences[6]/107) / 1
+#         land[i] <- (data$landscape * differences[7]/107) / 1
+#         
+#         propStreetWall[i] <- (data$prop_street_wall * differences[10]/107) #/ mean(data$prop_street_wall)
+#         propWind[i] <- (data$prop_wind * differences[11]/107) #/ mean(data$prop_wind)
+#         propSkyAhe[i] <- (data$prop_sky_ahead * differences[12]/107) #/ mean(data$prop_sky_ahead)
+#         propSkyAc[i] <- (data$prop_sky_across * differences[13]/107) #/ mean(data$prop_sky_across)
+#         propActiv[i] <- (data$prop_active_use * differences[25]/107) #/ mean(data$prop_active_use)
+#         
+#         streetW[i] <- (data$street_wid * differences[26]/107) / min(data$street_wid)
+#         sidewalW[i] <- (data$sidewalk_wid * differences[1]/107) / min(data$sidewalk_wid)
+#         buildHei[i] <- (data$build_height * differences[17]/107) / 1
+    }    
     
-    data$propStreetWall <- (data$prop_street_wall * abs(differences[10])) #/ mean(data$prop_street_wall)
-    data$propWind <- (data$prop_wind * abs(differences[11])) #/ mean(data$prop_wind)
-    data$propSkyAhe <- (data$prop_sky_ahead * abs(differences[12])) #/ mean(data$prop_sky_ahead)
-    data$propSkyAc <- (data$prop_sky_across * abs(differences[13])) #/ mean(data$prop_sky_across)
-    data$propActiv <- (data$prop_active_use * abs(differences[25])) #/ mean(data$prop_active_use)
-    
-    data$graffiti <- as.character(data$graffiti)
-    data$graffiti[data$graffiti == "No"] <- 0
-    data$graffiti[data$graffiti == "Yes"] <- 1
-    data$graff <- (abs(differences[14])) / sum(as.integer(data$graffiti))
-    data$build_diff_ages <- as.character(data$build_diff_ages)
-    data$build_diff_ages[data$build_diff_ages == "No"] <- 0
-    data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
-    data$buildDiffAges <- (abs(differences[18])) / sum(as.integer(data$build_diff_ages))
-
+        #Shuffle mean and sd
+        data$rmovCars <- apply(movCars, 1, mean)
+        data$rsdmovCars <- apply(movCars, 1, sd)
+        data$rparkCars <- apply(parkCars, 1, mean)
+        data$rsdparkCars <- apply(parkCars, 1, sd)
+        data$rmovCicly <- apply(movCicly, 1, mean)
+        data$rsdmovCicly <- apply(movCicly, 1, sd)
+        data$rbuildId <- apply(buildId, 1, mean)
+        data$rsdbuildId <- apply(buildId, 1, sd)
+        data$rbuildNRec <- apply(buildNRec, 1, mean)
+        data$rsdbuildNRec <- apply(buildNRec, 1, sd)
+        data$rtree <- apply(tree, 1, mean)
+        data$rsdtree <- apply(tree, 1, sd)
+        data$rsmallPla <- apply(smallPla, 1, mean)
+        data$rsdsmallPla <- apply(smallPla, 1, sd)
+        data$rdiffBuild <- apply(diffBuild, 1, mean)
+        data$rsddiffBuild <- apply(diffBuild, 1, sd)
+        data$rstreeFur <- apply(streeFur, 1, mean)
+        data$rsdstreeFur <- apply(streeFur, 1, sd)
+        data$rbasCol <- apply(basCol, 1, mean)
+        data$rsdbasCol <- apply(basCol, 1, sd)
+        data$rligh <- apply(ligh, 1, mean)
+        data$rsdligh <- apply(ligh, 1, sd)
+        data$raccenCol <- apply(accenCol, 1, mean)
+        data$rsdaccenCol <- apply(accenCol, 1, sd)
+        data$rpeop <- apply(peop, 1, mean)
+        data$rsdpeop <- apply(peop, 1, sd)
+        
+        data$rgraff <- apply(graff, 1, mean)
+        data$rsdgraff <- apply(graff, 1, sd)
+        data$rbuildDiffAges <- apply(buildDiffAges, 1, mean)
+        data$rsdbuildDiffAges <- apply(buildDiffAges, 1, sd)
+        
     return (data)
 }
 
+iterations <- 10000
 
+simulateCoefShuffle <- function(agrad.l, iterations){
+
+  cmov <- cpark <- ccic <- cbuiid <- cbuiNR <- ctree <- csmalP <- cdiffB <- cfur <- cbcol <- clig <- cacol <- cgraf <- cdiffA <- cdeb <- cpav <- clan <- cwall <- cwind <- cskyA <- cskyAc <- cstreet <- cside <- cbuiH <- cpeop <- cacti <- 0
+  
+  #smov <- spark <- scic <- sbuiid <- sbuiNR <- stree <- ssmalP <- sdiffB <- sfur <- sbcol <- slig <- sacol <- sgraf <- sdiffA <- sdeb <- spav <- slan <- swall <- swind <- sskyA <- sskyAc <- sstreet <- sside <- sbuiH <- speop <- sacti <- c()
+  
+  agrad.l2 <- randomizeCoeff(agrad.l, iterations)
+
+  res <- wilcox.test(agrad.l$movCars, agrad.l2$rmovCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+   cmov = res$p.value
+#       if(res$p.value <= 0.05){
+#          cmov = cmov + 1
+#       }
+    res <- wilcox.test(agrad.l$parkCars, agrad.l2$rparkCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpark = res$p.value
+#       if(res$p.value <= 0.05){
+#          cpark = cpark + 1
+#       }
+    res <- wilcox.test(agrad.l$movCicly, agrad.l2$rmovCicly, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ccic = res$p.value
+#       if(res$p.value <= 0.05){
+#          ccic = ccic + 1
+#       }
+    res <- wilcox.test(agrad.l$buildId, agrad.l2$rbuildId, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiid = res$p.value
+#       if(res$p.value <= 0.05){
+#          cbuiid = cbuiid + 1
+#       }
+    res <- wilcox.test(agrad.l$buildNRec, agrad.l2$rbuildNRec, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiNR = res$p.value
+#       if(res$p.value <= 0.05){
+#          cbuiNR = cbuiNR + 1
+#       }
+    res <- wilcox.test(agrad.l$tree, agrad.l2$rtree, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ctree = res$p.value
+#       if(res$p.value <= 0.05){
+#          ctree = ctree + 1
+#       }
+    res <- wilcox.test(agrad.l$smallPla, agrad.l2$rsmallPla, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    csmalP= res$p.value
+#       if(res$p.value <= 0.05){
+#          csmalP = csmalP + 1
+#       }
+    res <- wilcox.test(agrad.l$diffBuild, agrad.l2$rdiffBuild, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffB = res$p.value
+#       if(res$p.value <= 0.05){
+#          cdiffB = cdiffB + 1
+# #       }
+    res <- wilcox.test(agrad.l$streeFur, agrad.l2$rstreeFur, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cfur = res$p.value
+#       if(res$p.value <= 0.05){
+#         cfur = cfur + 1
+#       }
+    res <- wilcox.test(agrad.l$basCol, agrad.l2$rbasCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbcol = res$p.value
+#       if(res$p.value <= 0.05){
+#          cbcol = cbcol + 1
+#       }
+    res <- wilcox.test(agrad.l$ligh, agrad.l2$rligh, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    clig = res$p.value
+#       if(res$p.value <= 0.05){
+#          clig = clig + 1
+#       }
+    res <- wilcox.test(agrad.l$accenCol, agrad.l2$raccenCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cacol = res$p.value
+#       if(res$p.value <= 0.05){
+#          cacol = cacol + 1
+#       }
+    res <- wilcox.test(agrad.l$peop, agrad.l2$rpeop, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpeop = res$p.value
+#       if(res$p.value <= 0.05){
+#          cpeop = cpeop + 1
+#       }
+    
+    res <- wilcox.test(agrad.l$graff, agrad.l2$rgraff, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cgraf = res$p.value
+#       if(res$p.value <= 0.05){
+#          cgraf = cgraf + 1
+#       }
+    res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$rbuildDiffAges, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffA = res$p.value
+#       if(res$p.value <= 0.05){
+#          cdiffA = cdiffA + 1
+#       }
+    
+#        sdeb[i] = agrad.l2$rdeb
+#       #cdeb[i] = agrad.l2$rdeb
+#       res <- wilcox.test(agrad.l$deb, agrad.l2$rdeb, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cdeb[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cdeb = cdeb + 1
+# #       }
+#       spav[i] = agrad.l2$rpav
+#       #cpav[i] = agrad.l2$rpav
+#       res <- wilcox.test(agrad.l$pav, agrad.l2$rpav, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cpav[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cpav = cpav + 1
+# #       }
+#      slan[i] = agrad.l2$rland
+#       #clan[i] = agrad.l2$rland
+#       res <- wilcox.test(agrad.l$land, agrad.l2$rland, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       clan[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          clan = clan + 1
+# #       }
+#       
+ #     swall[i] = agrad.l2$rpropStreetWall
+#       #cwall[i] = agrad.l2$rpropStreetWall
+#       res <- wilcox.test(agrad.l$propStreetWall, agrad.l2$rpropStreetWall, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cwall[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cwall = cwall + 1
+# #       }
+  #    swind[i] = agrad.l2$rpropWind
+#       #cwind[i] = agrad.l2$rpropWind
+#       res <- wilcox.test(agrad.l$propWind, agrad.l2$rpropWind, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cwind[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cwind = cwind + 1
+# #       }
+   #   sskyA[i] = agrad.l2$rpropSkyAhe
+#       #cskyA[i] = agrad.l2$rpropSkyAhe
+#       res <- wilcox.test(agrad.l$propSkyAhe, agrad.l2$rpropSkyAhe, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cskyA[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cskyA = cskyA + 1
+# #       }
+    #  sskyAc[i] = agrad.l2$rpropSkyAc
+#       #cskyAc[i] = agrad.l2$rpropSkyAc
+#       res <- wilcox.test(agrad.l$propSkyAc, agrad.l2$rpropSkyAc, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cskyAc[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cskyAc = cskyAc + 1
+# #       }
+     # sacti[i] = agrad.l2$rpropActiv
+#       #cacti[i] = agrad.l2$rpropActiv
+#       res <- wilcox.test(agrad.l$propActiv, agrad.l2$rpropActiv, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cacti[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cacti = cacti + 1
+# #       }
+#       
+      #sstreet[i] = agrad.l2$rstreetW
+#       #cstreet[i] = agrad.l2$rstreetW
+#       res <- wilcox.test(agrad.l$streetW, agrad.l2$rstreetW, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cstreet[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cstreet = cstreet + 1
+# #       }
+      #sside[i] = agrad.l2$rsidewalW
+#       #cside[i] = agrad.l2$rsidewalW
+#       res <- wilcox.test(agrad.l$sidewalW, agrad.l2$rsidewalW, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cside[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cside = cside + 1
+# #       }
+      #sbuiH[i] = agrad.l2$rbuildHei
+#       #cbuiH[i] = agrad.l2$rbuildHei
+#       res <- wilcox.test(agrad.l$buildHei, agrad.l2$rbuildHei, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+#       cbuiH[i] = res$p.value
+# #       if(res$p.value <= 0.05){
+# #          cbuiH = cbuiH + 1
+# #       }
+
+  print(paste("P-values - mov cars", cmov)) #/ iterations))
+  print(paste("P-values - park cars", cpark)) #/ iterations))
+  print(paste("P-values - cyclists", ccic)) #/ iterations))
+  print(paste("P-values - build ident", cbuiid)) #/ iterations))
+  print(paste("P-values - build n rect", cbuiNR)) #/ iterations))
+  print(paste("P-values - trees", ctree)) #/ iterations))
+  print(paste("P-values - small planters",csmalP))# / iterations))
+  print(paste("P-values - diff buildings", cdiffB)) #/ iterations))
+  print(paste("P-values - furniture", cfur)) #/ iterations))
+  print(paste("P-values - bas col", cbcol)) #/ iterations))
+  print(paste("P-values - acce col", cacol)) #/ iterations))
+  print(paste("P-values - lig", clig)) #/ iterations))
+  print(paste("P-values - peop", cpeop)) #/ iterations))
+  print(paste("P-values - graffiti", cgraf)) #/ iterations))
+  print(paste("P-values - build diff ages", cdiffA)) #/ iterations))
+#   print(paste("P-values - debris", mean(cdeb), median(cdeb))) #/ iterations))
+#   print(paste("P-values - landscape", mean(clan), median(clan))) #/ iterations))
+#   print(paste("P-values - pavement", mean(cpav), median(cpav))) #/ iterations))
+#   print(paste("P-values - prop street wall", mean(cwall), median(cwall))) #/ iterations))
+#   print(paste("P-values - window", mean(cwind), median(cwind))) #/ iterations))
+#   print(paste("P-values - prop sky ahead", mean(cskyA), median(cskyA)))# / iterations))
+#   print(paste("P-values - prop sky across", mean(cskyAc), median(cskyAc))) #/ iterations))
+#   print(paste("P-values - prop active use", mean(cacti), median(cacti))) #/ iterations))
+#   print(paste("P-values - street width", mean(cstreet), median(cstreet))) #/ iterations))
+#   print(paste("P-values - sidewalk width", mean(cside), median(cside))) #/ iterations))
+#   print(paste("P-values - building height", mean(cbuiH), median(cbuiH))) #/ iterations))
+
+  return (agrad.l2)
+
+}
 
 #Avaliando correlação das caracteristicas urbanas
 # novo <- select(temp, street_wid, sidewalk_wid,public_art,mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
@@ -993,164 +1228,41 @@ randomizeCoeff <- function (data) {
 # regGeralAgrad <- lm(V3.Geral ~ street_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + small_planters + build_height + prop_hist_build + street_furnit + basic_col + accent_col + people, na.action = na.exclude, data = agrad)
 # texreg(regGeralAgrad)
 # summary(regGeralAgrad)
+```
+
+## Men x Women - Pleasantness
+
+100 iterations
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+printOutput <- function(agrad.l2, column1, column2){
+  
+      print(head(arrange(select_(agrad.l2, "movCars", "rmovCars", "rsdmovCars", "image_url", column1, column2, "diff"), desc(movCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars", "rparkCars", "rsdparkCars", "image_url", column1, column2, "diff"), desc(parkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly", "rmovCicly", "rsdmovCicly", "image_url", column1, column2, "diff"), desc(movCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId", "rbuildId", "rsdbuildId", "image_url", column1, column2, "diff"), desc(buildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec", "rbuildNRec", "rsdbuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree", "rtree", "rsdtree", "image_url", column1, column2, "diff"), desc(tree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla", "rsmallPla", "rsdsmallPla", "image_url", column1, column2, "diff"), desc(smallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild", "rdiffBuild", "rsddiffBuild", "image_url", column1, column2, "diff"), desc(diffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur", "rstreeFur", "rsdstreeFur", "image_url", column1, column2, "diff"), desc(streeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol", "rbasCol", "rsdbasCol", "image_url", column1, column2, "diff"), desc(basCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol", "raccenCol", "rsdaccenCol", "image_url", column1, column2, "diff"), desc(accenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh", "rligh", "rsdligh", "image_url", column1, column2, "diff"), desc(ligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop", "rpeop", "rsdpeop", "image_url", column1, column2, "diff"), desc(peop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff", "rgraff", "rsdgraff", "image_url", column1, column2, "diff"), desc(graff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges", "rbuildDiffAges", "rsdbuildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges)), n = 10))
+  
+}
 
 #Homem x Mulher
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
 agrad.l <- calcDanieleCoeff(agrad.l)
-```
+agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
-## Men x Women - Pleasantness
-
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-# T test?
-
-iterations <- 20
-
-simulateCoefShuffle <- function(agrad.l, iterations){
-
-  cmov <- cpark <- ccic <- cbuiid <- cbuiNR <- ctree <- csmalP <- cdiffB <- cfur <- cbcol <- clig <- cacol <- cgraf <- cdiffA <- cdeb <- cpav <- clan <- cwall <- cwind <- cskyA <- cskyAc <- cstreet <- cside <- cbuiH <- 0
-  
-  for (i in seq(1, iterations)){
-  
-      agrad.l2 <- randomizeCoeff(agrad.l)
-      
-      res <- wilcox.test(agrad.l$movCars, agrad.l2$movCars, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cmov = cmov + 1
-      }
-      res <- wilcox.test(agrad.l$parkCars, agrad.l2$parkCars, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cpark = cpark + 1
-      }
-      res <- wilcox.test(agrad.l$movCicly, agrad.l2$movCicly, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         ccic = ccic + 1
-      }
-      res <- wilcox.test(agrad.l$buildId, agrad.l2$buildId, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cbuiid = cbuiid + 1
-      }
-      res <- wilcox.test(agrad.l$buildNRec, agrad.l2$buildNRec, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cbuiNR = cbuiNR + 1
-      }
-      res <- wilcox.test(agrad.l$tree, agrad.l2$tree, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         ctree = ctree + 1
-      }
-      res <- wilcox.test(agrad.l$smallPla, agrad.l2$smallPla, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         csmalP = csmalP + 1
-      }
-      res <- wilcox.test(agrad.l$diffBuild, agrad.l2$diffBuild, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cdiffB = cdiffB + 1
-      }
-      res <- wilcox.test(agrad.l$streeFur, agrad.l2$streeFur, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cfur = cfur + 1
-      }
-      res <- wilcox.test(agrad.l$basCol, agrad.l2$basCol, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cbcol = cbcol + 1
-      }
-      res <- wilcox.test(agrad.l$ligh, agrad.l2$ligh, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         clig = clig + 1
-      }
-      res <- wilcox.test(agrad.l$accenCol, agrad.l2$accenCol, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cacol = cacol + 1
-      }
-      
-      res <- wilcox.test(agrad.l$graff, agrad.l2$graff, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cgraf = cgraf + 1
-      }
-      res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$buildDiffAges, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cdiffA = cdiffA + 1
-      }
-      
-      res <- wilcox.test(agrad.l$deb, agrad.l2$deb, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cdeb = cdeb + 1
-      }
-      res <- wilcox.test(agrad.l$pav, agrad.l2$pav, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cpav = cpav + 1
-      }
-      res <- wilcox.test(agrad.l$land, agrad.l2$land, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         clan = clan + 1
-      }
-      
-      res <- wilcox.test(agrad.l$propStreetWall, agrad.l2$propStreetWall, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cwall = cwall + 1
-      }
-      res <- wilcox.test(agrad.l$propWind, agrad.l2$propWind, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cwind = cwind + 1
-      }
-      res <- wilcox.test(agrad.l$propSkyAhe, agrad.l2$propSkyAhe, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cskyA = cskyA + 1
-      }
-      res <- wilcox.test(agrad.l$propSkyAc, agrad.l2$propSkyAc, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cskyAc = cskyAc + 1
-      }
-      
-      res <- wilcox.test(agrad.l$streetW, agrad.l2$streetW, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cstreet = cstreet + 1
-      }
-      res <- wilcox.test(agrad.l$sidewalW, agrad.l2$sidewalW, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cside = cside + 1
-      }
-      res <- wilcox.test(agrad.l$buildHei, agrad.l2$buildHei, na.action = na.exclude, conf.int = TRUE)
-      if(res$p.value <= 0.05){
-         cbuiH = cbuiH + 1
-      }
-  }
-  
-  print(paste("Percent of p-values < 0.05 - mov cars", cmov / iterations))
-  print(paste("Percent of p-values < 0.05 - park cars", cpark / iterations))
-  print(paste("Percent of p-values < 0.05 - cyclists", ccic / iterations))
-  print(paste("Percent of p-values < 0.05 - build ident", cbuiid / iterations))
-  print(paste("Percent of p-values < 0.05 - build n rect", cbuiNR / iterations))
-  print(paste("Percent of p-values < 0.05 - trees", ctree / iterations))
-  print(paste("Percent of p-values < 0.05 - small planters", csmalP / iterations))
-  print(paste("Percent of p-values < 0.05 - diff buildings", cdiffB / iterations))
-  print(paste("Percent of p-values < 0.05 - furniture", cfur / iterations))
-  print(paste("Percent of p-values < 0.05 - bas col", cbcol / iterations))
-  print(paste("Percent of p-values < 0.05 - acce col", cacol / iterations))
-  print(paste("Percent of p-values < 0.05 - lig", clig / iterations))
-  print(paste("Percent of p-values < 0.05 - graffiti", cgraf / iterations))
-  print(paste("Percent of p-values < 0.05 - build diff ages", cdiffA / iterations))
-  print(paste("Percent of p-values < 0.05 - debris", cdeb / iterations))
-  print(paste("Percent of p-values < 0.05 - landscape", clan / iterations))
-  print(paste("Percent of p-values < 0.05 - pavement", cpav / iterations))
-  print(paste("Percent of p-values < 0.05 - prop street wall", cwall / iterations))
-  print(paste("Percent of p-values < 0.05 - window", cwind / iterations))
-  print(paste("Percent of p-values < 0.05 - prop sky ahead", cskyA / iterations))
-  print(paste("Percent of p-values < 0.05 - prop sky across", cskyAc / iterations))
-  print(paste("Percent of p-values < 0.05 - street width", cstreet / iterations))
-  print(paste("Percent of p-values < 0.05 - sidewalk width", cside / iterations))
-  print(paste("Percent of p-values < 0.05 - building height", cbuiH / iterations))
-
-}
-
-simulateCoefShuffle(agrad.l,iterations)
-
-library(knitr)
-novo <- select(agrad.l, image_url, area, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
-novo$url <- sprintf('![](https://contribua.org/bairros/%s/%s)', novo$area, novo$image_url)
-kable(novo)
+printOutput(agrad.l2, "V3.Masculino", "V3.Feminino")
 
 #regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 #plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2", )
@@ -1181,6 +1293,8 @@ kable(novo)
 
 ## Young x Adult - Pleasantness
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Jovem x Adulto
@@ -1189,9 +1303,9 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 agrad.l <- calcDanieleCoeff(agrad.l)
-simulateCoefShuffle(agrad.l,iterations)
+agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+printOutput(agrad.l2, "V3.Jovem", "V3.Adulto")
 
 # regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1238,6 +1352,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Married x Single - Pleasantness
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Casado x Solteiro
@@ -1246,9 +1362,10 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 
 agrad.l <- calcDanieleCoeff(agrad.l)
-simulateCoefShuffle(agrad.l,iterations)
+agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+printOutput(agrad.l2, "V3.Casado", "V3.Solteiro")
+
 # regsubsetsAgrad.out <<- regsubsets( diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti +  trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 # 
@@ -1269,6 +1386,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Low x High income - Pleasantness
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Baixa renda x Media renda
@@ -1278,8 +1397,9 @@ agrad.l <- agrad %>%
 
 #Danieles coefficients
 agrad.l <- calcDanieleCoeff(agrad.l)
-simulateCoefShuffle(agrad.l,iterations)
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
+
+printOutput(agrad.l2, "V3.Baixa", "V3.Media")
 
 #Subset da diferenca dos rankings x features
 # regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
@@ -1320,6 +1440,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Men x Women - Safety
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Homem x Mulher
@@ -1328,8 +1450,9 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
 seg.l <- calcDanieleCoeff(seg.l)
-simulateCoefShuffle(seg.l,iterations)
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+seg.l2 <- simulateCoefShuffle(seg.l,iterations)
+
+printOutput(seg.l2, "V3.Masculino", "V3.Feminino")
 
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = 20, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
@@ -1376,6 +1499,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Young x Adult - Safety
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Jovem x Adulto
@@ -1384,8 +1509,10 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 seg.l <- calcDanieleCoeff(seg.l)
-simulateCoefShuffle(seg.l,iterations)
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+seg.l2 <- simulateCoefShuffle(seg.l,iterations)
+
+printOutput(seg.l2, "V3.Jovem", "V3.Adulto")
+
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 # 
@@ -1420,6 +1547,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Married x Single - Safety
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Casado x Solteiro
@@ -1428,8 +1557,10 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 
 seg.l <- calcDanieleCoeff(seg.l)
-simulateCoefShuffle(seg.l,iterations)
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+seg.l2 <- simulateCoefShuffle(seg.l,iterations)
+
+printOutput(seg.l2, "V3.Casado", "V3.Solteiro")
+
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 # 
@@ -1450,6 +1581,8 @@ select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAge
 
 ## Low x High income - Safety
 
+100 iterations
+
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 
 #Baixa renda x Media renda
@@ -1458,8 +1591,10 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 
 seg.l <- calcDanieleCoeff(seg.l)
-simulateCoefShuffle(seg.l,iterations)
-select(agrad.l, diff, diffBuild, streeFur, basCol, accenCol, graff, buildDiffAges, streetW, sidewalW, buildHei, deb, land, pav, propStreetWall, propSkyAhe)
+seg.l2 <- simulateCoefShuffle(seg.l,iterations)
+
+printOutput(seg.l2, "V3.Baixa", "V3.Media")
+
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 # 

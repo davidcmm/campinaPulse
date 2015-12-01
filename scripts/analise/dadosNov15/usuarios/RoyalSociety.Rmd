@@ -33,7 +33,7 @@ dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "b
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 
 #Copia com todos os dados
-dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+#dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
 ```
 
 
@@ -1235,8 +1235,8 @@ simulateCoefShuffle <- function(agrad.l, iterations){
 100 iterations
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-printOutput <- function(agrad.l2, column1, column2){
-  
+printOutputOneListPerFeature <- function(agrad.l2, column1, column2){
+     print(">>>>>>>> One list - top 10 ordered by real world coef and containing real world and shuffle world data")
       print(head(arrange(select_(agrad.l2, "movCars", "rmovCars", "rsdmovCars", "image_url", column1, column2, "diff"), desc(movCars)), n = 10))
       print(head(arrange(select_(agrad.l2, "parkCars", "rparkCars", "rsdparkCars", "image_url", column1, column2, "diff"), desc(parkCars)), n = 10))
       print(head(arrange(select_(agrad.l2, "movCicly", "rmovCicly", "rsdmovCicly", "image_url", column1, column2, "diff"), desc(movCicly)), n = 10))
@@ -1255,14 +1255,78 @@ printOutput <- function(agrad.l2, column1, column2){
   
 }
 
+printOutputTwoListsPerFeature <- function(agrad.l2, column1, column2){
+      print(">>>>>>>> Two lists - top 10 ordered by real world coef ; top 10 ordered by shuffle world")
+      print(head(arrange(select_(agrad.l2, "movCars", "image_url", column1, column2, "diff"), desc(movCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCars", "rsdmovCars", "image_url", column1, column2, "diff"), desc(rmovCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars", "image_url", column1, column2, "diff"), desc(parkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rparkCars", "rsdparkCars", "image_url", column1, column2, "diff"), desc(rparkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly", "image_url", column1, column2, "diff"), desc(movCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCicly", "rsdmovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId", "image_url", column1, column2, "diff"), desc(buildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildId", "rsdbuildId", "image_url", column1, column2, "diff"), desc(rbuildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec", "image_url", column1, column2, "diff"), desc(buildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildNRec", "rsdbuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree", "image_url", column1, column2, "diff"), desc(tree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rtree", "rsdtree", "image_url", column1, column2, "diff"), desc(rtree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla", "image_url", column1, column2, "diff"), desc(smallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rsmallPla", "rsdsmallPla", "image_url", column1, column2, "diff"), desc(rsmallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild", "image_url", column1, column2, "diff"), desc(diffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rdiffBuild", "rsddiffBuild", "image_url", column1, column2, "diff"), desc(rdiffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur", "image_url", column1, column2, "diff"), desc(streeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rstreeFur", "rsdstreeFur", "image_url", column1, column2, "diff"), desc(rstreeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol", "image_url", column1, column2, "diff"), desc(basCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbasCol", "rsdbasCol", "image_url", column1, column2, "diff"), desc(rbasCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol", "image_url", column1, column2, "diff"), desc(accenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "raccenCol", "rsdaccenCol", "image_url", column1, column2, "diff"), desc(raccenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh", "image_url", column1, column2, "diff"), desc(ligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rligh", "rsdligh", "image_url", column1, column2, "diff"), desc(rligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop", "image_url", column1, column2, "diff"), desc(peop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rpeop", "rsdpeop", "image_url", column1, column2, "diff"), desc(rpeop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff", "image_url", column1, column2, "diff"), desc(graff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rgraff", "rsdgraff", "image_url", column1, column2, "diff"), desc(rgraff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildDiffAges", "rsdbuildDiffAges", "image_url", column1, column2, "diff"), desc(rbuildDiffAges)), n = 10))
+  
+}
+
+printOutputTwoListsForAll <- function(agrad.l2){
+      print(">>>>>>>> Two lists with all features together - top 10 ordered by real world coef ; top 10 ordered by shuffle world")
+      library(reshape)
+      real <- melt(select(agrad.l2, movCars, parkCars, movCicly, buildId, buildNRec, tree, smallPla, diffBuild, streeFur, basCol, ligh, accenCol, peop, graff, buildDiffAges, image_url), id=c("image_url"))
+      
+      shuff <- melt(select(agrad.l2, rmovCars, rparkCars, rmovCicly, rbuildId, rbuildNRec, rtree, rsmallPla, rdiffBuild, rstreeFur, rbasCol, rligh, raccenCol, rpeop, rgraff, rbuildDiffAges, image_url), id=c("image_url"))
+      shuff$sd <- 0
+      shuff[shuff$variable == "rmovCars",]$sd <- agrad.l2$rsdmovCars
+      shuff[shuff$variable == "rparkCars",]$sd <- agrad.l2$rsdparkCars
+      shuff[shuff$variable == "rmovCicly",]$sd <- agrad.l2$rsdmovCicly
+      shuff[shuff$variable == "rbuildId",]$sd <- agrad.l2$rsdbuildId
+      shuff[shuff$variable == "rbuildNRec",]$sd <- agrad.l2$rsdbuildNRec
+      shuff[shuff$variable == "rtree",]$sd <- agrad.l2$rsdtree
+      shuff[shuff$variable == "rsmallPla",]$sd <- agrad.l2$rsdsmallPla
+      shuff[shuff$variable == "rdiffBuild",]$sd <- agrad.l2$rsddiffBuild
+      shuff[shuff$variable == "rstreeFur",]$sd <- agrad.l2$rsdstreeFur
+      shuff[shuff$variable == "rbasCol",]$sd <- agrad.l2$rsdbasCol
+      shuff[shuff$variable == "raccenCol",]$sd <- agrad.l2$rsdaccenCol
+      shuff[shuff$variable == "rpeop",]$sd <- agrad.l2$rsdpeop
+      shuff[shuff$variable == "rbuildDiffAges",]$sd <- agrad.l2$rsdbuildDiffAges
+      
+      print(">>>>>> Real")
+      print( arrange(real, desc(value)) )
+      print(">>>>>> Shuffle")
+      print( arrange(shuff, desc(value)) )
+}
+
 #Homem x Mulher
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
 agrad.l <- calcDanieleCoeff(agrad.l)
-agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
+agrad.l2 <- simulateCoefShuffle(agrad.l, 10)
 
-printOutput(agrad.l2, "V3.Masculino", "V3.Feminino")
+printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
+printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
+printOutputTwoListsForAll(agrad.l2)
 
 #regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 #plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2", )
@@ -1305,7 +1369,9 @@ agrad.l <- agrad %>%
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
-printOutput(agrad.l2, "V3.Jovem", "V3.Adulto")
+printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
+printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
+printOutputTwoListsForAll(agrad.l2)
 
 # regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1364,7 +1430,9 @@ agrad.l <- agrad %>%
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
-printOutput(agrad.l2, "V3.Casado", "V3.Solteiro")
+printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
+printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
+printOutputTwoListsForAll(agrad.l2)
 
 # regsubsetsAgrad.out <<- regsubsets( diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti +  trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1399,7 +1467,9 @@ agrad.l <- agrad %>%
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
-printOutput(agrad.l2, "V3.Baixa", "V3.Media")
+printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
+printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
+printOutputTwoListsForAll(agrad.l2)
 
 #Subset da diferenca dos rankings x features
 # regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
@@ -1452,7 +1522,9 @@ seg.l <- seg %>%
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-printOutput(seg.l2, "V3.Masculino", "V3.Feminino")
+printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
+printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
+printOutputTwoListsForAll(seg.l2)
 
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = 20, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2", )
@@ -1511,7 +1583,9 @@ seg.l <- seg %>%
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-printOutput(seg.l2, "V3.Jovem", "V3.Adulto")
+printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
+printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
+printOutputTwoListsForAll(seg.l2)
 
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1559,7 +1633,9 @@ seg.l <- seg %>%
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-printOutput(seg.l2, "V3.Casado", "V3.Solteiro")
+printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
+printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
+printOutputTwoListsForAll(seg.l2)
 
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1593,7 +1669,9 @@ seg.l <- seg %>%
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-printOutput(seg.l2, "V3.Baixa", "V3.Media")
+printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
+printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
+printOutputTwoListsForAll(seg.l2)
 
 # regsubsetsSeg.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")

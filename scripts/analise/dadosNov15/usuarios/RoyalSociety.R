@@ -524,37 +524,87 @@ randomizeCoeff <- function (data, iterations) {
     }    
     
         #Shuffle mean and sd
-        data$rmovCars <- apply(movCars, 1, mean)
+        randomizeCoeff <- function (data, iterations) {
+    movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- deb <- pav <- land <- propStreetWall <- propWind <- propSkyAhe <- propActiv <- streetW <- sidewalW <- buildHei <- c()
+    
+    graffiti <- as.character(data$graffiti)
+    graffiti[data$graffiti == "No"] <- 0
+    graffiti[data$graffiti == "Yes"] <- 1
+    build_diff_ages <- as.character(data$build_diff_ages)
+    build_diff_ages[data$build_diff_ages == "No"] <- 0
+    build_diff_ages[data$build_diff_ages == "yes"] <- 1
+    
+    for (i in seq(1, iterations)){#Creating shuffled values
+    
+        differences <- sample(data$diff)
+        
+        movCars <- cbind(movCars, (data$mov_cars * differences[2]/107) / sum(data$mov_cars))
+        parkCars <- cbind(parkCars, (data$park_cars * differences[3]/107) / sum(data$park_cars))
+        movCicly <- cbind(movCicly, (data$mov_ciclyst * differences[4]/107) / sum(data$mov_ciclyst))
+        buildId <- cbind(buildId, (data$build_ident * differences[8])/107 / sum(data$build_ident))
+        buildNRec <- cbind(buildNRec,(data$build_nrectan * differences[9]/107) / sum(data$build_nrectan))
+        tree <- cbind(tree,(data$trees * differences[15]/107) / sum(data$trees))
+        smallPla <- cbind(smallPla,(data$small_planters * differences[16]/107) / sum(data$small_planters))
+        diffBuild <- cbind(diffBuild,(data$diff_build * differences[19]/107) / sum(data$diff_build))
+        streeFur <- cbind(streeFur, (data$street_furnit * differences[20]/107) / sum(data$street_furnit))
+        basCol <- cbind(basCol, (data$basic_col * differences[21]/107) / sum(data$basic_col))
+        ligh <- cbind(ligh, (data$lights * differences[22]/107) / sum(data$lights))
+        accenCol <- cbind(accenCol, (data$accent_col * differences[23]/107) / sum(data$accent_col))
+        peop <- cbind(peop, (data$people * differences[24]/107) / sum(data$people))
+        
+        graff <- cbind(graff, (differences[14]/107 * as.integer(data$graffiti)) / sum(as.integer(data$graffiti)))
+        buildDiffAges <- cbind(buildDiffAges, (differences[18]/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages)))
+        
+#         deb[i] <- (data$debris * differences[5]/107) / 1
+#         pav[i] <- (data$pavement * differences[6]/107) / 1
+#         land[i] <- (data$landscape * differences[7]/107) / 1
+#         
+#         propStreetWall[i] <- (data$prop_street_wall * differences[10]/107) #/ mean(data$prop_street_wall)
+#         propWind[i] <- (data$prop_wind * differences[11]/107) #/ mean(data$prop_wind)
+#         propSkyAhe[i] <- (data$prop_sky_ahead * differences[12]/107) #/ mean(data$prop_sky_ahead)
+#         propSkyAc[i] <- (data$prop_sky_across * differences[13]/107) #/ mean(data$prop_sky_across)
+#         propActiv[i] <- (data$prop_active_use * differences[25]/107) #/ mean(data$prop_active_use)
+#         
+#         streetW[i] <- (data$street_wid * differences[26]/107) / min(data$street_wid)
+#         sidewalW[i] <- (data$sidewalk_wid * differences[1]/107) / min(data$sidewalk_wid)
+#         buildHei[i] <- (data$build_height * differences[17]/107) / 1
+    }    
+    
+        #Shuffle median and sd
+        data$rmovCars <- apply(movCars, 1, median)
         data$rsdmovCars <- apply(movCars, 1, sd)
-        data$rparkCars <- apply(parkCars, 1, mean)
+        data$rparkCars <- apply(parkCars, 1, median)
         data$rsdparkCars <- apply(parkCars, 1, sd)
-        data$rmovCicly <- apply(movCicly, 1, mean)
+        data$rmovCicly <- apply(movCicly, 1, median)
         data$rsdmovCicly <- apply(movCicly, 1, sd)
-        data$rbuildId <- apply(buildId, 1, mean)
+        data$rbuildId <- apply(buildId, 1, median)
         data$rsdbuildId <- apply(buildId, 1, sd)
-        data$rbuildNRec <- apply(buildNRec, 1, mean)
+        data$rbuildNRec <- apply(buildNRec, 1, median)
         data$rsdbuildNRec <- apply(buildNRec, 1, sd)
-        data$rtree <- apply(tree, 1, mean)
+        data$rtree <- apply(tree, 1, median)
         data$rsdtree <- apply(tree, 1, sd)
-        data$rsmallPla <- apply(smallPla, 1, mean)
+        data$rsmallPla <- apply(smallPla, 1, median)
         data$rsdsmallPla <- apply(smallPla, 1, sd)
-        data$rdiffBuild <- apply(diffBuild, 1, mean)
+        data$rdiffBuild <- apply(diffBuild, 1, median)
         data$rsddiffBuild <- apply(diffBuild, 1, sd)
-        data$rstreeFur <- apply(streeFur, 1, mean)
+        data$rstreeFur <- apply(streeFur, 1, median)
         data$rsdstreeFur <- apply(streeFur, 1, sd)
-        data$rbasCol <- apply(basCol, 1, mean)
+        data$rbasCol <- apply(basCol, 1, median)
         data$rsdbasCol <- apply(basCol, 1, sd)
-        data$rligh <- apply(ligh, 1, mean)
+        data$rligh <- apply(ligh, 1, median)
         data$rsdligh <- apply(ligh, 1, sd)
-        data$raccenCol <- apply(accenCol, 1, mean)
+        data$raccenCol <- apply(accenCol, 1, median)
         data$rsdaccenCol <- apply(accenCol, 1, sd)
-        data$rpeop <- apply(peop, 1, mean)
+        data$rpeop <- apply(peop, 1, median)
         data$rsdpeop <- apply(peop, 1, sd)
         
-        data$rgraff <- apply(graff, 1, mean)
+        data$rgraff <- apply(graff, 1, median)
         data$rsdgraff <- apply(graff, 1, sd)
-        data$rbuildDiffAges <- apply(buildDiffAges, 1, mean)
+        data$rbuildDiffAges <- apply(buildDiffAges, 1, median)
         data$rsdbuildDiffAges <- apply(buildDiffAges, 1, sd)
+        
+    return (data)
+}
         
     return (data)
 }

@@ -518,165 +518,197 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 
 #Combinando dados QScores com elementos urbanos
-# temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
-# temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
-# temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
-# temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
-# temp5 <- merge(novosDados, groupedData5, by.x="V2", by.y="image_url")
-# temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
-# temp7 <- merge(novosDados, groupedData7, by.x="V2", by.y="image_url")
-# temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
-# temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
-# temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
-# temp11 <- merge(novosDados, groupedData11, by.x="V2", by.y="image_url")
-# temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
-# temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
-#colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
+temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
+temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
+temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
+temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
+temp5 <- merge(novosDados, groupedData5, by.x="V2", by.y="image_url")
+temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
+temp7 <- merge(novosDados, groupedData7, by.x="V2", by.y="image_url")
+temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
+temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
+temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
+temp11 <- merge(novosDados, groupedData11, by.x="V2", by.y="image_url")
+temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
+temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
+colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
-#Correlacao? FIXME: names of columns!
-# calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
-#     sink(arquivo)
-#     print(questao)
-#   
-#     temp = listaDados[[1]]
-#     dadosAtuais <- temp[(temp$V1 == questao),] 
-#     res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_wid, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "street_wid"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "sidewalk_wid_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "sidewalk_wid_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$public_art, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "public_art"))
-#     
-#     temp2 = listaDados[[2]]
-#     dadosAtuais <- temp2[(temp2$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_cars, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "mov_cars"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_left, na.action = na.exclude)
-#        print(paste(res$estimate, res$p.value, "park_cars_left"))
-#   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "park_cars_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_ciclyst, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "mov_ciclyst"))
-#     
-#     temp3 = listaDados[[3]]
-#     dadosAtuais <- temp3[(temp3$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_left, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "debris_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "debris_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_left, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "pavement_left"))
-#   res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "pavement_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_left, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "landscape_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "landscape_right"))
-#     
-#     temp4 = listaDados[[4]]
-#     dadosAtuais <- temp4[(temp4$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$courtyards, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "courtyards"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$major_landsc, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "major_landsc"))
-#     
-#     temp5 = listaDados[[5]]
-#     dadosAtuais <- temp5[(temp5$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_ident, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "build_ident"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_nrectan, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "build_nrectan"))
-#     
-#     temp6 = listaDados[[6]]
-#     dadosAtuais <- temp6[(temp6$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_left, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "prop_street_wall_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "prop_street_wall_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_left, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "prop_wind_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind_right, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "prop_wind_right"))
-#     
-#     temp7 = listaDados[[7]]
-#     dadosAtuais <- temp7[(temp7$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$long_sight, na.action = na.exclude)
-#       print(paste(res$estimate, res$p.value, "long_sight"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_ahead, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_sky_ahead"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_sky_across_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_sky_across_right"))
-#     
-#     temp8 = listaDados[[8]]
-#     dadosAtuais <- temp8[(temp8$V1 == questao),] 
-#     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$graffiti, na.action = na.exclude)
-# #     print(paste(res$estimate, res$p.value, "graffiti"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "trees_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "trees_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "small_planters_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "small_planters_right"))
-#     
-#     temp9 = listaDados[[9]]
-#     dadosAtuais <- temp9[(temp9$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "build_height_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "build_height_right"))
-#     
-#     temp10 = listaDados[[10]]
-#     dadosAtuais <- temp10[(temp10$V1 == questao),] 
-#     #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_diff_ages, na.action = na.exclude)
-# #     print(res)
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$diff_build, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "diff_build"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_hist_build, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_hist_build"))
-#     
-#     temp11 = listaDados[[11]]
-#     dadosAtuais <- temp11[(temp11$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "outdoor_table_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "outdoor_table_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "street_furnit_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "street_furnit_right"))
-#     
-#     temp12 = listaDados[[12]]
-#     dadosAtuais <- temp12[(temp12$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$basic_col, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "basic_col"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "lights_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "lights_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$accent_col, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "accent_col"))
-#     
-#     temp13 = listaDados[[13]]
-#     dadosAtuais <- temp13[(temp13$V1 == questao),] 
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "people_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "people_right"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_left, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_active_use_left"))
-#     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use_right, na.action = na.exclude)
-#     print(paste(res$estimate, res$p.value, "prop_active_use_right"))
-#     sink()
-# }
-# 
-# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'agradavel?', "correlacao-agrad.dat")
+#Correlacao? 
+calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
+    sink(arquivo, append = TRUE)
+    print(questao)
+  
+    temp = listaDados[[1]]
+    dadosAtuais <- temp[(temp$V1 == questao),] 
+    res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_wid, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "street_wid"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$sidewalk_wid, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "sidewalk_wid"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "sidewalk_wid_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g1q2_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "sidewalk_wid_right"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$public_art, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "public_art"))
+    
+    temp2 = listaDados[[2]]
+    dadosAtuais <- temp2[(temp2$V1 == questao),] 
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_cars, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "mov_cars"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$park_cars, na.action = na.exclude, method = "spearman")
+       print(paste(res$estimate, res$p.value, "park_cars"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_left, na.action = na.exclude, method = "spearman")
+       print(paste(res$estimate, res$p.value, "park_cars_left"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g2q2_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "park_cars_right"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$mov_ciclyst, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "mov_ciclyst"))
+    
+    temp3 = listaDados[[3]]
+    dadosAtuais <- temp3[(temp3$V1 == questao),] 
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$debris, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "debris"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_left, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "debris_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q1_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "debris_right"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$pavement, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "pavement"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_left, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "pavement_left"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q2_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "pavement_right"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$landscape, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "landscape"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_left, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "landscape_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g3q3_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "landscape_right"))
+    
+    temp4 = listaDados[[4]]
+    dadosAtuais <- temp4[(temp4$V1 == questao),] 
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$courtyards, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "courtyards"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$major_landsc, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "major_landsc"))
+    
+    temp5 = listaDados[[5]]
+    dadosAtuais <- temp5[(temp5$V1 == questao),] 
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_ident, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "build_ident"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_nrectan, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "build_nrectan"))
+    
+    temp6 = listaDados[[6]]
+    dadosAtuais <- temp6[(temp6$V1 == questao),] 
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_street_wall, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_street_wall"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_left, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_street_wall_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q1_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_street_wall_right"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_wind, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_wind"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_left, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_wind_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g6q2_right, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "prop_wind_right"))
+    
+    temp7 = listaDados[[7]]
+    dadosAtuais <- temp7[(temp7$V1 == questao),] 
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$long_sight, na.action = na.exclude, method = "spearman")
+      print(paste(res$estimate, res$p.value, "long_sight"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_ahead, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_sky_ahead"))
+  res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_sky_across, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_sky_across"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_sky_across_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g7q3_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_sky_across_right"))
+    
+    temp8 = listaDados[[8]]
+    dadosAtuais <- temp8[(temp8$V1 == questao),] 
+    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$graffiti, na.action = na.exclude)
+#     print(paste(res$estimate, res$p.value, "graffiti"))
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$trees, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "trees"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "trees_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q2_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "trees_right"))
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$small_planters, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "small_planters"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q3_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "small_planters_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g8q3_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "small_planters_right"))
+    
+    temp9 = listaDados[[9]]
+    dadosAtuais <- temp9[(temp9$V1 == questao),] 
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_height, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "build_height"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "build_height_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g9q1_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "build_height_right"))
+    
+    temp10 = listaDados[[10]]
+    dadosAtuais <- temp10[(temp10$V1 == questao),] 
+    #res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$build_diff_ages, na.action = na.exclude)
+#     print(res)
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$diff_build, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "diff_build"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_hist_build, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_hist_build"))
+    
+    temp11 = listaDados[[11]]
+    dadosAtuais <- temp11[(temp11$V1 == questao),] 
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$outdoor_table, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "outdoor_table"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "outdoor_table_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q2_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "outdoor_table_right"))
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_furnit, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "street_furnit"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "street_furnit_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g11q3_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "street_furnit_right"))
+    
+    temp12 = listaDados[[12]]
+    dadosAtuais <- temp12[(temp12$V1 == questao),] 
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$basic_col, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "basic_col"))
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$lights, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "lights"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "lights_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g12q2_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "lights_right"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$accent_col, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "accent_col"))
+    
+    temp13 = listaDados[[13]]
+    dadosAtuais <- temp13[(temp13$V1 == questao),] 
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$people, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "people"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "people_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q1_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "people_right"))
+res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_active_use"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_left, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_active_use_left"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$g13q2_right, na.action = na.exclude, method = "spearman")
+    print(paste(res$estimate, res$p.value, "prop_active_use_right"))
+    sink()
+}
+
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", "agrad%C3%A1vel?", "correlacao-agrad.dat")
 # 
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'agradavel?', "correlacao-agrad-fem.dat")
@@ -687,7 +719,7 @@ groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'agradavel?', "correlacao-agrad-bai.dat")
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4,temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'agradavel?', "correlacao-agrad-med.dat")
 # 
-# calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'seguro?', "correlacao-seg.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", 'seguro?', "correlacao-seg.dat")
 # 
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'seguro?', "correlacao-seg-masc.dat")
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'seguro?', "correlacao-seg-fem.dat")
@@ -698,14 +730,78 @@ groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Baixa", 'seguro?', "correlacao-seg-bai.dat")
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
 # 
-# #Resumo por bairros
-# temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
-# neigs1 <- unlist(lapply(temp1, '[[', 1))
-# novosDados$bairro <- neigs1
-# 
-# colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
-# allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
-# 
+
+#Correlacoes por setor
+setores <- read.table("geralSetoresAJ.dat", header=TRUE)
+novosDadosSet <- reshape(setores, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
+options("scipen"=100, "digits"=4)
+
+#Centro
+data1 <- filter(novosDadosSet, bairro == "centro")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
+
+data1 <- filter(novosDadosSet, setor == "25040090500004")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+data1 <- filter(novosDadosSet, setor == "250400905000013" | setor == "250400905000023")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+#Catole
+data1 <- filter(novosDadosSet, bairro == "catole")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+data1 <- filter(novosDadosSet, setor == "250400905000060")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+data1 <- filter(novosDadosSet, setor == "250400905000062")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+#Liberdade
+data1 <- filter(novosDadosSet, bairro == "liberdade")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+data1 <- filter(novosDadosSet, setor == "250400905000089")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+data1 <- filter(novosDadosSet, setor == "250400905000095")
+correlacao <- cor(x = select(data1, V3.Masculino, V3.Feminino, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media, V3.Jovem, V3.Adulto), method = "spearman")
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
+
+
+#Resumo por bairros
+temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs1 <- unlist(lapply(temp1, '[[', 1))
+novosDados$bairro <- neigs1
+
+colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+
 # #Centro
 # centro <- filter(allData, bairro == "centro")
 # sink("centro-summary.dat")
@@ -1211,12 +1307,12 @@ simulateCoefShuffle <- function(agrad.l, iterations){
 }
 
 #Avaliando correlação das caracteristicas urbanas
-# novo <- select(temp, street_wid, sidewalk_wid,public_art,mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
-# 
-# correlacao <- cor(x = novo)
-# library(lattice)
-# rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
-# levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
+novo <- select(temp, street_wid, sidewalk_wid,public_art,mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
+
+correlacao <- cor(x = novo)
+library(lattice)
+rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
 
 #Geral
 # library(leaps)

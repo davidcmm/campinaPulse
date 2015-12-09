@@ -791,7 +791,7 @@ printOutputTwoListsForAll <- function(agrad.l2){
       print( arrange(shuff, desc(value)) )
       
       print(">>>>>>>> Two lists with all features together - top 10 ordered by real world coef ; top 10 ordered by shuffle world - Cofficient 2")
-      real <- melt(select(agrad.l2, movCars2, parkCars2, movCicly2, buildId2, buildNRec2, tree2, smallPla2, diffBuild2, streeFu2r, basCol2, ligh2, accenCol2, peop2, graff2, buildDiffAges2, image_url), id=c("image_url"))
+      real <- melt(select(agrad.l2, movCars2, parkCars2, movCicly2, buildId2, buildNRec2, tree2, smallPla2, diffBuild2, streeFur2, basCol2, ligh2, accenCol2, peop2, graff2, buildDiffAges2, image_url), id=c("image_url"))
       
       shuff <- melt(select(agrad.l2, rmovCars2, rparkCars2, rmovCicly2, rbuildId2, rbuildNRec2, rtree2, rsmallPla2, rdiffBuild2, rstreeFur2, rbasCol2, rligh2, raccenCol2, rpeop2, rgraff2, rbuildDiffAges2, image_url), id=c("image_url"))
       shuff$sd <- 0

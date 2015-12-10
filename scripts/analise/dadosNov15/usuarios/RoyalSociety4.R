@@ -643,7 +643,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 1
+iterations <- 10000
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

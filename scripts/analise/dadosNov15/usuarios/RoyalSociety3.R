@@ -643,14 +643,16 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 10000
+iterations <- 5
 
 simulateCoefShuffle <- function(agrad.l, iterations){
+
 
   cmov <- cpark <- ccic <- cbuiid <- cbuiNR <- ctree <- csmalP <- cdiffB <- cfur <- cbcol <- clig <- cacol <- cgraf <- cdiffA <- cdeb <- cpav <- clan <- cwall <- cwind <- cskyA <- cskyAc <- cstreet <- cside <- cbuiH <- cpeop <- cacti <- 0
   
   agrad.l2 <- randomizeCoeff(agrad.l, iterations)
 
+  print("### P-values for Coeff - Flavio")
   res <- wilcox.test(agrad.l$movCars2, agrad.l2$rmovCars2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
    cmov = res$p.value
 
@@ -713,12 +715,94 @@ simulateCoefShuffle <- function(agrad.l, iterations){
   print(paste("P-values - graffiti", cgraf)) #/ iterations))
   print(paste("P-values - build diff ages", cdiffA)) #/ iterations))
 
+print("### P-values for Coeff - Daniele")
+  res <- wilcox.test(agrad.l$movCars, agrad.l2$rmovCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+   cmov = res$p.value
+
+    res <- wilcox.test(agrad.l$parkCars, agrad.l2$rparkCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpark = res$p.value
+
+    res <- wilcox.test(agrad.l$movCicly, agrad.l2$rmovCicly, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ccic = res$p.value
+
+    res <- wilcox.test(agrad.l$buildId, agrad.l2$rbuildId, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiid = res$p.value
+
+    res <- wilcox.test(agrad.l$buildNRec, agrad.l2$rbuildNRec, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiNR = res$p.value
+
+    res <- wilcox.test(agrad.l$tree, agrad.l2$rtree, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ctree = res$p.value
+
+    res <- wilcox.test(agrad.l$smallPla, agrad.l2$rsmallPla, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    csmalP= res$p.value
+
+    res <- wilcox.test(agrad.l$diffBuild, agrad.l2$rdiffBuild, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffB = res$p.value
+
+    res <- wilcox.test(agrad.l$streeFur, agrad.l2$rstreeFur, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cfur = res$p.value
+
+    res <- wilcox.test(agrad.l$basCol, agrad.l2$rbasCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbcol = res$p.value
+
+    res <- wilcox.test(agrad.l$ligh, agrad.l2$rligh, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    clig = res$p.value
+
+    res <- wilcox.test(agrad.l$accenCol, agrad.l2$raccenCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cacol = res$p.value
+
+    res <- wilcox.test(agrad.l$peop, agrad.l2$rpeop, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpeop = res$p.value
+    
+    res <- wilcox.test(agrad.l$graff, agrad.l2$rgraff, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cgraf = res$p.value
+
+    res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$rbuildDiffAges, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffA = res$p.value
+
+    
+  print(paste("P-values - mov cars", cmov)) #/ iterations))
+  print(paste("P-values - park cars", cpark)) #/ iterations))
+  print(paste("P-values - cyclists", ccic)) #/ iterations))
+  print(paste("P-values - build ident", cbuiid)) #/ iterations))
+  print(paste("P-values - build n rect", cbuiNR)) #/ iterations))
+  print(paste("P-values - trees", ctree)) #/ iterations))
+  print(paste("P-values - small planters",csmalP))# / iterations))
+  print(paste("P-values - diff buildings", cdiffB)) #/ iterations))
+  print(paste("P-values - furniture", cfur)) #/ iterations))
+  print(paste("P-values - bas col", cbcol)) #/ iterations))
+  print(paste("P-values - acce col", cacol)) #/ iterations))
+  print(paste("P-values - lig", clig)) #/ iterations))
+  print(paste("P-values - peop", cpeop)) #/ iterations))
+  print(paste("P-values - graffiti", cgraf)) #/ iterations))
+  print(paste("P-values - build diff ages", cdiffA)) #/ iterations))
+
+
   return (agrad.l2)
 
 }
 
 printOutputOneListPerFeature <- function(agrad.l2, column1, column2){
-     print(">>>>>>>> One list - top 10 ordered by real world coef and containing real world and shuffle world data")
+     print(">>>>>>>> One list - top 10 ordered by real world coef and containing real world and shuffle world data - Daniele")
+      print(head(arrange(select_(agrad.l2, "movCars", "rmovCars", "rsdmovCars", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars", "rparkCars", "rsdparkCars", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly", "rmovCicly", "rsdmovCicly", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId", "rbuildId", "rsdbuildId", "maxBuildId", "image_url", column1, column2, "diff"), desc(buildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec", "rbuildNRec", "rsdbuildNRec", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree", "rtree", "rsdtree", "maxTree", "image_url", column1, column2, "diff"), desc(tree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla", "rsmallPla", "rsdsmallPla", "maxSmallPla", "image_url", column1, column2, "diff"), desc(smallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild", "rdiffBuild", "rsddiffBuild", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(diffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur", "rstreeFur", "rsdstreeFur", "maxStreeFur", "image_url", column1, column2, "diff"), desc(streeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol", "rbasCol", "rsdbasCol", "maxBasCol", "image_url", column1, column2, "diff"), desc(basCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol", "raccenCol", "rsdaccenCol", "maxAccenCol", "image_url", column1, column2, "diff"), desc(accenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh", "rligh", "rsdligh", "maxLigh", "image_url", column1, column2, "diff"), desc(ligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop", "rpeop", "rsdpeop", "maxPeop", "image_url", column1, column2, "diff"), desc(peop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff", "rgraff", "rsdgraff", "maxGraff", "image_url", column1, column2, "diff"), desc(graff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges", "rbuildDiffAges", "rsdbuildDiffAges", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges)), n = 10))
+
+
+     print(">>>>>>>> One list - top 10 ordered by real world coef and containing real world and shuffle world data - Flavio")
       print(head(arrange(select_(agrad.l2, "movCars2", "rmovCars2", "rsdmovCars2", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
       print(head(arrange(select_(agrad.l2, "parkCars2", "rparkCars2", "rsdparkCars2", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
       print(head(arrange(select_(agrad.l2, "movCicly2", "rmovCicly2", "rsdmovCicly2", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
@@ -738,17 +822,51 @@ printOutputOneListPerFeature <- function(agrad.l2, column1, column2){
 }
 
 printOutputTwoListsPerFeature <- function(agrad.l2, column1, column2){
-      print(">>>>>>>> Two lists - top 10 ordered by real world coef ; top 10 ordered by shuffle world")
+      print(">>>>>>>> Two lists - top 10 ordered by real world coef ; top 10 ordered by shuffle world - Daniele")
+
+      print(head(arrange(select_(agrad.l2, "movCars", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCars", "rsdmovCars", "maxMovCars", "image_url", column1, column2, "diff"), desc(rmovCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rparkCars", "rsdparkCars", "maxParkCars", "image_url", column1, column2, "diff"), desc(rparkCars)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCicly", "rsdmovCicly", "maxMovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId", "maxBuildId", "image_url", column1, column2, "diff"), desc(buildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildId", "rsdbuildId", "maxBuildId", "image_url", column1, column2, "diff"), desc(rbuildId)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildNRec", "rsdbuildNRec", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree", "maxTree", "image_url", column1, column2, "diff"), desc(tree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rtree", "rsdtree", "maxTree", "image_url", column1, column2, "diff"), desc(rtree)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla", "maxSmallPla", "image_url", column1, column2, "diff"), desc(smallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rsmallPla", "rsdsmallPla", "maxSmallPla", "image_url", column1, column2, "diff"), desc(rsmallPla)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(diffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rdiffBuild", "rsddiffBuild", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(rdiffBuild)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur", "maxStreeFur", "image_url", column1, column2, "diff"), desc(streeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rstreeFur", "rsdstreeFur", "maxStreeFur", "image_url", column1, column2, "diff"), desc(rstreeFur)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol", "maxBasCol", "image_url", column1, column2, "diff"), desc(basCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbasCol", "rsdbasCol", "maxBasCol", "image_url", column1, column2, "diff"), desc(rbasCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol", "maxAccenCol", "image_url", column1, column2, "diff"), desc(accenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "raccenCol", "rsdaccenCol", "maxAccenCol", "image_url", column1, column2, "diff"), desc(raccenCol)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh", "maxLigh", "image_url", column1, column2, "diff"), desc(ligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rligh", "rsdligh", "maxLigh", "image_url", column1, column2, "diff"), desc(rligh)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop", "maxPeop", "image_url", column1, column2, "diff"), desc(peop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rpeop", "rsdpeop", "maxPeop", "image_url", column1, column2, "diff"), desc(rpeop)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff", "maxGraff", "image_url", column1, column2, "diff"), desc(graff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rgraff", "rsdgraff", "maxGraff", "image_url", column1, column2, "diff"), desc(rgraff)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildDiffAges", "rsdbuildDiffAges", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(rbuildDiffAges)), n = 10))
+
+
+      print(">>>>>>>> Two lists - top 10 ordered by real world coef ; top 10 ordered by shuffle world - Flavio")
       print(head(arrange(select_(agrad.l2, "movCars2", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rmovCars2", "rsdmovCars", "maxMovCars", "image_url", column1, column2, "diff"), desc(rmovCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCars2", "rsdmovCars2", "maxMovCars", "image_url", column1, column2, "diff"), desc(rmovCars2)), n = 10))
       print(head(arrange(select_(agrad.l2, "parkCars2", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rparkCars2", "rsdparkCars", "maxParkCars", "image_url", column1, column2, "diff"), desc(rparkCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rparkCars2", "rsdparkCars2", "maxParkCars", "image_url", column1, column2, "diff"), desc(rparkCars2)), n = 10))
       print(head(arrange(select_(agrad.l2, "movCicly2", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rmovCicly2", "rsdmovCicly", "maxMovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCicly2", "rsdmovCicly2", "maxMovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly2)), n = 10))
       print(head(arrange(select_(agrad.l2, "buildId2", "maxBuildId", "image_url", column1, column2, "diff"), desc(buildId2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbuildId2", "rsdbuildId", "maxBuildId", "image_url", column1, column2, "diff"), desc(rbuildId2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildId2", "rsdbuildId2", "maxBuildId", "image_url", column1, column2, "diff"), desc(rbuildId2)), n = 10))
       print(head(arrange(select_(agrad.l2, "buildNRec2", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbuildNRec2", "rsdbuildNRec", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildNRec2", "rsdbuildNRec2", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec2)), n = 10))
       print(head(arrange(select_(agrad.l2, "tree2", "maxTree", "image_url", column1, column2, "diff"), desc(tree2)), n = 10))
       print(head(arrange(select_(agrad.l2, "rtree2", "rsdtree2", "maxTree", "image_url", column1, column2, "diff"), desc(rtree2)), n = 10))
       print(head(arrange(select_(agrad.l2, "smallPla2", "maxSmallPla", "image_url", column1, column2, "diff"), desc(smallPla2)), n = 10))
@@ -900,4 +1018,5 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsForAll(seg.l2)
+
 

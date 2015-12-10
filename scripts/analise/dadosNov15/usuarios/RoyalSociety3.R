@@ -488,21 +488,36 @@ calcDanieleCoeff <- function (data) {
     data$buildDiffAges <- (data$diff/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages))
     
     data$movCars2 <- (data$mov_cars * abs(data$diff))
+    data$maxMovCars <- max(data$mov_cars)
     data$parkCars2 <- (data$park_cars * abs(data$diff))
+    data$maxParkCars <- max(data$park_cars)
     data$movCicly2 <- (data$mov_ciclyst * abs(data$diff))
+    data$maxMovCicly <- max(data$mov_ciclyst)
     data$buildId2 <- (data$build_ident * abs(data$diff))
+    data$maxBuildId <- max(data$build_ident)
     data$buildNRec2 <- (data$build_nrectan * abs(data$diff))
+    data$maxBuildNRec <- max(data$build_nrectan)
     data$tree2 <- (data$trees * abs(data$diff))
+    data$maxTree <- max(data$trees)
     data$smallPla2 <- (data$small_planters * abs(data$diff))
+    data$maxSmallPla <- max(data$small_planters)
     data$diffBuild2 <- (data$diff_build * abs(data$diff))
+    data$maxDiffBuild <- max(data$diff_build)
     data$streeFur2 <- (data$street_furnit * abs(data$diff))
+    data$maxStreeFur <- max(data$street_furnit)
     data$basCol2 <- (data$basic_col * abs(data$diff))
+    data$maxBasCol <- max(data$basic_col)
     data$ligh2 <- (data$lights * abs(data$diff))
+    data$maxLigh <- max(data$lights)
     data$accenCol2 <- (data$accent_col * abs(data$diff))
+    data$maxAccenCol <- max(data$accent_col)
     data$peop2 <- (data$people * abs(data$diff))
+    data$maxPeop <- max(data$people)
     
     data$graff2 <- (abs(data$diff) * as.integer(data$graffiti)) 
+    data$maxGraff <- max(as.integer(data$graffiti))
     data$buildDiffAges2 <- (abs(data$diff) * as.integer(data$build_diff_ages)) 
+    data$maxBuildDiffAges <- max(as.integer(data$build_diff_ages))
 
     return (data)
 }
@@ -593,42 +608,42 @@ randomizeCoeff <- function (data, iterations) {
         data$rsdbuildDiffAges <- apply(buildDiffAges, 1, sd)
 
         #Shuffle mean and sd
-        data$rmovCars2 <- apply(movCars2, 1, median)
+        data$rmovCars2 <- apply(movCars2, 1, mean)
         data$rsdmovCars2 <- apply(movCars2, 1, sd)
-        data$rparkCars2 <- apply(parkCars2, 1, median)
+        data$rparkCars2 <- apply(parkCars2, 1, mean)
         data$rsdparkCars2 <- apply(parkCars2, 1, sd)
-        data$rmovCicly2 <- apply(movCicly2, 1, median)
+        data$rmovCicly2 <- apply(movCicly2, 1, mean)
         data$rsdmovCicly2 <- apply(movCicly2, 1, sd)
-        data$rbuildId2 <- apply(buildId2, 1, median)
+        data$rbuildId2 <- apply(buildId2, 1, mean)
         data$rsdbuildId2 <- apply(buildId2, 1, sd)
-        data$rbuildNRec2 <- apply(buildNRec2, 1, median)
+        data$rbuildNRec2 <- apply(buildNRec2, 1, mean)
         data$rsdbuildNRec2 <- apply(buildNRec2, 1, sd)
-        data$rtree2 <- apply(tree2, 1, median)
+        data$rtree2 <- apply(tree2, 1, mean)
         data$rsdtree2 <- apply(tree2, 1, sd)
-        data$rsmallPla2 <- apply(smallPla2, 1, median)
+        data$rsmallPla2 <- apply(smallPla2, 1, mean)
         data$rsdsmallPla2 <- apply(smallPla2, 1, sd)
-        data$rdiffBuild2 <- apply(diffBuild2, 1, median)
+        data$rdiffBuild2 <- apply(diffBuild2, 1, mean)
         data$rsddiffBuild2 <- apply(diffBuild2, 1, sd)
-        data$rstreeFur2 <- apply(streeFur2, 1, median)
+        data$rstreeFur2 <- apply(streeFur2, 1, mean)
         data$rsdstreeFur2 <- apply(streeFur2, 1, sd)
-        data$rbasCol2 <- apply(basCol2, 1, median)
+        data$rbasCol2 <- apply(basCol2, 1, mean)
         data$rsdbasCol2 <- apply(basCol2, 1, sd)
-        data$rligh2 <- apply(ligh2, 1, median)
+        data$rligh2 <- apply(ligh2, 1, mean)
         data$rsdligh2 <- apply(ligh2, 1, sd)
-        data$raccenCol2 <- apply(accenCol2, 1, median)
+        data$raccenCol2 <- apply(accenCol2, 1, mean)
         data$rsdaccenCol2 <- apply(accenCol2, 1, sd)
-        data$rpeop2 <- apply(peop2, 1, median)
+        data$rpeop2 <- apply(peop2, 1, mean)
         data$rsdpeop2 <- apply(peop2, 1, sd)
         
-        data$rgraff2 <- apply(graff2, 1, median)
+        data$rgraff2 <- apply(graff2, 1, mean)
         data$rsdgraff2 <- apply(graff2, 1, sd)
-        data$rbuildDiffAges2 <- apply(buildDiffAges2, 1, median)
+        data$rbuildDiffAges2 <- apply(buildDiffAges2, 1, mean)
         data$rsdbuildDiffAges2 <- apply(buildDiffAges2, 1, sd)
         
     return (data)
 }
 
-iterations <- 10000
+iterations <- 1
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 
@@ -704,63 +719,63 @@ simulateCoefShuffle <- function(agrad.l, iterations){
 
 printOutputOneListPerFeature <- function(agrad.l2, column1, column2){
      print(">>>>>>>> One list - top 10 ordered by real world coef and containing real world and shuffle world data")
-      print(head(arrange(select_(agrad.l2, "movCars2", "rmovCars2", "rsdmovCars2", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "parkCars2", "rparkCars2", "rsdparkCars2", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "movCicly2", "rmovCicly2", "rsdmovCicly2", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildId2", "rbuildId2", "rsdbuildId2", "image_url", column1, column2, "diff"), desc(buildId2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildNRec2", "rbuildNRec2", "rsdbuildNRec2", "image_url", column1, column2, "diff"), desc(buildNRec2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "tree2", "rtree2", "rsdtree2", "image_url", column1, column2, "diff"), desc(tree2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "smallPla2", "rsmallPla2", "rsdsmallPla2", "image_url", column1, column2, "diff"), desc(smallPla2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "diffBuild2", "rdiffBuild2", "rsddiffBuild2", "image_url", column1, column2, "diff"), desc(diffBuild2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "streeFur2", "rstreeFur2", "rsdstreeFur2", "image_url", column1, column2, "diff"), desc(streeFur2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "basCol2", "rbasCol2", "rsdbasCol2", "image_url", column1, column2, "diff"), desc(basCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "accenCol2", "raccenCol2", "rsdaccenCol2", "image_url", column1, column2, "diff"), desc(accenCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "ligh2", "rligh2", "rsdligh2", "image_url", column1, column2, "diff"), desc(ligh2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "peop2", "rpeop2", "rsdpeop2", "image_url", column1, column2, "diff"), desc(peop2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "graff2", "rgraff2", "rsdgraff2", "image_url", column1, column2, "diff"), desc(graff2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildDiffAges2", "rbuildDiffAges2", "rsdbuildDiffAges2", "image_url", column1, column2, "diff"), desc(buildDiffAges2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCars2", "rmovCars2", "rsdmovCars2", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars2", "rparkCars2", "rsdparkCars2", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly2", "rmovCicly2", "rsdmovCicly2", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId2", "rbuildId2", "rsdbuildId2", "maxBuildId", "image_url", column1, column2, "diff"), desc(buildId2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec2", "rbuildNRec2", "rsdbuildNRec2", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree2", "rtree2", "rsdtree2", "maxTree", "image_url", column1, column2, "diff"), desc(tree2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla2", "rsmallPla2", "rsdsmallPla2", "maxSmallPla", "image_url", column1, column2, "diff"), desc(smallPla2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild2", "rdiffBuild2", "rsddiffBuild2", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(diffBuild2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur2", "rstreeFur2", "rsdstreeFur2", "maxStreeFur", "image_url", column1, column2, "diff"), desc(streeFur2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol2", "rbasCol2", "rsdbasCol2", "maxBasCol", "image_url", column1, column2, "diff"), desc(basCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol2", "raccenCol2", "rsdaccenCol2", "maxAccenCol", "image_url", column1, column2, "diff"), desc(accenCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh2", "rligh2", "rsdligh2", "maxLigh", "image_url", column1, column2, "diff"), desc(ligh2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop2", "rpeop2", "rsdpeop2", "maxPeop", "image_url", column1, column2, "diff"), desc(peop2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff2", "rgraff2", "rsdgraff2", "maxGraff", "image_url", column1, column2, "diff"), desc(graff2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges2", "rbuildDiffAges2", "rsdbuildDiffAges2", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges2)), n = 10))
   
 }
 
 printOutputTwoListsPerFeature <- function(agrad.l2, column1, column2){
       print(">>>>>>>> Two lists - top 10 ordered by real world coef ; top 10 ordered by shuffle world")
-      print(head(arrange(select_(agrad.l2, "movCars2", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rmovCars2", "rsdmovCars", "image_url", column1, column2, "diff"), desc(rmovCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "parkCars2", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rparkCars2", "rsdparkCars", "image_url", column1, column2, "diff"), desc(rparkCars2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "movCicly2", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rmovCicly2", "rsdmovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildId2", "image_url", column1, column2, "diff"), desc(buildId2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbuildId2", "rsdbuildId", "image_url", column1, column2, "diff"), desc(rbuildId2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildNRec2", "image_url", column1, column2, "diff"), desc(buildNRec2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbuildNRec2", "rsdbuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "tree2", "image_url", column1, column2, "diff"), desc(tree2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rtree2", "rsdtree2", "image_url", column1, column2, "diff"), desc(rtree2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "smallPla2", "image_url", column1, column2, "diff"), desc(smallPla2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rsmallPla2", "rsdsmallPla2", "image_url", column1, column2, "diff"), desc(rsmallPla2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "diffBuild2", "image_url", column1, column2, "diff"), desc(diffBuild2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rdiffBuild2", "rsddiffBuild2", "image_url", column1, column2, "diff"), desc(rdiffBuild2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "streeFur2", "image_url", column1, column2, "diff"), desc(streeFur2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rstreeFur2", "rsdstreeFur2", "image_url", column1, column2, "diff"), desc(rstreeFur2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "basCol2", "image_url", column1, column2, "diff"), desc(basCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbasCol2", "rsdbasCol2", "image_url", column1, column2, "diff"), desc(rbasCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "accenCol2", "image_url", column1, column2, "diff"), desc(accenCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "raccenCol2", "rsdaccenCol2", "image_url", column1, column2, "diff"), desc(raccenCol2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "ligh2", "image_url", column1, column2, "diff"), desc(ligh2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rligh2", "rsdligh2", "image_url", column1, column2, "diff"), desc(rligh2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "peop2", "image_url", column1, column2, "diff"), desc(peop2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rpeop2", "rsdpeop2", "image_url", column1, column2, "diff"), desc(rpeop2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "graff2", "image_url", column1, column2, "diff"), desc(graff2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rgraff2", "rsdgraff2", "image_url", column1, column2, "diff"), desc(rgraff2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "buildDiffAges2", "image_url", column1, column2, "diff"), desc(buildDiffAges2)), n = 10))
-      print(head(arrange(select_(agrad.l2, "rbuildDiffAges2", "rsdbuildDiffAges2", "image_url", column1, column2, "diff"), desc(rbuildDiffAges2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCars2", "maxMovCars", "image_url", column1, column2, "diff"), desc(movCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCars2", "rsdmovCars", "maxMovCars", "image_url", column1, column2, "diff"), desc(rmovCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "parkCars2", "maxParkCars", "image_url", column1, column2, "diff"), desc(parkCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rparkCars2", "rsdparkCars", "maxParkCars", "image_url", column1, column2, "diff"), desc(rparkCars2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "movCicly2", "maxMovCicly", "image_url", column1, column2, "diff"), desc(movCicly2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rmovCicly2", "rsdmovCicly", "maxMovCicly", "image_url", column1, column2, "diff"), desc(rmovCicly2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildId2", "maxBuildId", "image_url", column1, column2, "diff"), desc(buildId2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildId2", "rsdbuildId", "maxBuildId", "image_url", column1, column2, "diff"), desc(rbuildId2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildNRec2", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(buildNRec2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildNRec2", "rsdbuildNRec", "maxBuildNRec", "image_url", column1, column2, "diff"), desc(rbuildNRec2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "tree2", "maxTree", "image_url", column1, column2, "diff"), desc(tree2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rtree2", "rsdtree2", "maxTree", "image_url", column1, column2, "diff"), desc(rtree2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "smallPla2", "maxSmallPla", "image_url", column1, column2, "diff"), desc(smallPla2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rsmallPla2", "rsdsmallPla2", "maxSmallPla", "image_url", column1, column2, "diff"), desc(rsmallPla2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "diffBuild2", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(diffBuild2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rdiffBuild2", "rsddiffBuild2", "maxDiffBuild", "image_url", column1, column2, "diff"), desc(rdiffBuild2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "streeFur2", "maxStreeFur", "image_url", column1, column2, "diff"), desc(streeFur2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rstreeFur2", "rsdstreeFur2", "maxStreeFur", "image_url", column1, column2, "diff"), desc(rstreeFur2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "basCol2", "maxBasCol", "image_url", column1, column2, "diff"), desc(basCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbasCol2", "rsdbasCol2", "maxBasCol", "image_url", column1, column2, "diff"), desc(rbasCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "accenCol2", "maxAccenCol", "image_url", column1, column2, "diff"), desc(accenCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "raccenCol2", "rsdaccenCol2", "maxAccenCol", "image_url", column1, column2, "diff"), desc(raccenCol2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "ligh2", "maxLigh", "image_url", column1, column2, "diff"), desc(ligh2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rligh2", "rsdligh2", "maxLigh", "image_url", column1, column2, "diff"), desc(rligh2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "peop2", "maxPeop", "image_url", column1, column2, "diff"), desc(peop2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rpeop2", "rsdpeop2", "maxPeop", "image_url", column1, column2, "diff"), desc(rpeop2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "graff2", "maxGraff", "image_url", column1, column2, "diff"), desc(graff2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rgraff2", "rsdgraff2", "maxGraff", "image_url", column1, column2, "diff"), desc(rgraff2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "buildDiffAges2", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(buildDiffAges2)), n = 10))
+      print(head(arrange(select_(agrad.l2, "rbuildDiffAges2", "rsdbuildDiffAges2", "maxBuildDiffAges", "image_url", column1, column2, "diff"), desc(rbuildDiffAges2)), n = 10))
   
 }
 
 printOutputTwoListsForAll <- function(agrad.l2){
       library(reshape)
       
-      print(">>>>>>>> Two lists with all features together - top 10 ordered by real world coef ; top 10 ordered by shuffle world")
+      print(">>>>>>>> Two lists with all features together with Daniele coeff - real world and shuffle world")
       real <- melt(select(agrad.l2, movCars, parkCars, movCicly, buildId, buildNRec, tree, smallPla, diffBuild, streeFur, basCol, ligh, accenCol, peop, graff, buildDiffAges, image_url), id=c("image_url"))
       
       shuff <- melt(select(agrad.l2, rmovCars, rparkCars, rmovCicly, rbuildId, rbuildNRec, rtree, rsmallPla, rdiffBuild, rstreeFur, rbasCol, rligh, raccenCol, rpeop, rgraff, rbuildDiffAges, image_url), id=c("image_url"))
@@ -778,20 +793,38 @@ printOutputTwoListsForAll <- function(agrad.l2){
       shuff[shuff$variable == "raccenCol",]$sd <- agrad.l2$rsdaccenCol
       shuff[shuff$variable == "rpeop",]$sd <- agrad.l2$rsdpeop
       shuff[shuff$variable == "rbuildDiffAges",]$sd <- agrad.l2$rsdbuildDiffAges
-      
+      shuff[shuff$variable == "rgraff",]$sd <- agrad.l2$rsdgraff
+      shuff[shuff$variable == "rligh",]$sd <- agrad.l2$rsdligh
+
       print(">>>>>> Real")
       print(">>>>>> Summary")
-      print( real %>% group_by(variable) %>% summarise( som=sum(value)/(max(value)*108*107/2) ) %>% arrange(desc(som)) )
+      print( real %>% group_by(variable) %>% summarise( som=sum(value) ) %>% arrange(desc(som)) )
       print(">>>>>> List")
       print( arrange(real, desc(value)) )
       print(">>>>>> Shuffle")
       print(">>>>>> Summary")
-      print( shuff %>% group_by(variable) %>% summarise( som=sum(value)/(max(value)*108*107/2) ) %>% arrange(desc(som)) )
+      print( shuff %>% group_by(variable) %>% summarise( som=sum(value) ) %>% arrange(desc(som)) )
       print(">>>>>> List")
       print( arrange(shuff, desc(value)) )
       
-      print(">>>>>>>> Two lists with all features together - top 10 ordered by real world coef ; top 10 ordered by shuffle world - Cofficient 2")
+      print(">>>>>>>> Two lists with all features together Flavio coeff - real world and shuffle world")
       real <- melt(select(agrad.l2, movCars2, parkCars2, movCicly2, buildId2, buildNRec2, tree2, smallPla2, diffBuild2, streeFur2, basCol2, ligh2, accenCol2, peop2, graff2, buildDiffAges2, image_url), id=c("image_url"))
+      real$max <- 0
+      real[real$variable == "movCars2",]$max <- agrad.l2$maxMovCars
+      real[real$variable == "parkCars2",]$max <- agrad.l2$maxParkCars
+      real[real$variable == "movCicly2",]$max <- agrad.l2$maxMovCicly
+      real[real$variable == "buildId2",]$max <- agrad.l2$maxBuildId
+      real[real$variable == "buildNRec2",]$max <- agrad.l2$maxBuildNRec
+      real[real$variable == "tree2",]$max <- agrad.l2$maxTree
+      real[real$variable == "smallPla2",]$max <- agrad.l2$maxSmallPla
+      real[real$variable == "diffBuild2",]$max <- agrad.l2$maxDiffBuild
+      real[real$variable == "streeFur2",]$max <- agrad.l2$maxStreeFur
+      real[real$variable == "basCol2",]$max <- agrad.l2$maxBasCol
+      real[real$variable == "accenCol2",]$max <- agrad.l2$maxAccenCol
+      real[real$variable == "peop2",]$max <- agrad.l2$maxPeop
+      real[real$variable == "buildDiffAges2",]$max <- agrad.l2$maxBuildDiffAges
+      real[real$variable == "graff2",]$max <- agrad.l2$maxGraff
+      real[real$variable == "ligh2",]$max <- agrad.l2$maxLigh
       
       shuff <- melt(select(agrad.l2, rmovCars2, rparkCars2, rmovCicly2, rbuildId2, rbuildNRec2, rtree2, rsmallPla2, rdiffBuild2, rstreeFur2, rbasCol2, rligh2, raccenCol2, rpeop2, rgraff2, rbuildDiffAges2, image_url), id=c("image_url"))
       shuff$sd <- 0
@@ -808,15 +841,35 @@ printOutputTwoListsForAll <- function(agrad.l2){
       shuff[shuff$variable == "raccenCol2",]$sd <- agrad.l2$rsdaccenCol2
       shuff[shuff$variable == "rpeop2",]$sd <- agrad.l2$rsdpeop2
       shuff[shuff$variable == "rbuildDiffAges2",]$sd <- agrad.l2$rsdbuildDiffAges2
+      shuff[shuff$variable == "rgraff2",]$sd <- agrad.l2$rsdgraff2
+      shuff[shuff$variable == "rligh2",]$sd <- agrad.l2$rsdligh2
+
+      shuff$max <- 0
+      shuff[shuff$variable == "rmovCars2",]$max <- agrad.l2$maxMovCars
+      shuff[shuff$variable == "rparkCars2",]$max <- agrad.l2$maxParkCars
+      shuff[shuff$variable == "rmovCicly2",]$max <- agrad.l2$maxMovCicly
+      shuff[shuff$variable == "rbuildId2",]$max <- agrad.l2$maxBuildId
+      shuff[shuff$variable == "rbuildNRec2",]$max <- agrad.l2$maxBuildNRec
+      shuff[shuff$variable == "rtree2",]$max <- agrad.l2$maxTree
+      shuff[shuff$variable == "rsmallPla2",]$max <- agrad.l2$maxSmallPla
+      shuff[shuff$variable == "rdiffBuild2",]$max <- agrad.l2$maxDiffBuild
+      shuff[shuff$variable == "rstreeFur2",]$max <- agrad.l2$maxStreeFur
+      shuff[shuff$variable == "rbasCol2",]$max <- agrad.l2$maxBasCol
+      shuff[shuff$variable == "raccenCol2",]$max <- agrad.l2$maxAccenCol
+      shuff[shuff$variable == "rpeop2",]$max <- agrad.l2$maxPeop
+      shuff[shuff$variable == "rbuildDiffAges2",]$max <- agrad.l2$maxBuildDiffAges
+      shuff[shuff$variable == "rgraff2",]$max <- agrad.l2$maxGraff
+      shuff[shuff$variable == "rligh2",]$max <- agrad.l2$maxLigh
+ 
       
       print(">>>>>> Real")
       print(">>>>>> Summary")
-      print( real %>% group_by(variable) %>% summarise( som=sum(value)/(max(value)*108*107/2) ) %>% arrange(desc(som)) )
+      print( real %>% group_by(variable) %>% summarise( som=sum(value)/(max(max)*108*107/2) ) %>% arrange(desc(som)) )
       print(">>>>>> List")
       print( arrange(real, desc(value)) )
       print(">>>>>> Shuffle")
       print(">>>>>> Summary")
-      print( shuff %>% group_by(variable) %>% summarise( som=sum(value)/(max(value)*108*107/2) ) %>% arrange(desc(som)) )
+      print( shuff %>% group_by(variable) %>% summarise( som=sum(value)/(max(max)*108*107/2) ) %>% arrange(desc(som)) )
       print(">>>>>> List")
       print( arrange(shuff, desc(value)) )
 }

@@ -503,21 +503,22 @@ calcDanieleCoeff <- function (data) {
     data$graff2 <- (abs(data$diff) * as.integer(data$graffiti)) 
     data$buildDiffAges2 <- (abs(data$diff) * as.integer(data$build_diff_ages)) 
 
-    data$sumMovCars <- sum(max(data$mov_cars) * abs(data$diff))
-    data$sumParkCars <- sum(max(data$park_cars)* abs(data$diff))
-    data$sumMovCicly <- sum(max(data$mov_ciclyst)* abs(data$diff))
-    data$sumBuildId <- sum(max(data$build_ident)* abs(data$diff))
-    data$sumBuildNRec <- sum(max(data$build_nrectan)* abs(data$diff))
-    data$sumTree <- sum(max(data$trees)* abs(data$diff))
-    data$sumSmallPla <- sum(max(data$small_planters)* abs(data$diff))
-    data$sumDiffBuild <- sum(max(data$diff_build)* abs(data$diff))
-    data$sumStreeFur <- sum(max(data$street_furnit)* abs(data$diff))
-    data$sumBasCol <- sum(max(data$basic_col)* abs(data$diff))
-    data$sumLigh <- sum(max(data$lights)* abs(data$diff))
-    data$sumAccenCol <- sum(max(data$accent_col)* abs(data$diff))
-    data$sumPeop <- sum(max(data$people)* abs(data$diff))
-    data$sumGraff <- sum(max(as.integer(data$graffiti))* abs(data$diff))
-    data$sumBuildDiffAges <- sum(max(as.integer(data$build_diff_ages))* abs(data$diff))
+    size <- length(data)
+    data$sumMovCars <- max(data$mov_cars) * (size-1) * size
+    data$sumParkCars <- max(data$park_cars)* (size-1) * size
+    data$sumMovCicly <- max(data$mov_ciclyst)* (size-1) * size
+    data$sumBuildId <- max(data$build_ident)* (size-1) * size
+    data$sumBuildNRec <- max(data$build_nrectan)* (size-1) * size
+    data$sumTree <- max(data$trees)* (size-1) * size
+    data$sumSmallPla <- max(data$small_planters)* (size-1) * size
+    data$sumDiffBuild <- max(data$diff_build)* (size-1) * size
+    data$sumStreeFur <- max(data$street_furnit)* (size-1) * size
+    data$sumBasCol <- max(data$basic_col)* (size-1) * size
+    data$sumLigh <-  max(data$lights)* (size-1) * size
+    data$sumAccenCol <- max(data$accent_col)* (size-1) * size
+    data$sumPeop <- max(data$people)* (size-1) * size
+    data$sumGraff <- max(as.integer(data$graffiti))* (size-1) * size
+    data$sumBuildDiffAges <- max(as.integer(data$build_diff_ages)) * (size-1) * size
 
     data$maxMovCars <- max(data$mov_cars)
     data$maxParkCars <- max(data$park_cars)

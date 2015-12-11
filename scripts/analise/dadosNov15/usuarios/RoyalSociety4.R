@@ -460,6 +460,23 @@ temp$area[temp$bairro == "catole"] <- "oeste"
 agrad <- filter(temp, V1 == "agrad%C3%A1vel?")
 seg <- filter(temp, V1 == "seguro?")
 
+#Calculates maximum denominator for normalization
+calcGreatesSum <- function(maxFeature, amountOfImages) {
+	sumFeat <- 0
+	maxDiff <- amountOfImages - 1
+	reuse <- FALSE
+
+	for (i in seq(1, amountOfImages)){
+		sumFeat <- sumFeat + maxFeature * (maxDiff)		
+		if(maxDiff == 0 | maxDiff == 1){
+			maxDiff <- amountOfImages - 1
+		}else{
+			maxDiff <- maxDiff - 2
+		}
+	}
+	return (sumFeat)
+}
+
 #Evaluates presence and coefficients for each picture
 calcDanieleCoeff <- function (data) {
     data$diff <- data$rank - data$index
@@ -503,22 +520,22 @@ calcDanieleCoeff <- function (data) {
     data$graff2 <- (abs(data$diff) * as.integer(data$graffiti)) 
     data$buildDiffAges2 <- (abs(data$diff) * as.integer(data$build_diff_ages)) 
 
-    size <- length(data)
-    data$sumMovCars <- max(data$mov_cars) * (size-1) * size
-    data$sumParkCars <- max(data$park_cars)* (size-1) * size
-    data$sumMovCicly <- max(data$mov_ciclyst)* (size-1) * size
-    data$sumBuildId <- max(data$build_ident)* (size-1) * size
-    data$sumBuildNRec <- max(data$build_nrectan)* (size-1) * size
-    data$sumTree <- max(data$trees)* (size-1) * size
-    data$sumSmallPla <- max(data$small_planters)* (size-1) * size
-    data$sumDiffBuild <- max(data$diff_build)* (size-1) * size
-    data$sumStreeFur <- max(data$street_furnit)* (size-1) * size
-    data$sumBasCol <- max(data$basic_col)* (size-1) * size
-    data$sumLigh <-  max(data$lights)* (size-1) * size
-    data$sumAccenCol <- max(data$accent_col)* (size-1) * size
-    data$sumPeop <- max(data$people)* (size-1) * size
-    data$sumGraff <- max(as.integer(data$graffiti))* (size-1) * size
-    data$sumBuildDiffAges <- max(as.integer(data$build_diff_ages)) * (size-1) * size
+    size <- nrow(data)
+    data$sumMovCars <- calcGreatesSum(max(data$mov_cars),  size)
+    data$sumParkCars <- calcGreatesSum(max(data$park_cars), size)
+    data$sumMovCicly <- calcGreatesSum(max(data$mov_ciclyst), size)
+    data$sumBuildId <- calcGreatesSum(max(data$build_ident),size)
+    data$sumBuildNRec <- calcGreatesSum(max(data$build_nrectan),size)
+    data$sumTree <- calcGreatesSum(max(data$trees),size)
+    data$sumSmallPla <- calcGreatesSum(max(data$small_planters),size)
+    data$sumDiffBuild <- calcGreatesSum(max(data$diff_build),size)
+    data$sumStreeFur <- calcGreatesSum(max(data$street_furnit),size)
+    data$sumBasCol <- calcGreatesSum(max(data$basic_col),size)
+    data$sumLigh <-  calcGreatesSum(max(data$lights),size)
+    data$sumAccenCol <- calcGreatesSum(max(data$accent_col),size)
+    data$sumPeop <- calcGreatesSum(max(data$people),size)
+    data$sumGraff <- calcGreatesSum(max(as.integer(data$graffiti)),size)
+    data$sumBuildDiffAges <- calcGreatesSum(max(as.integer(data$build_diff_ages)),size)
 
     data$maxMovCars <- max(data$mov_cars)
     data$maxParkCars <- max(data$park_cars)

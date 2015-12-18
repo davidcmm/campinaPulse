@@ -55,94 +55,25 @@ def ptest(df, name_g1, name_g2, pergunta, bairro=None, setor=None, num_permut=10
     for i in xrange(len(functions)):
         actual[i] = functions[i][1](g1, g2)
     
-    P = np.tile(np.arange(n_all), num_permut).reshape(num_permut, n_all)
-    P = np.apply_along_axis(np.random.permutation, 1, P)
-    R = np.zeros(shape=(P.shape[0], len(functions)))
+    P = np.tile(np.arange(n_all), num_permut).reshape(num_permut, n_all)#Array with size of all Qscores num_permut times, and divide in arrays of size n_all
+    P = np.apply_along_axis(np.random.permutation, 1, P)#Randomize order of QScores
+    R = np.zeros(shape=(P.shape[0], len(functions)))#Array to store functions results in samples
     permut_array = np.zeros(P.shape[0], dtype='f')
     for i in xrange(P.shape[0]):
         permut = P[i]
-        new_data = all_[permut]
+        new_data = all_[permut]#Permut all data and build new groups
         new_g1 = new_data[:n_g1]
         new_g2 = new_data[n_g1:]
         
         for j in xrange(len(functions)):
-            R[i][j] = functions[j][1](new_g1, new_g2)
+            R[i][j] = functions[j][1](new_g1, new_g2)#Compute functions/statistics based on new groups
     
     pvals = []
     for i in xrange(len(functions)):
-        pvals.append(float((R[:, i] > actual[i]).sum()) / R.shape[0])
+        pvals.append(float((R[:, i] > actual[i]).sum()) / R.shape[0])#Compare each function value for each sample with real function values and count occurences when sample value > real value
     
     return (name_g1, name_g2, pergunta), actual, np.array(pvals), functions
 
-
-df = pd.read_csv('geralNomes.dat', sep=' ', encoding='utf8')
-df = df.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
-
-all_res = []
-
-all_res.append(ptest(df, 'Masculino', 'Feminino', 'agradavel?'))
-all_res.append(ptest(df, 'Masculino', 'Feminino', 'seguro?'))
-
-all_res.append(ptest(df, 'Jovem', 'Adulto', 'agradavel?'))
-all_res.append(ptest(df, 'Jovem', 'Adulto', 'seguro?'))
-
-all_res.append(ptest(df, 'Solteiro', 'Casado', 'agradavel?'))
-all_res.append(ptest(df, 'Solteiro', 'Casado', 'seguro?'))
-
-all_res.append(ptest(df, 'Baixa', 'Media', 'agradavel?'))
-all_res.append(ptest(df, 'Baixa', 'Media', 'seguro?'))
-
-all_res.append(ptest(df, 'Medio', 'Pos', 'agradavel?'))
-all_res.append(ptest(df, 'Medio', 'Pos', 'seguro?'))
-
-print ">>>> Geral: "
-for r in all_res:
-   print r[0]
-   for i, f in enumerate(r[-1]):
-	print f[0], r[1][i]
-	print 'pval', r[2][i]
-	print
-   print '--'
-
-for bairro in ['catole', 'centro', 'liberdade']:
-	all_res = []
-
-	all_res.append(ptest(df, 'Masculino', 'Feminino', 'agradavel?', bairro=bairro))
-	all_res.append(ptest(df, 'Masculino', 'Feminino', 'seguro?', bairro=bairro))
-
-	all_res.append(ptest(df, 'Jovem', 'Adulto', 'agradavel?', bairro=bairro))
-	all_res.append(ptest(df, 'Jovem', 'Adulto', 'seguro?', bairro=bairro))
-
-	all_res.append(ptest(df, 'Solteiro', 'Casado', 'agradavel?', bairro=bairro))
-	all_res.append(ptest(df, 'Solteiro', 'Casado', 'seguro?', bairro=bairro))
-
-	all_res.append(ptest(df, 'Baixa', 'Media', 'agradavel?', bairro=bairro))
-	all_res.append(ptest(df, 'Baixa', 'Media', 'seguro?', bairro=bairro))
-
-	all_res.append(ptest(df, 'Medio', 'Pos', 'agradavel?', bairro=bairro))
-	all_res.append(ptest(df, 'Medio', 'Pos', 'seguro?', bairro=bairro))
-
-	if bairro == 'catole':
-		all_res.append(ptest(df, 'CCatole', 'NCCatole', 'agradavel?', bairro=bairro))
-		all_res.append(ptest(df, 'CCatole', 'NCCatole', 'seguro?', bairro=bairro))
-	elif bairro == 'centro':
-		all_res.append(ptest(df, 'CCentro', 'NCCentro', 'agradavel?', bairro=bairro))
-		all_res.append(ptest(df, 'CCentro', 'NCCentro', 'seguro?', bairro=bairro))
-	else:
-		all_res.append(ptest(df, 'CLiberdade', 'NCLiberdade', 'agradavel?', bairro=bairro))
-		all_res.append(ptest(df, 'CLiberdade', 'NCLiberdade', 'seguro?', bairro=bairro))
-
-	#all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', bairro=bairro))
-	#all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'seguro?', bairro=bairro))
-
-	print ">>>> Bairro: ", bairro
-	for r in all_res:
-	    print r[0]
-	    for i, f in enumerate(r[-1]):
-		print f[0], r[1][i]
-		print 'pval', r[2][i]
-		print
-	    print '--'
 
 
 df = pd.read_csv('geralSetoresAJ.dat', sep=' ', encoding='utf8')
@@ -175,8 +106,8 @@ for setor in ['25040090500004', '250400905000013', '250400905000060', '250400905
 		all_res.append(ptest(df, 'CLiberdade', 'NCLiberdade', 'agradavel?', setor=setor))
 		all_res.append(ptest(df, 'CLiberdade', 'NCLiberdade', 'seguro?', setor=setor))
 
-       #all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', setor=setor))
-       #all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', setor=setor))
+#     #all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', setor=setor))
+  #     #all_res.append(ptest(df, 'MenorMed', 'MaiorMed', 'agradavel?', setor=setor))
 #
 #
 	print ">>>> Setor: ", setor

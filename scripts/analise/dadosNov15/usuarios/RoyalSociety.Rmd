@@ -37,7 +37,8 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
-dados <- read.table("geral.dat", header=TRUE)
+#dados <- read.table("geral.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 
 #Intervalo de confiança por ponto
@@ -47,9 +48,9 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Subset of columns
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 
 #Copia com todos os dados
 #dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
@@ -1000,6 +1001,75 @@ temp$area[temp$bairro == "catole"] <- "oeste"
 agrad <- filter(temp, V1 == "agrad%C3%A1vel?")
 seg <- filter(temp, V1 == "seguro?")
 
+kendallWithWeights <- function(data){
+    
+    featuresMapG1 <- rep(0, 15)
+    names(featuresMapG1) <- c("movCars", "parkCars", "movCicly","buildId", "buildNRec", "tree", "smallPla", "diffBuild", "streeFur", "basCol", "ligh", "accenCol", "peop", "graff", "buildDiffAges")
+    featuresMapG2 <- rep(0, 15)
+    names(featuresMapG2) <- c("movCars", "parkCars", "movCicly","buildId", "buildNRec", "tree", "smallPla", "diffBuild", "streeFur", "basCol", "ligh", "accenCol", "peop", "graff", "buildDiffAges")
+    
+    #First call, comparing for group 1
+    data <- arrange(data, rank)
+    for( i in seq(1, nrow(data)) ){
+        rankLine1 <- data[i,]
+        
+        if(i+1 <= nrow(data)){
+            for( j in seq(i+1, nrow(data)) ){
+                rankLine2 <- data[j,]
+                if( (rankLine1$rank < rankLine2$rank) & (rankLine1$index > rankLine2$index) ){
+                    featuresMapG1['movCars'] <- featuresMapG1['movCars'] + (rankLine1$mov_cars - rankLine2$mov_cars)
+                    print(paste(rankLine1$rank, " ", rankLine2$rank, " ", rankLine1$index, " ", rankLine2$index, " ", (rankLine1$park_cars - rankLine2$park_cars)))
+                    featuresMapG1['parkCars'] <- featuresMapG1['parkCars'] + (rankLine1$park_cars - rankLine2$park_cars)
+                    featuresMapG1['movCicly'] <- featuresMapG1['movCicly'] + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                    featuresMapG1['buildId'] <- featuresMapG1['buildId'] + (rankLine1$build_ident - rankLine2$build_ident)
+                    featuresMapG1['buildNRec'] <- featuresMapG1['buildNRec'] + (rankLine1$build_nrectan - rankLine2$build_nrectan)
+                    featuresMapG1['tree'] <- featuresMapG1['tree'] + (rankLine1$trees - rankLine2$trees)
+                    featuresMapG1['smallPla'] <- featuresMapG1['smallPla'] + (rankLine1$small_planters - rankLine2$small_planters)
+                    featuresMapG1['diffBuild'] <- featuresMapG1['diffBuild'] + (rankLine1$diff_build - rankLine2$diff_build)
+                    featuresMapG1['streeFur'] <- featuresMapG1['streeFur'] + (rankLine1$street_furnit - rankLine2$street_furnit)
+                    featuresMapG1['basCol'] <- featuresMapG1['basCol'] + (rankLine1$basic_col - rankLine2$basic_col)
+                    featuresMapG1['ligh'] <- featuresMapG1['ligh'] + (rankLine1$lights - rankLine2$lights)
+                    featuresMapG1['accenCol'] <- featuresMapG1['accenCol'] + (rankLine1$accent_col - rankLine2$accent_col)
+                    featuresMapG1['peop'] <- featuresMapG1['peop'] + (rankLine1$people - rankLine2$people)
+                    featuresMapG1['graff'] <- featuresMapG1['graff'] + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                    featuresMapG1['buildDiffAges'] <- featuresMapG1['buildDiffAges'] + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
+                }        
+            }
+        }
+    }
+    
+    #First call, comparing for group 2
+    data <- arrange(data, index)
+    for( i in seq(1, nrow(data)) ){
+        rankLine1 <- data[i,]
+        
+        if(i+1 <= nrow(data)){
+          for( j in seq(i+1, nrow(data)-1) ){
+              rankLine2 <- data[j,]
+              if( (rankLine1$index < rankLine2$index) & (rankLine1$rank > rankLine2$rank) ){
+                  featuresMapG2['movCars'] <- featuresMapG2['movCars'] + (rankLine1$mov_cars - rankLine2$mov_cars)
+                  featuresMapG2['parkCars'] <- featuresMapG2['parkCars'] + (rankLine1$park_cars - rankLine2$park_cars)
+                  featuresMapG2['movCicly'] <- featuresMapG2['movCicly'] + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                  featuresMapG2['buildId'] <- featuresMapG2['buildId'] + (rankLine1$build_ident - rankLine2$build_ident)
+                  featuresMapG2['buildNRec'] <- featuresMapG2['buildNRec'] + (rankLine1$build_nrectan - rankLine2$build_nrectan)
+                  featuresMapG2['tree'] <- featuresMapG2['tree'] + (rankLine1$trees - rankLine2$trees)
+                  featuresMapG2['smallPla'] <- featuresMapG2['smallPla'] + (rankLine1$small_planters - rankLine2$small_planters)
+                  featuresMapG2['diffBuild'] <- featuresMapG2['diffBuild'] + (rankLine1$diff_build - rankLine2$diff_build)
+                  featuresMapG2['streeFur'] <- featuresMapG2['streeFur'] + (rankLine1$street_furnit - rankLine2$street_furnit)
+                  featuresMapG2['basCol'] <- featuresMapG2['basCol'] + (rankLine1$basic_col - rankLine2$basic_col)
+                  featuresMapG2['ligh'] <- featuresMapG2['ligh'] + (rankLine1$lights - rankLine2$lights)
+                  featuresMapG2['accenCol'] <- featuresMapG2['accenCol'] + (rankLine1$accent_col - rankLine2$accent_col)
+                  featuresMapG2['peop'] <- featuresMapG2['peop'] + (rankLine1$people - rankLine2$people)
+                  featuresMapG2['graff'] <- featuresMapG2['graff'] + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                  featuresMapG2['buildDiffAges'] <- featuresMapG2['buildDiffAges'] + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
+              }        
+          }
+        }  
+    }
+    
+    return (c(featuresMapG1, featuresMapG2))
+}
+
 #Evaluates presence and coefficients for each picture
 calcDanieleCoeff <- function (data) {
     data$diff <- data$rank - data$index
@@ -1027,38 +1097,41 @@ calcDanieleCoeff <- function (data) {
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
     data$buildDiffAges <- (data$diff/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages))
     
-    data$movCars2 <- (data$mov_cars * (data$diff))
-    data$parkCars2 <- (data$park_cars * (data$diff))
-    data$movCicly2 <- (data$mov_ciclyst * (data$diff))
-    data$buildId2 <- (data$build_ident * (data$diff))
-    data$buildNRec2 <- (data$build_nrectan * (data$diff))
-    data$tree2 <- (data$trees * (data$diff))
-    data$smallPla2 <- (data$small_planters * (data$diff))
-    data$diffBuild2 <- (data$diff_build * (data$diff))
-    data$streeFur2 <- (data$street_furnit * (data$diff))
-    data$basCol2 <- (data$basic_col * (data$diff))
-    data$ligh2 <- (data$lights * (data$diff))
-    data$accenCol2 <- (data$accent_col * (data$diff))
-    data$peop2 <- (data$people * (data$diff))
+    #Flavio adaptation of Kendall
     
-    data$graff2 <- (data$diff * as.integer(data$graffiti)) 
-    data$buildDiffAges2 <- (data$diff * as.integer(data$build_diff_ages)) 
+    
+    data$movCars2 <- (data$mov_cars * abs(data$diff))
+    data$maxMovCars <- max(data$mov_cars)
+    data$parkCars2 <- (data$park_cars * abs(data$diff))
+    data$maxParkCars <- max(data$park_cars)
+    data$movCicly2 <- (data$mov_ciclyst * abs(data$diff))
+    data$maxMovCicly <- max(data$mov_ciclyst)
+    data$buildId2 <- (data$build_ident * abs(data$diff))
+    data$maxBuildId <- max(data$build_ident)
+    data$buildNRec2 <- (data$build_nrectan * abs(data$diff))
+    data$maxBuildNRec <- max(data$build_nrectan)
+    data$tree2 <- (data$trees * abs(data$diff))
+    data$maxTree <- max(data$trees)
+    data$smallPla2 <- (data$small_planters * abs(data$diff))
+    data$maxSmallPla <- max(data$small_planters)
+    data$diffBuild2 <- (data$diff_build * abs(data$diff))
+    data$maxDiffBuild <- max(data$diff_build)
+    data$streeFur2 <- (data$street_furnit * abs(data$diff))
+    data$maxStreeFur <- max(data$street_furnit)
+    data$basCol2 <- (data$basic_col * abs(data$diff))
+    data$maxBasCol <- max(data$basic_col)
+    data$ligh2 <- (data$lights * abs(data$diff))
+    data$maxLigh <- max(data$lights)
+    data$accenCol2 <- (data$accent_col * abs(data$diff))
+    data$maxAccenCol <- max(data$accent_col)
+    data$peop2 <- (data$people * abs(data$diff))
+    data$maxPeop <- max(data$people)
+    
+    data$graff2 <- (abs(data$diff) * as.integer(data$graffiti)) 
+    data$maxGraff <- max(as.integer(data$graffiti))
+    data$buildDiffAges2 <- (abs(data$diff) * as.integer(data$build_diff_ages)) 
+    data$maxBuildDiffAges <- max(as.integer(data$build_diff_ages))
 
-    #TODO fix formulas!
-#     data$streetW <- (data$street_wid * (data$diff/107)) / min(data$street_wid)
-#     data$sidewalW <- (data$sidewalk_wid * (data$diff/107)) / min(data$sidewalk_wid)
-#     data$buildHei <- (data$build_height * (data$diff/107)) / 1
-#     
-#     data$deb <- (data$debris * (data$diff/107)) / 1
-#     data$pav <- (data$pavement * (data$diff/107)) / 1
-#     data$land <- (data$landscape * (data$diff/107)) / 1
-#     
-#     data$propStreetWall <- (data$prop_street_wall * (data$diff/107)) #/ mean(data$prop_street_wall)
-#     data$propWind <- (data$prop_wind * (data$diff/107))  #/ mean(data$prop_wind)
-#     data$propSkyAhe <- (data$prop_sky_ahead * (data$diff/107)) #/ mean(data$prop_sky_ahead)
-#     data$propSkyAc <- (data$prop_sky_across * (data$diff/107)) #/ mean(data$prop_sky_across)
-#     data$propActiv <- (data$prop_active_use * (data$diff/107)) #/ mean(data$prop_active_use)
-    
     return (data)
 }
 
@@ -1095,36 +1168,23 @@ randomizeCoeff <- function (data, iterations) {
         graff <- cbind(graff, (differences[14]/107 * as.integer(data$graffiti)) / sum(as.integer(data$graffiti)))
         buildDiffAges <- cbind(buildDiffAges, (differences[18]/107 * as.integer(data$build_diff_ages)) / sum(as.integer(data$build_diff_ages)))
         
-        movCars2 <- cbind(movCars2, (data$mov_cars * differences[2]))
-        parkCars2 <- cbind(parkCars2, (data$park_cars * differences[3]))
-        movCicly2 <- cbind(movCicly2, (data$mov_ciclyst * differences[4]))
-        buildId2 <- cbind(buildId2, (data$build_ident * differences[8])))
-        buildNRec2 <- cbind(buildNRec2,(data$build_nrectan * differences[9]))
-        tree2 <- cbind(tree2,(data$trees * differences[15]))
-        smallPla2 <- cbind(smallPla2,(data$small_planters * differences[16]))
-        diffBuild2 <- cbind(diffBuild2,(data$diff_build * differences[19]))
-        streeFur2 <- cbind(streeFur2, (data$street_furnit * differences[20]))
-        basCol2 <- cbind(basCol2, (data$basic_col * differences[21]))
-        ligh2 <- cbind(ligh2, (data$lights * differences[22]))
-        accenCol2 <- cbind(accenCol2, (data$accent_col * differences[23]))
-        peop2 <- cbind(peop2, (data$people * differences[24]))
+        movCars2 <- cbind(movCars2, (data$mov_cars * abs(differences[2])))
+        parkCars2 <- cbind(parkCars2, (data$park_cars * abs(differences[3])))
+        movCicly2 <- cbind(movCicly2, (data$mov_ciclyst * abs(differences[4])))
+        buildId2 <- cbind(buildId2, (data$build_ident * abs(differences[8])))
+        buildNRec2 <- cbind(buildNRec2,(data$build_nrectan * abs(differences[9])))
+        tree2 <- cbind(tree2,(data$trees * abs(differences[15])))
+        smallPla2 <- cbind(smallPla2,(data$small_planters * abs(differences[16])))
+        diffBuild2 <- cbind(diffBuild2,(data$diff_build * abs(differences[19])))
+        streeFur2 <- cbind(streeFur2, (data$street_furnit * abs(differences[20])))
+        basCol2 <- cbind(basCol2, (data$basic_col * abs(differences[21])))
+        ligh2 <- cbind(ligh2, (data$lights * abs(differences[22])))
+        accenCol2 <- cbind(accenCol2, (data$accent_col * abs(differences[23])))
+        peop2 <- cbind(peop2, (data$people * abs(differences[24])))
         
-        graff2 <- cbind(graff2, (differences[14] * as.integer(data$graffiti))) 
-        buildDiffAges2 <- cbind(buildDiffAges2, (differences[18] * as.integer(data$build_diff_ages)))
+        graff2 <- cbind(graff2, (abs(differences[14]) * as.integer(data$graffiti))) 
+        buildDiffAges2 <- cbind(buildDiffAges2, (abs(differences[18]) * as.integer(data$build_diff_ages)))
         
-#         deb[i] <- (data$debris * differences[5]/107) / 1
-#         pav[i] <- (data$pavement * differences[6]/107) / 1
-#         land[i] <- (data$landscape * differences[7]/107) / 1
-#         
-#         propStreetWall[i] <- (data$prop_street_wall * differences[10]/107) #/ mean(data$prop_street_wall)
-#         propWind[i] <- (data$prop_wind * differences[11]/107) #/ mean(data$prop_wind)
-#         propSkyAhe[i] <- (data$prop_sky_ahead * differences[12]/107) #/ mean(data$prop_sky_ahead)
-#         propSkyAc[i] <- (data$prop_sky_across * differences[13]/107) #/ mean(data$prop_sky_across)
-#         propActiv[i] <- (data$prop_active_use * differences[25]/107) #/ mean(data$prop_active_use)
-#         
-#         streetW[i] <- (data$street_wid * differences[26]/107) / min(data$street_wid)
-#         sidewalW[i] <- (data$sidewalk_wid * differences[1]/107) / min(data$sidewalk_wid)
-#         buildHei[i] <- (data$build_height * differences[17]/107) / 1
     }    
     
         #Shuffle mean and sd
@@ -1161,36 +1221,36 @@ randomizeCoeff <- function (data, iterations) {
         data$rsdbuildDiffAges <- apply(buildDiffAges, 1, sd)
 
         #Shuffle mean and sd
-        data$rmovCars2 <- apply(movCars2, 1, median)
+        data$rmovCars2 <- apply(movCars2, 1, mean)
         data$rsdmovCars2 <- apply(movCars2, 1, sd)
-        data$rparkCars2 <- apply(parkCars2, 1, median)
+        data$rparkCars2 <- apply(parkCars2, 1, mean)
         data$rsdparkCars2 <- apply(parkCars2, 1, sd)
-        data$rmovCicly2 <- apply(movCicly2, 1, median)
+        data$rmovCicly2 <- apply(movCicly2, 1, mean)
         data$rsdmovCicly2 <- apply(movCicly2, 1, sd)
-        data$rbuildId2 <- apply(buildId2, 1, median)
+        data$rbuildId2 <- apply(buildId2, 1, mean)
         data$rsdbuildId2 <- apply(buildId2, 1, sd)
-        data$rbuildNRec2 <- apply(buildNRec2, 1, median)
+        data$rbuildNRec2 <- apply(buildNRec2, 1, mean)
         data$rsdbuildNRec2 <- apply(buildNRec2, 1, sd)
-        data$rtree2 <- apply(tree2, 1, median)
+        data$rtree2 <- apply(tree2, 1, mean)
         data$rsdtree2 <- apply(tree2, 1, sd)
-        data$rsmallPla2 <- apply(smallPla2, 1, median)
+        data$rsmallPla2 <- apply(smallPla2, 1, mean)
         data$rsdsmallPla2 <- apply(smallPla2, 1, sd)
-        data$rdiffBuild2 <- apply(diffBuild2, 1, median)
+        data$rdiffBuild2 <- apply(diffBuild2, 1, mean)
         data$rsddiffBuild2 <- apply(diffBuild2, 1, sd)
-        data$rstreeFur2 <- apply(streeFur2, 1, median)
+        data$rstreeFur2 <- apply(streeFur2, 1, mean)
         data$rsdstreeFur2 <- apply(streeFur2, 1, sd)
-        data$rbasCol2 <- apply(basCol2, 1, median)
+        data$rbasCol2 <- apply(basCol2, 1, mean)
         data$rsdbasCol2 <- apply(basCol2, 1, sd)
-        data$rligh2 <- apply(ligh2, 1, median)
+        data$rligh2 <- apply(ligh2, 1, mean)
         data$rsdligh2 <- apply(ligh2, 1, sd)
-        data$raccenCol2 <- apply(accenCol2, 1, median)
+        data$raccenCol2 <- apply(accenCol2, 1, mean)
         data$rsdaccenCol2 <- apply(accenCol2, 1, sd)
-        data$rpeop2 <- apply(peop2, 1, median)
+        data$rpeop2 <- apply(peop2, 1, mean)
         data$rsdpeop2 <- apply(peop2, 1, sd)
         
-        data$rgraff2 <- apply(graff2, 1, median)
+        data$rgraff2 <- apply(graff2, 1, mean)
         data$rsdgraff2 <- apply(graff2, 1, sd)
-        data$rbuildDiffAges2 <- apply(buildDiffAges2, 1, median)
+        data$rbuildDiffAges2 <- apply(buildDiffAges2, 1, mean)
         data$rsdbuildDiffAges2 <- apply(buildDiffAges2, 1, sd)
         
     return (data)
@@ -1200,169 +1260,58 @@ iterations <- 10000
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 
+
   cmov <- cpark <- ccic <- cbuiid <- cbuiNR <- ctree <- csmalP <- cdiffB <- cfur <- cbcol <- clig <- cacol <- cgraf <- cdiffA <- cdeb <- cpav <- clan <- cwall <- cwind <- cskyA <- cskyAc <- cstreet <- cside <- cbuiH <- cpeop <- cacti <- 0
-  
-  #smov <- spark <- scic <- sbuiid <- sbuiNR <- stree <- ssmalP <- sdiffB <- sfur <- sbcol <- slig <- sacol <- sgraf <- sdiffA <- sdeb <- spav <- slan <- swall <- swind <- sskyA <- sskyAc <- sstreet <- sside <- sbuiH <- speop <- sacti <- c()
   
   agrad.l2 <- randomizeCoeff(agrad.l, iterations)
 
-  res <- wilcox.test(agrad.l$movCars, agrad.l2$rmovCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+  print("### P-values for Coeff - Flavio")
+  res <- wilcox.test(agrad.l$movCars2, agrad.l2$rmovCars2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
    cmov = res$p.value
-#       if(res$p.value <= 0.05){
-#          cmov = cmov + 1
-#       }
-    res <- wilcox.test(agrad.l$parkCars, agrad.l2$rparkCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cpark = res$p.value
-#       if(res$p.value <= 0.05){
-#          cpark = cpark + 1
-#       }
-    res <- wilcox.test(agrad.l$movCicly, agrad.l2$rmovCicly, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    ccic = res$p.value
-#       if(res$p.value <= 0.05){
-#          ccic = ccic + 1
-#       }
-    res <- wilcox.test(agrad.l$buildId, agrad.l2$rbuildId, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cbuiid = res$p.value
-#       if(res$p.value <= 0.05){
-#          cbuiid = cbuiid + 1
-#       }
-    res <- wilcox.test(agrad.l$buildNRec, agrad.l2$rbuildNRec, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cbuiNR = res$p.value
-#       if(res$p.value <= 0.05){
-#          cbuiNR = cbuiNR + 1
-#       }
-    res <- wilcox.test(agrad.l$tree, agrad.l2$rtree, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    ctree = res$p.value
-#       if(res$p.value <= 0.05){
-#          ctree = ctree + 1
-#       }
-    res <- wilcox.test(agrad.l$smallPla, agrad.l2$rsmallPla, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    csmalP= res$p.value
-#       if(res$p.value <= 0.05){
-#          csmalP = csmalP + 1
-#       }
-    res <- wilcox.test(agrad.l$diffBuild, agrad.l2$rdiffBuild, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cdiffB = res$p.value
-#       if(res$p.value <= 0.05){
-#          cdiffB = cdiffB + 1
-# #       }
-    res <- wilcox.test(agrad.l$streeFur, agrad.l2$rstreeFur, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cfur = res$p.value
-#       if(res$p.value <= 0.05){
-#         cfur = cfur + 1
-#       }
-    res <- wilcox.test(agrad.l$basCol, agrad.l2$rbasCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cbcol = res$p.value
-#       if(res$p.value <= 0.05){
-#          cbcol = cbcol + 1
-#       }
-    res <- wilcox.test(agrad.l$ligh, agrad.l2$rligh, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    clig = res$p.value
-#       if(res$p.value <= 0.05){
-#          clig = clig + 1
-#       }
-    res <- wilcox.test(agrad.l$accenCol, agrad.l2$raccenCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cacol = res$p.value
-#       if(res$p.value <= 0.05){
-#          cacol = cacol + 1
-#       }
-    res <- wilcox.test(agrad.l$peop, agrad.l2$rpeop, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cpeop = res$p.value
-#       if(res$p.value <= 0.05){
-#          cpeop = cpeop + 1
-#       }
-    
-    res <- wilcox.test(agrad.l$graff, agrad.l2$rgraff, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cgraf = res$p.value
-#       if(res$p.value <= 0.05){
-#          cgraf = cgraf + 1
-#       }
-    res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$rbuildDiffAges, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-    cdiffA = res$p.value
-#       if(res$p.value <= 0.05){
-#          cdiffA = cdiffA + 1
-#       }
-    
-#        sdeb[i] = agrad.l2$rdeb
-#       #cdeb[i] = agrad.l2$rdeb
-#       res <- wilcox.test(agrad.l$deb, agrad.l2$rdeb, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cdeb[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cdeb = cdeb + 1
-# #       }
-#       spav[i] = agrad.l2$rpav
-#       #cpav[i] = agrad.l2$rpav
-#       res <- wilcox.test(agrad.l$pav, agrad.l2$rpav, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cpav[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cpav = cpav + 1
-# #       }
-#      slan[i] = agrad.l2$rland
-#       #clan[i] = agrad.l2$rland
-#       res <- wilcox.test(agrad.l$land, agrad.l2$rland, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       clan[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          clan = clan + 1
-# #       }
-#       
- #     swall[i] = agrad.l2$rpropStreetWall
-#       #cwall[i] = agrad.l2$rpropStreetWall
-#       res <- wilcox.test(agrad.l$propStreetWall, agrad.l2$rpropStreetWall, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cwall[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cwall = cwall + 1
-# #       }
-  #    swind[i] = agrad.l2$rpropWind
-#       #cwind[i] = agrad.l2$rpropWind
-#       res <- wilcox.test(agrad.l$propWind, agrad.l2$rpropWind, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cwind[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cwind = cwind + 1
-# #       }
-   #   sskyA[i] = agrad.l2$rpropSkyAhe
-#       #cskyA[i] = agrad.l2$rpropSkyAhe
-#       res <- wilcox.test(agrad.l$propSkyAhe, agrad.l2$rpropSkyAhe, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cskyA[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cskyA = cskyA + 1
-# #       }
-    #  sskyAc[i] = agrad.l2$rpropSkyAc
-#       #cskyAc[i] = agrad.l2$rpropSkyAc
-#       res <- wilcox.test(agrad.l$propSkyAc, agrad.l2$rpropSkyAc, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cskyAc[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cskyAc = cskyAc + 1
-# #       }
-     # sacti[i] = agrad.l2$rpropActiv
-#       #cacti[i] = agrad.l2$rpropActiv
-#       res <- wilcox.test(agrad.l$propActiv, agrad.l2$rpropActiv, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cacti[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cacti = cacti + 1
-# #       }
-#       
-      #sstreet[i] = agrad.l2$rstreetW
-#       #cstreet[i] = agrad.l2$rstreetW
-#       res <- wilcox.test(agrad.l$streetW, agrad.l2$rstreetW, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cstreet[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cstreet = cstreet + 1
-# #       }
-      #sside[i] = agrad.l2$rsidewalW
-#       #cside[i] = agrad.l2$rsidewalW
-#       res <- wilcox.test(agrad.l$sidewalW, agrad.l2$rsidewalW, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cside[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cside = cside + 1
-# #       }
-      #sbuiH[i] = agrad.l2$rbuildHei
-#       #cbuiH[i] = agrad.l2$rbuildHei
-#       res <- wilcox.test(agrad.l$buildHei, agrad.l2$rbuildHei, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
-#       cbuiH[i] = res$p.value
-# #       if(res$p.value <= 0.05){
-# #          cbuiH = cbuiH + 1
-# #       }
 
+    res <- wilcox.test(agrad.l$parkCars2, agrad.l2$rparkCars2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpark = res$p.value
+
+    res <- wilcox.test(agrad.l$movCicly2, agrad.l2$rmovCicly2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ccic = res$p.value
+
+    res <- wilcox.test(agrad.l$buildId2, agrad.l2$rbuildId2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiid = res$p.value
+
+    res <- wilcox.test(agrad.l$buildNRec2, agrad.l2$rbuildNRec2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiNR = res$p.value
+
+    res <- wilcox.test(agrad.l$tree2, agrad.l2$rtree2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ctree = res$p.value
+
+    res <- wilcox.test(agrad.l$smallPla2, agrad.l2$rsmallPla2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    csmalP= res$p.value
+
+    res <- wilcox.test(agrad.l$diffBuild2, agrad.l2$rdiffBuild2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffB = res$p.value
+
+    res <- wilcox.test(agrad.l$streeFur2, agrad.l2$rstreeFur2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cfur = res$p.value
+
+    res <- wilcox.test(agrad.l$basCol2, agrad.l2$rbasCol2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbcol = res$p.value
+
+    res <- wilcox.test(agrad.l$ligh2, agrad.l2$rligh2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    clig = res$p.value
+
+    res <- wilcox.test(agrad.l$accenCol2, agrad.l2$raccenCol2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cacol = res$p.value
+
+    res <- wilcox.test(agrad.l$peop2, agrad.l2$rpeop2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpeop = res$p.value
+    
+    res <- wilcox.test(agrad.l$graff2, agrad.l2$rgraff2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cgraf = res$p.value
+
+    res <- wilcox.test(agrad.l$buildDiffAges2, agrad.l2$rbuildDiffAges2, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffA = res$p.value
+
+    
   print(paste("P-values - mov cars", cmov)) #/ iterations))
   print(paste("P-values - park cars", cpark)) #/ iterations))
   print(paste("P-values - cyclists", ccic)) #/ iterations))
@@ -1378,17 +1327,70 @@ simulateCoefShuffle <- function(agrad.l, iterations){
   print(paste("P-values - peop", cpeop)) #/ iterations))
   print(paste("P-values - graffiti", cgraf)) #/ iterations))
   print(paste("P-values - build diff ages", cdiffA)) #/ iterations))
-#   print(paste("P-values - debris", mean(cdeb), median(cdeb))) #/ iterations))
-#   print(paste("P-values - landscape", mean(clan), median(clan))) #/ iterations))
-#   print(paste("P-values - pavement", mean(cpav), median(cpav))) #/ iterations))
-#   print(paste("P-values - prop street wall", mean(cwall), median(cwall))) #/ iterations))
-#   print(paste("P-values - window", mean(cwind), median(cwind))) #/ iterations))
-#   print(paste("P-values - prop sky ahead", mean(cskyA), median(cskyA)))# / iterations))
-#   print(paste("P-values - prop sky across", mean(cskyAc), median(cskyAc))) #/ iterations))
-#   print(paste("P-values - prop active use", mean(cacti), median(cacti))) #/ iterations))
-#   print(paste("P-values - street width", mean(cstreet), median(cstreet))) #/ iterations))
-#   print(paste("P-values - sidewalk width", mean(cside), median(cside))) #/ iterations))
-#   print(paste("P-values - building height", mean(cbuiH), median(cbuiH))) #/ iterations))
+
+print("### P-values for Coeff - Daniele")
+  res <- wilcox.test(agrad.l$movCars, agrad.l2$rmovCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+   cmov = res$p.value
+
+    res <- wilcox.test(agrad.l$parkCars, agrad.l2$rparkCars, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpark = res$p.value
+
+    res <- wilcox.test(agrad.l$movCicly, agrad.l2$rmovCicly, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ccic = res$p.value
+
+    res <- wilcox.test(agrad.l$buildId, agrad.l2$rbuildId, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiid = res$p.value
+
+    res <- wilcox.test(agrad.l$buildNRec, agrad.l2$rbuildNRec, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbuiNR = res$p.value
+
+    res <- wilcox.test(agrad.l$tree, agrad.l2$rtree, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    ctree = res$p.value
+
+    res <- wilcox.test(agrad.l$smallPla, agrad.l2$rsmallPla, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    csmalP= res$p.value
+
+    res <- wilcox.test(agrad.l$diffBuild, agrad.l2$rdiffBuild, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffB = res$p.value
+
+    res <- wilcox.test(agrad.l$streeFur, agrad.l2$rstreeFur, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cfur = res$p.value
+
+    res <- wilcox.test(agrad.l$basCol, agrad.l2$rbasCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cbcol = res$p.value
+
+    res <- wilcox.test(agrad.l$ligh, agrad.l2$rligh, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    clig = res$p.value
+
+    res <- wilcox.test(agrad.l$accenCol, agrad.l2$raccenCol, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cacol = res$p.value
+
+    res <- wilcox.test(agrad.l$peop, agrad.l2$rpeop, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cpeop = res$p.value
+    
+    res <- wilcox.test(agrad.l$graff, agrad.l2$rgraff, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cgraf = res$p.value
+
+    res <- wilcox.test(agrad.l$buildDiffAges, agrad.l2$rbuildDiffAges, na.action = na.exclude, conf.int = TRUE, paired = TRUE)
+    cdiffA = res$p.value
+
+    
+  print(paste("P-values - mov cars", cmov)) #/ iterations))
+  print(paste("P-values - park cars", cpark)) #/ iterations))
+  print(paste("P-values - cyclists", ccic)) #/ iterations))
+  print(paste("P-values - build ident", cbuiid)) #/ iterations))
+  print(paste("P-values - build n rect", cbuiNR)) #/ iterations))
+  print(paste("P-values - trees", ctree)) #/ iterations))
+  print(paste("P-values - small planters",csmalP))# / iterations))
+  print(paste("P-values - diff buildings", cdiffB)) #/ iterations))
+  print(paste("P-values - furniture", cfur)) #/ iterations))
+  print(paste("P-values - bas col", cbcol)) #/ iterations))
+  print(paste("P-values - acce col", cacol)) #/ iterations))
+  print(paste("P-values - lig", clig)) #/ iterations))
+  print(paste("P-values - peop", cpeop)) #/ iterations))
+  print(paste("P-values - graffiti", cgraf)) #/ iterations))
+  print(paste("P-values - build diff ages", cdiffA)) #/ iterations))
+
 
   return (agrad.l2)
 
@@ -1714,7 +1716,6 @@ printOutputTwoListsAllFeaturesTog <- function(agrad.l2){
       shuff[shuff$variable == "rbuildDiffAges2",]$sumDen <- agrad.l2$sumBuildDiffAges
       shuff[shuff$variable == "rgraff2",]$sumDen <- agrad.l2$sumGraff
       shuff[shuff$variable == "rligh2",]$sumDen <- agrad.l2$sumLigh
- 
       
       print("### Real")
       print("##### Summary")
@@ -1779,13 +1780,23 @@ agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
 agrad.l <- calcDanieleCoeff(agrad.l)
-agrad.l2 <- simulateCoefShuffle(agrad.l, 10)
+agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
+
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 
 printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsForAll(agrad.l2)
+
+#Top 20 images based on diff, regression for men and women QScore
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+
+regGroup1 <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+summary(regGroup1)
+summary(regGroup2)
 
 #Spatial regression - consider spatial dependency and correlation!
 library(spdep)
@@ -1843,6 +1854,15 @@ printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsForAll(agrad.l2)
 
+#Top 20 images based on diff, regression for men and women QScore
+top20Diff <- filter(agrad.l, setor == "25040090500004" | setor == "250400905000089")
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+summary(regGroup1)
+summary(regGroup2)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -1851,7 +1871,6 @@ neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
 test <- spautolm(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=res, listw=neigh2)
 summary(test)
-
 
 # regsubsetsAgrad.out <<- regsubsets(diff ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 # plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
@@ -1916,6 +1935,16 @@ printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsForAll(agrad.l2)
 
+#Top 20 images based on diff, regression for men and women QScore
+top20Diff <- filter(agrad.l, bairro == "liberdade")
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+summary(regGroup1)
+summary(regGroup2)
+  
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -1947,7 +1976,6 @@ summary(test)
 100 iterations
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
 #Baixa renda x Media renda
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
@@ -1962,6 +1990,15 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.B
 printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsForAll(agrad.l2)
+
+#Top 20 images based on diff, regression for men and women QScore
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+summary(regGroup1)
+summary(regGroup2)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -2207,6 +2244,16 @@ printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsForAll(seg.l2)
 
+#Top 20 images based on diff, regression for men and women QScore
+top20Diff <- filter(seg.l, setor == "25040090500004" | setor == "250400905000089")
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+summary(regGroup1)
+summary(regGroup2)
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -2295,6 +2342,4 @@ dev.off()
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="spearman")
-
-
 ```

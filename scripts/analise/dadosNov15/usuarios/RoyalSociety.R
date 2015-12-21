@@ -463,32 +463,36 @@ seg <- filter(temp, V1 == "seguro?")
 #Kendall adaptation to consider weights as the difference in amount of features between images
 kendallWithWeights <- function(data, iterations){
     
-    #Maximum comparisons
-    amountOfItems <- nrow(data)
-    itemsWithMax <- floor(amountOfItems/2)
-    den <- 0
-    for( i in seq(1, itemsWithMax) ) {
-        den <- den + ((amountOfItems-i) - (itemsWithMax-i))
-    }
-    data$maxMovCars <- max(data$mov_cars)
-    data$maxParkCars <- max(data$park_cars)
-    data$maxMovCicly <- max(data$mov_ciclyst)
-    data$maxBuildId <- max(data$build_ident)
-    data$maxBuildNRec <- max(data$build_nrectan)
-    data$maxTree <- max(data$trees)
-    data$maxSmallPla <- max(data$small_planters)
-    data$maxDiffBuild <- max(data$diff_build)
-    data$maxStreeFur <- max(data$street_furnit)
-    data$maxBasCol <- max(data$basic_col)
-    data$maxLigh <- max(data$lights)
-    data$maxAccenCol <- max(data$accent_col)
-    data$maxPeop <- max(data$people)
-    data$maxGraff <- max(as.integer(data$graffiti))
-    data$maxBuildDiffAges <- max(as.integer(data$build_diff_ages))
+    #Maximum comparisons - worst scenario ever!
+#     amountOfItems <- nrow(data)
+#     itemsWithMax <- floor(amountOfItems/2)
+#     den <- 0
+#     for( i in seq(1, itemsWithMax) ) {
+#         den <- den + ((amountOfItems-i) - (itemsWithMax-i))
+#     }
+#     #Max values of each feature
+#     maxMovCars <- max(data$mov_cars)
+#     maxParkCars <- max(data$park_cars)
+#     maxMovCicly <- max(data$mov_ciclyst)
+#     maxBuildId <- max(data$build_ident)
+#     maxBuildNRec <- max(data$build_nrectan)
+#     maxTree <- max(data$trees)
+#     maxSmallPla <- max(data$small_planters)
+#     maxDiffBuild <- max(data$diff_build)
+#     maxStreeFur <- max(data$street_furnit)
+#     maxBasCol <- max(data$basic_col)
+#     maxLigh <- max(data$lights)
+#     maxAccenCol <- max(data$accent_col)
+#     maxPeop <- max(data$people)
+#     maxGraff <- max(as.integer(data$graffiti))
+#     maxBuildDiffAges <- max(as.integer(data$build_diff_ages))
 
+    #Maximum comparisons - worst scenario possible between these two groups!
+    #data$index2 <- seq(amountOfItems, 1)#Fake index, completely opposite rank!
+    featuresMapMax <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0)
+    
     #Improve? http://stackoverflow.com/questions/6269526/r-applying-a-function-to-all-row-pairs-of-a-matrix-without-for-loop
-    featuresMapG1 <- rep(0, 30)
-    names(featuresMapG1) <- c("movCars", "parkCars", "movCicly","buildId", "buildNRec", "tree", "smallPla", "diffBuild", "streeFur", "basCol", "ligh", "accenCol", "peop", "graff", "buildDiffAges","rmovCars", "rparkCars", "rmovCicly","rbuildId", "rbuildNRec", "rtree", "rsmallPla", "rdiffBuild", "rstreeFur", "rbasCol", "rligh", "raccenCol", "rpeop", "rgraff", "rbuildDiffAges")
+    featuresMapG1 <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0, rmovCars=0, rparkCars=0, rmovCicly=0, rbuildId=0, rbuildNRec=0, rtree=0, rsmallPla=0, rdiffBuild=0, rstreeFur=0, rbasCol=0, rligh=0, raccenCol=0, rpeop=0, rgraff=0, rbuildDiffAges=0)
     
     #First call, comparing for group 1
     data <- arrange(data, rank)
@@ -496,27 +500,45 @@ kendallWithWeights <- function(data, iterations){
         rankLine1 <- data[i,]
         
         if(i+1 <= amountOfItems){
+          
             for( j in seq(i+1, amountOfItems) ){
                 rankLine2 <- data[j,]
                 
                 if( (rankLine1$rank < rankLine2$rank) & (rankLine1$index > rankLine2$index) ){
-                    featuresMapG1['movCars'] <- featuresMapG1['movCars'] + (rankLine1$mov_cars - rankLine2$mov_cars)
+                    featuresMapG1$movCars <- featuresMapG1$movCars + (rankLine1$mov_cars - rankLine2$mov_cars)
                     #print(paste(rankLine1$rank, " ", rankLine2$rank, " ", rankLine1$index, " ", rankLine2$index, " ", (rankLine1$park_cars - rankLine2$park_cars)))
-                    featuresMapG1['parkCars'] <- featuresMapG1['parkCars'] + (rankLine1$park_cars - rankLine2$park_cars)
-                    featuresMapG1['movCicly'] <- featuresMapG1['movCicly'] + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-                    featuresMapG1['buildId'] <- featuresMapG1['buildId'] + (rankLine1$build_ident - rankLine2$build_ident)
-                    featuresMapG1['buildNRec'] <- featuresMapG1['buildNRec'] + (rankLine1$build_nrectan - rankLine2$build_nrectan)
-                    featuresMapG1['tree'] <- featuresMapG1['tree'] + (rankLine1$trees - rankLine2$trees)
-                    featuresMapG1['smallPla'] <- featuresMapG1['smallPla'] + (rankLine1$small_planters - rankLine2$small_planters)
-                    featuresMapG1['diffBuild'] <- featuresMapG1['diffBuild'] + (rankLine1$diff_build - rankLine2$diff_build)
-                    featuresMapG1['streeFur'] <- featuresMapG1['streeFur'] + (rankLine1$street_furnit - rankLine2$street_furnit)
-                    featuresMapG1['basCol'] <- featuresMapG1['basCol'] + (rankLine1$basic_col - rankLine2$basic_col)
-                    featuresMapG1['ligh'] <- featuresMapG1['ligh'] + (rankLine1$lights - rankLine2$lights)
-                    featuresMapG1['accenCol'] <- featuresMapG1['accenCol'] + (rankLine1$accent_col - rankLine2$accent_col)
-                    featuresMapG1['peop'] <- featuresMapG1['peop'] + (rankLine1$people - rankLine2$people)
-                    featuresMapG1['graff'] <- featuresMapG1['graff'] + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
-                    featuresMapG1['buildDiffAges'] <- featuresMapG1['buildDiffAges'] + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
-                }        
+                    featuresMapG1$parkCars <- featuresMapG1$parkCars + (rankLine1$park_cars - rankLine2$park_cars)
+                    featuresMapG1$movCicly <- featuresMapG1$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                    featuresMapG1$buildId <- featuresMapG1$buildId + (rankLine1$build_ident - rankLine2$build_ident)
+                    featuresMapG1$buildNRec <- featuresMapG1$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
+                    featuresMapG1$tree <- featuresMapG1$tree + (rankLine1$trees - rankLine2$trees)
+                    featuresMapG1$smallPla <- featuresMapG1$smallPla + (rankLine1$small_planters - rankLine2$small_planters)
+                    featuresMapG1$diffBuild <- featuresMapG1$diffBuild + (rankLine1$diff_build - rankLine2$diff_build)
+                    featuresMapG1$streeFur <- featuresMapG1$streeFur + (rankLine1$street_furnit - rankLine2$street_furnit)
+                    featuresMapG1$basCol <- featuresMapG1$basCol + (rankLine1$basic_col - rankLine2$basic_col)
+                    featuresMapG1$ligh <- featuresMapG1$ligh + (rankLine1$lights - rankLine2$lights)
+                    featuresMapG1$accenCol <- featuresMapG1$accenCol + (rankLine1$accent_col - rankLine2$accent_col)
+                    featuresMapG1$peop <- featuresMapG1$peop + (rankLine1$people - rankLine2$people)
+                    featuresMapG1$graff <- featuresMapG1$graff + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                    featuresMapG1$buildDiffAges <- featuresMapG1$buildDiffAges + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
+                }  
+                
+                #Accounting differences for max!
+                featuresMapMax$movCars <- featuresMapMax$movCars + (rankLine1$mov_cars - rankLine2$mov_cars)
+                featuresMapMax$parkCars <- featuresMapMax$parkCars + (rankLine1$park_cars - rankLine2$park_cars)
+                featuresMapMax$movCicly <- featuresMapMax$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                featuresMapMax$buildId <- featuresMapMax$buildId + (rankLine1$build_ident - rankLine2$build_ident)
+                featuresMapMax$buildNRec <- featuresMapMax$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
+                featuresMapMax$tree <- featuresMapMax$tree + (rankLine1$trees - rankLine2$trees)
+                featuresMapMax$smallPla <- featuresMapMax$smallPla + (rankLine1$small_planters - rankLine2$small_planters)
+                featuresMapMax$diffBuild <- featuresMapMax$diffBuild + (rankLine1$diff_build - rankLine2$diff_build)
+                featuresMapMax$streeFur <- featuresMapMax$streeFur + (rankLine1$street_furnit - rankLine2$street_furnit)
+                featuresMapMax$basCol <- featuresMapMax$basCol + (rankLine1$basic_col - rankLine2$basic_col)
+                featuresMapMax$ligh <- featuresMapMax$ligh + (rankLine1$lights - rankLine2$lights)
+                featuresMapMax$accenCol <- featuresMapMax$accenCol + (rankLine1$accent_col - rankLine2$accent_col)
+                featuresMapMax$peop <- featuresMapMax$peop + (rankLine1$people - rankLine2$people)
+                featuresMapMax$graff <- featuresMapMax$graff + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                featuresMapMax$buildDiffAges <- featuresMapMax$buildDiffAges + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
             }
         }
     }
@@ -526,8 +548,7 @@ kendallWithWeights <- function(data, iterations){
     
     for (i in seq(1, iterations)){
         randomIndex <- sample(data$index)
-        featuresMapR <- rep(0, 15)
-        names(featuresMapR) <- c("movCars", "parkCars", "movCicly","buildId", "buildNRec", "tree", "smallPla", "diffBuild", "streeFur", "basCol", "ligh", "accenCol", "peop", "graff", "buildDiffAges")
+        featuresMapR = data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0)
         
         for( i in seq(1, amountOfItems) ) {
             rankLine1 <- data[i,]
@@ -536,81 +557,96 @@ kendallWithWeights <- function(data, iterations){
                     rankLine2 <- data[j,]
                     
                     if( (rankLine1$rank < rankLine2$rank) & (randomIndex[i] > randomIndex[j]) ){
-                        featuresMapR['movCars'] <- featuresMapR['movCars'] + (rankLine1$mov_cars - rankLine2$mov_cars)
-                        featuresMapR['parkCars'] <- featuresMapR['parkCars'] + (rankLine1$park_cars - rankLine2$park_cars)
-                        featuresMapR['movCicly'] <- featuresMapR['movCicly'] + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-                        featuresMapR['buildId'] <- featuresMapR['buildId'] + (rankLine1$build_ident - rankLine2$build_ident)
-                        featuresMapR['buildNRec'] <- featuresMapR['buildNRec'] + (rankLine1$build_nrectan - rankLine2$build_nrectan)
-                        featuresMapR['tree'] <- featuresMapR['tree'] + (rankLine1$trees - rankLine2$trees)
-                        featuresMapR['smallPla'] <- featuresMapR['smallPla'] + (rankLine1$small_planters - rankLine2$small_planters)
-                        featuresMapR['diffBuild'] <- featuresMapR['diffBuild'] + (rankLine1$diff_build - rankLine2$diff_build)
-                        featuresMapR['streeFur'] <- featuresMapR['streeFur'] + (rankLine1$street_furnit - rankLine2$street_furnit)
-                        featuresMapR['basCol'] <- featuresMapR['basCol'] + (rankLine1$basic_col - rankLine2$basic_col)
-                        featuresMapR['ligh'] <- featuresMapR['ligh'] + (rankLine1$lights - rankLine2$lights)
-                        featuresMapR['accenCol'] <- featuresMapR['accenCol'] + (rankLine1$accent_col - rankLine2$accent_col)
-                        featuresMapR['peop'] <- featuresMapR['peop'] + (rankLine1$people - rankLine2$people)
-                        featuresMapR['graff'] <- featuresMapR['graff'] + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
-                        featuresMapR['buildDiffAges'] <- featuresMapR['buildDiffAges'] + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
+                        featuresMapR$movCars <- featuresMapR$movCars + (rankLine1$mov_cars - rankLine2$mov_cars)
+                        featuresMapR$parkCars <- featuresMapR$parkCars + (rankLine1$park_cars - rankLine2$park_cars)
+                        featuresMapR$movCicly <- featuresMapR$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                        featuresMapR$buildId <- featuresMapR$buildId + (rankLine1$build_ident - rankLine2$build_ident)
+                        featuresMapR$buildNRec <- featuresMapR$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
+                        featuresMapR$tree <- featuresMapR$tree + (rankLine1$trees - rankLine2$trees)
+                        featuresMapR$smallPla <- featuresMapR$smallPla + (rankLine1$small_planters - rankLine2$small_planters)
+                        featuresMapR$diffBuild <- featuresMapR$diffBuild + (rankLine1$diff_build - rankLine2$diff_build)
+                        featuresMapR$streeFur <- featuresMapR$streeFur + (rankLine1$street_furnit - rankLine2$street_furnit)
+                        featuresMapR$basCol <- featuresMapR$basCol + (rankLine1$basic_col - rankLine2$basic_col)
+                        featuresMapR$ligh <- featuresMapR$ligh + (rankLine1$lights - rankLine2$lights)
+                        featuresMapR$accenCol <- featuresMapR$accenCol + (rankLine1$accent_col - rankLine2$accent_col)
+                        featuresMapR$peop <- featuresMapR$peop + (rankLine1$people - rankLine2$people)
+                        featuresMapR$graff <- featuresMapR$graff + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                        featuresMapR$buildDiffAges <- featuresMapR$buildDiffAges + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
                     }        
                 }
             }
         } 
         
         #Binding with previous iterations
-        movCars <- cbind(movCars, featuresMapR['movCars'])
-        parkCars <- cbind(parkCars, featuresMapR['parkCars'])
-        movCicly <- cbind(movCicly, featuresMapR['movCicly'])
-        buildId <- cbind(buildId, featuresMapR['buildId'])
-        buildNRec <- cbind(buildNRec, featuresMapR['buildNRec'])
-        tree <- cbind(tree, featuresMapR['tree'])
-        smallPla <- cbind(smallPla, featuresMapR['smallPla'])
-        diffBuild <- cbind(diffBuild, featuresMapR['diffBuild'])
-        streeFur <- cbind(streeFur, featuresMapR['streeFur'])
-        basCol <- cbind(basCol, featuresMapR['basCol'])
-        ligh <-  cbind(ligh, featuresMapR['ligh'])
-        accenCol <- cbind(accenCol, featuresMapR['accenCol'])
-        peop <- cbind(peop, featuresMapR['peop'])
-        graff <- cbind(graff, featuresMapR['graff'])
-        buildDiffAges <- cbind(graff, featuresMapR['buildDiffAges'])
+        movCars <- cbind(movCars, featuresMapR$movCars)
+        parkCars <- cbind(parkCars, featuresMapR$parkCars)
+        movCicly <- cbind(movCicly, featuresMapR$movCicly)
+        buildId <- cbind(buildId, featuresMapR$buildId)
+        buildNRec <- cbind(buildNRec, featuresMapR$buildNRec)
+        tree <- cbind(tree, featuresMapR$tree)
+        smallPla <- cbind(smallPla, featuresMapR$smallPla)
+        diffBuild <- cbind(diffBuild, featuresMapR$diffBuild)
+        streeFur <- cbind(streeFur, featuresMapR$streeFur)
+        basCol <- cbind(basCol, featuresMapR$basCol)
+        ligh <-  cbind(ligh, featuresMapR$ligh)
+        accenCol <- cbind(accenCol, featuresMapR$accenCol)
+        peop <- cbind(peop, featuresMapR$peop)
+        graff <- cbind(graff, featuresMapR$graff)
+        buildDiffAges <- cbind(graff, featuresMapR$buildDiffAges)
     }  
     
-    #Adding random mean values
-    featuresMapG1['rmovCars'] <- mean(movCars) / (data$maxMovCars*den)
-    featuresMapG1['rparkCars'] <- mean(parkCars) / (data$maxParkCars*den)
-    featuresMapG1['rmovCicly'] <- mean(movCicly) / (data$maxMovCicly*den)
-    featuresMapG1['rbuildId'] <- mean(buildId)/ (data$maxBuildId*den)
-    featuresMapG1['rbuildNRec'] <- mean(buildNRec) / (data$maxBuildNRec*den)
-    featuresMapG1['rtree'] <- mean(tree) / (data$maxTree*den)
-    featuresMapG1['rsmallPla'] <- mean(smallPla) / (data$maxSmallPla*den)
-    featuresMapG1['rdiffBuild'] <- mean(diffBuild) / (data$maxDiffBuild*den)
-    featuresMapG1['rstreeFur'] <- mean(streeFur) / (data$maxStreeFur*den)
-    featuresMapG1['rbasCol'] <- mean(basCol) / (data$maxBasCol*den)
-    featuresMapG1['rligh'] <- mean(ligh) / (data$maxLigh*den)
-    featuresMapG1['raccenCol'] <- mean(accenCol) / (data$maxAccenCol*den)
-    featuresMapG1['rpeop'] <- mean(peop) / (data$maxPeop*den)
-    featuresMapG1['rgraff'] <- mean(graff) / (data$maxGraff*den)
-    featuresMapG1['rbuildDiffAges'] <- mean(buildDiffAges) / (data$maxBuildDiffAges*den)
+    featuresMapG1$rmovCars <- mean(movCars) 
+    featuresMapG1$rparkCars <- mean(parkCars)
+    featuresMapG1$rmovCicly <- mean(movCicly)
+    featuresMapG1$rbuildId <- mean(buildId) 
+    featuresMapG1$rbuildNRec <- mean(buildNRec) 
+    featuresMapG1$rtree <- mean(tree)
+    featuresMapG1$rsmallPla <- mean(smallPla)
+    featuresMapG1$rdiffBuild <- mean(diffBuild)
+    featuresMapG1$rstreeFur <- mean(streeFur) 
+    featuresMapG1$rbasCol <- mean(basCol) 
+    featuresMapG1$rligh <- mean(ligh)
+    featuresMapG1$raccenCol <- mean(accenCol) 
+    featuresMapG1$rpeop <- mean(peop) 
+    featuresMapG1$rgraff <- mean(graff) 
+    featuresMapG1$rbuildDiffAges <- mean(buildDiffAges)
     
-    #Updating denom
-    featuresMapG1['movCarsN'] <- featuresMapG1['movCars'] / (data$maxMovCars*den)
-    featuresMapG1['parkCarsN'] <- featuresMapG1['parkCars']  / (data$maxParkCars*den)
-    featuresMapG1['movCiclyN'] <-  featuresMapG1['movCicly'] / (data$maxMovCicly*den)
-    featuresMapG1['buildIdN'] <- featuresMapG1['buildId']/ (data$maxBuildId*den)
-    featuresMapG1['buildNRecN'] <- featuresMapG1['buildNRec'] / (data$maxBuildNRec*den)
-    featuresMapG1['treeN'] <- featuresMapG1['tree'] / (data$maxTree*den)
-    featuresMapG1['smallPlaN'] <- featuresMapG1['smallPla'] / (data$maxSmallPla*den)
-    featuresMapG1['diffBuildN'] <- featuresMapG1['diffBuild'] / (data$maxDiffBuild*den)
-    featuresMapG1['streeFurN'] <- featuresMapG1['streeFur'] / (data$maxStreeFur*den)
-    featuresMapG1['basColN'] <- featuresMapG1['basCol'] / (data$maxBasCol*den)
-    featuresMapG1['lighN'] <- featuresMapG1['ligh'] / (data$maxLigh*den)
-    featuresMapG1['accenColN'] <- featuresMapG1['accenCol'] / (data$maxAccenCol*den)
-    featuresMapG1['peopN'] <- featuresMapG1['peop']  / (data$maxPeop*den)
-    featuresMapG1['graffN'] <- featuresMapG1['graff'] / (data$maxGraff*den)
-    featuresMapG1['buildDiffAgesN'] <- featuresMapG1['buildDiffAges'] / (data$maxBuildDiffAges*den)
+    #Adding random mean values - normalized
+    featuresMapG1$rmovCarsN <- mean(movCars) / featuresMapMax$movCars#/ (maxMovCars*den)
+    featuresMapG1$rparkCarsN <- mean(parkCars) / featuresMapMax$parkCars#/ (maxParkCars*den)
+    featuresMapG1$rmovCiclyN <- mean(movCicly)/ featuresMapMax$movCicly #/ (maxMovCicly*den)
+    featuresMapG1$rbuildIdN <- mean(buildId) / featuresMapMax$buildId#/ (maxBuildId*den)
+    featuresMapG1$rbuildNRecN <- mean(buildNRec) / featuresMapMax$buildNRec#/ (maxBuildNRec*den)
+    featuresMapG1$rtreeN <- mean(tree) / featuresMapMax$tree#/ (maxTree*den)
+    featuresMapG1$rsmallPlaN <- mean(smallPla) / featuresMapMax$smallPla#/ (maxSmallPla*den)
+    featuresMapG1$rdiffBuildN <- mean(diffBuild) / featuresMapMax$diffBuild#/ (maxDiffBuild*den)
+    featuresMapG1$rstreeFurN <- mean(streeFur) / featuresMapMax$streeFur#/ (maxStreeFur*den)
+    featuresMapG1$rbasColN <- mean(basCol) / featuresMapMax$basCol#/ (maxBasCol*den)
+    featuresMapG1$rlighN <- mean(ligh) / featuresMapMax$ligh#/ (maxLigh*den)
+    featuresMapG1$raccenColN <- mean(accenCol) / featuresMapMax$accenCol#/ (maxAccenCol*den)
+    featuresMapG1$rpeopN <- mean(peop) / featuresMapMax$peop#/ (maxPeop*den)
+    featuresMapG1$rgraffN <- mean(graff) / featuresMapMax$graff#/ (maxGraff*den)
+    featuresMapG1$rbuildDiffAgesN <- mean(buildDiffAges) / featuresMapMax$buildDiffAges#/ (maxBuildDiffAges*den)
+    
+    #Normalizing real values
+    featuresMapG1$movCarsN <- featuresMapG1$movCars / featuresMapMax$movCars#(maxMovCars*den)
+    featuresMapG1$parkCarsN <- featuresMapG1$parkCars  / featuresMapMax$parkCars#(maxParkCars*den)
+    featuresMapG1$movCiclyN <-  featuresMapG1$movCicly / featuresMapMax$movCicly#(maxMovCicly*den)
+    featuresMapG1$buildIdN <- featuresMapG1$buildId/ featuresMapMax$buildId#(maxBuildId*den)
+    featuresMapG1$buildNRecN <- featuresMapG1$buildNRec / featuresMapMax$buildNRec#(maxBuildNRec*den)
+    featuresMapG1$treeN <- featuresMapG1$tree / featuresMapMax$tree#(maxTree*den)
+    featuresMapG1$smallPlaN <- featuresMapG1$smallPla / featuresMapMax$smallPla#(maxSmallPla*den)
+    featuresMapG1$diffBuildN <- featuresMapG1$diffBuild / featuresMapMax$diffBuild#(maxDiffBuild*den)
+    featuresMapG1$streeFurN <- featuresMapG1$streeFur / featuresMapMax$streeFur#(maxStreeFur*den)
+    featuresMapG1$basColN <- featuresMapG1$basCol / featuresMapMax$basCol#(maxBasCol*den)
+    featuresMapG1$lighN <- featuresMapG1$ligh / featuresMapMax$ligh#(maxLigh*den)
+    featuresMapG1$accenColN <- featuresMapG1$accenCol / featuresMapMax$accenCol#(maxAccenCol*den)
+    featuresMapG1$peopN <- featuresMapG1$peop  / featuresMapMax$peop#(maxPeop*den)
+    featuresMapG1$graffN <- featuresMapG1$graff / featuresMapMax$graff#(maxGraff*den)
+    featuresMapG1$buildDiffAgesN <- featuresMapG1$buildDiffAges / featuresMapMax$buildDiffAges#(maxBuildDiffAges*den)
     
     return ( featuresMapG1 )
 }
-
 
 #Calculates maximum denominator for normalization
 calcGreatesSum <- function(maxFeature, amountOfImages) {
@@ -1334,7 +1370,7 @@ agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-print(paste(">>>> Kendall adapted Hom x Mul ", kendallWithWeights(agrad.l, iterations)))
+print(kendallWithWeights(agrad.l, iterations))
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -1351,7 +1387,7 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-print(paste(">>>> Kendall adapted Hom x Mul ", kendallWithWeights(seg.l, iterations)))
+print(kendallWithWeights(seg.l, iterations))
 
 #printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")

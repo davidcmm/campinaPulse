@@ -464,7 +464,7 @@ seg <- filter(temp, V1 == "seguro?")
 kendallWithWeights <- function(data, iterations){
     
     #Maximum comparisons - worst scenario ever!
-#     amountOfItems <- nrow(data)
+     amountOfItems <- nrow(data)
 #     itemsWithMax <- floor(amountOfItems/2)
 #     den <- 0
 #     for( i in seq(1, itemsWithMax) ) {

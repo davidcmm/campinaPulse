@@ -463,8 +463,15 @@ seg <- filter(temp, V1 == "seguro?")
 #Kendall adaptation to consider weights as the difference in amount of features between images
 kendallWithWeights <- function(data, iterations){
     
+    data$graffiti <- as.character(data$graffiti)
+    data$graffiti[data$graffiti == "No"] <- 0
+    data$graffiti[data$graffiti == "Yes"] <- 1
+    data$build_diff_ages <- as.character(data$build_diff_ages)
+    data$build_diff_ages[data$build_diff_ages == "No"] <- 0
+    data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
+  
     #Maximum comparisons - worst scenario ever!
-     amountOfItems <- nrow(data)
+    amountOfItems <- nrow(data)
 #     itemsWithMax <- floor(amountOfItems/2)
 #     den <- 0
 #     for( i in seq(1, itemsWithMax) ) {
@@ -524,21 +531,21 @@ kendallWithWeights <- function(data, iterations){
                 }  
                 
                 #Accounting differences for max!
-                featuresMapMax$movCars <- featuresMapMax$movCars + (rankLine1$mov_cars - rankLine2$mov_cars)
-                featuresMapMax$parkCars <- featuresMapMax$parkCars + (rankLine1$park_cars - rankLine2$park_cars)
-                featuresMapMax$movCicly <- featuresMapMax$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-                featuresMapMax$buildId <- featuresMapMax$buildId + (rankLine1$build_ident - rankLine2$build_ident)
-                featuresMapMax$buildNRec <- featuresMapMax$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
-                featuresMapMax$tree <- featuresMapMax$tree + (rankLine1$trees - rankLine2$trees)
-                featuresMapMax$smallPla <- featuresMapMax$smallPla + (rankLine1$small_planters - rankLine2$small_planters)
-                featuresMapMax$diffBuild <- featuresMapMax$diffBuild + (rankLine1$diff_build - rankLine2$diff_build)
-                featuresMapMax$streeFur <- featuresMapMax$streeFur + (rankLine1$street_furnit - rankLine2$street_furnit)
-                featuresMapMax$basCol <- featuresMapMax$basCol + (rankLine1$basic_col - rankLine2$basic_col)
-                featuresMapMax$ligh <- featuresMapMax$ligh + (rankLine1$lights - rankLine2$lights)
-                featuresMapMax$accenCol <- featuresMapMax$accenCol + (rankLine1$accent_col - rankLine2$accent_col)
-                featuresMapMax$peop <- featuresMapMax$peop + (rankLine1$people - rankLine2$people)
-                featuresMapMax$graff <- featuresMapMax$graff + (as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
-                featuresMapMax$buildDiffAges <- featuresMapMax$buildDiffAges + (as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
+                featuresMapMax$movCars <- featuresMapMax$movCars + abs(rankLine1$mov_cars - rankLine2$mov_cars)
+                featuresMapMax$parkCars <- featuresMapMax$parkCars + abs(rankLine1$park_cars - rankLine2$park_cars)
+                featuresMapMax$movCicly <- featuresMapMax$movCicly + abs(rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                featuresMapMax$buildId <- featuresMapMax$buildId + abs(rankLine1$build_ident - rankLine2$build_ident)
+                featuresMapMax$buildNRec <- featuresMapMax$buildNRec + abs(rankLine1$build_nrectan - rankLine2$build_nrectan)
+                featuresMapMax$tree <- featuresMapMax$tree + abs(rankLine1$trees - rankLine2$trees)
+                featuresMapMax$smallPla <- featuresMapMax$smallPla + abs(rankLine1$small_planters - rankLine2$small_planters)
+                featuresMapMax$diffBuild <- featuresMapMax$diffBuild + abs(rankLine1$diff_build - rankLine2$diff_build)
+                featuresMapMax$streeFur <- featuresMapMax$streeFur + abs(rankLine1$street_furnit - rankLine2$street_furnit)
+                featuresMapMax$basCol <- featuresMapMax$basCol + abs(rankLine1$basic_col - rankLine2$basic_col)
+                featuresMapMax$ligh <- featuresMapMax$ligh + abs(rankLine1$lights - rankLine2$lights)
+                featuresMapMax$accenCol <- featuresMapMax$accenCol + abs(rankLine1$accent_col - rankLine2$accent_col)
+                featuresMapMax$peop <- featuresMapMax$peop + abs(rankLine1$people - rankLine2$people)
+                featuresMapMax$graff <- featuresMapMax$graff + abs(as.integer(rankLine1$graffiti) - as.integer(rankLine2$graffiti))
+                featuresMapMax$buildDiffAges <- featuresMapMax$buildDiffAges + abs(as.integer(rankLine1$build_diff_ages) - as.integer(rankLine2$build_diff_ages))
             }
         }
     }
@@ -865,7 +872,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 10000
+iterations <- 1000
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

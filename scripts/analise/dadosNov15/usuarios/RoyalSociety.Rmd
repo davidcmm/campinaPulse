@@ -5,6 +5,13 @@ output: pdf_document
 
 #Reading data
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(spdep)
+library(reshape)
+source('analisaICPorFoto.R')
+
 getLatLong <- function(data, fileWithCoord) {
   coord <- read.table(fileWithCoord, sep="+", header=F)#V4 and V5 -> lat and long; V2 street
   data$lat <- 0
@@ -22,12 +29,6 @@ getLatLong <- function(data, fileWithCoord) {
   return (data)
 }
 
-library(ggplot2)
-library(gridExtra)
-library(dplyr)
-library(spdep)
-source('analisaICPorFoto.R')
-
 facet_names <- list(
   'agrad%C3%A1vel?'="Pleasantness",
   'seguro?'="Safety"
@@ -39,7 +40,6 @@ facet_labeller <- function(variable,value){
 
 #dados <- read.table("geral.dat", header=TRUE)
 dados <- read.table("geralSetoresAJ.dat", header=TRUE)
-
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -2418,7 +2418,7 @@ agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-print(paste(">>>> Kendall adapted Hom x Mul ", kendallWithWeights(agrad.l, iterations)))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -2458,7 +2458,7 @@ agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
-print(paste(">>>> Kendall adapted Jov x Adu ", kendallWithWeights(agrad.l, iterations)))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
@@ -2507,7 +2507,7 @@ agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
-print(paste(">>>> Kendall adapted Cas x Sol ", kendallWithWeights(agrad.l, iterations)))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -2548,7 +2548,7 @@ agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-print(paste(">>>> Kendall adapted Baix x Med ", kendallWithWeights(agrad.l, iterations)))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
@@ -2588,7 +2588,7 @@ seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-print(paste(">>>> Kendall adapted Hom x Mul ", kendallWithWeights(seg.l, iterations)))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
@@ -2619,7 +2619,7 @@ seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
-print(paste(">>>> Kendall adapted Jov x Adu ", kendallWithWeights(seg.l, iterations)))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
@@ -2649,7 +2649,7 @@ seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
-print(paste(">>>> Kendall adapted Cas x Sol ", kendallWithWeights(seg.l, iterations)))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
@@ -2678,7 +2678,7 @@ seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-print(paste(">>>> Kendall adapted Bai x Med ", kendallWithWeights(seg.l, iterations)))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")

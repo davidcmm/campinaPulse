@@ -4,6 +4,7 @@
 library(ggplot2)
 library(gridExtra)
 library(dplyr)
+library(reshape)
 source('analisaICPorFoto.R')
 
 facet_names <- list(
@@ -1377,7 +1378,7 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-print(kendallWithWeights(agrad.l, iterations))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
@@ -1394,7 +1395,7 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-print(kendallWithWeights(seg.l, iterations))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")

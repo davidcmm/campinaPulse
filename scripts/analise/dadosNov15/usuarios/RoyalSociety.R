@@ -4,6 +4,7 @@
 library(ggplot2)
 library(gridExtra)
 library(dplyr)
+library(reshape)
 source('analisaICPorFoto.R')
 
 facet_names <- list(
@@ -1374,7 +1375,7 @@ agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-print(kendallWithWeights(agrad.l, iterations))
+print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -1391,7 +1392,7 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-print(kendallWithWeights(seg.l, iterations))
+print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")

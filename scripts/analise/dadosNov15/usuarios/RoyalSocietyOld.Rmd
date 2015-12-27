@@ -1,0 +1,513 @@
+#Graficos - Boxplot e Scatterplots QScores
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+
+#Todos os usuarios
+geral <- filter(dadosCopy, grupo == "Geral")
+
+geral$bairro <- as.character(geral$bairro)
+geral$bairro[geral$bairro == "catole"] <- "Catolé"
+geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
+geral$bairro[geral$bairro == "centro"] <- "Centro"
+
+w = 8
+h = 7
+pdf("images/boxPleaSafeAll.pdf", width = w, height = h)
+ggplot(geral, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1, labeller = facet_labeller)
+dev.off()
+
+#Know neighborhoods
+geral <- filter(dadosCopy, (bairro == "catole" & grupo == "CCatole") | (bairro == "centro" & grupo == "CCentro") | (bairro == "liberdade" & grupo == "CLiberdade"))
+
+geral$bairro <- as.character(geral$bairro)
+geral$bairro[geral$bairro == "catole"] <- "Catolé"
+geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
+geral$bairro[geral$bairro == "centro"] <- "Centro"
+
+w = 8
+h = 7
+pdf("images/boxPleaSafeKnow.pdf", width = w, height = h)
+ggplot(geral, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1, labeller = facet_labeller)
+dev.off()
+
+#Do not Know neighborhoods
+geral <- filter(dadosCopy, (bairro == "catole" & grupo == "NCCatole") | (bairro == "centro" & grupo == "NCCentro") | (bairro == "liberdade" & grupo == "NCLiberdade"))
+
+geral$bairro <- as.character(geral$bairro)
+geral$bairro[geral$bairro == "catole"] <- "Catolé"
+geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
+geral$bairro[geral$bairro == "centro"] <- "Centro"
+
+w = 8
+h = 7
+pdf("images/boxPleaSafeNKnow.pdf", width = w, height = h)
+ggplot(geral, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1, labeller = facet_labeller)
+dev.off()
+
+#Scatterplot Pleas x Safe
+geral <- select(filter(dadosCopy, grupo == "Geral"), grupo, V1, V2, V3, bairro) 
+
+geral$bairro <- as.character(geral$bairro)
+geral$bairro[geral$bairro == "catole"] <- "Catolé"
+geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
+geral$bairro[geral$bairro == "centro"] <- "Centro"
+
+novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), direction="wide")
+novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "neighborhood"))
+
+library(plyr)
+
+w = 5
+h = 4
+pdf("images/pleasXsafeAll.pdf", width = w, height = h)
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()
+dev.off()
+
+cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
+cor.test(novosDados$Safe, novosDados$Pleasant, method="spearman")
+
+```
+
+#Homens e Mulheres
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando homens e mulheres
+grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='agrad%C3%A1vel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Masculino)
+sd(novosgrupo1grupo2$V3.Feminino)
+sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
+
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "pearson")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-hom-mul-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-agrad.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-hom-mul-data-agrad.dat", sep = "\t")
+
+#Separando homens e mulheres
+grupo1 <- dadosSub[(dadosSub$grupo == 'Masculino' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Feminino' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Masculino)
+sd(novosgrupo1grupo2$V3.Feminino)
+sd(novosgrupo1grupo2$V3.Masculino - novosgrupo1grupo2$V3.Feminino)
+
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Masculino, novosgrupo1grupo2$V3.Feminino, method = "pearson")
+
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-hom-mul-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos")], file="reg-hom-mul-data-seg.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Masculino", "V3.Feminino", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-hom-mul-data-seg.dat", sep = "\t")
+```
+
+
+#Agradavel x Seguro
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.agradavel ~ V3.seguro, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-jov-adu-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.agradavel", "V3.seguro", "residuals", "residualsPos")], file="agrad-seg.dat", sep = "\t")
+
+```
+
+
+#Jovens e Adultos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando jovens e adultos
+grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='agrad%C3%A1vel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao?
+sd(novosgrupo1grupo2$V3.Jovem)
+sd(novosgrupo1grupo2$V3.Adulto)
+sd(novosgrupo1grupo2$V3.Jovem - novosgrupo1grupo2$V3.Adulto)
+
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "pearson")
+
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+mean(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+sum( (novosgrupo1grupo2$V3.Adulto - mean(novosgrupo1grupo2$V3.Adulto))**2 )
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-jov-adu-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-agrad.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-jov-adu-data-agrad.dat", sep = "\t")
+
+#Separando jovens e adultos
+grupo1 <- dadosSub[(dadosSub$grupo == 'Jovem' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Adulto' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Jovem)
+sd(novosgrupo1grupo2$V3.Adulto)
+sd(novosgrupo1grupo2$V3.Jovem - novosgrupo1grupo2$V3.Adulto)
+
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Jovem, novosgrupo1grupo2$V3.Adulto, method = "pearson")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-jov-adu-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos")], file="reg-jov-adu-data-seg.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Jovem", "V3.Adulto", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-jov-adu-data-seg.dat", sep = "\t")
+```
+
+#Casados e Solteiros
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='agrad%C3%A1vel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-cas-sol-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Casado)
+sd(novosgrupo1grupo2$V3.Solteiro)
+sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
+
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "pearson")
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-agrad.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-cas-sol-data-agrad.dat", sep = "\t")
+
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Casado' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Solteiro' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Casado)
+sd(novosgrupo1grupo2$V3.Solteiro)
+sd(novosgrupo1grupo2$V3.Casado - novosgrupo1grupo2$V3.Solteiro)
+
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Casado, novosgrupo1grupo2$V3.Solteiro, method = "pearson")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+#Modelo
+#sink("reg-cas-sol-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Casado", "V3.Solteiro", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-cas-sol-data-seg.dat", sep = "\t")
+```
+
+#Baixa renda e Media renda
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='agrad%C3%A1vel?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Baixa)
+sd(novosgrupo1grupo2$V3.Media)
+sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
+
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "pearson")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+plot(regAgrad$residuals, main = "Residual Plot Pleasantness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-bai-med-agrad.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-agrad.dat", sep = "\t")
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-cas-sol-data-seg.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Baixa", "V3.Media", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-bai-med-data-agrad.dat", sep = "\t")
+
+#Separando casados e solteiros
+grupo1 <- dadosSub[(dadosSub$grupo == 'Baixa' & dadosSub$V1=='seguro?' ),] 
+grupo2 <- dadosSub[(dadosSub$grupo == 'Media' & dadosSub$V1=='seguro?'),] 
+temp <- rbind(grupo1, grupo2)
+
+novosgrupo1grupo2 <- reshape(temp, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+#Desvio padrao
+sd(novosgrupo1grupo2$V3.Baixa)
+sd(novosgrupo1grupo2$V3.Media)
+sd(novosgrupo1grupo2$V3.Baixa - novosgrupo1grupo2$V3.Media)
+
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "spearman")
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "kendall")
+cor.test(novosgrupo1grupo2$V3.Baixa, novosgrupo1grupo2$V3.Media, method = "pearson")
+
+#Regressao
+library(texreg)
+
+regAgrad <- lm(V3.Baixa ~ V3.Media, data=novosgrupo1grupo2)
+
+novosgrupo1grupo2$residuals <- regAgrad$residuals
+novosgrupo1grupo2$residualsPos <- abs(regAgrad$residuals)
+
+novosgrupo1grupo2 <- novosgrupo1grupo2[with(novosgrupo1grupo2, order(-residualsPos)), ]
+
+sum(novosgrupo1grupo2$residuals)
+sum(novosgrupo1grupo2$residuals**2)
+
+plot(regAgrad$residuals, main = "Residual Plot Safeteness", ylab = "Residuals")
+
+#Modelo
+#sink("reg-bai-med-seg.txt")
+texreg(regAgrad)
+summary(regAgrad)
+#sink()
+
+#Fotos, QScores e resíduos
+write.table(novosgrupo1grupo2[, c("V2", "V3.Baixa", "V3.Media", "residuals", "residualsPos")], file="reg-bai-med-data-seg.dat", sep = "\t")
+
+#Fotos, QScores e elementos urbanos
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V2"] <- "image_url"
+allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosgrupo1grupo2, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
+allData <- allData[with(allData, order(-residualsPos)), ]
+
+write.table(allData[, c("image_url", "V3.Baixa", "V3.Media", "residuals", "residualsPos", "street_wid","sidewalk_wid_left","sidewalk_wid_right","public_art","mov_cars","park_cars_left","park_cars_right","mov_ciclyst","debris_left","debris_right","pavement_left","pavement_right","landscape_left","landscape_right","courtyards","major_landsc","build_ident","build_nrectan","prop_street_wall_left","prop_street_wall_right","prop_wind_left","prop_wind_right","long_sight","prop_sky_ahead","prop_sky_across_left","prop_sky_across_right","graffiti","trees_left","trees_right","small_planters_left","small_planters_right","build_height_left","build_height_right","build_diff_ages","diff_build","prop_hist_build","outdoor_table_left","outdoor_table_right","street_furnit_left","street_furnit_right","basic_col","lights_left","lights_right","accent_col","people_left","people_right","prop_active_use_left","prop_active_use_right")], file="elem-bai-med-data-seg.dat", sep = "\t")
+```
+
+
+

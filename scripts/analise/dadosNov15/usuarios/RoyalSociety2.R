@@ -472,27 +472,6 @@ kendallWithWeights <- function(data, iterations){
   
     #Maximum comparisons - worst scenario ever!
     amountOfItems <- nrow(data)
-#     itemsWithMax <- floor(amountOfItems/2)
-#     den <- 0
-#     for( i in seq(1, itemsWithMax) ) {
-#         den <- den + ((amountOfItems-i) - (itemsWithMax-i))
-#     }
-#     #Max values of each feature
-#     maxMovCars <- max(data$mov_cars)
-#     maxParkCars <- max(data$park_cars)
-#     maxMovCicly <- max(data$mov_ciclyst)
-#     maxBuildId <- max(data$build_ident)
-#     maxBuildNRec <- max(data$build_nrectan)
-#     maxTree <- max(data$trees)
-#     maxSmallPla <- max(data$small_planters)
-#     maxDiffBuild <- max(data$diff_build)
-#     maxStreeFur <- max(data$street_furnit)
-#     maxBasCol <- max(data$basic_col)
-#     maxLigh <- max(data$lights)
-#     maxAccenCol <- max(data$accent_col)
-#     maxPeop <- max(data$people)
-#     maxGraff <- max(as.integer(data$graffiti))
-#     maxBuildDiffAges <- max(as.integer(data$build_diff_ages))
 
     #Maximum comparisons - worst scenario possible between these two groups!
     #data$index2 <- seq(amountOfItems, 1)#Fake index, completely opposite rank!
@@ -564,7 +543,8 @@ kendallWithWeights <- function(data, iterations){
                 for( j in seq(i+1, amountOfItems) ) {
                     rankLine2 <- data[j,]
                     
-                    if( (rankLine1$rank < rankLine2$rank) & (randomIndex[i] > randomIndex[j]) ){
+                    if( (rankLine1$rank < rankLine2$rank) & (rankLine1$index > rankLine2$index) ){
+                      
                         featuresMapR$movCars <- featuresMapR$movCars + ( as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) )
                         featuresMapR$parkCars <- featuresMapR$parkCars + ( as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) )
                         featuresMapR$movCicly <- featuresMapR$movCicly + ( as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) )
@@ -618,6 +598,22 @@ kendallWithWeights <- function(data, iterations){
     featuresMapG1$rpeop <- mean(peop) 
     featuresMapG1$rgraff <- mean(graff) 
     featuresMapG1$rbuildDiffAges <- mean(buildDiffAges)
+
+    featuresMapG1$rsdMovCars <- sd(movCars) 
+    featuresMapG1$rsdParkCars <- sd(parkCars)
+    featuresMapG1$rsdMovCicly <- sd(movCicly)
+    featuresMapG1$rsdBuildId <- sd(buildId) 
+    featuresMapG1$rsdBuildNRec <- sd(buildNRec) 
+    featuresMapG1$rsdTree <- sd(tree)
+    featuresMapG1$rsdSmallPla <- sd(smallPla)
+    featuresMapG1$rsdDiffBuild <- sd(diffBuild)
+    featuresMapG1$rsdStreeFur <- sd(streeFur) 
+    featuresMapG1$rsdBasCol <- sd(basCol) 
+    featuresMapG1$rsdLigh <- sd(ligh)
+    featuresMapG1$rsdAccenCol <- sd(accenCol) 
+    featuresMapG1$rsdPeop <- sd(peop) 
+    featuresMapG1$rsdGraff <- sd(graff) 
+    featuresMapG1$rsdBuildDiffAges <- sd(buildDiffAges)
     
     #Adding random mean values - normalized
     featuresMapG1$rmovCarsN <- mean(movCars) / featuresMapMax$movCars#/ (maxMovCars*den)

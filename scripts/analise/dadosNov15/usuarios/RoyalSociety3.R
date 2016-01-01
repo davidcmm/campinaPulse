@@ -536,7 +536,7 @@ kendallWithWeights <- function(data, iterations){
     for (i in seq(1, iterations)){
         #randomIndex <- sample(data$index)
         featuresMapR = data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0)
-        randomCols <- sample(colnames(data)[3:17])
+        randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages"))
         
         for( i in seq(1, amountOfItems) ) {
             rankLine1 <- data[i,]

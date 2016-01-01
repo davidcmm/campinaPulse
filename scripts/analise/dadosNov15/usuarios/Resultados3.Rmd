@@ -1,0 +1,492 @@
+---
+title: "Análise Comparativa (TTests) Bairros"
+output: pdf_document
+---
+
+#Análise dos Bairros
+
+##Agradável  Geral
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+library(ggplot2)
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleAgradAll.dat"
+centro <- "bairros100/centroAgradAll.dat"
+liberdade <- "bairros100/liberdadeAgradAll.dat"
+color <- "green"
+#output1 <- "Catolé Agradável Geral"
+#output2 <- "Centro Agradável Geral"
+#output3 <-  "Liberdade Agradável Geral"
+output1 <- "Catolé"
+output2 <- "Centro"
+output3 <-  "Liberdade"
+calculateTTests(catole, centro, output1, output2, FALSE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, FALSE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=2.5}
+ggplot(catoleData, aes(y=catoleData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(centroData, aes(y=centroData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(""))) + geom_boxplot() + geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output3))+theme_bw()+ xlab("") + ylab("QScore")+ylim(2, 8)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+catoleData$bairro <- "Catolé"
+catoleData$questao <- "Pleasant"
+centroData$bairro <- "Centro"
+centroData$questao <- "Pleasant"
+liberdadeData$bairro <- "Liberdade"
+liberdadeData$questao <- "Pleasant"
+
+#os3 <- rbind(catoleData, centroData, liberdadeData)
+#ggplot(os3, aes(y=V3, x = bairro)) + 
+ # geom_boxplot() + 
+  #geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  #theme_bw()+ xlab("") + 
+  #ylab("QScore")+ylim(2, 8)+
+  #theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Seguranca  Geral
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+catole <- "bairros100/catoleSegAll.dat"
+centro <- "bairros100/centroSegAll.dat"
+liberdade <- "bairros100/liberdadeSegAll.dat"
+color <- "green"
+#output1 <- "Catolé Segurança"
+#output2 <- "Centro Segurança"
+#output3 <-  "Liberdade Segurança"
+output1 <- "Catolé"
+output2 <- "Centro"
+output3 <-  "Liberdade"
+calculateTTests(catole, centro, output1, output2, TRUE)
+catoleDataSeg <- data1
+centroDataSeg <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, TRUE)
+liberdadeDataSeg <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=2.5}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c("")))+geom_boxplot()+ geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste(output1))+theme_bw()+ xlab("") + ylab("QScore")+ ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(centroData, aes(y=centroData$V3, x=c("")))+geom_boxplot() + geom_point(position = position_jitter(width = 0.2))+ ggtitle(paste(output2))+theme_bw()+ xlab("") + ylab("QScore")+ ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c("")))+geom_boxplot()+ geom_point(position = position_jitter(width = 0.2)) + ggtitle(paste( output3))+theme_bw()+ xlab("") + ylab("QScore") + ylim(2, 7)+theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+
+
+catoleDataSeg$bairro <- "Catolé"
+catoleDataSeg$questao <- "Safeness"
+centroDataSeg$bairro <- "Centro"
+centroDataSeg$questao <- "Safeness"
+liberdadeDataSeg$bairro <- "Liberdade"
+liberdadeDataSeg$questao <- "Safeness"
+
+os3 <- rbind(catoleData, centroData, liberdadeData, catoleDataSeg, centroDataSeg, liberdadeDataSeg)
+w = 8
+h = 7
+pdf("boxGeral.pdf", width = w, height = h)
+ggplot(os3, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ questao)
+dev.off()
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Jovem Agradável
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleAgradJovemAll.dat"
+centro <- "bairros100/centroAgradJovemAll.dat"
+liberdade <- "bairros100/liberdadeAgradJovemAll.dat"
+color <- "green"
+output1 <- "Catole Agrad Jov"
+output2 <- "Centro Agrad Jov"
+output3 <-  "Liberdade Agrad Jov"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+summary(liberdadeData)
+summary(catoleData)
+summary(centroData)
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Jovem Segurança
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleSegJovemAll.dat"
+centro <- "bairros100/centroSegJovemAll.dat"
+liberdade <- "bairros100/liberdadeSegJovemAll.dat"
+color <- "green"
+output1 <- "Catole Seg Jov"
+output2 <- "Centro Seg Jov"
+output3 <-  "Liberdade Seg Jov"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Adulto Agradável
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleAgradAdultoAll.dat"
+centro <- "bairros100/centroAgradAdultoAll.dat"
+liberdade <- "bairros100/liberdadeAgradAdultoAll.dat"
+color <- "green"
+output1 <- "Catole Agra Adu"
+output2 <- "Centro Agra Adu"
+output3 <-  "Liberdade Agra Adu"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+summary(liberdadeData)
+summary(catoleData)
+summary(centroData)
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Adulto Seguranca
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleSegAdultoAll.dat"
+centro <- "bairros100/centroSegAdultoAll.dat"
+liberdade <- "bairros100/liberdadeSegAdultoAll.dat"
+color <- "green"
+output1 <- "Catole Seg Adu"
+output2 <- "Centro Seg Adu"
+output3 <-  "Liberdade Seg Adu"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Baixa Agradável
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleAgradBaixaAll.dat"
+centro <- "bairros100/centroAgradBaixaAll.dat"
+liberdade <- "bairros100/liberdadeAgradBaixaAll.dat"
+color <- "green"
+output1 <- "Catole Agrad Baixa"
+output2 <- "Centro Agrad Baixa"
+output3 <-  "Liberdade Agrad Baixa"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Baixa Segurança
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleSegBaixaAll.dat"
+centro <- "bairros100/centroSegBaixaAll.dat"
+liberdade <- "bairros100/liberdadeSegBaixaAll.dat"
+color <- "green"
+output1 <- "Catole Seg Baixa"
+output2 <- "Centro Seg Baixa"
+output3 <-  "Liberdade Seg Baixa"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+
+##Media Agradável
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleAgradMediaAll.dat"
+centro <- "bairros100/centroAgradMediaAll.dat"
+liberdade <- "bairros100/liberdadeAgradMediaAll.dat"
+color <- "green"
+output1 <- "Catole Agrad Media"
+output2 <- "Centro Agrad Media"
+output3 <-  "Liberdade Agrad Media"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+
+##Media Segurança
+### Catole x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+source('calculaTTest.R')
+
+catole <- "bairros100/catoleSegMediaAll.dat"
+centro <- "bairros100/centroSegMediaAll.dat"
+liberdade <- "bairros100/liberdadeSegMediaAll.dat"
+color <- "green"
+output1 <- "Catole Seg Media"
+output2 <- "Centro Seg Media"
+output3 <-  "Liberdade Seg Media"
+calculateTTests(catole, centro, output1, output2, color, TRUE)
+catoleData <- data1
+centroData <- data2
+```
+
+### Liberdade x Centro
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(liberdade, centro, output3, output2, color, TRUE)
+liberdadeData <- data1
+```
+
+### Catole x Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+calculateTTests(catole, liberdade, output1, output3, color, TRUE)
+```
+
+### Normalidade Catole, Centro, Liberdade
+```{r, echo=FALSE, fig.show='asis', fig.width=3}
+
+ggplot(catoleData, aes(y=catoleData$V3, x=c(output1)))+geom_boxplot() + ggtitle(paste("Boxplot ", output1))
+ggplot(centroData, aes(y=centroData$V3, x=c(output2)))+geom_boxplot() + ggtitle(paste("Boxplot ", output2))
+ggplot(liberdadeData, aes(y=liberdadeData$V3, x=c(output3)))+geom_boxplot() + ggtitle(paste("Boxplot ", output3))
+
+
+qqnorm(catoleData$V3)
+qqline(catoleData$V3)
+qqnorm(centroData$V3)
+qqline(centroData$V3)
+qqnorm(liberdadeData$V3)
+qqline(liberdadeData$V3)
+```
+

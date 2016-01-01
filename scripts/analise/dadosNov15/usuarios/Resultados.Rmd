@@ -1,0 +1,362 @@
+---
+title: "Moran_Corr_Reg"
+output: pdf_document
+---
+# Moran Geral (simulações)
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('krippMoran.R')
+
+moranI("moran100/streetsQScoresLatLongAgraAll.dat", "moran100/streetsQScoresLatLongSegAll.dat")
+```
+
+# Moran por grupo
+
+## Adulto
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllAdulto.dat", "moran100/streetsQScoresLatLongSegAllAdulto.dat")
+```
+
+## Jovem
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllJovem.dat", "moran100/streetsQScoresLatLongSegAllJovem.dat")
+```
+
+## Baixa
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllBaixa.dat", "moran100/streetsQScoresLatLongSegAllBaixa.dat")
+```
+
+## Média
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllMedia.dat", "moran100/streetsQScoresLatLongSegAllMedia.dat")
+```
+
+## Feminino
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllFeminino.dat", "moran100/streetsQScoresLatLongSegAllFeminino.dat")
+```
+
+## Masculino
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllMasculino.dat", "moran100/streetsQScoresLatLongSegAllMasculino.dat")
+```
+
+## Solteiro
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllSolteiro.dat", "moran100/streetsQScoresLatLongSegAllCasado.dat")
+```
+
+## Casado
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllCasado.dat", "moran100/streetsQScoresLatLongSegAllCasado.dat")
+```
+
+## Medio
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllMedio.dat", "moran100/streetsQScoresLatLongSegAllMedio.dat")
+```
+
+## Pos
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+moranI("moran100/streetsQScoresLatLongAgraAllPos.dat", "moran100/streetsQScoresLatLongSegAllPos.dat")
+```
+
+# Correlações
+
+## Geral
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('analisaCorrelacao.R')
+
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Adulto
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllAdulto.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllAdulto.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Jovem
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllJovem.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllJovem.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Baixa
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllBaixa.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllBaixa.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Media
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedia.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedia.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Feminino
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllFeminino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllFeminino.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Masculino
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllMasculino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMasculino.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Solteiro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllSolteiro.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllSolteiro.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Casado
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Medio
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+## Pos
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('analisaCorrelacao.R')
+calculateTests("inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat", shouldPlot=TRUE)
+boxplot(dataAgrad$qscore, prob=TRUE, main="Agrad")
+boxplot(dataSeg$qscore, prob=TRUE, main="Seg")
+```
+
+# Regressões
+
+## Geral
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+source('analisaRegressao.R')
+
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAll.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradGeral <- modeloAgrad
+modeloSegGeral <- modeloSeg
+```
+
+## Adulto
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllAdulto.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllAdulto.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradAdulto <- modeloAgrad
+modeloSegAdulto <- modeloSeg
+```
+
+## Jovem
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllJovem.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllJovem.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradJovem <- modeloAgrad
+modeloSegJovem <- modeloSeg
+```
+
+## Baixa
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllBaixa.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllBaixa.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradBaixa <- modeloAgrad
+modeloSegBaixa <- modeloSeg
+```
+
+## Media
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedia.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedia.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMedia <- modeloAgrad
+modeloSegMedia <- modeloSeg
+```
+
+## Feminino
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllFeminino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllFeminino.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradFeminino <- modeloAgrad
+modeloSegFeminino <- modeloSeg
+```
+
+## Masculino
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMasculino.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMasculino.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMasculino <- modeloAgrad
+modeloSegMasculino <- modeloSeg
+```
+
+## Solteiro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllSolteiro.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllSolteiro.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradSolteiro <- modeloAgrad
+modeloSegSolteiro <- modeloSeg
+```
+
+## Casado
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllCasado.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllCasado.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradCasado <- modeloAgrad
+modeloSegCasado <- modeloSeg
+```
+
+## Medio
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllMedio.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllMedio.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradMedio <- modeloAgrad
+modeloSegMedio <- modeloSeg
+```
+
+## Casado
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+calculateRegression("inputCorrelacaoRegressao100/rgbQScoreAgradAllPos.dat", "inputCorrelacaoRegressao100/rgbQScoreSegAllPos.dat", shouldPlot=TRUE)
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+modeloAgradPos <- modeloAgrad
+modeloSegPos <- modeloSeg
+```
+
+## Modelo de Regressão com Percentual de Usuários por Perfil SócioDemográfico
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4}
+library(texreg)
+
+dadosAgrad0 <- read.table("rgbQScoreAgrad0.dat", header=TRUE)
+dadosSeg0 <- read.table("rgbQScoreSeg0.dat", header=TRUE)
+
+bairrosAgrad <- lapply(as.character(dadosAgrad0$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+bairrosSeg <- lapply(as.character(dadosSeg0$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+dadosAgrad0$bairro <- unlist(lapply(bairrosAgrad, '[[', 1))
+dadosSeg0$bairro <- unlist(lapply(bairrosSeg, '[[', 1))
+
+dadosAgrad1 <- read.table("rgbQScoreAgrad1.dat", header=TRUE)
+dadosSeg1 <- read.table("rgbQScoreSeg1.dat", header=TRUE)
+
+bairrosAgrad <- lapply(as.character(dadosAgrad1$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+bairrosSeg <- lapply(as.character(dadosSeg1$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+dadosAgrad1$bairro <- unlist(lapply(bairrosAgrad, '[[', 1))
+dadosSeg1$bairro <- unlist(lapply(bairrosSeg, '[[', 1))
+
+dadosAgrad2 <- read.table("rgbQScoreAgrad2.dat", header=TRUE)
+dadosSeg2 <- read.table("rgbQScoreSeg2.dat", header=TRUE)
+
+bairrosAgrad <- lapply(as.character(dadosAgrad2$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+bairrosSeg <- lapply(as.character(dadosSeg2$foto), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+dadosAgrad2$bairro <- unlist(lapply(bairrosAgrad, '[[', 1))
+dadosSeg2$bairro <- unlist(lapply(bairrosSeg, '[[', 1))
+
+dadosAgrad <- rbind(dadosAgrad0, dadosAgrad1, dadosAgrad2)
+dadosSeg <- rbind(dadosSeg0, dadosSeg1, dadosSeg2)
+
+#colnames(dadosAgrad) <- c("foto", "qscore",	"vermelho", "verde", "azul", "diag", "hor", "vert", "jovem", "adulto", "mulher", "homem", "renda baixa", "renda média baix", "renda média"	hasLowClass	hasMLowClass	hasMClass	hasMHighClass	hasHighClass	hasGraduated	hasHighSchool	hasMaster	hasPHD	hasSingle	hasDivorced	hasWidower	hasMarried	knowsCenter	knowsLiberdade	knowsCatole) 
+
+#dadosAgrad$countSingle <- dadosAgrad$countSingle + dadosAgrad$countDivorced + dadosAgrad$countWidower
+#dadosSeg$countSingle <- dadosSeg$countSingle + dadosSeg$countDivorced + dadosSeg$countWidower
+
+print(">>>> Agrad")
+#regAgrad <- lm(qscore ~ scale(countYoung) + scale(countOld) + scale(countMale) + scale(countMClass) + scale(countHighSchool) + scale(countGraduated) + scale(countMaster) + scale(countSingle) + scale(countMarried) + scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosAgrad)
+regAgrad <- lm(qscore ~ scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + bairro, data=dadosAgrad)
+texreg(regAgrad)
+
+print(">>>> Seg")
+#regSeg <- lm(qscore ~ scale(countYoung) + scale(countOld) + scale(countMale) + scale(countMClass) + scale(countGraduated) + scale(countMaster) + scale(countSingle) + scale(countMarried) + scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + scale(red) + scale(green) + scale(blue) + scale(diag) + scale(vert) + scale(hor) + bairro, data=dadosSeg)
+regSeg <- lm(qscore ~ scale(countKnowsCenter) + scale(countKnowsLiberdade) + scale(countKnowsCatole) + bairro, data=dadosSeg)
+texreg(regSeg)
+
+source('sjPlot/R/sjPlotLinreg.R')
+source('sjPlot/R/helpfunctions.R')
+source('sjPlot/R/sjPlotSetTheme.R')
+library("ggplot2")
+library("sjPlot")
+library("sjmisc")
+
+sjp.setTheme(axis.title.size = 1.0, axis.textsize = 1.0, legend.size = .8, geom.label.size = 3.5, legend.pos = "left", title.align = "center", legend.inside = FALSE, geom.label.angle = 0)
+#sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Ens. Médio", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+sjp.lm(regAgrad, title="", sort.est=FALSE, axisLabels.y=c("Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+#sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Jovem", "Adulto", "Homem", "Cla. Média", "Graduação", "Mestrado", "Solteiro", "Casado", "Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "Vermelho", "Verde", "Azul", "Diagonais", "Verticais", "Horizontais", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+sjp.lm(regSeg, title="", sort.est=FALSE, axisLabels.y=c("Conhece Centro", "Conhece Liberdade", "Conhece Catolé", "É Centro?", "É Liberdade?"), axisTitle.x="Estimativas dos Coeficientes")
+```
+
+## Tabela com Modelos para Agradavel
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4, out.width=4}
+texreg(list(modeloAgradGeral, modeloAgradAdulto, modeloAgradJovem, modeloAgradBaixa, modeloAgradMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Agradável")
+
+texreg(list(modeloAgradGeral, modeloAgradFeminino, modeloAgradMasculino, modeloAgradSolteiro, modeloAgradCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Agradável")
+
+texreg(list(modeloAgradGeral, modeloAgradMedio, modeloAgradPos), custom.model.names=c("Geral", "Medio", "Pos"), caption="Modelo de Regressão para Agradável")
+```
+
+## Tabelas com Modelos para Seguro
+
+```{r, echo=FALSE, fig.show='asis', fig.width=4, out.width=4}
+texreg(list(modeloSegGeral, modeloSegAdulto, modeloSegJovem, modeloSegBaixa, modeloSegMedia), custom.model.names=c("Geral", "Adulto", "Jovem", "Baixa", "Media"), caption="Modelo de Regressão para Seguro")
+
+texreg(list(modeloSegGeral, modeloSegFeminino, modeloSegMasculino, modeloSegSolteiro, modeloSegCasado), custom.model.names=c("Geral", "Feminino", "Masculino", "Solteiro", "Casado"), caption="Modelo de Regressão para Seguro")
+
+texreg(list(modeloSegGeral, modeloSegMedio, modeloSegPos), custom.model.names=c("Geral", "Medio", "Pos"), caption="Modelo de Regressão para Seguro")
+```

@@ -535,8 +535,8 @@ kendallWithWeights <- function(data, iterations){
     
     for (i in seq(1, iterations)){
         #randomIndex <- sample(data$index)
-        featuresMapR = data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0)
-        randomCols <- sample(colnames(data)[3:17])
+        featuresMapR = data.frame(movCars = 0, parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0)
+        randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages"))
         
         for( i in seq(1, amountOfItems) ) {
             rankLine1 <- data[i,]
@@ -545,7 +545,8 @@ kendallWithWeights <- function(data, iterations){
                     rankLine2 <- data[j,]
                     
                     if( (rankLine1$rank < rankLine2$rank) & (rankLine1$index > rankLine2$index) ){
-                      
+		
+			print(paste(randomCols[1], " ", rankLine1[[randomCols[1]]], " ", rankLine2[[randomCols[1]]]))                  
                         featuresMapR$movCars <- featuresMapR$movCars + ( as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) )
                         featuresMapR$parkCars <- featuresMapR$parkCars + ( as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) )
                         featuresMapR$movCicly <- featuresMapR$movCicly + ( as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) )
@@ -567,6 +568,7 @@ kendallWithWeights <- function(data, iterations){
         } 
         
         #Binding with previous iterations
+	print(movCars)
         movCars <- cbind(movCars, featuresMapR$movCars)
         parkCars <- cbind(parkCars, featuresMapR$parkCars)
         movCicly <- cbind(movCicly, featuresMapR$movCicly)
@@ -583,7 +585,7 @@ kendallWithWeights <- function(data, iterations){
         graff <- cbind(graff, featuresMapR$graff)
         buildDiffAges <- cbind(graff, featuresMapR$buildDiffAges)
     }  
-    
+
     featuresMapG1$rmovCars <- mean(movCars) 
     featuresMapG1$rparkCars <- mean(parkCars)
     featuresMapG1$rmovCicly <- mean(movCicly)
@@ -870,7 +872,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 1000
+iterations <- 10
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

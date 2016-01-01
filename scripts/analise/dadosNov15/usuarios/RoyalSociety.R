@@ -546,7 +546,6 @@ kendallWithWeights <- function(data, iterations){
                     
                     if( (rankLine1$rank < rankLine2$rank) & (rankLine1$index > rankLine2$index) ){
 		
-			print(paste(randomCols[1], " ", rankLine1[[randomCols[1]]], " ", rankLine2[[randomCols[1]]]))                  
                         featuresMapR$movCars <- featuresMapR$movCars + ( as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) )
                         featuresMapR$parkCars <- featuresMapR$parkCars + ( as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) )
                         featuresMapR$movCicly <- featuresMapR$movCicly + ( as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) )
@@ -568,7 +567,6 @@ kendallWithWeights <- function(data, iterations){
         } 
         
         #Binding with previous iterations
-	print(movCars)
         movCars <- cbind(movCars, featuresMapR$movCars)
         parkCars <- cbind(parkCars, featuresMapR$parkCars)
         movCicly <- cbind(movCicly, featuresMapR$movCicly)
@@ -872,7 +870,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 10
+iterations <- 1000
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

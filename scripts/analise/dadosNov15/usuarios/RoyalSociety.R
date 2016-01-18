@@ -16,7 +16,8 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
-dados <- read.table("geral.dat", header=TRUE)
+#dados <- read.table("geral.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados

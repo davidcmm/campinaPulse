@@ -16,7 +16,8 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
-dados <- read.table("geral.dat", header=TRUE)
+#dados <- read.table("geral.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -1375,8 +1376,14 @@ agrad.l <- agrad %>%
 #agrad.l <- calcDanieleCoeff(agrad.l)
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
-print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+#All places
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
+#print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+
+#Sector with diff
+diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -1392,8 +1399,8 @@ seg.l <- seg %>%
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
-print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
+#print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")

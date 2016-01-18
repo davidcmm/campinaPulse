@@ -16,7 +16,8 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
-dados <- read.table("geral.dat", header=TRUE)
+#dados <- read.table("geral.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -1374,8 +1375,18 @@ agrad.l <- agrad %>%
 #agrad.l <- calcDanieleCoeff(agrad.l)
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
-print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+#All places
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+#print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+
+#Sectors with difference
+diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
+diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
@@ -1391,8 +1402,14 @@ seg.l <- seg %>%
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
-print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
+#All places
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
+#print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
+
+#Sectores with difference
+diff <- filter(seg.l, setor == "250400905000062") #YA Cat
+print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")

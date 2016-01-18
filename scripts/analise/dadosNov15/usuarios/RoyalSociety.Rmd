@@ -2427,8 +2427,8 @@ printOutputTwoListsForAll(agrad.l2)
 #Top 20 images based on diff, regression for men and women QScore
 top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
 
-regGroup1 <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
-regGroup2 <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
+regGroup1 <- lm(rank ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
+regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
 summary(regGroup1)
 summary(regGroup2)
 
@@ -2448,7 +2448,6 @@ summary(test)
 100 iterations
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
 #Jovem x Adulto
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
@@ -2460,6 +2459,15 @@ agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
+#Sectors with difference
+diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
+diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
 printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsForAll(agrad.l2)
@@ -2468,9 +2476,13 @@ printOutputTwoListsForAll(agrad.l2)
 top20Diff <- filter(agrad.l, setor == "25040090500004" | setor == "250400905000089")
 top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
 
-regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)
+#Features being considered in coefficient first verstion
+regGroup1 <- lm(rank ~ scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
 #regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
-regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)
+#Features being considered in coefficient first verstion
+regGroup2 <- lm(index ~  scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
 summary(regGroup1)
 summary(regGroup2)
 
@@ -2508,6 +2520,11 @@ agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
 print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+
+#Sector with diff
+diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -2621,6 +2638,11 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
 print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
+#Sectores with difference
+diff <- filter(seg.l, setor == "250400905000062") #YA Cat
+print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
 printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsForAll(seg.l2)
@@ -2680,6 +2702,15 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
 print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
 
+#Sectors with difference
+diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
+diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
 printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsForAll(seg.l2)
@@ -2701,6 +2732,122 @@ neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
 test <- spautolm(diff ~ mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan + graffiti + trees + small_planters + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people, data=res, listw=neigh2)
 summary(test)
+```
+
+#Reading table and formatting - Flavio coeff and sd
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+ic <- function(mean, sd, n) { 
+	return ( sd/sqrt(n)*qnorm(1-(0.05/2)) )#95% confidence interval, significance level of 0.05 (alpha)
+}
+
+coeffData <- read.table("teste.dat", header=TRUE)
+
+print( paste( "index feature real random sd lower higher" ), quote=FALSE )
+
+realValue <- as.double(filter(coeffData, variable=="movCars")$value)
+randomValue <- as.double(filter(coeffData, variable=="rmovCars")$value)
+sdValue <- as.double(filter(coeffData, variable=="rsdMovCars")$value)
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "movCars", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE )
+
+realValue <- filter(coeffData, variable=="parkCars")$value
+randomValue <- filter(coeffData, variable=="rparkCars")$value
+sdValue <- filter(coeffData, variable=="rsdParkCars")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "parkCars", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="movCicly")$value
+randomValue <- filter(coeffData, variable=="rmovCicly")$value
+sdValue <- filter(coeffData, variable=="rsdMovCicly")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "movCicly", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="buildId")$value
+randomValue <- filter(coeffData, variable=="rbuildId")$value
+sdValue <- filter(coeffData, variable=="rsdBuildId")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "buildId", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="buildNRec")$value
+randomValue <- filter(coeffData, variable=="rbuildNRec")$value
+sdValue <- filter(coeffData, variable=="rsdBuildNRec")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "buildNRec", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="tree")$value
+randomValue <- filter(coeffData, variable=="rtree")$value
+sdValue <- filter(coeffData, variable=="rsdTree")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "tree", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="smallPla")$value
+randomValue <- filter(coeffData, variable=="rsmallPla")$value
+sdValue <- filter(coeffData, variable=="rsdSmallPla")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "smallPla", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="diffBuild")$value
+randomValue <- filter(coeffData, variable=="rdiffBuild")$value
+sdValue <- filter(coeffData, variable=="rsdDiffBuild")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "diffBuild", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="streeFur")$value
+randomValue <- filter(coeffData, variable=="rstreeFur")$value
+sdValue <- filter(coeffData, variable=="rsdStreeFur")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "streeFur", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="basCol")$value
+randomValue <- filter(coeffData, variable=="rbasCol")$value
+sdValue <- filter(coeffData, variable=="rsdBasCol")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "basCol", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="ligh")$value
+randomValue <- filter(coeffData, variable=="rligh")$value
+sdValue <- filter(coeffData, variable=="rsdLigh")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "ligh", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="accenCol")$value
+randomValue <- filter(coeffData, variable=="raccenCol")$value
+sdValue <- filter(coeffData, variable=="rsdAccenCol")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "accenCol", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="peop")$value
+randomValue <- filter(coeffData, variable=="rpeop")$value
+sdValue <- filter(coeffData, variable=="rsdPeop")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "peop", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="graff")$value
+randomValue <- filter(coeffData, variable=="rgraff")$value
+sdValue <- filter(coeffData, variable=="rsdGraff")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "graff", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
+
+realValue <- filter(coeffData, variable=="buildDiffAges")$value
+randomValue <- filter(coeffData, variable=="rbuildDiffAges")$value
+sdValue <- filter(coeffData, variable=="rsdBuildDiffAges")$value
+lower <- randomValue - ic(randomValue, sdValue, 1000)
+higher <- randomValue + ic(randomValue, sdValue, 1000)
+print( paste ( "buildDiffAges", realValue, " ",  randomValue, " ",  sdValue, " ", lower, higher ), quote=FALSE  )
 ```
 
 #Agradavel x Seguro

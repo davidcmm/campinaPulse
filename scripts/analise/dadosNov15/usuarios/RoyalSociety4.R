@@ -16,7 +16,8 @@ facet_labeller <- function(variable,value){
   return(facet_names[value])
 }
 
-dados <- read.table("geral.dat", header=TRUE)
+#dados <- read.table("geral.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -1377,8 +1378,9 @@ agrad.l <- agrad %>%
 #agrad.l <- calcDanieleCoeff(agrad.l)
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
+#All places
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
+#print(melt(kendallWithWeights(agrad.l, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
@@ -1394,8 +1396,18 @@ seg.l <- seg %>%
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
+#All places
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
+#print(melt(kendallWithWeights(seg.l, iterations)), row.names=FALSE)
+
+#Sectors with difference
+diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
+
+diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+print(melt(kendallWithWeights(diff, iterations)), row.names=FALSE)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")

@@ -48,6 +48,10 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Subset of columns
+#dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
+
+#novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
+
 dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")

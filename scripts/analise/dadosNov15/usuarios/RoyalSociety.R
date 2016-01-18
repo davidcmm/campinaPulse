@@ -26,9 +26,9 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Subset of columns
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 
 #Urban Elements
 library(dplyr)
@@ -459,7 +459,8 @@ temp$area[temp$bairro == "centro"] <- "norte"
 temp$area[temp$bairro == "liberdade"] <- "oeste"
 temp$area[temp$bairro == "catole"] <- "oeste"
 
-agrad <- filter(temp, V1 == "agrad%C3%A1vel?")
+#agrad <- filter(temp, V1 == "agrad%C3%A1vel?")
+agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images

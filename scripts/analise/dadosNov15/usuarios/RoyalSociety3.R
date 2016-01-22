@@ -1483,17 +1483,17 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
-print(res, row.names=FALSE)
-convertSummary(res)
-
-#Sector with diff
-#diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
-#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
-#res <- melt(kendallWithWeights(diff, iterations))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
+#res <- melt(kendallWithWeights(agrad.l, iterations))
 #print(res, row.names=FALSE)
 #convertSummary(res)
+
+#Sector with diff
+diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
+res <- melt(kendallWithWeights(diff, iterations))
+print(res, row.names=FALSE)
+convertSummary(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -1509,10 +1509,10 @@ seg.l <- seg %>%
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
-res <- melt(kendallWithWeights(seg.l, iterations))
-print(res, row.names=FALSE)
-convertSummary(res)
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
+#res <- melt(kendallWithWeights(seg.l, iterations))
+#print(res, row.names=FALSE)
+#convertSummary(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")

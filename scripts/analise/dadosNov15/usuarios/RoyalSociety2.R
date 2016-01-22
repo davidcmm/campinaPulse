@@ -1482,23 +1482,23 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+#res <- melt(kendallWithWeights(agrad.l, iterations))
+#print(res, row.names=FALSE)
+#convertSummary(res)
+
+#Sectors with difference
+diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
 convertSummary(res)
 
-#Sectors with difference
-#diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
-#print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations))
-#print(res, row.names=FALSE)
-#convertSummary(res)
-
-#diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
-#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations))
-#print(res, row.names=FALSE)
-#convertSummary(res)
+diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations))
+print(res, row.names=FALSE)
+convertSummary(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
@@ -1515,17 +1515,17 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
-res <- melt(kendallWithWeights(seg.l, iterations))
-print(res, row.names=FALSE)
-convertSummary(res)
-
-#Sectores with difference
-#diff <- filter(seg.l, setor == "250400905000062") #YA Cat
-#print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
+#res <- melt(kendallWithWeights(seg.l, iterations))
 #print(res, row.names=FALSE)
 #convertSummary(res)
+
+#Sectores with difference
+diff <- filter(seg.l, setor == "250400905000062") #YA Cat
+print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations))
+print(res, row.names=FALSE)
+convertSummary(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")

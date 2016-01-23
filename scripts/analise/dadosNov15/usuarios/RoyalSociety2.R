@@ -650,7 +650,7 @@ kendallWithWeights <- function(data, iterations){
                         #featuresMapR$propSkyAhead <- featuresMapR$propSkyAhead + (as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
                         #featuresMapR$propSkyAcross <- featuresMapR$propSkyAcross + (as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
                         propSkyAheadR <- cbind(propSkyAheadR, as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
-                        propSkyAcrossR <- cbind(propSkyAcrossR, as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]])
+                        propSkyAcrossR <- cbind(propSkyAcrossR, as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
                         featuresMapR$buildHeight <- featuresMapR$buildHeight + (as.double(rankLine1[[randomCols[26]]]) - as.double(rankLine2[[randomCols[26]]]))
                         #featuresMapR$propActiveUse <- featuresMapR$propActiveUse + (as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
                         propActiveUseR <- cbind(propActiveUseR, as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))

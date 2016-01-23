@@ -956,6 +956,9 @@ kendallWithWeights <- function(data, iterations){
     #Improve? http://stackoverflow.com/questions/6269526/r-applying-a-function-to-all-row-pairs-of-a-matrix-without-for-loop
     featuresMapG1 <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec = 0, tree = 0, smallPla = 0, diffBuild = 0, streeFur = 0, basCol = 0, ligh = 0, accenCol = 0, peop = 0, graff = 0, buildDiffAges = 0, streetWid = 0, sidewalkWid = 0, debris = 0, pavement = 0, landscape = 0, propStreetWall = 0, propWind = 0, longSight = 0, propSkyAhead = 0, propSkyAcross = 0, buildHeight = 0, propActiveUse = 0, rmovCars = 0, rparkCars = 0, rmovCicly = 0, rbuildId = 0, rbuildNRec = 0, rtree = 0, rsmallPla = 0, rdiffBuild = 0, rstreeFur = 0, rbasCol = 0, rligh = 0, raccenCol = 0, rpeop = 0, rgraff = 0, rbuildDiffAges = 0, rstreetWid = 0, rsidewalkWid = 0, rdebris = 0, rpavement = 0, rlandscape = 0, rpropStreetWall = 0, rpropWind = 0, rlongSight = 0, rpropSkyAhead = 0, rpropSkyAcross = 0, rbuildHeight = 0, rpropActiveUse = 0)
     
+    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
+    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <-  propActiveUseMax <- c()
+    
     #First call, comparing for group 1
     data <- arrange(data, rank)
     for( i in seq(1, amountOfItems) ){
@@ -986,17 +989,24 @@ kendallWithWeights <- function(data, iterations){
                     
                     featuresMapG1$streetWid <- featuresMapG1$streetWid + (as.double(rankLine1$street_wid) - as.double(rankLine2$street_wid))
                     featuresMapG1$sidewalkWid <- featuresMapG1$sidewalkWid + (as.double(rankLine1$sidewalk_wid) - as.double(rankLine2$sidewalk_wid))
-                    featuresMapG1$debris <- featuresMapG1$debris + (as.double(rankLine1$debris) - as.double(rankLine2$debris))
-                    featuresMapG1$pavement <- featuresMapG1$pavement + (as.double(rankLine1$pavement) - as.double(rankLine2$pavement))
-                    featuresMapG1$landscape <- featuresMapG1$landscape + (as.double(rankLine1$landscape) - as.double(rankLine2$landscape))
-                    featuresMapG1$propStreetWall <- featuresMapG1$propStreetWall + (as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall))
-                    featuresMapG1$propWind <- featuresMapG1$propWind + (as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind))
+                    #featuresMapG1$debris <- featuresMapG1$debris + (as.double(rankLine1$debris) - as.double(rankLine2$debris))
+                    #featuresMapG1$pavement <- featuresMapG1$pavement + (as.double(rankLine1$pavement) - as.double(rankLine2$pavement))
+                    #featuresMapG1$landscape <- featuresMapG1$landscape + (as.double(rankLine1$landscape) - as.double(rankLine2$landscape))
+                    #featuresMapG1$propStreetWall <- featuresMapG1$propStreetWall + (as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall))
+                    #featuresMapG1$propWind <- featuresMapG1$propWind + (as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind))
+                    debris <- cbind(debris, as.double(rankLine1$debris) - as.double(rankLine2$debris))
+                    pavement <- cbind(pavement, as.double(rankLine1$pavement) - as.double(rankLine2$pavement)) 
+                    landscape <- cbind(landscape, as.double(rankLine1$landscape) - as.double(rankLine2$landscape))
+                    propStreetWall <- cbind(propStreetWall, as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall))
+                    propWind <- cbind(propWind, as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind))
                     featuresMapG1$longSight <- featuresMapG1$longSight + (as.double(rankLine1$long_sight) - as.double(rankLine2$long_sight))
-                    featuresMapG1$propSkyAhead <- featuresMapG1$propSkyAhead + (as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead))
-                    featuresMapG1$propSkyAcross <- featuresMapG1$propSkyAcross + (as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))
+                    #featuresMapG1$propSkyAhead <- featuresMapG1$propSkyAhead + (as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead))
+                    #featuresMapG1$propSkyAcross <- featuresMapG1$propSkyAcross + (as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))
+                    propSkyAhead <- cbind(propSkyAhead, as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead))
+                    propSkyAcross <- cbind(propSkyAcross, as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))  
                     featuresMapG1$buildHeight <- featuresMapG1$buildHeight + (as.double(rankLine1$build_height) - as.double(rankLine2$build_height))
-                    featuresMapG1$propActiveUse <- featuresMapG1$propActiveUse + (as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use))
-                    
+                    #featuresMapG1$propActiveUse <- featuresMapG1$propActiveUse + (as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use))
+                    propActiveUse <- cbind(propActiveUse, as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use))
                 }  
                 
                 #Accounting differences for max!
@@ -1018,20 +1028,50 @@ kendallWithWeights <- function(data, iterations){
                 
                 featuresMapMax$streetWid <- featuresMapMax$streetWid + abs(as.double(rankLine1$street_wid) - as.double(rankLine2$street_wid))
                 featuresMapMax$sidewalkWid <- featuresMapMax$sidewalkWid + abs(as.double(rankLine1$sidewalk_wid) - as.double(rankLine2$sidewalk_wid))
-                featuresMapMax$debris <- featuresMapMax$debris + abs(as.double(rankLine1$debris) - as.double(rankLine2$debris))
-                featuresMapMax$pavement <- featuresMapMax$pavement + abs(as.double(rankLine1$pavement) - as.double(rankLine2$pavement))
-                featuresMapMax$landscape <- featuresMapMax$landscape + abs(as.double(rankLine1$landscape) - as.double(rankLine2$landscape))
-                featuresMapMax$propStreetWall <- featuresMapMax$propStreetWall + abs(as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall))
-                featuresMapMax$propWind <- featuresMapMax$propWind + abs(as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind))
+                #featuresMapMax$debris <- featuresMapMax$debris + abs(as.double(rankLine1$debris) - as.double(rankLine2$debris))
+                #featuresMapMax$pavement <- featuresMapMax$pavement + abs(as.double(rankLine1$pavement) - as.double(rankLine2$pavement))
+                #featuresMapMax$landscape <- featuresMapMax$landscape + abs(as.double(rankLine1$landscape) - as.double(rankLine2$landscape))
+                debrisMax <- cbind(debrisMax, abs(as.double(rankLine1$debris) - as.double(rankLine2$debris)))
+                pavementMax <- cbind(pavementMax, abs(as.double(rankLine1$pavement) - as.double(rankLine2$pavement))) 
+                landscapeMax <- cbind(landscapeMax, abs(as.double(rankLine1$landscape) - as.double(rankLine2$landscape)))
+                #featuresMapMax$propStreetWall <- featuresMapMax$propStreetWall + abs(as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall))
+                #featuresMapMax$propWind <- featuresMapMax$propWind + abs(as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind))
+                propStreetWallMax <- cbind(propStreetWallMax, abs(as.double(rankLine1$prop_street_wall) - as.double(rankLine2$prop_street_wall)))
+                propWindMax <- cbind(propWindMax, abs(as.double(rankLine1$prop_wind) - as.double(rankLine2$prop_wind)))
                 featuresMapMax$longSight <- featuresMapMax$longSight + abs(as.double(rankLine1$long_sight) - as.double(rankLine2$long_sight))
-                featuresMapMax$propSkyAhead <- featuresMapMax$propSkyAhead + abs(as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead))
-                featuresMapMax$propSkyAcross <- featuresMapMax$propSkyAcross + abs(as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))
+                #featuresMapMax$propSkyAhead <- featuresMapMax$propSkyAhead + abs(as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead))
+                #featuresMapMax$propSkyAcross <- featuresMapMax$propSkyAcross + abs(as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))
+                propSkyAheadMax <- cbind(propSkyAheadMax, abs(as.double(rankLine1$prop_sky_ahead) - as.double(rankLine2$prop_sky_ahead)))
+                propSkyAcrossMax <- cbind(propSkyAcrossMax, abs(as.double(rankLine1$prop_sky_across) - as.double(rankLine2$prop_sky_across))) 
                 featuresMapMax$buildHeight <- featuresMapMax$buildHeight + abs(as.double(rankLine1$build_height) - as.double(rankLine2$build_height))
-                featuresMapMax$propActiveUse <- featuresMapMax$propActiveUse + abs(as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use))
-                
+                #featuresMapMax$propActiveUse <- featuresMapMax$propActiveUse + abs(as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use))
+                propActiveUseMax <- cbind(propActiveUseMax, abs(as.double(rankLine1$prop_active_use) - as.double(rankLine2$prop_active_use)))
             }
         }
     }
+    
+    #Real world mean values for grades and proportions
+    featuresMapG1$debris <- mean(debris)
+    featuresMapG1$pavement <- mean(pavement)
+    featuresMapG1$landscape <- mean(landscape)
+    featuresMapG1$propStreetWall <- mean(propStreetWall)
+    featuresMapG1$propWind <- mean(propWind)
+    featuresMapG1$propStreetWall <- mean(propStreetWall)
+    featuresMapG1$propWind <- mean(propWind)
+    featuresMapG1$propSkyAhead <- mean(propSkyAhead)
+    featuresMapG1$propSkyAcross <- mean(propSkyAcross)
+    featuresMapG1$propActiveUse <- mean(propActiveUse)
+    
+    featuresMapMax$debris <- mean(debrisMax)
+    featuresMapMax$pavement <- mean(pavementMax)
+    featuresMapMax$landscape <- mean(landscapeMax)
+    featuresMapMax$propStreetWall <- mean(propStreetWallMax)
+    featuresMapMax$propWind <- mean(propWindMax)
+    featuresMapMax$propStreetWall <- mean(propStreetWallMax)
+    featuresMapMax$propWind <- mean(propWindMax)
+    featuresMapMax$propSkyAhead <- mean(propSkyAheadMax)
+    featuresMapMax$propSkyAcross <- mean(propSkyAcrossMax)
+    featuresMapMax$propActiveUse <- mean(propActiveUseMax)
     
     #Random world
     movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- debris <- pavement <- landscape <- propStreetWall <- propWind <- longSight <- propSkyAhead <- propSkyAcross <- buildHeight <- propActiveUse <- c()
@@ -1040,6 +1080,7 @@ kendallWithWeights <- function(data, iterations){
         #randomIndex <- sample(data$index)
         featuresMapR = data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0, streetWid=0, sidewalkWid=0, debris=0, pavement=0, landscape=0, propStreetWall=0, propWind=0, longSight=0, propSkyAhead=0 , propSkyAcross=0, buildHeight=0, propActiveUse=0)
         randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages", "street_wid", "sidewalk_wid", "debris", "pavement", "landscape", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead",  "prop_sky_across", "build_height", "prop_active_use"))
+        debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
         
         for( i in seq(1, amountOfItems) ) {
             rankLine1 <- data[i,]
@@ -1067,16 +1108,24 @@ kendallWithWeights <- function(data, iterations){
                         
                         featuresMapR$streetWid <- featuresMapR$streetWid + (as.double(rankLine1[[randomCols[16]]]) - as.double(rankLine2[[randomCols[16]]]))
                         featuresMapR$sidewalkWid <- featuresMapR$sidewalkWid + (as.double(rankLine1[[randomCols[17]]]) - as.double(rankLine2[[randomCols[17]]]))
-                        featuresMapR$debris <- featuresMapR$debris + (as.double(rankLine1[[randomCols[18]]]) - as.double(rankLine2[[randomCols[18]]]))
-                        featuresMapR$pavement <- featuresMapR$pavement + (as.double(rankLine1[[randomCols[19]]]) - as.double(rankLine2[[randomCols[19]]]))
-                        featuresMapR$landscape <- featuresMapR$landscape + (as.double(rankLine1[[randomCols[20]]]) - as.double(rankLine2[[randomCols[20]]]))
-                        featuresMapR$propStreetWall <- featuresMapR$propStreetWall + (as.double(rankLine1[[randomCols[21]]]) - as.double(rankLine2[[randomCols[21]]]))
-                        featuresMapR$propWind <- featuresMapR$propWind + (as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
+                        #featuresMapR$debris <- featuresMapR$debris + (as.double(rankLine1[[randomCols[18]]]) - as.double(rankLine2[[randomCols[18]]]))
+                        #featuresMapR$pavement <- featuresMapR$pavement + (as.double(rankLine1[[randomCols[19]]]) - as.double(rankLine2[[randomCols[19]]]))
+                        #featuresMapR$landscape <- featuresMapR$landscape + (as.double(rankLine1[[randomCols[20]]]) - as.double(rankLine2[[randomCols[20]]]))
+                        #featuresMapR$propStreetWall <- featuresMapR$propStreetWall + (as.double(rankLine1[[randomCols[21]]]) - as.double(rankLine2[[randomCols[21]]]))
+                        #featuresMapR$propWind <- featuresMapR$propWind + (as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
+                        debrisR <- cbind(debrisR, as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
+                        pavementR <- cbind(pavementR, as.double(rankLine1[[randomCols[19]]]) - as.double(rankLine2[[randomCols[19]]])) 
+                        landscapeR <- cbind(landscapeR, as.double(rankLine1[[randomCols[20]]]) - as.double(rankLine2[[randomCols[20]]]))
+                        propStreetWallR <- cbind(propStreetWallR, as.double(rankLine1[[randomCols[21]]]) - as.double(rankLine2[[randomCols[21]]]))
+                        propWindR <- cbind(propWindR, as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
                         featuresMapR$longSight <- featuresMapR$longSight + (as.double(rankLine1[[randomCols[23]]]) - as.double(rankLine2[[randomCols[23]]]))
-                        featuresMapR$propSkyAhead <- featuresMapR$propSkyAhead + (as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
-                        featuresMapR$propSkyAcross <- featuresMapR$propSkyAcross + (as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
+                        #featuresMapR$propSkyAhead <- featuresMapR$propSkyAhead + (as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
+                        #featuresMapR$propSkyAcross <- featuresMapR$propSkyAcross + (as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
+                        propSkyAheadR <- cbind(propSkyAheadR, as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
+                        propSkyAcrossR <- cbind(propSkyAcrossR, as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
                         featuresMapR$buildHeight <- featuresMapR$buildHeight + (as.double(rankLine1[[randomCols[26]]]) - as.double(rankLine2[[randomCols[26]]]))
-                        featuresMapR$propActiveUse <- featuresMapR$propActiveUse + (as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
+                        #featuresMapR$propActiveUse <- featuresMapR$propActiveUse + (as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
+                        propActiveUseR <- cbind(propActiveUseR, as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
                     }        
                 }
             }
@@ -1101,18 +1150,27 @@ kendallWithWeights <- function(data, iterations){
                 
         streetWid <- cbind(streetWid, featuresMapR$streetWid)
         sidewalkWid <- cbind(sidewalkWid, featuresMapR$sidewalkWid)
-        debris <- cbind(debris, featuresMapR$debris)
-        pavement <- cbind(pavement, featuresMapR$pavement)
-        landscape <- cbind(landscape, featuresMapR$landscape)
-        propStreetWall <- cbind(propStreetWall, featuresMapR$propStreetWall)
-        propWind <- cbind(propWind, featuresMapR$propWind)
+        #debris <- cbind(debris, featuresMapR$debris)
+        #pavement <- cbind(pavement, featuresMapR$pavement)
+        #landscape <- cbind(landscape, featuresMapR$landscape)
+        debris <- cbind(debris, mean(debrisR))
+        pavement <- cbind(pavement, mean(pavementR))
+        landscape <- cbind(landscape, mean(landscapeR))
+        #propStreetWall <- cbind(propStreetWall, featuresMapR$propStreetWall)
+        #propWind <- cbind(propWind, featuresMapR$propWind)
+        propStreetWall <- cbind(propStreetWall, mean(propStreetWallR))
+        propWind <- cbind(propWind, mean(propWindR))
         longSight <- cbind(longSight, featuresMapR$longSight)
-        propSkyAhead <- cbind(propSkyAhead, featuresMapR$propSkyAhead)
-        propSkyAcross <- cbind(propSkyAcross, featuresMapR$propSkyAcross)
+        #propSkyAhead <- cbind(propSkyAhead, featuresMapR$propSkyAhead)
+        #propSkyAcross <- cbind(propSkyAcross, featuresMapR$propSkyAcross)
+        propSkyAhead <- cbind(propSkyAhead, mean(propSkyAheadR))
+        propSkyAcross <- cbind(propSkyAcross, mean(propSkyAcrossR))
         buildHeight <- cbind(buildHeight, featuresMapR$buildHeight)
-        propActiveUse <- cbind(propActiveUse, featuresMapR$propActiveUse)
-    }  
+        #propActiveUse <- cbind(propActiveUse, featuresMapR$propActiveUse)
+        propActiveUse <- cbind(propActiveUse, mean(propActiveUseR))
+    }
     
+    #Random world mean
     featuresMapG1$rmovCars <- mean(movCars) 
     featuresMapG1$rparkCars <- mean(parkCars)
     featuresMapG1$rmovCicly <- mean(movCicly)
@@ -1968,7 +2026,7 @@ levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.pale
 ```
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Unit tests
+#Unit tests FIXME for proportions means!
 library(RUnit)
 
 test.kendallWithEqualRankingsAndZeroFeature <- function(){

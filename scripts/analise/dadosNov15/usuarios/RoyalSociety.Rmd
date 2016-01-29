@@ -2003,6 +2003,29 @@ normalizedKendallTauDistance2 <- function(data1, data2){
   print (normalized)
 }
 
+#Summary of neighborhoods city
+citySummary <- function(groupName, data){
+   print(paste("Total summary ", groupName))
+   print(summary(data[groupName]))
+   centerData <- filter(data, bairro == "centro")[groupName]
+   print( paste("City Center summary ") )
+   print(summary(centerData))
+   libData <- filter(data, bairro == "liberdade")[groupName]
+   print( paste("Liberdade summary ") )
+   print(summary(libData))
+   catData <- filter(data, bairro == "catole")[groupName]
+   print( paste("Catolé summary ") )
+   print(summary(catData))
+   
+   #For census sectors
+   sectors <- c("25040090500004", "250400905000013", "250400905000023", "250400905000060", "250400905000062", "250400905000089", "250400905000095")
+   for (sec in sectors){
+       secData <- filter(data, setor == sec)[groupName]
+       print( paste(sec, " summary ") )
+       print(summary(secData))
+   }
+}
+
 #Avaliando correlação das caracteristicas urbanas
 novo <- select(temp, street_wid, sidewalk_wid, public_art, mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
 
@@ -2935,6 +2958,9 @@ printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsForAll(agrad.l2)
 
+citySummary("V3.Masculino", agrad.l)
+citySummary("V3.Feminino", agrad.l)
+
 #Top 20 images based on diff, regression for men and women QScore
 # top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
 # 
@@ -3001,6 +3027,9 @@ convertSummary(res)
 printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsForAll(agrad.l2)
+
+citySummary("V3.Jovem", agrad.l)
+citySummary("V3.Adulto", agrad.l)
 
 #Top 20 images based on diff, regression for men and women QScore
 top20Diff <- filter(agrad.l, setor == "25040090500004" | setor == "250400905000089")
@@ -3076,6 +3105,9 @@ printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsForAll(agrad.l2)
 
+citySummary("V3.Casado", agrad.l)
+citySummary("V3.Solteiro", agrad.l)
+
 #Top 20 images based on diff, regression for men and women QScore
 # top20Diff <- filter(agrad.l, bairro == "liberdade")
 # top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
@@ -3130,6 +3162,9 @@ printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsForAll(agrad.l2)
 
+citySummary("V3.Baixa", agrad.l)
+citySummary("V3.Media", agrad.l)
+
 #Top 20 images based on diff, regression for men and women QScore
 top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
 
@@ -3183,6 +3218,9 @@ printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsForAll(seg.l2)
 
+citySummary("V3.Masculino", seg.l)
+citySummary("V3.Feminino", seg.l)
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3234,6 +3272,9 @@ printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsForAll(seg.l2)
 
+citySummary("V3.Jovem", seg.l)
+citySummary("V3.Adulto", seg.l)
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3276,6 +3317,9 @@ convertSummary(res)
 printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsForAll(seg.l2)
+
+citySummary("V3.Casado", seg.l)
+citySummary("V3.Solteiro", seg.l)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3331,6 +3375,9 @@ convertSummary(res)
 printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsForAll(seg.l2)
+
+citySummary("V3.Baixa", seg.l)
+citySummary("V3.Media", seg.l)
 
 #Top 20 images based on diff, regression for men and women QScore
 top20Diff <- filter(seg.l, setor == "25040090500004" | setor == "250400905000089")

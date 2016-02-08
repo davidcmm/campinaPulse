@@ -8,27 +8,11 @@ output: pdf_document
 library(ggplot2)
 library(gridExtra)
 library(dplyr)
+library(texreg)
 library(spdep)
 library(reshape)
 source('analisaICPorFoto.R')
 source('convertKendallSummary.R')
-
-getLatLong <- function(data, fileWithCoord) {
-  coord <- read.table(fileWithCoord, sep="+", header=F)#V4 and V5 -> lat and long; V2 street
-  data$lat <- 0
-  data$long <- 0
-  
-  for (i in 1:nrow(coord)){
-    row <- coord[i,]
-    for (j in 1:nrow(data)){
-      if(length(grep(row$V2, data[j,]$image_url)) > 0){
-        data[j,]$lat <- row$V4
-        data[j,]$long <- row$V5
-      }  
-    }
-  }
-  return (data)
-}
 
 facet_names <- list(
   'agrad%C3%A1vel?'="Pleasantness",
@@ -49,10 +33,6 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Subset of columns
-#dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
-
-#novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
-
 dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
@@ -64,16 +44,33 @@ novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "ho
 
 #Urban Elements
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-library(dplyr)
-library(texreg)
-
+#Split image url data and return neighborhood and place
 substituiURL <- function(dadosPorGrupo){
     localData <- lapply(as.character(dadosPorGrupo$image_url), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
     local <- unlist(lapply(localData, '[[', 1))
     return (local)
 }
 
-#Lendo resultados do CrowdFlower
+#Returns lat and longitude from file data
+getLatLong <- function(data, fileWithCoord) {
+  coord <- read.table(fileWithCoord, sep="+", header=F)#V4 and V5 -> lat and long; V2 street
+  data$lat <- 0
+  data$long <- 0
+  
+  for (i in 1:nrow(coord)){
+    row <- coord[i,]
+    for (j in 1:nrow(data)){
+      if(length(grep(row$V2, data[j,]$image_url)) > 0){
+        data[j,]$lat <- row$V4
+        data[j,]$long <- row$V5
+      }  
+    }
+  }
+  return (data)
+}
+
+
+#Reading CrowdFlower features data
 dadosg1 <- read.csv("regressao100/g1.csv")
 dadosg1$image_url <- substituiURL(dadosg1)
 
@@ -113,14 +110,13 @@ dadosg12$image_url <- substituiURL(dadosg12)
 dadosg13 <- read.csv("regressao100/g13.csv")
 dadosg13$image_url <- substituiURL(dadosg13)
 
-#Somando esquerda e direita
+#Summing features values  - left and right
 somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     dados1[is.na(dados1)] <- 0
     dados2[is.na(dados2)] <- 0
     
     soma = dados1 + dados2
     desvios = (desvio1 + desvio2)/2
-    
     
     desvio = sd(soma)
     if (is.na(desvio)){ 
@@ -135,7 +131,7 @@ somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     }
 }
 
-#Somando esquerda e direita
+#Mean of features values - left and right
 mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     for (i in length(dados1)){
        if(is.na(dados1[i])){
@@ -149,7 +145,6 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = (dados1 + dados2) / 2
     desvios = (desvio1 + desvio2)/2
     
-    
     desvio = sd(soma)
     if (is.na(desvio)){ 
         valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
@@ -164,7 +159,7 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
 }
 
 
-#Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
+#Creating values for the cases where only 1 answer was obtained considering the desviations of other features answers
 geraValores <- function(lista, question, desvios, uplimit){
    #desvio = sd(lista)
    return (mean(lista, na.rm = TRUE))
@@ -175,7 +170,7 @@ Mode <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 }
 
-#Agrupando por imagem e por questao - G1
+#Grouping by image and question - G1
 by_image <- group_by(dadosg1, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -195,7 +190,7 @@ groupedData1 <- summarise(by_image,
   #sdq3 = sd(question3, na.rm = TRUE) 
   )
 
-#Agrupando por imagem e por questao - G2
+#Grouping by image and question- G2
 by_image <- group_by(dadosg2, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -215,7 +210,7 @@ groupedData2 <- summarise(by_image,
   #sdq3 = sd(question3, na.rm = TRUE) 
   )
 
-#Agrupando por imagem e por questao - G3
+#Grouping by image and question - G3
 by_image <- group_by(dadosg3, image_url)
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
@@ -243,7 +238,7 @@ groupedData3 <- summarise(by_image,
   #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
   )
 
-#Agrupando por imagem e por questao - G4
+#Grouping by image and question - G4
 by_image <- group_by(dadosg4, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -256,7 +251,7 @@ groupedData4 <- summarise(by_image,
   #sdq2 = sd(question2, na.rm = TRUE) 
   )
 
-#Agrupando por imagem e por questao - G5
+#Grouping by image and question - G5
 by_image <- group_by(dadosg5, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -269,7 +264,7 @@ groupedData5 <- summarise(by_image,
   #sdq2 = sd(question2, na.rm = TRUE) 
   )
 
-#Agrupando por imagem e por questao - G6
+#Grouping by image and question - G6
 by_image <- group_by(dadosg6, image_url)
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
@@ -290,8 +285,7 @@ groupedData6 <- summarise(by_image,
   #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
   )
 
-
-#Agrupando por imagem e por questao - G7
+#Grouping by image and question - G7
 by_image <- group_by(dadosg7, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -311,7 +305,7 @@ groupedData7 <- summarise(by_image,
   #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
   )
 
-#Agrupando por imagem e por questao - G8
+#Grouping by image and question - G8
 by_image <- group_by(dadosg8, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -334,7 +328,7 @@ groupedData8 <- summarise(by_image,
   q3_right = geraValores(question3_right_side, "3r", desvios, 20)
   )
 
-#Agrupando por imagem e por questao - G9
+#Grouping by image and question - G9
 by_image <- group_by(dadosg9, image_url)
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
@@ -348,7 +342,7 @@ groupedData9 <- summarise(by_image,
   #sdq1_right = sd(question1__right_side, na.rm = TRUE)  
   )
 
-#Agrupando por imagem e por questao - G10
+#Grouping by image and question - G10
 by_image <- group_by(dadosg10, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -364,7 +358,7 @@ groupedData10 <- summarise(by_image,
   #sdq3 = sd(question3, na.rm = TRUE)  
   )
 
-#Agrupando por imagem e por questao - G11
+#Grouping by image and question - G11
 by_image <- group_by(dadosg11, image_url)
 desvios <- summarise (by_image, 
                   sd2l = sd(question2__left_side, na.rm = TRUE),
@@ -385,7 +379,7 @@ groupedData11 <- summarise(by_image,
   #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
   )
 
-#Agrupando por imagem e por questao - G12
+#Grouping by image and question - G12
 by_image <- group_by(dadosg12, image_url)
 desvios <- summarise (by_image, 
                   sd1 = sd(question1, na.rm = TRUE),
@@ -405,8 +399,7 @@ groupedData12 <- summarise(by_image,
   #sdq3 = sd(question3, na.rm = TRUE)  
   )
 
-
-#Agrupando por imagem e por questao - G13
+#Grouping by image and question - G13
 by_image <- group_by(dadosg13, image_url)
 desvios <- summarise (by_image, 
                   sd1l = sd(question1__left_side, na.rm = TRUE),
@@ -427,8 +420,7 @@ groupedData13 <- summarise(by_image,
   #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
   )
 
-
-#Renomeando colunas por grupos
+#Renaming columns according to a fixed id
 renomeiaGrupos <- function(dadosPorGrupo, listaColunas, idGrupo) {
     for (coluna in listaColunas){
         colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- paste(idGrupo, coluna, sep="")
@@ -472,7 +464,7 @@ groupedData11 <- renomeiaGrupos2(groupedData11, c("q2", "q3"), c("outdoor_table"
 groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_col", "lights", "accent_col"))
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 
-#Combinando dados QScores com elementos urbanos
+#Combining QScores with each feature separetely
 temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
 temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
 temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
@@ -489,7 +481,7 @@ temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
-#Correlacao? Spearman e Kendall - non-parametric, any assumption, 
+#Correlation? Spearman and Kendall - non-parametric, any assumption, 
 calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
     sink(arquivo, append = TRUE)
     print(questao)
@@ -686,7 +678,7 @@ calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, 
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Media", 'seguro?', "correlacao-seg-med.dat")
 # 
 
-#Correlacoes por setor
+#Correlations per sector
 setores <- read.table("geralSetoresAJ.dat", header=TRUE)
 novosDadosSet <- reshape(setores, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 options("scipen"=100, "digits"=4)
@@ -748,8 +740,7 @@ library(lattice)
 rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
 levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features")
 
-
-#Resumo por bairros
+#Neighborhoods summary
 temp1 <- lapply(as.character(novosDados$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
 neigs1 <- unlist(lapply(temp1, '[[', 1))
 novosDados$bairro <- neigs1
@@ -757,163 +748,11 @@ novosDados$bairro <- neigs1
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
-# #Centro
-centro <- filter(allData, bairro == "centro")
-sink("centro-summary.dat")
-mean(centro$street_wid, na.rm = TRUE)
-mean(centro$sidewalk_wid, na.rm = TRUE)
-#mean(centro$sidewalk_wid_right, na.rm = TRUE)
-mean(centro$public_art, na.rm = TRUE)
-mean(centro$mov_cars, na.rm = TRUE)
-mean(centro$park_cars, na.rm = TRUE)
-#mean(centro$park_cars_right, na.rm = TRUE)
-mean(centro$mov_ciclyst, na.rm = TRUE)
-mean(centro$debris, na.rm = TRUE)
-#mean(centro$debris_right, na.rm = TRUE)
-mean(centro$pavement, na.rm = TRUE)
-#mean(centro$pavement_right, na.rm = TRUE)
-mean(centro$landscape, na.rm = TRUE)
-#mean(centro$landscape_right, na.rm = TRUE)
-mean(centro$courtyards, na.rm = TRUE)
-mean(centro$major_landsc, na.rm = TRUE)
-mean(centro$build_ident, na.rm = TRUE)
-mean(centro$build_nrectan, na.rm = TRUE)
-mean(centro$prop_street_wall, na.rm = TRUE)
-#mean(centro$prop_street_wall_right, na.rm = TRUE)
-mean(centro$prop_wind, na.rm = TRUE)
-#mean(centro$prop_wind_right, na.rm = TRUE)
-mean(centro$long_sight, na.rm = TRUE)
-mean(centro$prop_sky_ahead, na.rm = TRUE)
-mean(centro$prop_sky_across, na.rm = TRUE)
-#mean(centro$prop_sky_across_right, na.rm = TRUE)
-mean(centro$trees, na.rm = TRUE)
-#mean(centro$trees_right, na.rm = TRUE)
-mean(centro$small_planters, na.rm = TRUE)
-#mean(centro$small_planters_right, na.rm = TRUE)
-mean(centro$build_height, na.rm = TRUE)
-#mean(centro$build_height_right, na.rm = TRUE)
-mean(centro$diff_build, na.rm = TRUE)
-mean(centro$prop_hist_build, na.rm = TRUE)
-mean(centro$outdoor_table, na.rm = TRUE)
-#mean(centro$outdoor_table_right, na.rm = TRUE)
-mean(centro$street_furnit, na.rm = TRUE)
-#mean(centro$street_furnit_right, na.rm = TRUE)
-mean(centro$basic_col, na.rm = TRUE)
-mean(centro$lights, na.rm = TRUE)
-#mean(centro$lights_right, na.rm = TRUE)
-mean(centro$accent_col, na.rm = TRUE)
-mean(centro$people, na.rm = TRUE)
-#mean(centro$people_right, na.rm = TRUE)
-mean(centro$prop_active_use, na.rm = TRUE)
-#mean(centro$prop_active_use_right, na.rm = TRUE)
-sink()
-# 
-# #Catole
-catole <- filter(allData, bairro == "catole")
-sink("catole-summary.dat")
-mean(catole$street_wid, na.rm = TRUE)
-mean(catole$sidewalk_wid, na.rm = TRUE)
-#mean(catole$sidewalk_wid_right, na.rm = TRUE)
-mean(catole$public_art, na.rm = TRUE)
-mean(catole$mov_cars, na.rm = TRUE)
-mean(catole$park_cars, na.rm = TRUE)
-#mean(catole$park_cars_right, na.rm = TRUE)
-mean(catole$mov_ciclyst, na.rm = TRUE)
-mean(catole$debris, na.rm = TRUE)
-#mean(catole$debris_right, na.rm = TRUE)
-mean(catole$pavement, na.rm = TRUE)
-#mean(catole$pavement_right, na.rm = TRUE)
-mean(catole$landscape, na.rm = TRUE)
-#mean(catole$landscape_right, na.rm = TRUE)
-mean(catole$courtyards, na.rm = TRUE)
-mean(catole$major_landsc, na.rm = TRUE)
-mean(catole$build_ident, na.rm = TRUE)
-mean(catole$build_nrectan, na.rm = TRUE)
-mean(catole$prop_street_wall, na.rm = TRUE)
-#mean(catole$prop_street_wall_right, na.rm = TRUE)
-mean(catole$prop_wind, na.rm = TRUE)
-#mean(catole$prop_wind_right, na.rm = TRUE)
-mean(catole$long_sight, na.rm = TRUE)
-mean(catole$prop_sky_ahead, na.rm = TRUE)
-mean(catole$prop_sky_across, na.rm = TRUE)
-#mean(catole$prop_sky_across_right, na.rm = TRUE)
-mean(catole$trees, na.rm = TRUE)
-#mean(catole$trees_right, na.rm = TRUE)
-mean(catole$small_planters, na.rm = TRUE)
-#mean(catole$small_planters_right, na.rm = TRUE)
-mean(catole$build_height, na.rm = TRUE)
-#mean(catole$build_height_right, na.rm = TRUE)
-mean(catole$diff_build, na.rm = TRUE)
-mean(catole$prop_hist_build, na.rm = TRUE)
-mean(catole$outdoor_table, na.rm = TRUE)
-#mean(catole$outdoor_table_right, na.rm = TRUE)
-mean(catole$street_furnit, na.rm = TRUE)
-#mean(catole$street_furnit_right, na.rm = TRUE)
-mean(catole$basic_col, na.rm = TRUE)
-mean(catole$lights, na.rm = TRUE)
-#mean(catole$lights_right, na.rm = TRUE)
-mean(catole$accent_col, na.rm = TRUE)
-mean(catole$people, na.rm = TRUE)
-#mean(catole$people_right, na.rm = TRUE)
-mean(catole$prop_active_use, na.rm = TRUE)
-#mean(catole$prop_active_use_right, na.rm = TRUE)
-sink()
-# 
-# #Liberdade
-liberdade <- filter(allData, bairro == "liberdade")
-sink("liberdade-summary.dat")
-mean(liberdade$street_wid, na.rm = TRUE)
-mean(liberdade$sidewalk_wid, na.rm = TRUE)
-#mean(liberdade$sidewalk_wid_right, na.rm = TRUE)
-mean(liberdade$public_art, na.rm = TRUE)
-mean(liberdade$mov_cars, na.rm = TRUE)
-mean(liberdade$park_cars, na.rm = TRUE)
-#mean(liberdade$park_cars_right, na.rm = TRUE)
-mean(liberdade$mov_ciclyst, na.rm = TRUE)
-mean(liberdade$debris, na.rm = TRUE)
-#mean(liberdade$debris_right, na.rm = TRUE)
-mean(liberdade$pavement, na.rm = TRUE)
-#mean(liberdade$pavement_right, na.rm = TRUE)
-mean(liberdade$landscape, na.rm = TRUE)
-#mean(liberdade$landscape_right, na.rm = TRUE)
-mean(liberdade$courtyards, na.rm = TRUE)
-mean(liberdade$major_landsc, na.rm = TRUE)
-mean(liberdade$build_ident, na.rm = TRUE)
-mean(liberdade$build_nrectan, na.rm = TRUE)
-mean(liberdade$prop_street_wall, na.rm = TRUE)
-#mean(liberdade$prop_street_wall_right, na.rm = TRUE)
-mean(liberdade$prop_wind, na.rm = TRUE)
-#mean(liberdade$prop_wind_right, na.rm = TRUE)
-mean(liberdade$long_sight, na.rm = TRUE)
-mean(liberdade$prop_sky_ahead, na.rm = TRUE)
-mean(liberdade$prop_sky_across, na.rm = TRUE)
-#mean(liberdade$prop_sky_across_right, na.rm = TRUE)
-mean(liberdade$trees, na.rm = TRUE)
-#mean(liberdade$trees_right, na.rm = TRUE)
-mean(liberdade$small_planters, na.rm = TRUE)
-#mean(liberdade$small_planters_right, na.rm = TRUE)
-mean(liberdade$build_height, na.rm = TRUE)
-#mean(liberdade$build_height_right, na.rm = TRUE)
-mean(liberdade$diff_build, na.rm = TRUE)
-mean(liberdade$prop_hist_build, na.rm = TRUE)
-mean(liberdade$outdoor_table, na.rm = TRUE)
-#mean(liberdade$outdoor_table_right, na.rm = TRUE)
-mean(liberdade$street_furnit, na.rm = TRUE)
-#mean(liberdade$street_furnit_right, na.rm = TRUE)
-mean(liberdade$basic_col, na.rm = TRUE)
-mean(liberdade$lights, na.rm = TRUE)
-#mean(liberdade$lights_right, na.rm = TRUE)
-mean(liberdade$accent_col, na.rm = TRUE)
-mean(liberdade$people, na.rm = TRUE)
-#mean(liberdade$people_right, na.rm = TRUE)
-mean(liberdade$prop_active_use, na.rm = TRUE)
-#mean(liberdade$prop_active_use_right, na.rm = TRUE)
-sink()
 # 
 # #Confidence interval?
 # t.test(centro$people_left, na.action = na.rm )$conf.int
 
-#Regressao
+#Combining QScores with all features
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="image_url")
 temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
@@ -1510,8 +1349,6 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 10000
-
 #DEPRECATED
 simulateCoefShuffle <- function(agrad.l, iterations){
 
@@ -1958,6 +1795,8 @@ printOutputTwoListsAllFeaturesTog <- function(agrad.l2){
       print( arrange(shuff, desc(value)) )
 }
 
+iterations <- 10000
+
 mergeSort <- function(x){
   if(length(x) == 1){
     inv <- 0
@@ -2026,7 +1865,7 @@ citySummary <- function(groupName, data){
    }
 }
 
-#Avaliando correlação das caracteristicas urbanas
+#Correlation of features
 novo <- select(temp, street_wid, sidewalk_wid, public_art, mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
 
 correlacao <- cor(x = novo)
@@ -2034,7 +1873,7 @@ library(lattice)
 rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
 levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
 
-#Geral
+#General QScore regression
 # library(leaps)
 # 
 # regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
@@ -2939,10 +2778,7 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
 
 ## Men x Women - Pleasantness
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Homem x Mulher
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
@@ -2990,16 +2826,12 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 reg <- regGroup2 <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-
 ```
 
 
 ## Young x Adult - Pleasantness
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Jovem x Adulto
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
@@ -3078,11 +2910,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Married x Single - Pleasantness
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
-#Casado x Solteiro
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
@@ -3142,10 +2970,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Low x High income - Pleasantness
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Baixa renda x Media renda
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
@@ -3198,11 +3023,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Men x Women - Safety
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
-#Homem x Mulher
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
@@ -3245,11 +3066,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Young x Adult - Safety
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
-#Jovem x Adulto
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
@@ -3298,11 +3115,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Married x Single - Safety
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
-#Casado x Solteiro
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
@@ -3344,10 +3157,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ## Low x High income - Safety
 
-100 iterations
-
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-#Baixa renda x Media renda
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
@@ -3410,7 +3220,7 @@ summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
 
-##Ploting features and coefficients
+#Ploting features and coefficients
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 test <- read.table("teste.dat", header=TRUE)
@@ -3419,9 +3229,26 @@ res + geom_point(data=test, aes(x=feature, y=real), col="red") + ylab("Coeff") +
 
 select(arrange(test, -abs(norm)), feature, norm, real)
 
+features <- select(agrad.l, mov_cars, mov_ciclyst, park_cars, build_ident, build_nrectan, graffiti, trees, small_planters, build_diff_ages, diff_build, street_furnit, basic_col, lights, accent_col, people, bairro, image_url)
+features$id <- seq(0, 94) 
+Molten <- melt(features, id.vars = c("image_url", "bairro", "id"))
+ggplot(Molten, aes(x=id, y=value, colour=variable), ylab="Feature", xlab="Image") + geom_point() + facet_grid( bairro~variable, shrink=TRUE, as.table=TRUE) + scale_y_discrete(breaks=seq(0,8))
+
+#Used to test all differences between features values
+calcMax <- function(values){
+  normal <- values
+  max <- 0 
+  for ( i in seq(1, length(values)) ){
+      for ( j in seq(i, length(values)) ){
+         max = max + (values[i]-values[j])
+      }
+  }
+  return(max)
+}
+
 ```
 
-#Agradavel x Seguro
+#Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
@@ -3431,7 +3258,7 @@ novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", 
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
-#Regressao
+#Regression of one question x other question
 library(texreg)
 
 regAgrad <- lm(V3.agradavel ~ V3.seguro, data=novosgrupo1grupo2)
@@ -3449,7 +3276,7 @@ texreg(regAgrad)
 summary(regAgrad)
 #sink()
 
-#Fotos, QScores e resíduos
+#Photos, QScores and residuals
 write.table(novosgrupo1grupo2[, c("V2", "V3.agradavel", "V3.seguro", "residuals", "residualsPos")], file="agrad-seg.dat", sep = "\t")
 
 #Scatterplot Pleas x Safe

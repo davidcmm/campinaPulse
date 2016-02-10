@@ -3,6 +3,10 @@ library(dplyr)
 
 icOnValues <- function(mean, sd, n) { 
 	return (sd/sqrt(n)*qnorm(1-(0.05/2)))#95% confidence interval, significance level of 0.05 (alpha) - sample 100
+  #value = 1 - (1-0.05)**(1/26) #Sidak
+  #return (sd/sqrt(n)*qnorm(1-(value/2)))
+	#value = 1 - (1-0.05/26) #Bonferroni
+	#return (sd/sqrt(n)*qnorm(1-(value/2)))
 }
 
 

@@ -487,9 +487,6 @@ kendallWithWeights <- function(data, iterations){
     debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <- propActiveUse <- movCicly <- buildId <- c()
     debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <-  propActiveUseMax <- movCiclyMax <- buildIdMax <- c()
 
-	print(paste("Sta Mov ", movCicly)) 
-	print(paste("Sta Id ", buildId))
-    
     #First call, comparing for group 1
     data <- arrange(data, rank)
     for( i in seq(1, amountOfItems) ){
@@ -507,12 +504,8 @@ kendallWithWeights <- function(data, iterations){
                     #featuresMapG1$movCicly <- featuresMapG1$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
                     #featuresMapG1$buildId <- featuresMapG1$buildId + (rankLine1$build_ident - rankLine2$build_ident)
 
-		    print(rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-		    print(paste("Id ", rankLine1$build_ident - rankLine2$build_ident))
-
 		    movCicly <- cbind(movCicly, rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
 		    buildId <- cbind(buildId, rankLine1$build_ident - rankLine2$build_ident)
-		    print(paste("Sta Mov ", movCicly)) 
 
                     featuresMapG1$buildNRec <- featuresMapG1$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
                     featuresMapG1$tree <- featuresMapG1$tree + (rankLine1$trees - rankLine2$trees)
@@ -595,8 +588,6 @@ kendallWithWeights <- function(data, iterations){
 
     #Real world mean values for grades and proportions
 
-    print(paste("Cicly ", movCicly))
-    print(paste("ID ", buildId))
     featuresMapG1$movCicly <- mean(movCicly)
     featuresMapG1$buildId <- mean(buildId)
     featuresMapG1$debris <- mean(debris)
@@ -610,8 +601,6 @@ kendallWithWeights <- function(data, iterations){
     featuresMapG1$propSkyAcross <- mean(propSkyAcross)
     featuresMapG1$propActiveUse <- mean(propActiveUse)
     
-    print(paste("Ci Max ", movCiclyMax))
-    print(paste("Id Max ", buildIdMax))
     featuresMapMax$movCicly <- mean(movCiclyMax)
     featuresMapMax$buildId <- mean(buildIdMax)
     featuresMapMax$debris <- mean(debrisMax)
@@ -728,8 +717,6 @@ kendallWithWeights <- function(data, iterations){
     
     featuresMapG1$rmovCars <- mean(movCars) 
     featuresMapG1$rparkCars <- mean(parkCars)
-    print(paste("Cic R ", movCicly))
-   print(paste("IUd R ", buildId))
     featuresMapG1$rmovCicly <- mean(movCicly)
     featuresMapG1$rbuildId <- mean(buildId) 
     featuresMapG1$rbuildNRec <- mean(buildNRec) 
@@ -1066,7 +1053,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 2
+iterations <- 10
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

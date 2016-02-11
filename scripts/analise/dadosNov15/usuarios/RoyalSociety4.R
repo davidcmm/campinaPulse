@@ -484,8 +484,8 @@ kendallWithWeights <- function(data, iterations){
     #Improve? http://stackoverflow.com/questions/6269526/r-applying-a-function-to-all-row-pairs-of-a-matrix-without-for-loop
     featuresMapG1 <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec = 0, tree = 0, smallPla = 0, diffBuild = 0, streeFur = 0, basCol = 0, ligh = 0, accenCol = 0, peop = 0, graff = 0, buildDiffAges = 0, streetWid = 0, sidewalkWid = 0, debris = 0, pavement = 0, landscape = 0, propStreetWall = 0, propWind = 0, longSight = 0, propSkyAhead = 0, propSkyAcross = 0, buildHeight = 0, propActiveUse = 0, rmovCars = 0, rparkCars = 0, rmovCicly = 0, rbuildId = 0, rbuildNRec = 0, rtree = 0, rsmallPla = 0, rdiffBuild = 0, rstreeFur = 0, rbasCol = 0, rligh = 0, raccenCol = 0, rpeop = 0, rgraff = 0, rbuildDiffAges = 0, rstreetWid = 0, rsidewalkWid = 0, rdebris = 0, rpavement = 0, rlandscape = 0, rpropStreetWall = 0, rpropWind = 0, rlongSight = 0, rpropSkyAhead = 0, rpropSkyAcross = 0, rbuildHeight = 0, rpropActiveUse = 0)
 
-    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
-    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <-  propActiveUseMax <- c()
+    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- movCicly <- buildId <- c()
+    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <-  propActiveUseMax <- movCiclyMax <- buildIdMax <- c()
     
     #First call, comparing for group 1
     data <- arrange(data, rank)
@@ -501,8 +501,12 @@ kendallWithWeights <- function(data, iterations){
                     featuresMapG1$movCars <- featuresMapG1$movCars + (rankLine1$mov_cars - rankLine2$mov_cars)
                     #print(paste(rankLine1$rank, " ", rankLine2$rank, " ", rankLine1$index, " ", rankLine2$index, " ", (rankLine1$park_cars - rankLine2$park_cars)))
                     featuresMapG1$parkCars <- featuresMapG1$parkCars + (rankLine1$park_cars - rankLine2$park_cars)
-                    featuresMapG1$movCicly <- featuresMapG1$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-                    featuresMapG1$buildId <- featuresMapG1$buildId + (rankLine1$build_ident - rankLine2$build_ident)
+                    #featuresMapG1$movCicly <- featuresMapG1$movCicly + (rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                    #featuresMapG1$buildId <- featuresMapG1$buildId + (rankLine1$build_ident - rankLine2$build_ident)
+		    print(movCicly)
+			print(paste("Id ", buildId))
+		    movCicly <- cbind(movCicly, as.double(rankLine1$movCicly) - as.double(rankLine2$movCicly))
+		    buildId <- cbind(buildId, as.double(rankLine1$buildId) - as.double(rankLine2$buildId))
                     featuresMapG1$buildNRec <- featuresMapG1$buildNRec + (rankLine1$build_nrectan - rankLine2$build_nrectan)
                     featuresMapG1$tree <- featuresMapG1$tree + (rankLine1$trees - rankLine2$trees)
                     featuresMapG1$smallPla <- featuresMapG1$smallPla + (rankLine1$small_planters - rankLine2$small_planters)
@@ -540,8 +544,10 @@ kendallWithWeights <- function(data, iterations){
                 #Accounting differences for max!
                 featuresMapMax$movCars <- featuresMapMax$movCars + abs(rankLine1$mov_cars - rankLine2$mov_cars)
                 featuresMapMax$parkCars <- featuresMapMax$parkCars + abs(rankLine1$park_cars - rankLine2$park_cars)
-                featuresMapMax$movCicly <- featuresMapMax$movCicly + abs(rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
-                featuresMapMax$buildId <- featuresMapMax$buildId + abs(rankLine1$build_ident - rankLine2$build_ident)
+                #featuresMapMax$movCicly <- featuresMapMax$movCicly + abs(rankLine1$mov_ciclyst - rankLine2$mov_ciclyst)
+                #featuresMapMax$buildId <- featuresMapMax$buildId + abs(rankLine1$build_ident - rankLine2$build_ident)
+		movCiclyMax <- cbind(movCiclyMax, as.double(rankLine1$movCicly) - as.double(rankLine2$movCicly))
+		buildIdMax <- cbind(buildIdMax, as.double(rankLine1$buildId) - as.double(rankLine2$buildId))
                 featuresMapMax$buildNRec <- featuresMapMax$buildNRec + abs(rankLine1$build_nrectan - rankLine2$build_nrectan)
                 featuresMapMax$tree <- featuresMapMax$tree + abs(rankLine1$trees - rankLine2$trees)
                 featuresMapMax$smallPla <- featuresMapMax$smallPla + abs(rankLine1$small_planters - rankLine2$small_planters)
@@ -579,6 +585,11 @@ kendallWithWeights <- function(data, iterations){
     }
 
     #Real world mean values for grades and proportions
+
+    print(paste("Cicly ", movCicly))
+    print(paste("ID ", buildId))
+    featuresMapG1$movCicly <- mean(movCicly)
+    featuresMapG1$buildId <- mean(buildId)
     featuresMapG1$debris <- mean(debris)
     featuresMapG1$pavement <- mean(pavement)
     featuresMapG1$landscape <- mean(landscape)
@@ -590,6 +601,10 @@ kendallWithWeights <- function(data, iterations){
     featuresMapG1$propSkyAcross <- mean(propSkyAcross)
     featuresMapG1$propActiveUse <- mean(propActiveUse)
     
+    print(paste("Ci Max ", movCiclyMax))
+    print(paste("Id Max ", buildIdMax))
+    featuresMapMax$movCicly <- mean(movCiclyMax)
+    featuresMapMax$buildId <- mean(buildIdMax)
     featuresMapMax$debris <- mean(debrisMax)
     featuresMapMax$pavement <- mean(pavementMax)
     featuresMapMax$landscape <- mean(landscapeMax)
@@ -608,7 +623,7 @@ kendallWithWeights <- function(data, iterations){
         #randomIndex <- sample(data$index)
         featuresMapR = data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec=0, tree=0, smallPla=0, diffBuild=0, streeFur=0, basCol=0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0, streetWid=0, sidewalkWid=0, debris=0, pavement=0, landscape=0, propStreetWall=0, propWind=0, longSight=0, propSkyAhead=0 , propSkyAcross=0, buildHeight=0, propActiveUse=0)
         randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages", "street_wid", "sidewalk_wid", "debris", "pavement", "landscape", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead",  "prop_sky_across", "build_height", "prop_active_use"))
-	debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
+	debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- movCiclyR <- buildIdR <- c()
         
         for( i in seq(1, amountOfItems) ) {
             rankLine1 <- data[i,]
@@ -620,8 +635,10 @@ kendallWithWeights <- function(data, iterations){
                       
                         featuresMapR$movCars <- featuresMapR$movCars + ( as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) )
                         featuresMapR$parkCars <- featuresMapR$parkCars + ( as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) )
-                        featuresMapR$movCicly <- featuresMapR$movCicly + ( as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) )
-                        featuresMapR$buildId <- featuresMapR$buildId + ( as.double(rankLine1[[randomCols[4]]]) - as.double(rankLine2[[randomCols[4]]]) )
+                        #featuresMapR$movCicly <- featuresMapR$movCicly + ( as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) )
+                        #featuresMapR$buildId <- featuresMapR$buildId + ( as.double(rankLine1[[randomCols[4]]]) - as.double(rankLine2[[randomCols[4]]]) )
+			movCiclyR <- cbind(movCiclyR, as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]))
+			buildIdR <- cbind(buildIdR, as.double(rankLine1[[randomCols[4]]]) - as.double(rankLine2[[randomCols[4]]]))
                         featuresMapR$buildNRec <- featuresMapR$buildNRec + ( as.double(rankLine1[[randomCols[5]]]) - as.double(rankLine2[[randomCols[5]]]) )
                         featuresMapR$tree <- featuresMapR$tree + ( as.double(rankLine1[[randomCols[6]]]) - as.double(rankLine2[[randomCols[6]]]) )
                         featuresMapR$smallPla <- featuresMapR$smallPla + ( as.double(rankLine1[[randomCols[7]]]) - as.double(rankLine2[[randomCols[7]]]) )
@@ -662,8 +679,10 @@ kendallWithWeights <- function(data, iterations){
         #Binding with previous iterations
         movCars <- cbind(movCars, featuresMapR$movCars)
         parkCars <- cbind(parkCars, featuresMapR$parkCars)
-        movCicly <- cbind(movCicly, featuresMapR$movCicly)
-        buildId <- cbind(buildId, featuresMapR$buildId)
+        #movCicly <- cbind(movCicly, featuresMapR$movCicly)
+        #buildId <- cbind(buildId, featuresMapR$buildId)
+	movCicly <- cbind(movCicly, mean(movCiclyR))
+	buildId <- cbind(buildId, mean(buildIdR))
         buildNRec <- cbind(buildNRec, featuresMapR$buildNRec)
         tree <- cbind(tree, featuresMapR$tree)
         smallPla <- cbind(smallPla, featuresMapR$smallPla)
@@ -700,6 +719,8 @@ kendallWithWeights <- function(data, iterations){
     
     featuresMapG1$rmovCars <- mean(movCars) 
     featuresMapG1$rparkCars <- mean(parkCars)
+    print(paste("Cic R ", movCicly))
+   print(paste("IUd R ", buildId))
     featuresMapG1$rmovCicly <- mean(movCicly)
     featuresMapG1$rbuildId <- mean(buildId) 
     featuresMapG1$rbuildNRec <- mean(buildNRec) 
@@ -1036,7 +1057,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 1000
+iterations <- 3
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

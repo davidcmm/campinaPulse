@@ -129,11 +129,12 @@ somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
         soma <- ifelse(soma > uplimit, uplimit, soma)
         return (mean(soma))
     }
+  #return (mean(soma))
 }
 
 #Mean of features values - left and right
 mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
-    for (i in 1:length(dados1)){
+   for (i in 1:length(dados1)){
        if(is.na(dados1[i])){
          dados1[i] <- dados2[i]
        }
@@ -156,6 +157,7 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
         soma <- ifelse(soma > uplimit, uplimit, soma)
         return (mean(soma))
     }
+#   return(mean(soma))
 }
 
 
@@ -181,7 +183,7 @@ groupedData1 <- summarise(by_image,
   #count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
-  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
+  q2 = mediaValores(image_url, question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
   q2_left = geraValores(question2__left_side, "2l", desvios, 100),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 100),
@@ -793,14 +795,14 @@ kendallWithWeights <- function(data, iterations){
     featuresMapMax <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec = 0, tree = 0, smallPla = 0, diffBuild = 0, streeFur = 0, basCol = 0, ligh=0, accenCol=0, peop=0, graff=0, buildDiffAges=0, streetWid=0, sidewalkWid=0, debris=0, pavement=0, landscape=0, propStreetWall=0, propWind=0, longSight=0, propSkyAhead=0 , propSkyAcross=0, buildHeight=0, propActiveUse=0)
     
     #Improve? http://stackoverflow.com/questions/6269526/r-applying-a-function-to-all-row-pairs-of-a-matrix-without-for-loop
-    featuresMapG1 <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec = 0, tree = 0, smallPla = 0, diffBuild = 0, streeFur = 0, basCol = 0, ligh = 0, accenCol = 0, peop = 0, graff = 0, buildDiffAges = 0, streetWid = 0, sidewalkWid = 0, debris = 0, pavement = 0, landscape = 0, propStreetWall = 0, propWind = 0, longSight = 0, propSkyAhead = 0, propSkyAcross = 0, buildHeight = 0, propActiveUse = 0, rmovCars = 0, rparkCars = 0, rmovCicly = 0, rbuildId = 0, rbuildNRec = 0, rtree = 0, rsmallPla = 0, rdiffBuild = 0, rstreeFur = 0, rbasCol = 0, rligh = 0, raccenCol = 0, rpeop = 0, rgraff = 0, rbuildDiffAges = 0, rstreetWid = 0, rsidewalkWid = 0, rdebris = 0, rpavement = 0, rlandscape = 0, rpropStreetWall = 0, rpropWind = 0, rlongSight = 0, rpropSkyAhead = 0, rpropSkyAcross = 0, rbuildHeight = 0, rpropActiveUse = 0)
+    featuresMapG1 <- data.frame(movCars = 0 , parkCars = 0, movCicly= 0, buildId = 0, buildNRec = 0, tree = 0, smallPla = 0, diffBuild = 0, streeFur = 0, basCol = 0, ligh = 0, accenCol = 0, peop = 0, graff = 0, buildDiffAges = 0, streetWid = 0, sidewalkWid = 0, debris = 0, pavement = 0, landscape = 0, propStreetWall = 0, propWind = 0, longSight = 0, propSkyAhead = 0, propSkyAcross = 0, buildHeight = 0, propActiveUse = 0, rmovCars = 0, rparkCars = 0, rmovCicly = 0, rbuildId = 0, rbuildNRec = 0, rtree = 0, rsmallPla = 0, rdiffBuild = 0, rstreeFur = 0, rbasCol = 0, rligh = 0, raccenCol = 0, rpeop = 0, rgraff = 0, rbuildDiffAges = 0, rstreetWid = 0, rsidewalkWid = 0, rdebris = 0, rpavement = 0, rlandscape = 0, rpropStreetWall = 0, rpropWind = 0, rlongSight = 0, rpropSkyAhead = 0, rpropSkyAcross = 0, rbuildHeight = 0, rpropActiveUse = 0, rsdMovCars = 0, rsdParkCars = 0, rsdMovCicly = 0, rsdBuildId = 0, rsdBuildNRec = 0, rsdTree = 0, rsdSmallPla = 0, rsdDiffBuild = 0, rsdStreeFur = 0, rsdBasCol = 0, rsdLigh = 0, rsdAccenCol = 0, rsdPeop = 0, rsdGraff = 0, rsdBuildDiffAges = 0, rsdStreetWid = 0, rsdSidewalkWid = 0, rsdDebris = 0, rsdPavement = 0, rsdLandscape = 0, rsdPropStreetWall = 0, rsdPropWind = 0, rsdLongSight = 0, rsdPropSkyAhead = 0, rsdPropSkyAcross = 0, rsdBuildHeight = 0, rsdPropActiveUse = 0, movCarsN = 0 , parkCarsN = 0, movCiclyN= 0, buildIdN = 0, buildNRecN = 0, treeN = 0, smallPlaN = 0, diffBuildN = 0, streeFurN = 0, basColN = 0, lighN = 0, accenColN = 0, peopN = 0, graffN = 0, buildDiffAgesN = 0, streetWidN = 0, sidewalkWidN = 0, debrisN = 0, pavementN = 0, landscapeN = 0, propStreetWallN = 0, propWindN = 0, longSightN = 0, propSkyAheadN = 0, propSkyAcrossN = 0, buildHeightN = 0, propActiveUseN = 0,  rmovCarsN = 0 , rparkCarsN = 0, rmovCiclyN= 0, rbuildIdN = 0, rbuildNRecN = 0, rtreeN = 0, rsmallPlaN = 0, rdiffBuildN = 0, rstreeFurN = 0, rbasColN = 0, rlighN = 0, raccenColN = 0, rpeopN = 0, rgraffN = 0, rbuildDiffAgesN = 0, rstreetWidN = 0, rsidewalkWidN = 0, rdebrisN = 0, rpavementN = 0, rlandscapeN = 0, rpropStreetWallN = 0, rpropWindN = 0, rlongSightN = 0, rpropSkyAheadN = 0, rpropSkyAcrossN = 0, rbuildHeightN = 0, rpropActiveUseN = 0)
     
     movCars <- parkCars <- movCicly<- buildId <- buildNRec <- tree <- smallPla <- diffBuild <- streeFur <- basCol <- ligh <- accenCol<- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- buildHeight <- longSight <- 0
     debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
     movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
     debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
     
-    discordantPairs <- list()#Storing discordant pairs!
+    discordantPairs <- list()#Store discordant pairs in order to avoid check and comparisons multiple times!
     
     #First call, comparing for group 1
     data <- arrange(data, rank)
@@ -812,8 +814,8 @@ kendallWithWeights <- function(data, iterations){
             for( j in seq(i+1, amountOfItems) ){
                 rankLine2 <- data[j,]
                 
-                if( (rankLine1[["rank"]] < rankLine2[["rank"]]) & (rankLine1[["index"]] > rankLine2[["index"]]) ){
-                    discordantPairs[[length(discordantPairs)+1]] <- c(i, j)
+                if( rankLine1[["rank"]] < rankLine2[["rank"]] & rankLine1[["index"]] > rankLine2[["index"]] ){
+                    discordantPairs[[length(discordantPairs) + 1]] <- c(i,j)
                   
                     movCars <- movCars + rankLine1[["mov_cars"]] - rankLine2[["mov_cars"]]
                     parkCars <- parkCars + rankLine1[["park_cars"]] - rankLine2[["park_cars"]]
@@ -949,6 +951,7 @@ kendallWithWeights <- function(data, iterations){
         randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages", "street_wid", "sidewalk_wid", "debris", "pavement", "landscape", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead",  "prop_sky_across", "build_height", "prop_active_use"))
         movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
+
           if(length(discordantPairs) > 0){
                 for( j in seq(1, length(discordantPairs)) ) {
                       index1 <- discordantPairs[[j]][1]
@@ -956,13 +959,7 @@ kendallWithWeights <- function(data, iterations){
                       
                       rankLine1 <- data[index1,]
                       rankLine2 <- data[index2,]
-      #         for( i in seq(1, amountOfItems) ) {
-      #             rankLine1 <- data[i,]
-      #             if( i+1 <= amountOfItems ) {
-      #                 for( j in seq(i+1, amountOfItems) ) {
-      #                     rankLine2 <- data[j,]
-      #                     
-      #                     if( (rankLine1[["rank"]] < rankLine2[["rank"]]) & (rankLine1[["index"]] > rankLine2[["index"]]) ){
+
                       movCarsR <- movCarsR +  as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) 
                       parkCarsR <- parkCarsR +  as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) 
                       movCiclyR <- movCiclyR +  as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) 
@@ -992,6 +989,7 @@ kendallWithWeights <- function(data, iterations){
                       buildHeightR <- buildHeightR + as.double(rankLine1[[randomCols[26]]]) - as.double(rankLine2[[randomCols[26]]])
                       propActiveUseR <- cbind(propActiveUseR, as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
                 }        
+
         }
         
         #Binding with previous iterations
@@ -1105,7 +1103,7 @@ kendallWithWeights <- function(data, iterations){
           featuresMapG1[["rpeopN"]] <- .Internal(mean(peop)) / featuresMapMax[["peop"]]#/ (maxPeop*den)
           featuresMapG1[["rgraffN"]] <- .Internal(mean(graff)) / featuresMapMax[["graff"]]#/ (maxGraff*den)
           featuresMapG1[["rbuildDiffAgesN"]] <- .Internal(mean(buildDiffAges)) / featuresMapMax[["buildDiffAges"]]#/ (maxBuildDiffAges*den)
-          
+
           featuresMapG1[["rstreetWidN"]] <- .Internal(mean(streetWid)) / featuresMapMax[["streetWid"]]
           featuresMapG1[["rsidewalkWidN"]] <- .Internal(mean(sidewalkWid)) / featuresMapMax[["sidewalkWid"]]
           featuresMapG1[["rdebrisN"]] <- .Internal(mean(debris)) / featuresMapMax[["debris"]]
@@ -1136,7 +1134,6 @@ kendallWithWeights <- function(data, iterations){
     featuresMapG1[["peopN"]] <- featuresMapG1[["peop"]]  / featuresMapMax[["peop"]]#(maxPeop*den)
     featuresMapG1[["graffN"]] <- featuresMapG1[["graff"]]/ featuresMapMax[["graff"]]#(maxGraff*den)
     featuresMapG1[["buildDiffAgesN"]] <- featuresMapG1[["buildDiffAges"]] / featuresMapMax[["buildDiffAges"]]#(maxBuildDiffAges*den)
-    
     featuresMapG1[["streetWidN"]] <- featuresMapG1[["streetWid"]] / featuresMapMax[["streetWid"]]
     featuresMapG1[["sidewalkWidN"]] <- featuresMapG1[["sidewalkWid"]] / featuresMapMax[["sidewalkWid"]]
     featuresMapG1[["debrisN"]] <- featuresMapG1[["debris"]] / featuresMapMax[["debris"]]
@@ -2809,7 +2806,7 @@ agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -2834,17 +2831,17 @@ res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
-reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- spautolm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
@@ -2863,20 +2860,20 @@ agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 #Sectors with difference
 diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
 print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
 print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
@@ -2904,17 +2901,17 @@ res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
-reg <- spautolm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- spautolm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -2942,14 +2939,14 @@ agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 #Sector with diff
 diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
 print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -2974,17 +2971,17 @@ crd <- cbind(res$long, res$lat)
 neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
 #test <- spautolm(V3.Solteiro ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + outdoor_table + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=res, listw=neigh2)
-reg <- spautolm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- spautolm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
@@ -3003,7 +3000,7 @@ agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
@@ -3026,17 +3023,17 @@ res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 neigh <- dnearneigh(crd, 0, 100, longlat=F)
 neigh2 <- nb2listw(neigh, style = "B")
-reg <- spautolm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- spautolm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agrad%C3%A1vel?"), listw=neigh2)
+reg <- spautolm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agrad%C3%A1vel?"))
+reg <- regGroup2 <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3055,7 +3052,7 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
@@ -3098,14 +3095,14 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 #Sectores with difference
 diff <- filter(seg.l, setor == "250400905000062") #YA Cat
 print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
@@ -3147,7 +3144,7 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
@@ -3189,20 +3186,20 @@ seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 #Sectors with difference
 diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
 print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
 print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
 res <- melt(kendallWithWeights(diff, iterations))
 print(res, row.names=FALSE)
-convertSummary(res)
+convertSummary(res, iterations)
 
 printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
@@ -3245,13 +3242,13 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 test <- read.table("teste.dat", header=TRUE)
-res <- ggplot(data=test, aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lower, ymax=higher), width=.1)
+res <- ggplot(data=test, aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lowerSid, ymax=higherSid), width=.1)
 res + geom_point(data=test, aes(x=feature, y=real), col="red") + ylab("Coeff") + xlab("Feature") + theme(axis.text.x = element_text(angle=60, hjust=1, size=15), axis.text.y=element_text(size=15))
 
-res <- ggplot(data=filter(test, feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight"), aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lower, ymax=higher), width=.1)
+res <- ggplot(data=filter(test, feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight"), aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lowerSid, ymax=higherSid), width=.1)
 res + geom_point(data=filter(test, feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight"), aes(x=feature, y=real), col="red") + ylab("Coeff") + xlab("Feature") + theme(axis.text.x = element_text(angle=60, hjust=1, size=15), axis.text.y=element_text(size=15))
 
-res <- ggplot(data=filter(test, !(feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight")), aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lower, ymax=higher), width=.1) + ylim(c(-1, 1))
+res <- ggplot(data=filter(test, !(feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight")), aes(x=feature, y=random), col="red", ylab="Coeff", xlab="Feature") + geom_point() + geom_errorbar(aes(ymin=lowerSid, ymax=higherSid), width=.1) + ylim(c(-1, 1))
 res + geom_point(data=filter(test, !(feature == "streetWid" | feature == "sidewalkWid" | feature == "longSight" | feature == "buildHeight")), aes(x=feature, y=real), col="red") + ylab("Coeff") + xlab("Feature") + theme(axis.text.x = element_text(angle=60, hjust=1, size=15), axis.text.y=element_text(size=15))
   
 
@@ -3301,6 +3298,27 @@ temp <- rbind(grupo1, grupo2)
 novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
+
+#Spatial Regression of all users opinion
+res <- getLatLong(agrad, "moran100/streetsQScoresLatLongAgraAll2.dat")
+crd <- cbind(res$long, res$lat)
+neigh <- dnearneigh(crd, 0, 100, longlat=F)
+neigh2 <- nb2listw(neigh, style = "B")
+reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
+summary(reg)
+reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+res <- getLatLong(seg, "moran100/streetsQScoresLatLongAgraAll2.dat")
+crd <- cbind(res$long, res$lat)
+neigh <- dnearneigh(crd, 0, 100, longlat=F)
+neigh2 <- nb2listw(neigh, style = "B")
+reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+summary(reg)
+reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 #Regression of one question x other question
 library(texreg)

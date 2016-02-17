@@ -89,17 +89,18 @@ somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = dados1 + dados2
     desvios = (desvio1 + desvio2)/2
     
-    desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
-        soma <- ifelse(soma < 0, 0, soma)
-        soma <- ifelse(soma > uplimit, uplimit, soma)
-        return (mean(soma))
-    }
+    #desvio = sd(soma)
+    #if (is.na(desvio)){ 
+    #    valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+    #    valores <- ifelse(valores < 0, 0, valores)
+    #    valores <- ifelse(valores > uplimit, uplimit, valores)
+    #    return (mean(valores))
+    #}else{
+    #    soma <- ifelse(soma < 0, 0, soma)
+    #    soma <- ifelse(soma > uplimit, uplimit, soma)
+    #    return (mean(soma))
+    #}
+    return (mean(soma))
 }
 
 #Somando esquerda e direita
@@ -116,17 +117,7 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = (dados1 + dados2) / 2
     desvios = (desvio1 + desvio2)/2
     
-    desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
-        soma <- ifelse(soma < 0, 0, soma)
-        soma <- ifelse(soma > uplimit, uplimit, soma)
-        return (mean(soma))
-    }
+    return (mean(soma))
 }
 
 
@@ -1568,56 +1559,61 @@ normalizedKendallTauDistance2 <- function(data1, data2){
 }
 
 
-print("################### Low x High income - Pleasantness")
-
-#Baixa renda x Media renda
+print("################### Young x Adult - Pleasantness")
 agrad.l <- agrad %>% 
-    do(arrange(., desc(V3.Baixa))) %>% 
-    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+    do(arrange(., desc(V3.Jovem))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
-#Danieles coefficients
 #agrad.l <- calcDanieleCoeff(agrad.l)
-#agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
+#agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Jovem", "V3.Adulto"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
-#printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
-#printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
+#Sectors with difference
+diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+#printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
+#printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsAllFeaturesTog(agrad.l2)
 
-print("################### Low x High income - Safety")
+print("################### Young x Adult - Safety")
 
-#Baixa renda x Media renda
+#Jovem x Adulto
 seg.l <- seg %>% 
-    do(arrange(., desc(V3.Baixa))) %>% 
-    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+    do(arrange(., desc(V3.Jovem))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-res <- melt(kendallWithWeights(seg.l, iterations, "V3.Baixa", "V3.Media"))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
+res <- melt(kendallWithWeights(seg.l, iterations, "V3.Jovem", "V3.Adulto"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
-#Sectors with difference
-diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
-print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
-res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media"))
+#Sectores with difference
+diff <- filter(seg.l, setor == "250400905000062") #YA Cat
+print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
-diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
-print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
-res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media")) 
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
-
-#printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
-#printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")
+#printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
+#printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsAllFeaturesTog(seg.l2)
+

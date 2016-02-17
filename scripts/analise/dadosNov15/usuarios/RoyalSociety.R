@@ -464,7 +464,7 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
-kendallWithWeights <- function(data, iterations){
+kendallWithWeights <- function(data, iterations, group1Id, group2Id){
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -638,43 +638,56 @@ kendallWithWeights <- function(data, iterations){
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
         
-        if(length(discordantPairs) > 0){
-              for(j in seq(1, length(discordantPairs))){
-                index1 <- discordantPairs[[j]][1] 
-                index2 <- discordantPairs[[j]][2]
-                rankLine1 <- data[index1,]
-                rankLine2 <- data[index2,]
+       for( i in seq(1, amountOfItems) ){
+            rankLine1 <- data[i,]
+            
+            if(i+1 <= amountOfItems){
+                for( j in seq(i+1, amountOfItems) ){
+                    rankLine2 <- data[j,]
                     
-                movCarsR <- movCarsR +  as.double(rankLine1[[randomCols[1]]]) - as.double(rankLine2[[randomCols[1]]]) 
-                parkCarsR <- parkCarsR +  as.double(rankLine1[[randomCols[2]]]) - as.double(rankLine2[[randomCols[2]]]) 
-                movCiclyR <- movCiclyR +  as.double(rankLine1[[randomCols[3]]]) - as.double(rankLine2[[randomCols[3]]]) 
-                buildIdR <- buildIdR +  as.double(rankLine1[[randomCols[4]]]) - as.double(rankLine2[[randomCols[4]]]) 
-                buildNRecR <- buildNRecR +  as.double(rankLine1[[randomCols[5]]]) - as.double(rankLine2[[randomCols[5]]]) 
-                treeR <- treeR +  as.double(rankLine1[[randomCols[6]]]) - as.double(rankLine2[[randomCols[6]]]) 
-                smallPlaR <- smallPlaR +  as.double(rankLine1[[randomCols[7]]]) - as.double(rankLine2[[randomCols[7]]]) 
-                diffBuildR <- diffBuildR +  as.double(rankLine1[[randomCols[8]]]) - as.double(rankLine2[[randomCols[8]]]) 
-                streeFurR <- streeFurR +  as.double(rankLine1[[randomCols[9]]]) - as.double(rankLine2[[randomCols[9]]]) 
-                basColR <- basColR +  as.double(rankLine1[[randomCols[10]]]) - as.double(rankLine2[[randomCols[10]]]) 
-                lighR <- lighR +  as.double(rankLine1[[randomCols[11]]]) - as.double(rankLine2[[randomCols[11]]]) 
-                accenColR <- accenColR +  as.double(rankLine1[[randomCols[12]]]) - as.double(rankLine2[[randomCols[12]]]) 
-                peopR <- peopR + as.double(rankLine1[[randomCols[13]]]) - as.double(rankLine2[[randomCols[13]]]) 
-                graffR <- graffR + as.double(rankLine1[[randomCols[14]]]) - as.double(rankLine2[[randomCols[14]]])
-                buildDiffAgesR <- buildDiffAgesR + as.double(rankLine1[[randomCols[15]]]) - as.double(rankLine2[[randomCols[15]]])
-                
-                streetWidR <- streetWidR + as.double(rankLine1[[randomCols[16]]]) - as.double(rankLine2[[randomCols[16]]])
-                sidewalkWidR <- sidewalkWidR + as.double(rankLine1[[randomCols[17]]]) - as.double(rankLine2[[randomCols[17]]])
-                debrisR <- cbind(debrisR, as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
-                pavementR <- cbind(pavementR, as.double(rankLine1[[randomCols[19]]]) - as.double(rankLine2[[randomCols[19]]])) 
-                landscapeR <- cbind(landscapeR, as.double(rankLine1[[randomCols[20]]]) - as.double(rankLine2[[randomCols[20]]]))
-                propStreetWallR <- cbind(propStreetWallR, as.double(rankLine1[[randomCols[21]]]) - as.double(rankLine2[[randomCols[21]]]))
-                propWindR <- cbind(propWindR, as.double(rankLine1[[randomCols[22]]]) - as.double(rankLine2[[randomCols[22]]]))
-                longSightR <- longSightR + as.double(rankLine1[[randomCols[23]]]) - as.double(rankLine2[[randomCols[23]]])
-                propSkyAheadR <- cbind(propSkyAheadR, as.double(rankLine1[[randomCols[24]]]) - as.double(rankLine2[[randomCols[24]]]))
-                propSkyAcrossR <- cbind(propSkyAcrossR, as.double(rankLine1[[randomCols[25]]]) - as.double(rankLine2[[randomCols[25]]]))
-                buildHeightR <- buildHeightR + as.double(rankLine1[[randomCols[26]]]) - as.double(rankLine2[[randomCols[26]]])
-                propActiveUseR <- cbind(propActiveUseR, as.double(rankLine1[[randomCols[27]]]) - as.double(rankLine2[[randomCols[27]]]))
+                    sampledQScores <- sample(c(rankLine1[[group1Id]], rankLine1[[group2Id]]))#Sampling for image i
+                    sampledQScores2 <- sample(c(rankLine2[[group1Id]], rankLine2[[group2Id]]))#Sampling for image j
+                    
+                    if( (sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) | (sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]) ){
+#         if(length(discordantPairs) > 0){
+#               for(j in seq(1, length(discordantPairs))){
+#                      index1 <- discordantPairs[[j]][1] 
+#                      index2 <- discordantPairs[[j]][2]
+#                      rankLine1 <- data[index1,]
+#                      rankLine2 <- data[index2,]
+                    
+                    movCarsR <- movCarsR +  rankLine1[["mov_cars"]] - rankLine2[["mov_cars"]]
+                    parkCarsR <- parkCarsR +  rankLine1[["park_cars"]] - rankLine2[["park_cars"]] 
+                    movCiclyR <- movCiclyR +  rankLine1[["mov_ciclyst"]] - rankLine2[["mov_ciclyst"]]
+                    buildIdR <- buildIdR +  rankLine1[["build_ident"]] - rankLine2[["build_ident"]] 
+                    buildNRecR <- buildNRecR +  rankLine1[["build_nrectan"]] - rankLine2[["build_nrectan"]]
+                    treeR <- treeR +  rankLine1[["trees"]] - rankLine2[["trees"]]
+                    smallPlaR <- smallPlaR +  rankLine1[["small_planters"]] - rankLine2[["small_planters"]]
+                    diffBuildR <- diffBuildR +  rankLine1[["diff_build"]] - rankLine2[["diff_build"]] 
+                    streeFurR <- streeFurR +  rankLine1[["street_furnit"]] - rankLine2[["street_furnit"]]
+                    basColR <- basColR +  rankLine1[["basic_col"]] - rankLine2[["basic_col"]] 
+                    lighR <- lighR +  rankLine1[["lights"]] - rankLine2[["lights"]] 
+                    accenColR <- accenColR +  rankLine1[["accent_col"]] - rankLine2[["accent_col"]] 
+                    peopR <- peopR + rankLine1[["people"]] - rankLine2[["people"]]
+                    graffR <- graffR + as.integer(rankLine1[["graffiti"]]) - as.integer(rankLine2[["graffiti"]])
+                    buildDiffAgesR <- buildDiffAgesR + as.integer(rankLine1[["build_diff_ages"]]) - as.integer(rankLine2[["build_diff_ages"]])
+                              
+                    streetWidR <- streetWidR + rankLine1[["street_wid"]] - rankLine2[["street_wid"]]
+                    sidewalkWidR <- sidewalkWidR + rankLine1[["sidewalk_wid"]] - rankLine2[["sidewalk_wid"]]
+                    debrisR <- cbind(debrisR, rankLine1[["debris"]] - rankLine2[["debris"]])
+                    pavementR <- cbind(pavementR, rankLine1[["pavement"]] - rankLine2[["pavement"]])
+                    landscapeR <- cbind(landscapeR, rankLine1[["landscape"]] - rankLine2[["landscape"]])
+                    propStreetWallR <- cbind(propStreetWallR, rankLine1[["prop_street_wall"]] - rankLine2[["prop_street_wall"]])
+                    propWindR <- cbind(propWindR, rankLine1[["prop_wind"]] - rankLine2[["prop_wind"]])
+                    longSightR <- longSightR + rankLine1[["long_sight"]] - rankLine2[["long_sight"]]
+                    propSkyAheadR <- cbind(propSkyAheadR, rankLine1[["prop_sky_ahead"]] - rankLine2[["prop_sky_ahead"]])
+                    propSkyAcrossR <- cbind(propSkyAcrossR, rankLine1[["prop_sky_across"]] - rankLine2[["prop_sky_across"]])
+                    buildHeightR <- buildHeightR + rankLine1[["build_height"]] - rankLine2[["build_height"]]
+                    propActiveUseR <- cbind(propActiveUseR, rankLine1[["prop_active_use"]] - rankLine2[["prop_active_use"]])
             }
-        } 
+        }
+ 	}
+       } 
         
         #Binding with previous iterations
         if( length(debrisR) > 0 ) {
@@ -1565,7 +1578,7 @@ agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
+res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
@@ -1584,7 +1597,7 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-res <- melt(kendallWithWeights(seg.l, iterations))
+res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 

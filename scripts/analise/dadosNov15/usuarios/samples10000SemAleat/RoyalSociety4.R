@@ -89,17 +89,18 @@ somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = dados1 + dados2
     desvios = (desvio1 + desvio2)/2
     
-    desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
-        soma <- ifelse(soma < 0, 0, soma)
-        soma <- ifelse(soma > uplimit, uplimit, soma)
-        return (mean(soma))
-    }
+    #desvio = sd(soma)
+    #if (is.na(desvio)){ 
+    #    valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+    #    valores <- ifelse(valores < 0, 0, valores)
+    #    valores <- ifelse(valores > uplimit, uplimit, valores)
+    #    return (mean(valores))
+    #}else{
+    #    soma <- ifelse(soma < 0, 0, soma)
+    #    soma <- ifelse(soma > uplimit, uplimit, soma)
+    #    return (mean(soma))
+    #}
+    return (mean(soma))
 }
 
 #Somando esquerda e direita
@@ -116,17 +117,7 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = (dados1 + dados2) / 2
     desvios = (desvio1 + desvio2)/2
     
-    desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
-        soma <- ifelse(soma < 0, 0, soma)
-        soma <- ifelse(soma > uplimit, uplimit, soma)
-        return (mean(soma))
-    }
+    return (mean(soma))
 }
 
 
@@ -855,6 +846,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
     return ( featuresMapG1 )
 }
 
+
 #Calculates maximum denominator for normalization
 calcGreatesSum <- function(maxFeature, amountOfImages) {
 	sumFeat <- 0
@@ -1581,7 +1573,7 @@ agrad.l <- agrad %>%
 
 #All places
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
+res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Baixa", "V3.Media"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 

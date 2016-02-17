@@ -631,8 +631,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
     
     #Random world
     movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- longSight <- buildHeight <- debris <- pavement <- landscape <- propStreetWall <- propWind <-  propSkyAhead <- propSkyAcross <- propActiveUse <- c()
-    
-    for (i in seq(1, iterations)){
+    for (k in seq(1, iterations)){
         randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages", "street_wid", "sidewalk_wid", "debris", "pavement", "landscape", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead",  "prop_sky_across", "build_height", "prop_active_use"))
         movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
@@ -643,7 +642,6 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
             if(i+1 <= amountOfItems){
                 for( j in seq(i+1, amountOfItems) ){
                     rankLine2 <- data[j,]
-                    
                     sampledQScores <- sample(c(rankLine1[[group1Id]], rankLine1[[group2Id]]))#Sampling for image i
                     sampledQScores2 <- sample(c(rankLine2[[group1Id]], rankLine2[[group2Id]]))#Sampling for image j
                     
@@ -655,14 +653,14 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
 #                      rankLine1 <- data[index1,]
 #                      rankLine2 <- data[index2,]
                     
-		            if( sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) {
-					firstImageData <- rankLine2#Best ranked image for first group
-					secondImageData <- rankLine1
-			    }else if(sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]){
-					firstImageData <- rankLine1#Best ranked image for first group
-					secondImageData <- rankLine2
-			    }
-		            
+		              if( sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) {
+          					firstImageData <- rankLine2#Best ranked image for first group
+          					secondImageData <- rankLine1
+          			    }else if(sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]){
+          					firstImageData <- rankLine1#Best ranked image for first group
+          					secondImageData <- rankLine2
+          			    }
+
 		            movCarsR <- movCarsR +  firstImageData[["mov_cars"]] - secondImageData[["mov_cars"]]
 		            parkCarsR <- parkCarsR +  firstImageData[["park_cars"]] - secondImageData[["park_cars"]] 
 		            movCiclyR <- movCiclyR +  firstImageData[["mov_ciclyst"]] - secondImageData[["mov_ciclyst"]]
@@ -693,9 +691,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
 		            propActiveUseR <- cbind(propActiveUseR, firstImageData[["prop_active_use"]] - secondImageData[["prop_active_use"]])
             }
           }
-	 }
- 	}
-       } 
+	      }
+     	}
 
         #Binding with previous iterations
         if( length(debrisR) > 0 ) {
@@ -1566,8 +1563,6 @@ normalizedKendallTauDistance2 <- function(data1, data2){
 
   print (normalized)
 }
-
-
 
 print("################### Men x Women - Pleasantness")
 #Homem x Mulher

@@ -654,38 +654,47 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
 #                      index2 <- discordantPairs[[j]][2]
 #                      rankLine1 <- data[index1,]
 #                      rankLine2 <- data[index2,]
-                    
-                    movCarsR <- movCarsR +  rankLine1[["mov_cars"]] - rankLine2[["mov_cars"]]
-                    parkCarsR <- parkCarsR +  rankLine1[["park_cars"]] - rankLine2[["park_cars"]] 
-                    movCiclyR <- movCiclyR +  rankLine1[["mov_ciclyst"]] - rankLine2[["mov_ciclyst"]]
-                    buildIdR <- buildIdR +  rankLine1[["build_ident"]] - rankLine2[["build_ident"]] 
-                    buildNRecR <- buildNRecR +  rankLine1[["build_nrectan"]] - rankLine2[["build_nrectan"]]
-                    treeR <- treeR +  rankLine1[["trees"]] - rankLine2[["trees"]]
-                    smallPlaR <- smallPlaR +  rankLine1[["small_planters"]] - rankLine2[["small_planters"]]
-                    diffBuildR <- diffBuildR +  rankLine1[["diff_build"]] - rankLine2[["diff_build"]] 
-                    streeFurR <- streeFurR +  rankLine1[["street_furnit"]] - rankLine2[["street_furnit"]]
-                    basColR <- basColR +  rankLine1[["basic_col"]] - rankLine2[["basic_col"]] 
-                    lighR <- lighR +  rankLine1[["lights"]] - rankLine2[["lights"]] 
-                    accenColR <- accenColR +  rankLine1[["accent_col"]] - rankLine2[["accent_col"]] 
-                    peopR <- peopR + rankLine1[["people"]] - rankLine2[["people"]]
-                    graffR <- graffR + as.integer(rankLine1[["graffiti"]]) - as.integer(rankLine2[["graffiti"]])
-                    buildDiffAgesR <- buildDiffAgesR + as.integer(rankLine1[["build_diff_ages"]]) - as.integer(rankLine2[["build_diff_ages"]])
-                              
-                    streetWidR <- streetWidR + rankLine1[["street_wid"]] - rankLine2[["street_wid"]]
-                    sidewalkWidR <- sidewalkWidR + rankLine1[["sidewalk_wid"]] - rankLine2[["sidewalk_wid"]]
-                    debrisR <- cbind(debrisR, rankLine1[["debris"]] - rankLine2[["debris"]])
-                    pavementR <- cbind(pavementR, rankLine1[["pavement"]] - rankLine2[["pavement"]])
-                    landscapeR <- cbind(landscapeR, rankLine1[["landscape"]] - rankLine2[["landscape"]])
-                    propStreetWallR <- cbind(propStreetWallR, rankLine1[["prop_street_wall"]] - rankLine2[["prop_street_wall"]])
-                    propWindR <- cbind(propWindR, rankLine1[["prop_wind"]] - rankLine2[["prop_wind"]])
-                    longSightR <- longSightR + rankLine1[["long_sight"]] - rankLine2[["long_sight"]]
-                    propSkyAheadR <- cbind(propSkyAheadR, rankLine1[["prop_sky_ahead"]] - rankLine2[["prop_sky_ahead"]])
-                    propSkyAcrossR <- cbind(propSkyAcrossR, rankLine1[["prop_sky_across"]] - rankLine2[["prop_sky_across"]])
-                    buildHeightR <- buildHeightR + rankLine1[["build_height"]] - rankLine2[["build_height"]]
-                    propActiveUseR <- cbind(propActiveUseR, rankLine1[["prop_active_use"]] - rankLine2[["prop_active_use"]])
-            }
-        }
- 	}
+
+			   if( sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) {
+					firstImageData <- rankLine2#Best ranked image for first group
+					secondImageData <- rankLine1
+			    }else if(sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]){
+					firstImageData <- rankLine1#Best ranked image for first group
+					secondImageData <- rankLine2
+			    }
+		            
+		            movCarsR <- movCarsR +  firstImageData[["mov_cars"]] - secondImageData[["mov_cars"]]
+		            parkCarsR <- parkCarsR +  firstImageData[["park_cars"]] - secondImageData[["park_cars"]] 
+		            movCiclyR <- movCiclyR +  firstImageData[["mov_ciclyst"]] - secondImageData[["mov_ciclyst"]]
+		            buildIdR <- buildIdR +  firstImageData[["build_ident"]] - secondImageData[["build_ident"]] 
+		            buildNRecR <- buildNRecR +  firstImageData[["build_nrectan"]] - secondImageData[["build_nrectan"]]
+		            treeR <- treeR +  firstImageData[["trees"]] - secondImageData[["trees"]]
+		            smallPlaR <- smallPlaR +  firstImageData[["small_planters"]] - secondImageData[["small_planters"]]
+		            diffBuildR <- diffBuildR +  firstImageData[["diff_build"]] - secondImageData[["diff_build"]] 
+		            streeFurR <- streeFurR +  firstImageData[["street_furnit"]] - secondImageData[["street_furnit"]]
+		            basColR <- basColR +  firstImageData[["basic_col"]] - secondImageData[["basic_col"]] 
+		            lighR <- lighR +  firstImageData[["lights"]] - secondImageData[["lights"]] 
+		            accenColR <- accenColR +  firstImageData[["accent_col"]] - secondImageData[["accent_col"]] 
+		            peopR <- peopR + firstImageData[["people"]] - secondImageData[["people"]]
+		            graffR <- graffR + as.integer(firstImageData[["graffiti"]]) - as.integer(secondImageData[["graffiti"]])
+		            buildDiffAgesR <- buildDiffAgesR + as.integer(firstImageData[["build_diff_ages"]]) - as.integer(secondImageData[["build_diff_ages"]])
+		                      
+		            streetWidR <- streetWidR + firstImageData[["street_wid"]] - secondImageData[["street_wid"]]
+		            sidewalkWidR <- sidewalkWidR + firstImageData[["sidewalk_wid"]] - secondImageData[["sidewalk_wid"]]
+		            debrisR <- cbind(debrisR, firstImageData[["debris"]] - secondImageData[["debris"]])
+		            pavementR <- cbind(pavementR, firstImageData[["pavement"]] - secondImageData[["pavement"]])
+		            landscapeR <- cbind(landscapeR, firstImageData[["landscape"]] - secondImageData[["landscape"]])
+		            propStreetWallR <- cbind(propStreetWallR, firstImageData[["prop_street_wall"]] - secondImageData[["prop_street_wall"]])
+		            propWindR <- cbind(propWindR, firstImageData[["prop_wind"]] - secondImageData[["prop_wind"]])
+		            longSightR <- longSightR + firstImageData[["long_sight"]] - secondImageData[["long_sight"]]
+		            propSkyAheadR <- cbind(propSkyAheadR, firstImageData[["prop_sky_ahead"]] - secondImageData[["prop_sky_ahead"]])
+		            propSkyAcrossR <- cbind(propSkyAcrossR, firstImageData[["prop_sky_across"]] - secondImageData[["prop_sky_across"]])
+		            buildHeightR <- buildHeightR + firstImageData[["build_height"]] - secondImageData[["build_height"]]
+		            propActiveUseR <- cbind(propActiveUseR, firstImageData[["prop_active_use"]] - secondImageData[["prop_active_use"]])
+             }
+           }
+	  }
+ 	 }
        } 
         
         #Binding with previous iterations

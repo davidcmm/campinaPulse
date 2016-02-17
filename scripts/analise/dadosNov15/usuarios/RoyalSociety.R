@@ -565,7 +565,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
             }
         }
     }
-
+    
     #Real world mean values for grades and proportions
     if( length(debris) > 0 ){
       featuresMapG1[["movCars"]] <- movCars
@@ -633,9 +633,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
     movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- longSight <- buildHeight <- debris <- pavement <- landscape <- propStreetWall <- propWind <-  propSkyAhead <- propSkyAcross <- propActiveUse <- c()
     
     for (i in seq(1, iterations)){
-        #randomIndex <- sample(data$index)
         randomCols <- sample(c("mov_cars", "park_cars", "mov_ciclyst", "build_ident", "build_nrectan", "trees", "small_planters", "diff_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "graffiti", "build_diff_ages", "street_wid", "sidewalk_wid", "debris", "pavement", "landscape", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead",  "prop_sky_across", "build_height", "prop_active_use"))
-	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
+        movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
         
        for( i in seq(1, amountOfItems) ){
@@ -688,7 +687,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
         }
  	}
        } 
-        
+
         #Binding with previous iterations
         if( length(debrisR) > 0 ) {
             movCars <- cbind(movCars, movCarsR)
@@ -709,26 +708,18 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
                     
             streetWid <- cbind(streetWid, streetWidR)
             sidewalkWid <- cbind(sidewalkWid, sidewalkWidR)
-            #debris <- cbind(debris, debrisR)
-            #pavement <- cbind(pavement, pavementR)
-            #landscape <- cbind(landscape, landscapeR)
             longSight <- cbind(longSight, longSightR)
             buildHeight <- cbind(buildHeight, buildHeightR)
             debris <- cbind(debris, .Internal(mean(debrisR)))
             pavement <- cbind(pavement, .Internal(mean(pavementR)))
             landscape <- cbind(landscape, .Internal(mean(landscapeR)))
-            #propStreetWall <- cbind(propStreetWall, propStreetWall"]])
-            #propWind <- cbind(propWind, propWind"]])
             propStreetWall <- cbind(propStreetWall, .Internal(mean(propStreetWallR)))
             propWind <- cbind(propWind, .Internal(mean(propWindR)))
-            #propSkyAhead <- cbind(propSkyAhead, propSkyAhead"]])
-            #propSkyAcross <- cbind(propSkyAcross, propSkyAcross"]])
             propSkyAhead <- cbind(propSkyAhead, .Internal(mean(propSkyAheadR)))
             propSkyAcross <- cbind(propSkyAcross, .Internal(mean(propSkyAcrossR)))
-            #propActiveUse <- cbind(propActiveUse, propActiveUse"]])
             propActiveUse <- cbind(propActiveUse, .Internal(mean(propActiveUseR)))
         }
-    }  
+    }
     
     #Random world mean
     if(length(movCars) > 0){
@@ -761,7 +752,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
 	featuresMapG1[["rpropSkyAcross"]] <- .Internal(mean(propSkyAcross))
 	featuresMapG1[["rpropActiveUse"]] <- .Internal(mean(propActiveUse))
     }    
-
+    
     featuresMapG1[["rsdMovCars"]] <- sd(movCars) 
     featuresMapG1[["rsdParkCars"]] <- sd(parkCars)
     featuresMapG1[["rsdMovCicly"]] <- sd(movCicly)

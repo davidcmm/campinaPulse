@@ -638,7 +638,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
                     sampledQScores <- sample(c(rankLine1[[group1Id]], rankLine1[[group2Id]]))#Sampling for image i
                     sampledQScores2 <- sample(c(rankLine2[[group1Id]], rankLine2[[group2Id]]))#Sampling for image j
                     
-                    if( (sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) | (sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]) ){
+                    if( !is.na(sampledQScores) & !is.na(sampledQScores2) & (sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) | (sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]) ){
 #         if(length(discordantPairs) > 0){
 #               for(j in seq(1, length(discordantPairs))){
 #                      index1 <- discordantPairs[[j]][1] 

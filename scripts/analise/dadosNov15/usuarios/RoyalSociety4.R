@@ -1581,7 +1581,7 @@ agrad.l <- agrad %>%
 
 #All places
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-res <- melt(kendallWithWeights(agrad.l, iterations))
+res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Baixa", "V3.Media"))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 

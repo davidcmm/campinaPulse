@@ -698,6 +698,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id){
 		}
            }
  	 }
+	}
         
         #Binding with previous iterations
         if( length(debrisR) > 0 ) {

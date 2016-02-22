@@ -634,11 +634,10 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     
     for (k in seq(1, iterations)){
 
-	randomData <- filter(read.table(paste("geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
+	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
-	#print(	amountOfRandData)
 
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
@@ -651,13 +650,6 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
                     rankLine2 <- newData[j,]
                     
                     if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
-                    #if( (sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) | (sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]) ){
-#         if(length(discordantPairs) > 0){
-#               for(j in seq(1, length(discordantPairs))){
-#                      index1 <- discordantPairs[[j]][1] 
-#                      index2 <- discordantPairs[[j]][2]
-#                      rankLine1 <- data[index1,]
-#                      rankLine2 <- data[index2,]
 
 			    if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
         				firstImage <- filter(data, image_url == rankLine2$V2)#Best ranked image for first group
@@ -666,14 +658,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
       					firstImage <- filter(data, image_url == rankLine1$V2)#Best ranked image for first group
       					secondImage <- filter(data, image_url == rankLine2$V2)
 		            }
-				#print(rankLine2$V2)
-				#print(rankLine1$V2)
-				#if(rankLine2$V2 == "liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg" & rankLine1$V2 == "catole/Rua_Aluisio_Cunha_Linha__50__90.jpg") {
-				#	print(paste(">>> Diff ", firstImage[["mov_cars"]] - secondImage[["mov_cars"]]))
-				#	print(firstImage)
-				#	print(secondImage)
-				#
-				#}
+
 		            if(nrow(firstImage) > 0 & nrow(secondImage) > 0) {
 				    movCarsR <- movCarsR +  firstImage[["mov_cars"]] - secondImage[["mov_cars"]]
 				    parkCarsR <- parkCarsR +  firstImage[["park_cars"]] - secondImage[["park_cars"]]

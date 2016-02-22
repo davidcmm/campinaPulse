@@ -518,6 +518,34 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
     debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
     
+    mcaT <- new.env()
+    pcaT <- new.env()
+    mciT <- new.env()
+    bidT <- new.env()
+    bnrT <- new.env()
+    treT <- new.env()
+    splT <- new.env()
+    dbuT <- new.env()
+    sfuT <- new.env()
+    bacT <- new.env()
+    ligT <- new.env()
+    accT <- new.env()
+    peoT <- new.env()
+    graT <- new.env()
+    bdaT <- new.env()
+    swiT <- new.env()
+    siwiT <- new.env()
+    bheT <- new.env()
+    lsiT <- new.env()
+    debT <- new.env()
+    pavT <- new.env()
+    lanT <- new.env()
+    pswT <- new.env()
+    pwiT <- new.env()
+    psaT <- new.env()
+    psacT <- new.env()
+    pactT <- new.env()
+    
     #discordantPairs <- list()#Store discordant pairs in order to avoid check and comparisons multiple times!
 
     #First call, comparing for group 1
@@ -591,6 +619,63 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
                 propSkyAcrossMax <- cbind(propSkyAcrossMax, abs(as.double(propSkyAcrossOrig[i]) - as.double(propSkyAcrossOrig[j]))) 
                 buildHeightMax <- buildHeightMax + abs(as.double(buildHeightOrig[i]) - as.double(buildHeightOrig[j]))
                 propActiveUseMax <- cbind(propActiveUseMax, abs(as.double(propActiveUseOrig[i]) - as.double(propActiveUseOrig[j])))
+
+		#Storing all images features differences
+		mcaT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- movCarsOrig[i] - movCarsOrig[j]
+		mcaT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- movCarsOrig[j] - movCarsOrig[i]
+		pcaT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- parkCarsOrig[i] - parkCarsOrig[j]
+		pcaT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- parkCarsOrig[j] - parkCarsOrig[i]
+		mciT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- movCiclyOrig[i] - movCiclyOrig[j]
+		mciT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- movCiclyOrig[j] - movCiclyOrig[i]
+		bidT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- buildIdOrig[i] - buildIdOrig[j]
+		bidT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- buildIdOrig[j] - buildIdOrig[i]
+		bnrT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- buildNRecOrig[i] - buildNRecOrig[j]
+		bnrT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- buildNRecOrig[j] - buildNRecOrig[i]
+		treT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- treeOrig[i] - treeOrig[j]
+		treT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- treeOrig[j] - treeOrig[i]
+		splT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- smallPlaOrig[i] - smallPlaOrig[j]
+		splT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- smallPlaOrig[j] - smallPlaOrig[i]
+		dbuT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- diffBuildOrig[i] - diffBuildOrig[j]
+		dbuT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- diffBuildOrig[j] - diffBuildOrig[i]
+		sfuT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- streeFurOrig[i] - streeFurOrig[j]
+		sfuT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- streeFurOrig[j] - streeFurOrig[i]
+		bacT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- basColOrig[i] - basColOrig[j]
+		bacT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- basColOrig[j] - basColOrig[i]
+		ligT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- lighOrig[i] - lighOrig[j]
+		ligT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- lighOrig[j] - lighOrig[i]
+		accT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- accenColOrig[i] - accenColOrig[j]
+		accT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- accenColOrig[j] - accenColOrig[i]
+		peoT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- peopOrig[i] - peopOrig[j]
+		peoT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- peopOrig[j] - peopOrig[i]
+		graT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.integer(graffOrig[i]) - as.integer(graffOrig[j])
+		graT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.integer(graffOrig[j]) - as.integer(graffOrig[i])
+		bdaT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.integer(buildDiffAgesOrig[i]) - as.integer(buildDiffAgesOrig[j])
+		bdaT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.integer(buildDiffAgesOrig[j]) - as.integer(buildDiffAgesOrig[i])
+
+		swiT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(streetWidOrig[i]) - as.double(streetWidOrig[j])
+		swiT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(streetWidOrig[j]) - as.double(streetWidOrig[i])
+		siwiT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(sidewalkWidOrig[i]) - as.double(sidewalkWidOrig[j])
+		siwiT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(sidewalkWidOrig[j]) - as.double(sidewalkWidOrig[i])
+		bheT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(buildHeightOrig[i]) - as.double(buildHeightOrig[j])
+		bheT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(buildHeightOrig[j]) - as.double(buildHeightOrig[i])
+		lsiT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(longSightOrig[i]) - as.double(longSightOrig[j])
+		lsiT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(longSightOrig[j]) - as.double(longSightOrig[i])
+		debT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(debrisOrig[i]) - as.double(debrisOrig[j])
+		debT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(debrisOrig[j]) - as.double(debrisOrig[i])
+		pavT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(pavementOrig[i]) - as.double(pavementOrig[j])
+		pavT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(pavementOrig[j]) - as.double(pavementOrig[i])
+		lanT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(landscapeOrig[i]) - as.double(landscapeOrig[j])
+		lanT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(landscapeOrig[j]) - as.double(landscapeOrig[i])
+		pswT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(propStreetWallOrig[i]) - as.double(propStreetWallOrig[j])
+		pswT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(propStreetWallOrig[j]) - as.double(propStreetWallOrig[i])
+		pwiT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(propWindOrig[i]) - as.double(propWindOrig[j])
+		pwiT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(propWindOrig[j]) - as.double(propWindOrig[i])
+		psaT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(propSkyAheadOrig[i]) - as.double(propSkyAheadOrig[j])
+		psaT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(propSkyAheadOrig[j]) - as.double(propSkyAheadOrig[i])
+		psacT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(propSkyAcrossOrig[i]) - as.double(propSkyAcrossOrig[j])
+		psacT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(propSkyAcrossOrig[j]) - as.double(propSkyAcrossOrig[i])
+		pactT[[rankLine1[['image_url']]]][[rankLine2[['image_url']]]] <- as.double(propActiveUseOrig[i]) - as.double(propActiveUseOrig[j])
+		pactT[[rankLine2[['image_url']]]][[rankLine1[['image_url']]]] <- as.double(propActiveUseOrig[j]) - as.double(propActiveUseOrig[i])
             }
         }
     }
@@ -644,11 +729,11 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     
     for (k in seq(1, iterations)){
 
-	randomData <- filter(read.table(paste("geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
+	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
-	#print(	amountOfRandData)
+	#print(paste("Iteration ", k))
 
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
@@ -661,59 +746,58 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
                     rankLine2 <- newData[j,]
                     
                     if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
-                    #if( (sampledQScores[1] < sampledQScores2[1] & sampledQScores[2] > sampledQScores2[2]) | (sampledQScores[1] > sampledQScores2[1] & sampledQScores[2] < sampledQScores2[2]) ){
-#         if(length(discordantPairs) > 0){
-#               for(j in seq(1, length(discordantPairs))){
-#                      index1 <- discordantPairs[[j]][1] 
-#                      index2 <- discordantPairs[[j]][2]
-#                      rankLine1 <- data[index1,]
-#                      rankLine2 <- data[index2,]
 
-			    if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
-        				firstImage <- filter(data, image_url == rankLine2$V2)#Best ranked image for first group
-      					secondImage <- filter(data, image_url == rankLine1$V2)
-    			    }else {
-      					firstImage <- filter(data, image_url == rankLine1$V2)#Best ranked image for first group
-      					secondImage <- filter(data, image_url == rankLine2$V2)
-		            }
-				#print(rankLine2$V2)
-				#print(rankLine1$V2)
-				#if(rankLine2$V2 == "liberdade/Rua_Padre_Pedro_Serrao__353__270.jpg" & rankLine1$V2 == "catole/Rua_Aluisio_Cunha_Linha__50__90.jpg") {
-				#	print(paste(">>> Diff ", firstImage[["mov_cars"]] - secondImage[["mov_cars"]]))
-				#	print(firstImage)
-				#	print(secondImage)
-				#
-				#}
-		            if(nrow(firstImage) > 0 & nrow(secondImage) > 0) {
-				    movCarsR <- movCarsR +  firstImage[["mov_cars"]] - secondImage[["mov_cars"]]
-				    parkCarsR <- parkCarsR +  firstImage[["park_cars"]] - secondImage[["park_cars"]]
-				    movCiclyR <- movCiclyR +  firstImage[["mov_ciclyst"]] - secondImage[["mov_ciclyst"]]
-				    buildIdR <- buildIdR +  firstImage[["build_ident"]]  - secondImage[["build_ident"]] 
-				    buildNRecR <- buildNRecR +  firstImage[["build_nrectan"]] - secondImage[["build_nrectan"]]
-				    treeR <- treeR +  firstImage[["trees"]] - secondImage[["trees"]]
-				    smallPlaR <- smallPlaR + firstImage[["small_planters"]] - secondImage[["small_planters"]]
-				    diffBuildR <- diffBuildR +  firstImage[["diff_build"]] - secondImage[["diff_build"]]
-				    streeFurR <- streeFurR +  firstImage[["street_furnit"]] - secondImage[["street_furnit"]]
-				    basColR <- basColR +  firstImage[["basic_col"]] - secondImage[["basic_col"]]
-				    lighR <- lighR + firstImage[["lights"]] - secondImage[["lights"]]
-				    accenColR <- accenColR +  firstImage[["accent_col"]] - secondImage[["accent_col"]]
-				    peopR <- peopR + firstImage[["people"]] - secondImage[["people"]]
-				    graffR <- graffR + as.integer(firstImage[["graffiti"]]) - as.integer(secondImage[["graffiti"]])
-				    buildDiffAgesR <- buildDiffAgesR + as.integer(firstImage[["build_diff_ages"]]) - as.integer(secondImage[["build_diff_ages"]])
+			if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
+        		#		firstImage <- filter(data, image_url == rankLine2$V2)#Best ranked image for first group
+      			#		secondImage <- filter(data, image_url == rankLine1$V2)
+					firstImage <- as.character(rankLine2$V2)
+					secondImage <- as.character(rankLine1$V2)
+    			   }else {
+      			#		firstImage <- filter(data, image_url == rankLine1$V2)#Best ranked image for first group
+      			#		secondImage <- filter(data, image_url == rankLine2$V2)
+					firstImage <- as.character(rankLine1$V2)
+					secondImage <- as.character(rankLine2$V2)
+		          }
+
+
+tryCatch(
+  
+		            if(!is.null(mcaT[[firstImage]][[secondImage]])) {
+				    movCarsR <- movCarsR + mcaT[[firstImage]][[secondImage]]
+				    parkCarsR <- parkCarsR +  pcaT[[firstImage]][[secondImage]]
+				    movCiclyR <- movCiclyR +  mciT[[firstImage]][[secondImage]]
+				    buildIdR <- buildIdR +  bidT[[firstImage]][[secondImage]]
+				    buildNRecR <- buildNRecR +  bnrT[[firstImage]][[secondImage]]
+				    treeR <- treeR +  treT[[firstImage]][[secondImage]]
+				    smallPlaR <- smallPlaR + splT[[firstImage]][[secondImage]]
+				    diffBuildR <- diffBuildR +  dbuT[[firstImage]][[secondImage]]
+				    streeFurR <- streeFurR +  sfuT[[firstImage]][[secondImage]]
+				    basColR <- basColR +  bacT[[firstImage]][[secondImage]]
+				    lighR <- lighR + ligT[[firstImage]][[secondImage]]
+				    accenColR <- accenColR +  accT[[firstImage]][[secondImage]]
+				    peopR <- peopR + peoT[[firstImage]][[secondImage]]
+				    graffR <- graffR + graT[[firstImage]][[secondImage]]
+				    buildDiffAgesR <- bdaT[[firstImage]][[secondImage]]
 				              
-				    streetWidR <- streetWidR + firstImage[["street_wid"]] - secondImage[["street_wid"]]
-				    sidewalkWidR <- sidewalkWidR + firstImage[["sidewalk_wid"]] - secondImage[["sidewalk_wid"]]
-				    debrisR <- cbind(debrisR, firstImage[["debris"]] - secondImage[["debris"]])
-				    pavementR <- cbind(pavementR, firstImage[["pavement"]] - secondImage[["pavement"]])
-				    landscapeR <- cbind(landscapeR, firstImage[["landscape"]] - secondImage[["landscape"]])
-				    propStreetWallR <- cbind(propStreetWallR, firstImage[["prop_street_wall"]] - secondImage[["prop_street_wall"]])
-				    propWindR <- cbind(propWindR, firstImage[["prop_wind"]] - secondImage[["prop_wind"]])
-				    longSightR <- longSightR + firstImage[["long_sight"]] - secondImage[["long_sight"]]
-				    propSkyAheadR <- cbind(propSkyAheadR, firstImage[["prop_sky_ahead"]] - secondImage[["prop_sky_ahead"]])
-				    propSkyAcrossR <- cbind(propSkyAcrossR, firstImage[["prop_sky_across"]] - secondImage[["prop_sky_across"]]  )
-				    buildHeightR <- buildHeightR + firstImage[["build_height"]] - secondImage[["build_height"]]
-				    propActiveUseR <- cbind(propActiveUseR, firstImage[["prop_active_use"]] - secondImage[["prop_active_use"]])
-			}
+				    streetWidR <- streetWidR + swiT[[firstImage]][[secondImage]]
+				    sidewalkWidR <- sidewalkWidR + siwiT[[firstImage]][[secondImage]]
+				    debrisR <- cbind(debrisR, debT[[firstImage]][[secondImage]])
+				    pavementR <- cbind(pavementR, pavT[[firstImage]][[secondImage]])
+				    landscapeR <- cbind(landscapeR, lanT[[firstImage]][[secondImage]])
+				    propStreetWallR <- cbind(propStreetWallR, pswT[[firstImage]][[secondImage]])
+				    propWindR <- cbind(propWindR, pwiT[[firstImage]][[secondImage]])
+				    longSightR <- longSightR + lsiT[[firstImage]][[secondImage]]
+				    propSkyAheadR <- cbind(propSkyAheadR, psaT[[firstImage]][[secondImage]])
+				    propSkyAcrossR <- cbind(propSkyAcrossR, psacT[[firstImage]][[secondImage]])
+				    buildHeightR <- buildHeightR + bheT[[firstImage]][[secondImage]]
+				    propActiveUseR <- cbind(propActiveUseR, pactT[[firstImage]][[secondImage]])
+			},
+		error = function(e) 
+		  {
+		    #print(e$message) # or whatever error handling code you want
+		  }
+		)
+
              }
            }
  	 }
@@ -1094,7 +1178,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 10000
+iterations <- 1
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

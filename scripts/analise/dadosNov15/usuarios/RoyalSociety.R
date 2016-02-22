@@ -733,7 +733,9 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
-	#print(paste("Iteration ", k))
+	if (k %% 20 == 0){
+		print(paste("Iteration ", k))
+	}
 
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
@@ -748,19 +750,15 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
                     if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 
 			if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
-        		#		firstImage <- filter(data, image_url == rankLine2$V2)#Best ranked image for first group
-      			#		secondImage <- filter(data, image_url == rankLine1$V2)
 					firstImage <- as.character(rankLine2$V2)
 					secondImage <- as.character(rankLine1$V2)
     			   }else {
-      			#		firstImage <- filter(data, image_url == rankLine1$V2)#Best ranked image for first group
-      			#		secondImage <- filter(data, image_url == rankLine2$V2)
 					firstImage <- as.character(rankLine1$V2)
 					secondImage <- as.character(rankLine2$V2)
 		          }
 
 
-tryCatch(
+		tryCatch(
   
 		            if(!is.null(mcaT[[firstImage]][[secondImage]])) {
 				    movCarsR <- movCarsR + mcaT[[firstImage]][[secondImage]]
@@ -1178,7 +1176,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 1
+iterations <- 5
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 

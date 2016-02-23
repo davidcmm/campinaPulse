@@ -746,57 +746,60 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
             if(i+1 <= amountOfRandData){
                 for( j in seq(i+1, amountOfRandData) ){
                     rankLine2 <- newData[j,]
+
+		   if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) & !is.na(rankLine2[[group2Id]]) ) {
                     
-                    if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
+		            if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 
-			if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
-					firstImage <- as.character(rankLine2$V2)
-					secondImage <- as.character(rankLine1$V2)
-    			   }else {
-					firstImage <- as.character(rankLine1$V2)
-					secondImage <- as.character(rankLine2$V2)
-		          }
+				if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
+						firstImage <- as.character(rankLine2$V2)
+						secondImage <- as.character(rankLine1$V2)
+	    			   }else {
+						firstImage <- as.character(rankLine1$V2)
+						secondImage <- as.character(rankLine2$V2)
+				  }
 
 
-		tryCatch(
-  
-		            if(!is.null(mcaT[[firstImage]][[secondImage]])) {
-				    movCarsR <- movCarsR + mcaT[[firstImage]][[secondImage]]
-				    parkCarsR <- parkCarsR +  pcaT[[firstImage]][[secondImage]]
-				    movCiclyR <- movCiclyR +  mciT[[firstImage]][[secondImage]]
-				    buildIdR <- buildIdR +  bidT[[firstImage]][[secondImage]]
-				    buildNRecR <- buildNRecR +  bnrT[[firstImage]][[secondImage]]
-				    treeR <- treeR +  treT[[firstImage]][[secondImage]]
-				    smallPlaR <- smallPlaR + splT[[firstImage]][[secondImage]]
-				    diffBuildR <- diffBuildR +  dbuT[[firstImage]][[secondImage]]
-				    streeFurR <- streeFurR +  sfuT[[firstImage]][[secondImage]]
-				    basColR <- basColR +  bacT[[firstImage]][[secondImage]]
-				    lighR <- lighR + ligT[[firstImage]][[secondImage]]
-				    accenColR <- accenColR +  accT[[firstImage]][[secondImage]]
-				    peopR <- peopR + peoT[[firstImage]][[secondImage]]
-				    graffR <- graffR + graT[[firstImage]][[secondImage]]
-				    buildDiffAgesR <- bdaT[[firstImage]][[secondImage]]
-				              
-				    streetWidR <- streetWidR + swiT[[firstImage]][[secondImage]]
-				    sidewalkWidR <- sidewalkWidR + siwiT[[firstImage]][[secondImage]]
-				    debrisR <- cbind(debrisR, debT[[firstImage]][[secondImage]])
-				    pavementR <- cbind(pavementR, pavT[[firstImage]][[secondImage]])
-				    landscapeR <- cbind(landscapeR, lanT[[firstImage]][[secondImage]])
-				    propStreetWallR <- cbind(propStreetWallR, pswT[[firstImage]][[secondImage]])
-				    propWindR <- cbind(propWindR, pwiT[[firstImage]][[secondImage]])
-				    longSightR <- longSightR + lsiT[[firstImage]][[secondImage]]
-				    propSkyAheadR <- cbind(propSkyAheadR, psaT[[firstImage]][[secondImage]])
-				    propSkyAcrossR <- cbind(propSkyAcrossR, psacT[[firstImage]][[secondImage]])
-				    buildHeightR <- buildHeightR + bheT[[firstImage]][[secondImage]]
-				    propActiveUseR <- cbind(propActiveUseR, pactT[[firstImage]][[secondImage]])
-			},
-		error = function(e) 
-		  {
-		    #print(e$message) # or whatever error handling code you want
-		  }
-		)
+			tryCatch(
+	  
+				    if(!is.null(mcaT[[firstImage]][[secondImage]])) {
+					    movCarsR <- movCarsR + mcaT[[firstImage]][[secondImage]]
+					    parkCarsR <- parkCarsR +  pcaT[[firstImage]][[secondImage]]
+					    movCiclyR <- movCiclyR +  mciT[[firstImage]][[secondImage]]
+					    buildIdR <- buildIdR +  bidT[[firstImage]][[secondImage]]
+					    buildNRecR <- buildNRecR +  bnrT[[firstImage]][[secondImage]]
+					    treeR <- treeR +  treT[[firstImage]][[secondImage]]
+					    smallPlaR <- smallPlaR + splT[[firstImage]][[secondImage]]
+					    diffBuildR <- diffBuildR +  dbuT[[firstImage]][[secondImage]]
+					    streeFurR <- streeFurR +  sfuT[[firstImage]][[secondImage]]
+					    basColR <- basColR +  bacT[[firstImage]][[secondImage]]
+					    lighR <- lighR + ligT[[firstImage]][[secondImage]]
+					    accenColR <- accenColR +  accT[[firstImage]][[secondImage]]
+					    peopR <- peopR + peoT[[firstImage]][[secondImage]]
+					    graffR <- graffR + graT[[firstImage]][[secondImage]]
+					    buildDiffAgesR <- bdaT[[firstImage]][[secondImage]]
+						      
+					    streetWidR <- streetWidR + swiT[[firstImage]][[secondImage]]
+					    sidewalkWidR <- sidewalkWidR + siwiT[[firstImage]][[secondImage]]
+					    debrisR <- cbind(debrisR, debT[[firstImage]][[secondImage]])
+					    pavementR <- cbind(pavementR, pavT[[firstImage]][[secondImage]])
+					    landscapeR <- cbind(landscapeR, lanT[[firstImage]][[secondImage]])
+					    propStreetWallR <- cbind(propStreetWallR, pswT[[firstImage]][[secondImage]])
+					    propWindR <- cbind(propWindR, pwiT[[firstImage]][[secondImage]])
+					    longSightR <- longSightR + lsiT[[firstImage]][[secondImage]]
+					    propSkyAheadR <- cbind(propSkyAheadR, psaT[[firstImage]][[secondImage]])
+					    propSkyAcrossR <- cbind(propSkyAcrossR, psacT[[firstImage]][[secondImage]])
+					    buildHeightR <- buildHeightR + bheT[[firstImage]][[secondImage]]
+					    propActiveUseR <- cbind(propActiveUseR, pactT[[firstImage]][[secondImage]])
+				},
+			error = function(e) 
+			  {
+			    #print(e$message) # or whatever error handling code you want
+			  }
+			)
 
-             }
+		     }
+		}
            }
  	 }
 	}

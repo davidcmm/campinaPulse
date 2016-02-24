@@ -2981,7 +2981,9 @@ sink("spatialRegression.dat")
 
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)#Neighborhoods based on distance!
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
 
 source("krippMoran.R")

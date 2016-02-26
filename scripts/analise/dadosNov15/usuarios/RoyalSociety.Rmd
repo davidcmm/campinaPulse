@@ -11,8 +11,8 @@ library(dplyr)
 library(texreg)
 library(spdep)
 library(reshape)
-source('analisaICPorFoto.R')
-source('convertKendallSummary.R')
+source("analisaICPorFoto.R")
+source("convertKendallSummary.R")
 
 facet_names <- list(
   'agrad%C3%A1vel?'="Pleasantness",
@@ -467,19 +467,19 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 
 #Combining QScores with each feature separetely
-temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="V2")
-temp2 <- merge(novosDados, groupedData2, by.x="V2", by.y="image_url")
-temp3 <- merge(novosDados, groupedData3, by.x="V2", by.y="image_url")
-temp4 <- merge(novosDados, groupedData4, by.x="V2", by.y="image_url")
-temp5 <- merge(novosDados, groupedData5, by.x="V2", by.y="image_url")
-temp6 <- merge(novosDados, groupedData6, by.x="V2", by.y="image_url")
-temp7 <- merge(novosDados, groupedData7, by.x="V2", by.y="image_url")
-temp8 <- merge(novosDados, groupedData8, by.x="V2", by.y="image_url")
-temp9 <- merge(novosDados, groupedData9, by.x="V2", by.y="image_url")
-temp10 <- merge(novosDados, groupedData10, by.x="V2", by.y="image_url")
-temp11 <- merge(novosDados, groupedData11, by.x="V2", by.y="image_url")
-temp12 <- merge(novosDados, groupedData12, by.x="V2", by.y="image_url")
-temp13 <- merge(novosDados, groupedData13, by.x="V2", by.y="image_url")
+temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="image_url")
+temp2 <- merge(novosDados, groupedData2, by.x="image_url", by.y="image_url")
+temp3 <- merge(novosDados, groupedData3, by.x="image_url", by.y="image_url")
+temp4 <- merge(novosDados, groupedData4, by.x="image_url", by.y="image_url")
+temp5 <- merge(novosDados, groupedData5, by.x="image_url", by.y="image_url")
+temp6 <- merge(novosDados, groupedData6, by.x="image_url", by.y="image_url")
+temp7 <- merge(novosDados, groupedData7, by.x="image_url", by.y="image_url")
+temp8 <- merge(novosDados, groupedData8, by.x="image_url", by.y="image_url")
+temp9 <- merge(novosDados, groupedData9, by.x="image_url", by.y="image_url")
+temp10 <- merge(novosDados, groupedData10, by.x="image_url", by.y="image_url")
+temp11 <- merge(novosDados, groupedData11, by.x="image_url", by.y="image_url")
+temp12 <- merge(novosDados, groupedData12, by.x="image_url", by.y="image_url")
+temp13 <- merge(novosDados, groupedData13, by.x="image_url", by.y="image_url")
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
@@ -487,7 +487,24 @@ colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
     sink(arquivo, append = TRUE)
     print(questao)
-  
+    
+    #Colors and lines correlation
+    temp = listaDados[[1]]
+    dadosAtuais <- temp[(temp$V1 == questao),] 
+    res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$red, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "red"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$green, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "green"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$blue, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "blue"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$vert, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "vert_lines"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$hor, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "hor_lines"))
+    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$diag, na.action = na.exclude, method = "kendall")
+    print(paste(res$estimate, res$p.value, "diag_lines"))
+    
+    #Urban features
     temp = listaDados[[1]]
     dadosAtuais <- temp[(temp$V1 == questao),] 
     res<- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$street_wid, na.action = na.exclude, method = "kendall")
@@ -657,7 +674,7 @@ res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use, na.act
     sink()
 }
 
-calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", "agrad%C3%A1vel?", "correlacao-agrad-kendall.dat")
+calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", "agradavel?", "correlacao-agrad-kendall.dat")
 # 
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Feminino", 'agradavel?', "correlacao-agrad-fem.dat")
@@ -2991,7 +3008,7 @@ moranI2(res, "V3.Geral")
 moranI2(res, "V3.Masculino")
 moranI2(res, "V3.Feminino")
 
-reg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))#OLS regression - minimize squared distances of line and points!
+reg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))#OLS regression - minimize squared distances of line and points!
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3004,7 +3021,7 @@ reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars 
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3077,7 +3094,7 @@ neigh2 <- nb2listw(neigh, style = "B")
 moranI2(res, "V3.Jovem")
 moranI2(res, "V3.Adulto")
 
-reg <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3090,7 +3107,7 @@ reg <- spautolm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mo
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3161,7 +3178,7 @@ neigh2 <- nb2listw(neigh, style = "B")
 moranI2(res, "V3.Casado")
 moranI2(res, "V3.Solteiro")
 
-reg <- lm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3174,7 +3191,7 @@ reg <- spautolm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + m
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- lm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3229,7 +3246,7 @@ neigh2 <- nb2listw(neigh, style = "B")
 moranI2(res, "V3.Baixa")
 moranI2(res, "V3.Media")
 
-reg <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3242,7 +3259,7 @@ reg <- spautolm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mo
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-reg <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use+ red + green + blue + hor + vert + diag, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3281,7 +3298,9 @@ citySummary("V3.Feminino", seg.l)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)#100 or 1000*maxDist?
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Geral")
@@ -3297,7 +3316,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3310,7 +3329,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
@@ -3362,7 +3381,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Jovem ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3375,7 +3394,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Adulto ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
@@ -3420,7 +3439,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Casado ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3433,7 +3452,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Solteiro ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```
@@ -3501,7 +3520,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Baixa ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3514,7 +3533,7 @@ moran <- lm.morantest(reg, neigh2, alternative="two.sided")
 summary(moran)
 moran
 
-reg <- spautolm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(V3.Media ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use + red + green + blue + hor + vert + diag, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 ```

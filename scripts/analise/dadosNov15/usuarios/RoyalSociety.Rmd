@@ -2980,14 +2980,17 @@ library(texreg)
 sink("spatialRegression.dat")
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=F)
+neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
 neigh2 <- nb2listw(neigh, style = "B")
+
+reg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
 reg <- spautolm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-reg <- regGroup2 <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
-summary(reg)
-texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
 
 reg <- spautolm(V3.Feminino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
@@ -3442,12 +3445,12 @@ calcMax <- function(values){
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
 temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
@@ -3514,4 +3517,81 @@ dev.off()
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+```
+
+# Boxplots por grupos e bairros
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & dadosSub$grupo != 'CCentro' & dadosSub$grupo != 'NCCentro' & dadosSub$grupo != 'CLiberdade' & dadosSub$grupo != 'NCLiberdade' & dadosSub$grupo != 'CCatole' & dadosSub$grupo != 'NCCatole',]
+dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?' & dadosSub$grupo != 'CCentro' & dadosSub$grupo != 'NCCentro' & dadosSub$grupo != 'CLiberdade' & dadosSub$grupo != 'NCLiberdade' & dadosSub$grupo != 'CCatole' & dadosSub$grupo != 'NCCatole',]
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+
+ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+
+
+#General boxplot
+dadosSubA <- dadosSub[dadosSub$grupo == 'Geral',]
+dadosSubA$V1 <- as.character(dadosSubA$V1)
+dadosSubA$bairro <- as.character(dadosSubA$bairro)
+dadosSubA$V1[dadosSubA$V1 == "agradavel?"] <- "Agradável"
+dadosSubA$V1[dadosSubA$V1 == "seguro?"] <- "Seguro"
+dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
+dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
+dadosSubA$bairro[dadosSubA$bairro == "catole"] <- "Catolé"
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+
+#Filtering groups
+dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'Medio'  | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Feminino' | dadosSub$grupo == 'Masculino' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'liberdade'),]
+
+dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?'  & (dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro' | dadosSub$grupo == 'Medio' | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa' | dadosSub$grupo == 'Jovem' | dadosSub$grupo == 'Adulto') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'catole'),]
+
+dadosSubA$grupo <- as.character(dadosSubA$grupo)
+dadosSubA$bairro <- as.character(dadosSubA$bairro)
+dadosSubA$grupo[dadosSubA$grupo == "Media"] <- "Média"
+dadosSubA$grupo[dadosSubA$grupo == "Medio"] <- "Médio"
+dadosSubA$grupo[dadosSubA$grupo == "Pos"] <- "Pós"
+dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
+dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
+dadosSubA$grupo <- factor(dadosSubA$grupo, levels = c('Média', 'Baixa', 'Feminino', 'Masculino', 'Médio', 'Pós')) 
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
+
+dadosSubS$grupo <- as.character(dadosSubS$grupo)
+dadosSubS$bairro <- as.character(dadosSubS$bairro)
+dadosSubS$grupo[dadosSubS$grupo == "Media"] <- "Média"
+dadosSubS$grupo[dadosSubS$grupo == "Medio"] <- "Médio"
+dadosSubS$grupo[dadosSubS$grupo == "Pos"] <- "Pós"
+dadosSubS$bairro[dadosSubS$bairro == "centro"] <- "Centro"
+dadosSubS$bairro[dadosSubS$bairro == "catole"] <- "Catolé"
+dadosSubS$grupo <- factor(dadosSubS$grupo, levels = c('Média', 'Baixa', 'Casado', 'Solteiro', 'Médio', 'Pós', 'Jovem', 'Adulto')) 
+
+ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
+
 ```

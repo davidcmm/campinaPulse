@@ -90,7 +90,7 @@ def ptestFromFiles(num_it, name_g1, name_g2, question, neig=None, sector=None):
 	dfOrig = dfOrig[dfOrig['setor'] == int(sector)]
 
     g1 = dfOrig[dfOrig['grupo'] == name_g1].values[:, 2]
-    g2 = dfOrig[dfOrig['grupo'] == name_g2].values[:, 2]
+    g2 = dfOrig[dfOrig['grupo'] == name_g2].values[:, 2]#Input files are sorted according to image names, so the order of QScores retrieved is paired for both groups
 
     functions = [
        ('Mean', abs_mean),
@@ -130,7 +130,7 @@ def ptestFromFiles(num_it, name_g1, name_g2, question, neig=None, sector=None):
 
 
 #Using sample users files
-num_it = 5
+num_it = 10000
 all_res = []
 
 all_res.append(ptestFromFiles(num_it, 'Masculino', 'Feminino', 'agradavel?'))

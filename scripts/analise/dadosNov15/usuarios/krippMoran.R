@@ -46,6 +46,21 @@ moranI <- function (agra, seg) {
 	print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
 }
 
+moranI2 <- function (data, qscoreColumn) {
+  
+  data.dists <- as.matrix(dist(cbind(data$long, data$lat)))
+  
+  data.dists.inv <- 1/(1+data.dists)
+  print(data.dists)
+  print(data.dists.inv)
+  diag(data.dists.inv) <- 0
+  
+  print(">> Observed expected p.value z-score")
+  result <- Moran.I(data[[qscoreColumn]], data.dists.inv, na.rm = TRUE, alternative="two.sided")
+  zScore <- (result$observed - result$expected) / result$sd
+  print(paste(result$observed, " ", result$expected, " ", result$p.value, " ", zScore))
+}
+
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args) > 1){

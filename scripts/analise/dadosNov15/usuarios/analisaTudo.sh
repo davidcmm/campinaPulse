@@ -106,7 +106,7 @@ mv streetsQScoresLatLong.dat streetsQScoresLatLongAllAdulto.dat
 grep "agrad%C3%A1vel?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongAgraAllAdulto.dat
 grep "seguro?" streetsQScoresLatLongAllAdulto.dat > streetsQScoresLatLongSegAllAdulto.dat
 echo "Adulto" >> moranAll.dat
-Rscript krippMoran.R mor	an streetsQScoresLatLongAgraAllAdulto.dat streetsQScoresLatLongSegAllAdulto.dat >> moranAll.dat
+Rscript krippMoran.R moran streetsQScoresLatLongAgraAllAdulto.dat streetsQScoresLatLongSegAllAdulto.dat >> moranAll.dat
 
 
 ./processInputLatLong.sh allJovem.dat

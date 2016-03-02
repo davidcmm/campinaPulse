@@ -3088,7 +3088,9 @@ summary(regGroup2)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Jovem")
@@ -3172,7 +3174,9 @@ citySummary("V3.Solteiro", agrad.l)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l[1:94,], "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Casado")
@@ -3240,7 +3244,9 @@ summary(regGroup2)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Baixa")
@@ -3300,7 +3306,7 @@ res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 k2 <- knn2nb(knearneigh(unique(crd)))
 maxDist <- max(unlist(nbdists(k2, unique(crd))))
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)#100 or 1000*maxDist?
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Geral")
@@ -3366,7 +3372,9 @@ citySummary("V3.Adulto", seg.l)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Jovem")
@@ -3424,7 +3432,9 @@ citySummary("V3.Solteiro", seg.l)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Casado")
@@ -3505,7 +3515,9 @@ summary(regGroup2)
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
-neigh <- dnearneigh(crd, 0, 100, longlat=TRUE)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")
 
 moranI2(res, "V3.Baixa")
@@ -3591,12 +3603,12 @@ calcMax <- function(values){
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
+grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
 temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
@@ -3663,4 +3675,126 @@ dev.off()
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+```
+
+# IC por pontos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Per group - safety
+todos <- dadosSub[(dadosSub$grupo == 'Jovem'  | dadosSub$grupo == 'Adulto') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Masculino'  | dadosSub$grupo == 'Feminino') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Baixa'  | dadosSub$grupo == 'Media') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+#Per group - pleasantness
+todos <- dadosSub[(dadosSub$grupo == 'Jovem'  | dadosSub$grupo == 'Adulto') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Masculino'  | dadosSub$grupo == 'Feminino') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Baixa'  | dadosSub$grupo == 'Media') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:108), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+```
+
+# Boxplots por grupos e bairros
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & dadosSub$grupo != 'CCentro' & dadosSub$grupo != 'NCCentro' & dadosSub$grupo != 'CLiberdade' & dadosSub$grupo != 'NCLiberdade' & dadosSub$grupo != 'CCatole' & dadosSub$grupo != 'NCCatole',]
+dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?' & dadosSub$grupo != 'CCentro' & dadosSub$grupo != 'NCCentro' & dadosSub$grupo != 'CLiberdade' & dadosSub$grupo != 'NCLiberdade' & dadosSub$grupo != 'CCatole' & dadosSub$grupo != 'NCCatole',]
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+
+ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 4, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))+ facet_wrap( ~ grupo, ncol=2)
+
+
+#General boxplot
+dadosSubA <- dadosSub[dadosSub$grupo == 'Geral',]
+dadosSubA$V1 <- as.character(dadosSubA$V1)
+dadosSubA$bairro <- as.character(dadosSubA$bairro)
+dadosSubA$V1[dadosSubA$V1 == "agradavel?"] <- "Agradável"
+dadosSubA$V1[dadosSubA$V1 == "seguro?"] <- "Seguro"
+dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
+dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
+dadosSubA$bairro[dadosSubA$bairro == "catole"] <- "Catolé"
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+
+#Filtering groups
+dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'Medio'  | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Feminino' | dadosSub$grupo == 'Masculino' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'liberdade'),]
+
+dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?'  & (dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro' | dadosSub$grupo == 'Medio' | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa' | dadosSub$grupo == 'Jovem' | dadosSub$grupo == 'Adulto') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'catole'),]
+
+dadosSubA$grupo <- as.character(dadosSubA$grupo)
+dadosSubA$bairro <- as.character(dadosSubA$bairro)
+dadosSubA$grupo[dadosSubA$grupo == "Media"] <- "Média"
+dadosSubA$grupo[dadosSubA$grupo == "Medio"] <- "Médio"
+dadosSubA$grupo[dadosSubA$grupo == "Pos"] <- "Pós"
+dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
+dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
+dadosSubA$grupo <- factor(dadosSubA$grupo, levels = c('Média', 'Baixa', 'Feminino', 'Masculino', 'Médio', 'Pós')) 
+
+ggplot(dadosSubA, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
+
+dadosSubS$grupo <- as.character(dadosSubS$grupo)
+dadosSubS$bairro <- as.character(dadosSubS$bairro)
+dadosSubS$grupo[dadosSubS$grupo == "Media"] <- "Média"
+dadosSubS$grupo[dadosSubS$grupo == "Medio"] <- "Médio"
+dadosSubS$grupo[dadosSubS$grupo == "Pos"] <- "Pós"
+dadosSubS$bairro[dadosSubS$bairro == "centro"] <- "Centro"
+dadosSubS$bairro[dadosSubS$bairro == "catole"] <- "Catolé"
+dadosSubS$grupo <- factor(dadosSubS$grupo, levels = c('Média', 'Baixa', 'Casado', 'Solteiro', 'Médio', 'Pós', 'Jovem', 'Adulto')) 
+
+ggplot(dadosSubS, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
+
 ```

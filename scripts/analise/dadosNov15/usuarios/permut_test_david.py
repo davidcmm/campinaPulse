@@ -74,6 +74,58 @@ def ptest(df, name_g1, name_g2, pergunta, bairro=None, setor=None, num_permut=10
     
     return (name_g1, name_g2, pergunta), actual, np.array(pvals), functions
 
+def ptestFromFiles(num_it, name_g1, name_g2, question, neig=None, sector=None):
+    
+    questionsMap = {'agradavel?' : 'agrad%C3%A1vel?', 'seguro?' : 'seguro?'}
+
+    #Original data file
+    dfOrig = pd.read_csv('geralSetoresAJ.dat', sep=' ', encoding='utf8')
+    dfOrig = dfOrig.drop(['red', 'green', 'blue', 'hor', 'vert', 'diag'], axis=1)
+
+    dfOrig = dfOrig[dfOrig.values[:, 1] == question]
+
+    if neig is not None:
+	dfOrig = dfOrig[dfOrig['bairro'] == neig]
+    if sector is not None:
+	dfOrig = dfOrig[dfOrig['setor'] == int(sector)]
+
+    g1 = dfOrig[dfOrig['grupo'] == name_g1].values[:, 2]
+    g2 = dfOrig[dfOrig['grupo'] == name_g2].values[:, 2]#Input files are sorted according to image names, so the order of QScores retrieved is paired for both groups
+
+    functions = [
+       ('Mean', abs_mean),
+       ('Median', abs_median),
+       ('Top10-Mean-Old', top10_abs_mean_old),
+       ('Top10-Mean-Naza', top10_abs_mean_naza)]
+
+    actual = np.zeros(len(functions))
+    for i in xrange(len(functions)):
+		actual[i] = functions[i][1](g1, g2)
+
+    R = np.zeros(shape=(num_it, len(functions)))
+
+    #Sampled users files
+    newQuestion = questionsMap[question]
+    for it in xrange(1, num_it+1):
+	df = pd.read_csv('samplesIds/geralSetoresAJ_'+str(it)+'.dat', sep=' ', encoding='utf8')
+    	df = df[df.values[:, 1] == newQuestion]
+
+	if neig is not None:
+		df = df[df['bairro'] == neig]
+	if sector is not None:
+		df = df[df['setor'] == int(sector)]
+
+    	g1 = df[df['grupo'] == name_g1].values[:, 2]
+    	g2 = df[df['grupo'] == name_g2].values[:, 2]
+        
+        for j in xrange(len(functions)):
+            R[it-1][j] = functions[j][1](g1, g2)
+    
+    pvals = []
+    for i in xrange(len(functions)):
+        pvals.append(float((R[:, i] > actual[i]).sum()) / R.shape[0])
+    
+    return (name_g1, name_g2, question), actual, np.array(pvals), functions
 
 def ptestFromFiles(num_it, question, neig=None, sector=None):
     
@@ -181,7 +233,7 @@ def ptestFromFiles(num_it, question, neig=None, sector=None):
 
 
 #Using sample users files
-num_it = 5
+num_it = 10000
 all_res = []
 
 all_res.append(ptestFromFiles(num_it, 'agradavel?'))
@@ -238,20 +290,6 @@ for sector in ['25040090500004', '250400905000013', '250400905000060', '25040090
 	all_res.append(ptestFromFiles(num_it, 'agradavel?', sector=sector))
 	all_res.append(ptestFromFiles(num_it, 'seguro?', sector=sectorg))
 
-#Files not created with these columns!
-	#if sector == '250400905000060' or sector == '250400905000062':
-	#	all_res.append(ptestFromFiles(num_it, 'CCatole', 'NCCatole', 'agradavel?', sector=sector))
-	#	all_res.append(ptestFromFiles(num_it, 'CCatole', 'NCCatole', 'seguro?', sector=sector))
-	#elif sector == '25040090500004' or sector == '250400905000013':
-	#	all_res.append(ptestFromFiles(num_it, 'CCentro', 'NCCentro', 'agradavel?', sector=sector))
-	#	all_res.append(ptestFromFiles(num_it, 'CCentro', 'NCCentro', 'seguro?', sector=sector))
-	#else:
-	#	all_res.append(ptestFromFiles(num_it, 'CLiberdade', 'NCLiberdade', 'agradavel?', sector=sector))
-	#	all_res.append(ptestFromFiles(num_it, 'CLiberdade', 'NCLiberdade', 'seguro?', sector=sector))
-
-        #all_res.append(ptestFromFiles(num_it, 'MenorMed', 'MaiorMed', 'agradavel?', sector=sector))
-       #all_res.append(ptestFromFiles(num_it, 'MenorMed', 'MaiorMed', 'agradavel?', sector=sector))
-
 	print ">>>> Sector: ", sector
 	for index in xrange(len(all_res)):
 	  data = all_res[index]#All data for one question
@@ -263,7 +301,6 @@ for sector in ['25040090500004', '250400905000013', '250400905000060', '25040090
 			print 'pval', r[2][i]
 			print
 		  print '--'
-
 
 #sampling qscores from single file
 #df = pd.read_csv('geralRankAJ.dat', sep=' ', encoding='utf8')

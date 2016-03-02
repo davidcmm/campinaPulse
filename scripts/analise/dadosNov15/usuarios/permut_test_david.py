@@ -128,7 +128,7 @@ def ptestFromFiles(num_it, question, neig=None, sector=None):
     #Sampled users files
     newQuestion = questionsMap[question]
     for it in xrange(1, num_it+1):
-	df = pd.read_csv('geralSetoresAJ_'+str(it)+'.dat', sep=' ', encoding='utf8')
+	df = pd.read_csv('samplesIds/geralSetoresAJ_'+str(it)+'.dat', sep=' ', encoding='utf8')
     	df = df[df.values[:, 1] == newQuestion]
 
 	if neig is not None:

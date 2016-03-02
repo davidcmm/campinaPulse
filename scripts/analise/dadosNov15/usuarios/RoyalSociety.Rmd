@@ -3519,6 +3519,51 @@ cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 ```
 
+# IC por pontos
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Per group - safety
+todos <- dadosSub[(dadosSub$grupo == 'Jovem'  | dadosSub$grupo == 'Adulto') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Masculino'  | dadosSub$grupo == 'Feminino') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Baixa'  | dadosSub$grupo == 'Media') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro') & dadosSub$V1=='seguro?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+#Per group - pleasantness
+todos <- dadosSub[(dadosSub$grupo == 'Jovem'  | dadosSub$grupo == 'Adulto') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Masculino'  | dadosSub$grupo == 'Feminino') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Baixa'  | dadosSub$grupo == 'Media') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:109), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+
+todos <- dadosSub[(dadosSub$grupo == 'Casado'  | dadosSub$grupo == 'Solteiro') & dadosSub$V1=='agradavel?',]
+
+todos$NV2 <- rep(c(1:108), each=2)
+ggplot(todos, aes(x=NV2, y=V3, colour=grupo)) + geom_point(shape=1, size=2) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance)) + xlab("Local") + ylab("QScore") + ggtitle("City Places CI") + scale_x_discrete(breaks=seq(1, 108, by=5)) + facet_grid(bairro~.)
+```
+
 # Boxplots por grupos e bairros
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}

@@ -7,9 +7,15 @@ library(knitr)
 
 #Calculates the variance that should be added or removed from the mean
 ic <- function(x) { 
-	#return (sd(x)/sqrt(length(x))*qt(.95,999))#95% confidence interval for a sample of 1000 items
+	#return (sd(x)/sqrt(length(x))*qt(.975,99))#95% confidence interval for a sample of 1000 items
 	#print (100 * qnorm(1-(0.05/2)) * sd(x) / (5 * mean(x)))^2
 	return (sd(x)/sqrt(length(x))*qnorm(1-(0.05/2)))#95% confidence interval, significance level of 0.05 (alpha) - sample 100
+}
+
+icForFeatures <- function(x) { 
+	return (sd(x)/sqrt(length(x))*qt(.975,99))#95% confidence interval for a sample of 1000 items
+	#print (100 * qnorm(1-(0.05/2)) * sd(x) / (5 * mean(x)))^2
+	#return (sd(x)/sqrt(length(x))*qnorm(1-(0.05/2)))#95% confidence interval, significance level of 0.05 (alpha) - sample 100
 }
 
 # Multiple plot function
@@ -56,6 +62,121 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
                                       layout.pos.col = matchidx$col))
     }
   }
+}
+
+analyseICForFeatures <- function(data){
+      icData <- icForFeatures(data$movCars[[1]])
+      meanVal <- mean(data$movCars[[1]])
+      norm <- meanVal / data$movCarsN
+      print(paste("movCars", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE) 
+      icData <- icForFeatures(data$parkCars[[1]])
+      meanVal <- mean(data$parkCars[[1]])
+      norm <- meanVal / data$parkCarsN
+      print(paste("parkCars", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$movCicly[[1]])
+      meanVal <- mean(data$movCicly[[1]])
+      norm <- meanVal / data$movCiclyN
+      print(paste("movCicly", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$buildId[[1]])
+      meanVal <- mean(data$buildId[[1]])
+      norm <- meanVal / data$buildIdN
+      print(paste("buildId", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$buildNRec[[1]])
+      meanVal <- mean(data$buildNRec[[1]])
+      norm <- meanVal / data$buildNRecN
+      print(paste("buildNRec", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$tree[[1]])
+      meanVal <- mean(data$tree[[1]])
+      norm <- meanVal / data$treeN
+      print(paste("tree", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$smallPla[[1]])
+      meanVal <- mean(data$smallPla[[1]])
+      norm <- meanVal / data$smallPlaN
+      print(paste("smallPla", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$diffBuild[[1]])
+      meanVal <- mean(data$diffBuild[[1]])
+      norm <- meanVal / data$diffBuildN
+      print(paste("diffBuild", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$streeFur[[1]])
+      meanVal <- mean(data$streeFur[[1]])
+      norm <- meanVal / data$streeFurN
+      print(paste("streeFur", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$basCol[[1]])
+      meanVal <- mean(data$basCol[[1]])
+      norm <- meanVal / data$basColN
+      print(paste("basCol", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$ligh[[1]])
+      meanVal <- mean(data$ligh[[1]])
+      norm <- meanVal / data$lighN
+      print(paste("ligh", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$accenCol[[1]])
+      meanVal <- mean(data$accenCol[[1]])
+      norm <- meanVal / data$accenColN
+      print(paste("accenCol", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$peop[[1]])
+      meanVal <- mean(data$peop[[1]])
+      norm <- meanVal / data$peopN
+      print(paste("peop", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$graff[[1]])
+      meanVal <- mean(data$graff[[1]])
+      norm <- meanVal / data$graffN
+      print(paste("graff", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$buildDiffAges[[1]])
+      meanVal <- mean(data$buildDiffAges[[1]])
+      norm <- meanVal / data$buildDiffAgesN
+      print(paste("buildDiffAges", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$streetWid[[1]])
+      meanVal <- mean(data$streetWid[[1]])
+      norm <- meanVal / data$streetWidN
+      print(paste("streetWid", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$sidewalkWid[[1]])
+      meanVal <- mean(data$sidewalkWid[[1]])
+      norm <- meanVal / data$sidewalkWidN
+      print(paste("sidewalkWid", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$buildHeight[[1]])
+      meanVal <- mean(data$buildHeight[[1]])
+      norm <- meanVal / data$buildHeightN
+      print(paste("buildHeight", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$longSight[[1]])
+      meanVal <- mean(data$longSight[[1]])
+      norm <- meanVal / data$longSightN
+      print(paste("longSight", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$debris[[1]])
+      meanVal <- mean(data$debris[[1]])
+      norm <- meanVal / data$debrisN
+      print(paste("debris", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$pavement[[1]])
+      meanVal <- mean(data$pavement[[1]])
+      norm <- meanVal / data$pavementN
+      print(paste("pavement", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$landscape[[1]])
+      meanVal <- mean(data$landscape[[1]])
+      norm <- meanVal / data$landscapeN
+      print(paste("landscape", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      icData <- icForFeatures(data$propStreetWall[[1]])
+      meanVal <- mean(data$propStreetWall[[1]])
+      norm <- meanVal / data$propStreetWallN
+      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      icData <- icForFeatures(data$propWind[[1]])
+      meanVal <- mean(data$propWind[[1]])
+      norm <- meanVal / data$propWindN
+      print(paste("propWind", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      icData <- icForFeatures(data$propStreetWall[[1]])
+      meanVal <- mean(data$propStreetWall[[1]])
+      norm <- meanVal / data$propStreetWallN
+      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      icData <- icForFeatures(data$propSkyAhead[[1]])
+      meanVal <- mean(data$propSkyAhead[[1]])
+      norm <- meanVal / data$propSkyAheadN
+      print(paste("propSkyAhead", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      icData <- icForFeatures(data$propSkyAcross[[1]])
+      meanVal <- mean(data$propSkyAcross[[1]])
+      norm <- meanVal / data$propSkyAcrossN
+      print(paste("propSkyAcross", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      icData <- icForFeatures(data$propActiveUse[[1]])
+      meanVal <- mean(data$propActiveUse[[1]])
+      norm <- meanVal / data$propActiveUseN
+      print(paste("propActiveUse", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
 }
 
 #Selecting only qscores

@@ -21,13 +21,13 @@ facet_labeller <- function(variable,value){
 dados <- read.table("geralSetoresAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
-temp <- dados
-qscoreSim <- temp [ c(4:103) ]
+temp1 <- dados
+qscoreSim <- temp1 [ c(4:103) ]
 icData <- apply(qscoreSim, 1, ic)
-temp$distance <- icData
+temp1$distance <- icData
 
 #Subset of columns
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
+dadosSub <- temp1[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 
@@ -464,6 +464,219 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
+kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp){
+	
+    data$graffiti <- as.character(data$graffiti)
+    data$graffiti[data$graffiti == "No"] <- 0
+    data$graffiti[data$graffiti == "Yes"] <- 1
+    data$build_diff_ages <- as.character(data$build_diff_ages)
+    data$build_diff_ages[data$build_diff_ages == "No"] <- 0
+    data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
+
+    simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
+    simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
+    #Amount of images
+    amountOfItems <- nrow(data)
+
+    featuresMapG1 <- list(movCars = list(c()) , parkCars = list(c()), movCicly= list(c()), buildId = list(c()), buildNRec = list(c()), tree = list(c()), smallPla = list(c()), diffBuild = list(c()), streeFur = list(c()), basCol = list(c()), ligh = list(c()), accenCol = list(c()), peop = list(c()), graff = list(c()), buildDiffAges = list(c()), streetWid = list(c()), sidewalkWid = list(c()), debris = list(c()), pavement = list(c()), landscape = list(c()), propStreetWall = list(c()), propWind = list(c()), longSight = list(c()), propSkyAhead = list(c()), propSkyAcross = list(c()), buildHeight = list(c()), propActiveUse = list(c()), movCarsN = list(c()) , parkCarsN = list(c()), movCiclyN= list(c()), buildIdN = list(c()), buildNRecN = list(c()), treeN = list(c()), smallPlaN = list(c()), diffBuildN = list(c()), streeFurN = list(c()), basColN = list(c()), lighN = list(c()), accenColN = list(c()), peopN = list(c()), graffN = list(c()), buildDiffAgesN = list(c()), streetWidN = list(c()), sidewalkWidN = list(c()), debrisN = list(c()), pavementN = list(c()), landscapeN = list(c()), propStreetWallN = list(c()), propWindN = list(c()), longSightN = list(c()), propSkyAheadN = list(c()), propSkyAcrossN = list(c()), buildHeightN = list(c()), propActiveUseN = list(c()))
+
+    for (ind in seq(2, 101)) {
+		
+	#Original data
+	groupCompleteId1 <- paste("V3.", group1Id, sep="")
+	groupCompleteId2 <- paste("V3.", group2Id, sep="")
+        data <- data %>% do(arrange(., image_url)) 
+	data[[groupCompleteId1]] <- as.vector(simData1[,ind])
+	data[[groupCompleteId2]] <- as.vector(simData2[,ind])
+
+	sortedData <- data %>% do(arrange(., desc(V3.Masculino))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+    	data <- arrange(sortedData, rank)
+    
+	    movCarsOrig <- data[["mov_cars"]]
+	    parkCarsOrig <- data[["park_cars"]]
+	    movCiclyOrig <- data[["mov_ciclyst"]]
+	    buildIdOrig <- data[["build_ident"]] 
+	    buildNRecOrig <- data[["build_nrectan"]]
+	    treeOrig <- data[["trees"]]
+	    smallPlaOrig <- data[["small_planters"]]
+	    diffBuildOrig <-data[["diff_build"]]
+	    streeFurOrig <- data[["street_furnit"]]
+	    basColOrig <- data[["basic_col"]]
+	    lighOrig <- data[["lights"]]
+	    accenColOrig <-  data[["accent_col"]]
+	    peopOrig <- data[["people"]]
+	    graffOrig <- data[["graffiti"]]
+	    buildDiffAgesOrig <- data[["build_diff_ages"]]
+	    streetWidOrig <- data[["street_wid"]]
+	    sidewalkWidOrig <- data[["sidewalk_wid"]]
+	    buildHeightOrig <- data[["build_height"]]
+	    longSightOrig <- data[["long_sight"]]
+	    debrisOrig <- data[["debris"]]
+	    pavementOrig <- data[["pavement"]]
+	    landscapeOrig <- data[["landscape"]]
+	    propStreetWallOrig <- data[["prop_street_wall"]]
+	    propWindOrig <- data[["prop_wind"]]
+	    propSkyAheadOrig <- data[["prop_sky_ahead"]]
+	    propSkyAcrossOrig <- data[["prop_sky_across"]]  
+	    propActiveUseOrig <- data[["prop_active_use"]]
+
+	    movCars <- parkCars <- movCicly<- buildId <- buildNRec <- tree <- smallPla <- diffBuild <- streeFur <- basCol <- ligh <- accenCol<- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- buildHeight <- longSight <- 0
+	    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
+	    movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
+	    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
+
+	    #First call, comparing for group 1
+	    for( i in seq(1, amountOfItems) ){
+		rankLine1 <- data[i,]
+		
+		if(i+1 <= amountOfItems){
+		  
+		    for( j in seq(i+1, amountOfItems) ){
+		        rankLine2 <- data[j,]
+		        
+		        if( (rankLine1[["rank"]] < rankLine2[["rank"]]) & (rankLine1[["index"]] > rankLine2[["index"]]) ){
+		            #discordantPairs[[length(discordantPairs) + 1]] <- c(i,j)
+
+		            movCars <- movCars + movCarsOrig[i] - movCarsOrig[j]
+		            parkCars <- parkCars + parkCarsOrig[i] - parkCarsOrig[j]
+		            movCicly <- movCicly + movCiclyOrig[i] - movCiclyOrig[j]
+		            buildId <- buildId + buildIdOrig[i] - buildIdOrig[j]
+		            buildNRec <- buildNRec + buildNRecOrig[i] - buildNRecOrig[j]
+		            tree <- tree + treeOrig[i] - treeOrig[j]
+		            smallPla <- smallPla + smallPlaOrig[i] - smallPlaOrig[j]
+		            diffBuild <- diffBuild + diffBuildOrig[i] - diffBuildOrig[j]
+		            streeFur <- streeFur + streeFurOrig[i] - streeFurOrig[j]
+		            basCol <- basCol + basColOrig[i] - basColOrig[j]
+		            ligh <- ligh + lighOrig[i] - lighOrig[j]
+		            accenCol <- accenCol + accenColOrig[i] - accenColOrig[j]
+		            peop <- peop + peopOrig[i] - peopOrig[j]
+		            graff <- graff + as.integer(graffOrig[i]) - as.integer(graffOrig[j])
+		            buildDiffAges <- buildDiffAges + as.integer(buildDiffAgesOrig[i]) - as.integer(buildDiffAgesOrig[j])
+		            
+		            streetWid <- streetWid + as.double(streetWidOrig[i]) - as.double(streetWidOrig[j])
+		            sidewalkWid <- sidewalkWid + as.double(sidewalkWidOrig[i]) - as.double(sidewalkWidOrig[j])
+		            debris <- cbind(debris, as.double(debrisOrig[i]) - as.double(debrisOrig[j]))
+		            pavement <- cbind(pavement, as.double(pavementOrig[i]) - as.double(pavementOrig[j])) 
+		            landscape <- cbind(landscape, as.double(landscapeOrig[i]) - as.double(landscapeOrig[j]))
+		            propStreetWall <- cbind(propStreetWall, as.double(propStreetWallOrig[i]) - as.double(propStreetWallOrig[j]))
+		            propWind <- cbind(propWind, as.double(propWindOrig[i]) - as.double(propWindOrig[j]))
+		            longSight <- longSight + as.double(longSightOrig[i]) - as.double(longSightOrig[j])
+		            propSkyAhead <- cbind(propSkyAhead, as.double(propSkyAheadOrig[i]) - as.double(propSkyAheadOrig[j]))
+		            propSkyAcross <- cbind(propSkyAcross, as.double(propSkyAcrossOrig[i]) - as.double(propSkyAcrossOrig[j]))  
+		            buildHeight <- buildHeight + as.double(buildHeightOrig[i]) - as.double(buildHeightOrig[j])
+		            propActiveUse <- cbind(propActiveUse, as.double(propActiveUseOrig[i]) - as.double(propActiveUseOrig[j]))
+		        }  
+		        
+		        #Accounting differences for max!
+		        movCarsMax <- movCarsMax + abs(movCarsOrig[i] - movCarsOrig[j])
+		        parkCarsMax <- parkCarsMax + abs(parkCarsOrig[i] - parkCarsOrig[j])
+		        movCiclyMax <- movCiclyMax + abs(movCiclyOrig[i] - movCiclyOrig[j])
+		        buildIdMax <- buildIdMax + abs(buildIdOrig[i] - buildIdOrig[j])
+		        buildNRecMax <- buildNRecMax + abs(buildNRecOrig[i] - buildNRecOrig[j])
+		        treeMax <- treeMax + abs(treeOrig[i] - treeOrig[j])
+		        smallPlaMax <- smallPlaMax + abs(smallPlaOrig[i] - smallPlaOrig[j])
+		        diffBuildMax <- diffBuildMax + abs(diffBuildOrig[i] - diffBuildOrig[j])
+		        streeFurMax <- streeFurMax + abs(streeFurOrig[i] - streeFurOrig[j])
+		        basColMax <- basColMax + abs(basColOrig[i] - basColOrig[j])
+		        lighMax <- lighMax + abs(lighOrig[i] - lighOrig[j])
+		        accenColMax <- accenColMax + abs(accenColOrig[i] - accenColOrig[j])
+		        peopMax <- peopMax + abs(peopOrig[i] - peopOrig[j])
+		        graffMax <- graffMax + abs(as.integer(graffOrig[i]) - as.integer(graffOrig[j]))
+		        buildDiffAgesMax <- buildDiffAgesMax + abs(as.integer(buildDiffAgesOrig[i]) - as.integer(buildDiffAgesOrig[j]))
+		        
+		        streetWidMax <- streetWidMax + abs(as.double(streetWidOrig[i]) - as.double(streetWidOrig[j]))
+		        sidewalkWidMax <- sidewalkWidMax + abs(as.double(sidewalkWidOrig[i]) - as.double(sidewalkWidOrig[j]))
+		        debrisMax <- cbind(debrisMax, abs(as.double(debrisOrig[i]) - as.double(debrisOrig[j])))
+		        pavementMax <- cbind(pavementMax, abs(as.double(pavementOrig[i]) - as.double(pavementOrig[j]))) 
+		        landscapeMax <- cbind(landscapeMax, abs(as.double(landscapeOrig[i]) - as.double(landscapeOrig[j])))
+		        propStreetWallMax <- cbind(propStreetWallMax, abs(as.double(propStreetWallOrig[i]) - as.double(propStreetWallOrig[j])))
+		        propWindMax <- cbind(propWindMax, abs(as.double(propWindOrig[i]) - as.double(propWindOrig[j])))
+		        longSightMax <- longSightMax + abs(as.double(longSightOrig[i]) - as.double(longSightOrig[j]))
+		        propSkyAheadMax <- cbind(propSkyAheadMax, abs(as.double(propSkyAheadOrig[i]) - as.double(propSkyAheadOrig[j])))
+		        propSkyAcrossMax <- cbind(propSkyAcrossMax, abs(as.double(propSkyAcrossOrig[i]) - as.double(propSkyAcrossOrig[j]))) 
+		        buildHeightMax <- buildHeightMax + abs(as.double(buildHeightOrig[i]) - as.double(buildHeightOrig[j]))
+		        propActiveUseMax <- cbind(propActiveUseMax, abs(as.double(propActiveUseOrig[i]) - as.double(propActiveUseOrig[j])))
+
+		    }
+		}
+	    }
+
+	    #Real world mean values for grades and proportions
+	    if( length(debris) > 0 ){
+	      featuresMapG1$movCars[[1]] <- c(featuresMapG1$movCars[[1]], movCars)
+	      featuresMapG1$parkCars[[1]] <- c(featuresMapG1$parkCars[[1]], parkCars)
+	      featuresMapG1$movCicly[[1]] <- c(featuresMapG1$movCicly[[1]], movCicly)
+	      featuresMapG1$buildId[[1]] <- c(featuresMapG1$buildId[[1]], buildId)
+	      featuresMapG1$buildNRec[[1]] <- c(featuresMapG1$buildNRec[[1]], buildNRec)
+	      featuresMapG1$tree[[1]] <- c(featuresMapG1$tree[[1]], tree)
+	      featuresMapG1$smallPla[[1]] <- c(featuresMapG1$smallPla[[1]], smallPla)
+	      featuresMapG1$diffBuild[[1]] <- c(featuresMapG1$diffBuild[[1]], diffBuild)
+	      featuresMapG1$streeFur[[1]] <- c(featuresMapG1$streeFur[[1]], streeFur)
+	      featuresMapG1$basCol[[1]] <- c(featuresMapG1$basCol[[1]], basCol)
+	      featuresMapG1$ligh[[1]] <- c(featuresMapG1$ligh[[1]], ligh)
+	      featuresMapG1$accenCol[[1]] <- c(featuresMapG1$accenCol[[1]], accenCol)
+	      featuresMapG1$peop[[1]] <- c(featuresMapG1$peop[[1]], peop)
+	      featuresMapG1$graff[[1]] <- c(featuresMapG1$graff[[1]], graff)
+	      featuresMapG1$buildDiffAges[[1]] <- c(featuresMapG1$buildDiffAges[[1]], buildDiffAges)
+	      featuresMapG1$streetWid[[1]] <- c(featuresMapG1$streetWid[[1]], streetWid)
+	      featuresMapG1$sidewalkWid[[1]] <- c(featuresMapG1$sidewalkWid[[1]], sidewalkWid)
+	      featuresMapG1$buildHeight[[1]] <- c(featuresMapG1$buildHeight[[1]], buildHeight)
+	      featuresMapG1$longSight[[1]] <- c(featuresMapG1$longSight[[1]], longSight)
+	      
+	      featuresMapG1$debris[[1]] <- c(featuresMapG1$debris[[1]], .Internal(mean(debris)))
+	      featuresMapG1$pavement[[1]] <- c(featuresMapG1$pavement[[1]], .Internal(mean(pavement)))
+	      featuresMapG1$landscape[[1]] <- c(featuresMapG1$landscape[[1]], .Internal(mean(landscape)))
+	      featuresMapG1$propStreetWall[[1]] <- c(featuresMapG1$propStreetWall[[1]], .Internal(mean(propStreetWall)))
+	      featuresMapG1$propWind[[1]] <- c(featuresMapG1$propWind[[1]], .Internal(mean(propWind)))
+	      featuresMapG1$propSkyAhead[[1]] <- c(featuresMapG1$propSkyAhead[[1]], .Internal(mean(propSkyAhead)))
+	      featuresMapG1$propSkyAcross[[1]] <- c(featuresMapG1$propSkyAcross[[1]], .Internal(mean(propSkyAcross)))
+	      featuresMapG1$propActiveUse[[1]] <- c(featuresMapG1$propActiveUse[[1]], .Internal(mean(propActiveUse)))
+	    }
+	    debrisMax <- .Internal(mean(debrisMax))
+	    pavementMax <- .Internal(mean(pavementMax))
+	    landscapeMax <- .Internal(mean(landscapeMax))
+	    propStreetWallMax <- .Internal(mean(propStreetWallMax))
+	    propWindMax <- .Internal(mean(propWindMax))
+	    propStreetWallMax <- .Internal(mean(propStreetWallMax))
+	    propWindMax <- .Internal(mean(propWindMax))
+	    propSkyAheadMax <- .Internal(mean(propSkyAheadMax))
+	    propSkyAcrossMax <- .Internal(mean(propSkyAcrossMax))
+	    propActiveUseMax <- .Internal(mean(propActiveUseMax))
+   }
+
+   #Normalizing real values
+    featuresMapG1$movCarsN[[1]] <- c(movCarsMax)#(maxMovCars*den)
+    featuresMapG1$parkCarsN[[1]] <-  c(parkCarsMax)#(maxParkCars*den)
+    featuresMapG1$movCiclyN[[1]] <-   c(movCiclyMax)#(maxMovCicly*den)
+    featuresMapG1$buildIdN[[1]] <-  c(buildIdMax)#(maxBuildId*den)
+    featuresMapG1$buildNRecN[[1]] <-  c(buildNRecMax)#(maxBuildNRec*den)
+    featuresMapG1$treeN[[1]] <-  c(treeMax)#(maxTree*den)
+    featuresMapG1$smallPlaN[[1]] <-  c(smallPlaMax)#(maxSmallPla*den)
+    featuresMapG1$diffBuildN[[1]] <-  c(diffBuildMax)#(maxDiffBuild*den)
+    featuresMapG1$streeFurN[[1]] <-  c(streeFurMax)#(maxStreeFur*den)
+    featuresMapG1$basColN[[1]] <-  c(basColMax)#(maxBasCol*den)
+    featuresMapG1$lighN[[1]] <-  c(lighMax)#(maxLigh*den)
+    featuresMapG1$accenColN[[1]] <-  c(accenColMax)#(maxAccenCol*den)
+    featuresMapG1$peopN[[1]] <-  c(peopMax)#(maxPeop*den)
+    featuresMapG1$graffN[[1]] <-  c(graffMax)#(maxGraff*den)
+    featuresMapG1$buildDiffAgesN[[1]] <- c( buildDiffAgesMax)#(maxBuildDiffAges*den)
+    featuresMapG1$streetWidN[[1]] <-  c(streetWidMax)
+    featuresMapG1$sidewalkWidN[[1]] <- c(sidewalkWidMax)
+    featuresMapG1$debrisN[[1]] <-  c(debrisMax)
+    featuresMapG1$pavementN[[1]] <-  c(pavementMax)
+    featuresMapG1$landscapeN[[1]] <- c(landscapeMax)
+    featuresMapG1$propStreetWallN[[1]] <-  c(propStreetWallMax)
+    featuresMapG1$propWindN[[1]] <-  c(propWindMax)
+    featuresMapG1$longSightN[[1]] <-  c(longSightMax)
+    featuresMapG1$propSkyAheadN[[1]] <-  c(propSkyAheadMax)
+    featuresMapG1$propSkyAcrossN[[1]] <-  c(propSkyAcrossMax)
+    featuresMapG1$buildHeightN[[1]] <-  c(buildHeightMax)
+    featuresMapG1$propActiveUseN[[1]] <-  c(propActiveUseMax)
+
+	return ( featuresMapG1 )
+}
+
 kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     
     data$graffiti <- as.character(data$graffiti)
@@ -724,240 +937,6 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     propSkyAcrossMax <- .Internal(mean(propSkyAcrossMax))
     propActiveUseMax <- .Internal(mean(propActiveUseMax))
     
-    #Random world
-    movCars <- parkCars <- movCicly <- buildId <- buildNRec <- tree <- smallPla <- diffBuild <-streeFur <- basCol <- ligh <-  accenCol <- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- longSight <- buildHeight <- debris <- pavement <- landscape <- propStreetWall <- propWind <-  propSkyAhead <- propSkyAcross <- propActiveUse <- c()
-    
-    for (k in seq(1, iterations)){
-
-	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
-	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
-	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
-	amountOfRandData <- nrow(newData)
-	if (k %% 20 == 0){
-		print(paste("Iteration ", k))
-	}
-
-	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
-        debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
-        
-       for( i in seq(1, amountOfRandData) ) {
-            rankLine1 <- newData[i,]
-            
-            if(i+1 <= amountOfRandData){
-                for( j in seq(i+1, amountOfRandData) ){
-                    rankLine2 <- newData[j,]
-
-		   if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) & !is.na(rankLine2[[group2Id]]) ) {
-                    
-		            if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
-
-				if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
-						firstImage <- as.character(rankLine2$V2)
-						secondImage <- as.character(rankLine1$V2)
-	    			   }else {
-						firstImage <- as.character(rankLine1$V2)
-						secondImage <- as.character(rankLine2$V2)
-				  }
-
-
-			tryCatch(
-	  
-				    if(!is.null(mcaT[[firstImage]][[secondImage]])) {
-					    movCarsR <- movCarsR + mcaT[[firstImage]][[secondImage]]
-					    parkCarsR <- parkCarsR +  pcaT[[firstImage]][[secondImage]]
-					    movCiclyR <- movCiclyR +  mciT[[firstImage]][[secondImage]]
-					    buildIdR <- buildIdR +  bidT[[firstImage]][[secondImage]]
-					    buildNRecR <- buildNRecR +  bnrT[[firstImage]][[secondImage]]
-					    treeR <- treeR +  treT[[firstImage]][[secondImage]]
-					    smallPlaR <- smallPlaR + splT[[firstImage]][[secondImage]]
-					    diffBuildR <- diffBuildR +  dbuT[[firstImage]][[secondImage]]
-					    streeFurR <- streeFurR +  sfuT[[firstImage]][[secondImage]]
-					    basColR <- basColR +  bacT[[firstImage]][[secondImage]]
-					    lighR <- lighR + ligT[[firstImage]][[secondImage]]
-					    accenColR <- accenColR +  accT[[firstImage]][[secondImage]]
-					    peopR <- peopR + peoT[[firstImage]][[secondImage]]
-					    graffR <- graffR + graT[[firstImage]][[secondImage]]
-					    buildDiffAgesR <- bdaT[[firstImage]][[secondImage]]
-						      
-					    streetWidR <- streetWidR + swiT[[firstImage]][[secondImage]]
-					    sidewalkWidR <- sidewalkWidR + siwiT[[firstImage]][[secondImage]]
-					    debrisR <- cbind(debrisR, debT[[firstImage]][[secondImage]])
-					    pavementR <- cbind(pavementR, pavT[[firstImage]][[secondImage]])
-					    landscapeR <- cbind(landscapeR, lanT[[firstImage]][[secondImage]])
-					    propStreetWallR <- cbind(propStreetWallR, pswT[[firstImage]][[secondImage]])
-					    propWindR <- cbind(propWindR, pwiT[[firstImage]][[secondImage]])
-					    longSightR <- longSightR + lsiT[[firstImage]][[secondImage]]
-					    propSkyAheadR <- cbind(propSkyAheadR, psaT[[firstImage]][[secondImage]])
-					    propSkyAcrossR <- cbind(propSkyAcrossR, psacT[[firstImage]][[secondImage]])
-					    buildHeightR <- buildHeightR + bheT[[firstImage]][[secondImage]]
-					    propActiveUseR <- cbind(propActiveUseR, pactT[[firstImage]][[secondImage]])
-				},
-			error = function(e) 
-			  {
-			    #print(e$message) # or whatever error handling code you want
-			  }
-			)
-
-		     }
-		}
-           }
- 	 }
-	}
-        
-        #Binding with previous iterations
-        if( length(debrisR) > 0 ) {
-            movCars <- cbind(movCars, movCarsR)
-            parkCars <- cbind(parkCars, parkCarsR)
-            movCicly <- cbind(movCicly, movCiclyR)
-            buildId <- cbind(buildId, buildIdR)
-            buildNRec <- cbind(buildNRec, buildNRecR)
-            tree <- cbind(tree, treeR)
-            smallPla <- cbind(smallPla, smallPlaR)
-            diffBuild <- cbind(diffBuild, diffBuildR)
-            streeFur <- cbind(streeFur, streeFurR)
-            basCol <- cbind(basCol, basColR)
-            ligh <-  cbind(ligh, lighR)
-            accenCol <- cbind(accenCol, accenColR)
-            peop <- cbind(peop, peopR)
-            graff <- cbind(graff, graffR)
-            buildDiffAges <- cbind(buildDiffAges, buildDiffAgesR)
-                    
-            streetWid <- cbind(streetWid, streetWidR)
-            sidewalkWid <- cbind(sidewalkWid, sidewalkWidR)
-            longSight <- cbind(longSight, longSightR)
-            buildHeight <- cbind(buildHeight, buildHeightR)
-            debris <- cbind(debris, .Internal(mean(debrisR)))
-            pavement <- cbind(pavement, .Internal(mean(pavementR)))
-            landscape <- cbind(landscape, .Internal(mean(landscapeR)))
-            propStreetWall <- cbind(propStreetWall, .Internal(mean(propStreetWallR)))
-            propWind <- cbind(propWind, .Internal(mean(propWindR)))
-            propSkyAhead <- cbind(propSkyAhead, .Internal(mean(propSkyAheadR)))
-            propSkyAcross <- cbind(propSkyAcross, .Internal(mean(propSkyAcrossR)))
-            propActiveUse <- cbind(propActiveUse, .Internal(mean(propActiveUseR)))
-        }
-    }  
-    
-    #Random world mean
-    if(length(movCars) > 0){
-	featuresMapG1[["rmovCars"]] <- .Internal(mean(movCars)) 
-	featuresMapG1[["rparkCars"]] <- .Internal(mean(parkCars))
-	featuresMapG1[["rmovCicly"]] <- .Internal(mean(movCicly))
-	featuresMapG1[["rbuildId"]] <- .Internal(mean(buildId))
-	featuresMapG1[["rbuildNRec"]] <- .Internal(mean(buildNRec))
-	featuresMapG1[["rtree"]] <- .Internal(mean(tree))
-	featuresMapG1[["rsmallPla"]] <- .Internal(mean(smallPla))
-	featuresMapG1[["rdiffBuild"]] <- .Internal(mean(diffBuild))
-	featuresMapG1[["rstreeFur"]] <- .Internal(mean(streeFur))
-	featuresMapG1[["rbasCol"]] <- .Internal(mean(basCol)) 
-	featuresMapG1[["rligh"]] <- .Internal(mean(ligh))
-	featuresMapG1[["raccenCol"]] <- .Internal(mean(accenCol))
-	featuresMapG1[["rpeop"]] <- .Internal(mean(peop))
-	featuresMapG1[["rgraff"]] <- .Internal(mean(graff)) 
-	featuresMapG1[["rbuildDiffAges"]] <- .Internal(mean(buildDiffAges))
-
-	featuresMapG1[["rstreetWid"]] <- .Internal(mean(streetWid))
-	featuresMapG1[["rsidewalkWid"]] <- .Internal(mean(sidewalkWid))
-	featuresMapG1[["rlongSight"]] <- .Internal(mean(longSight))
-	featuresMapG1[["rbuildHeight"]] <- .Internal(mean(buildHeight))
-	featuresMapG1[["rdebris"]] <- .Internal(mean(debris))
-	featuresMapG1[["rpavement"]] <- .Internal(mean(pavement))
-	featuresMapG1[["rlandscape"]] <- .Internal(mean(landscape))
-	featuresMapG1[["rpropStreetWall"]] <- .Internal(mean(propStreetWall))
-	featuresMapG1[["rpropWind"]] <- .Internal(mean(propWind))
-	featuresMapG1[["rpropSkyAhead"]] <- .Internal(mean(propSkyAhead))
-	featuresMapG1[["rpropSkyAcross"]] <- .Internal(mean(propSkyAcross))
-	featuresMapG1[["rpropActiveUse"]] <- .Internal(mean(propActiveUse))
-    }    
-
-    featuresMapG1[["rsdMovCars"]] <- sd(movCars) 
-    featuresMapG1[["rsdParkCars"]] <- sd(parkCars)
-    featuresMapG1[["rsdMovCicly"]] <- sd(movCicly)
-    featuresMapG1[["rsdBuildId"]] <- sd(buildId) 
-    featuresMapG1[["rsdBuildNRec"]] <- sd(buildNRec) 
-    featuresMapG1[["rsdTree"]] <- sd(tree)
-    featuresMapG1[["rsdSmallPla"]] <- sd(smallPla)
-    featuresMapG1[["rsdDiffBuild"]] <- sd(diffBuild)
-    featuresMapG1[["rsdStreeFur"]] <- sd(streeFur) 
-    featuresMapG1[["rsdBasCol"]] <- sd(basCol) 
-    featuresMapG1[["rsdLigh"]] <- sd(ligh)
-    featuresMapG1[["rsdAccenCol"]] <- sd(accenCol) 
-    featuresMapG1[["rsdPeop"]] <- sd(peop) 
-    featuresMapG1[["rsdGraff"]] <- sd(graff) 
-    featuresMapG1[["rsdBuildDiffAges"]] <- sd(buildDiffAges)
-    
-    featuresMapG1[["rsdStreetWid"]] <- sd(streetWid)
-    featuresMapG1[["rsdSidewalkWid"]] <- sd(sidewalkWid)
-    featuresMapG1[["rsdLongSight"]] <- sd(longSight)
-    featuresMapG1[["rsdBuildHeight"]] <- sd(buildHeight)
-    featuresMapG1[["rsdDebris"]] <- sd(debris)
-    featuresMapG1[["rsdPavement"]] <- sd(pavement)
-    featuresMapG1[["rsdLandscape"]] <- sd(landscape)
-    featuresMapG1[["rsdPropStreetWall"]] <- sd(propStreetWall)
-    featuresMapG1[["rsdPropWind"]] <- sd(propWind)
-    featuresMapG1[["rsdPropSkyAhead"]] <- sd(propSkyAhead)
-    featuresMapG1[["rsdPropSkyAcross"]] <- sd(propSkyAcross)
-    featuresMapG1[["rsdPropActiveUse"]] <- sd(propActiveUse)
-    
-    #Adding random mean values - normalized
-    if(length(movCars) > 0){
-	  featuresMapG1[["rmovCarsN"]] <- .Internal(mean(movCars)) / movCarsMax#/ (maxMovCars*den)
-          featuresMapG1[["rparkCarsN"]] <- .Internal(mean(parkCars)) / parkCarsMax#/ (maxParkCars*den)
-          featuresMapG1[["rmovCiclyN"]] <- .Internal(mean(movCicly)) / movCiclyMax #/ (maxMovCicly*den)
-          featuresMapG1[["rbuildIdN"]] <- .Internal(mean(buildId)) / buildIdMax#/ (maxBuildId*den)
-          featuresMapG1[["rbuildNRecN"]] <- .Internal(mean(buildNRec)) / buildNRecMax#/ (maxBuildNRec*den)
-          featuresMapG1[["rtreeN"]] <- .Internal(mean(tree)) / treeMax#/ (maxTree*den)
-          featuresMapG1[["rsmallPlaN"]] <- .Internal(mean(smallPla)) / smallPlaMax#/ (maxSmallPla*den)
-          featuresMapG1[["rdiffBuildN"]] <- .Internal(mean(diffBuild)) / diffBuildMax#/ (maxDiffBuild*den)
-          featuresMapG1[["rstreeFurN"]] <- .Internal(mean(streeFur)) / streeFurMax#/ (maxStreeFur*den)
-          featuresMapG1[["rbasColN"]] <- .Internal(mean(basCol)) / basColMax#/ (maxBasCol*den)
-          featuresMapG1[["rlighN"]] <- .Internal(mean(ligh)) / lighMax#/ (maxLigh*den)
-          featuresMapG1[["raccenColN"]] <- .Internal(mean(accenCol)) / accenColMax#/ (maxAccenCol*den)
-          featuresMapG1[["rpeopN"]] <- .Internal(mean(peop)) / peopMax#/ (maxPeop*den)
-          featuresMapG1[["rgraffN"]] <- .Internal(mean(graff)) / graffMax#/ (maxGraff*den)
-          featuresMapG1[["rbuildDiffAgesN"]] <- .Internal(mean(buildDiffAges)) / buildDiffAgesMax#/ (maxBuildDiffAges*den)
-
-          featuresMapG1[["rstreetWidN"]] <- .Internal(mean(streetWid)) / streetWidMax
-          featuresMapG1[["rsidewalkWidN"]] <- .Internal(mean(sidewalkWid)) / sidewalkWidMax
-          featuresMapG1[["rdebrisN"]] <- .Internal(mean(debris)) / debrisMax
-          featuresMapG1[["rpavementN"]] <- .Internal(mean(pavement)) / pavementMax
-          featuresMapG1[["rlandscapeN"]] <- .Internal(mean(landscape)) / landscapeMax
-          featuresMapG1[["rpropStreetWallN"]] <- .Internal(mean(propStreetWall)) / propStreetWallMax
-          featuresMapG1[["rpropWindN"]] <- .Internal(mean(propWind)) / propWindMax
-          featuresMapG1[["rlongSightN"]] <- .Internal(mean(longSight)) / longSightMax
-          featuresMapG1[["rpropSkyAheadN"]] <- .Internal(mean(propSkyAhead)) / propSkyAheadMax
-          featuresMapG1[["rpropSkyAcrossN"]] <- .Internal(mean(propSkyAcross)) / propSkyAcrossMax
-          featuresMapG1[["rbuildHeightN"]] <- .Internal(mean(buildHeight)) / buildHeightMax
-          featuresMapG1[["rpropActiveUseN"]] <- .Internal(mean(propActiveUse)) / propActiveUseMax
-    }
-
-    #Normalizing real values
-    featuresMapG1[["movCarsN"]] <- featuresMapG1[["movCars"]] / movCarsMax#(maxMovCars*den)
-    featuresMapG1[["parkCarsN"]] <- featuresMapG1[["parkCars"]]  / parkCarsMax#(maxParkCars*den)
-    featuresMapG1[["movCiclyN"]] <-  featuresMapG1[["movCicly"]] / movCiclyMax#(maxMovCicly*den)
-    featuresMapG1[["buildIdN"]] <- featuresMapG1[["buildId"]]/ buildIdMax#(maxBuildId*den)
-    featuresMapG1[["buildNRecN"]] <- featuresMapG1[["buildNRec"]] / buildNRecMax#(maxBuildNRec*den)
-    featuresMapG1[["treeN"]] <- featuresMapG1[["tree"]] / treeMax#(maxTree*den)
-    featuresMapG1[["smallPlaN"]] <- featuresMapG1[["smallPla"]] / smallPlaMax#(maxSmallPla*den)
-    featuresMapG1[["diffBuildN"]] <- featuresMapG1[["diffBuild"]] / diffBuildMax#(maxDiffBuild*den)
-    featuresMapG1[["streeFurN"]] <- featuresMapG1[["streeFur"]] / streeFurMax#(maxStreeFur*den)
-    featuresMapG1[["basColN"]] <- featuresMapG1[["basCol"]] / basColMax#(maxBasCol*den)
-    featuresMapG1[["lighN"]] <- featuresMapG1[["ligh"]] / lighMax#(maxLigh*den)
-    featuresMapG1[["accenColN"]] <- featuresMapG1[["accenCol"]] / accenColMax#(maxAccenCol*den)
-    featuresMapG1[["peopN"]] <- featuresMapG1[["peop"]]  / peopMax#(maxPeop*den)
-    featuresMapG1[["graffN"]] <- featuresMapG1[["graff"]]/ graffMax#(maxGraff*den)
-    featuresMapG1[["buildDiffAgesN"]] <- featuresMapG1[["buildDiffAges"]] / buildDiffAgesMax#(maxBuildDiffAges*den)
-    featuresMapG1[["streetWidN"]] <- featuresMapG1[["streetWid"]] / streetWidMax
-    featuresMapG1[["sidewalkWidN"]] <- featuresMapG1[["sidewalkWid"]] / sidewalkWidMax
-    featuresMapG1[["debrisN"]] <- featuresMapG1[["debris"]] / debrisMax
-    featuresMapG1[["pavementN"]] <- featuresMapG1[["pavement"]] / pavementMax
-    featuresMapG1[["landscapeN"]] <- featuresMapG1[["landscape"]] / landscapeMax
-    featuresMapG1[["propStreetWallN"]] <- featuresMapG1[["propStreetWall"]] / propStreetWallMax
-    featuresMapG1[["propWindN"]] <- featuresMapG1[["propWind"]] / propWindMax
-    featuresMapG1[["longSightN"]] <- featuresMapG1[["longSight"]] / longSightMax
-    featuresMapG1[["propSkyAheadN"]] <- featuresMapG1[["propSkyAhead"]] / propSkyAheadMax
-    featuresMapG1[["propSkyAcrossN"]] <- featuresMapG1[["propSkyAcross"]] / propSkyAcrossMax
-    featuresMapG1[["buildHeightN"]] <- featuresMapG1[["buildHeight"]] / buildHeightMax
-    featuresMapG1[["propActiveUseN"]] <- featuresMapG1[["propActiveUse"]] / propActiveUseMax
     
     return ( featuresMapG1 )
 }
@@ -1179,7 +1158,7 @@ randomizeCoeff <- function (data, iterations) {
     return (data)
 }
 
-iterations <- 5
+iterations <- 10000
 
 simulateCoefShuffle <- function(agrad.l, iterations){
 
@@ -1682,9 +1661,12 @@ agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?"))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?"))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
+res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1)
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -1701,9 +1683,12 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino", "seguro?"))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino", "seguro?"))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
+res <- kendallWithWeightsSimReal(seg.l, iterations, "Masculino", "Feminino", "seguro?", temp1)
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")

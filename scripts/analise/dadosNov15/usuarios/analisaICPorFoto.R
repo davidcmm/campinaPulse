@@ -67,116 +67,167 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 analyseICForFeatures <- function(data){
       icData <- icForFeatures(data$movCars[[1]])
       meanVal <- mean(data$movCars[[1]])
-      norm <- meanVal / data$movCarsN
-      print(paste("movCars", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE) 
+      norm <- meanVal / data$movCarsN[[1]]
+      medianVal <- median(data$movCars[[1]])
+      norm2 <- medianVal / data$movCarsN[[1]]
+      print(paste("movCars", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE) 
       icData <- icForFeatures(data$parkCars[[1]])
       meanVal <- mean(data$parkCars[[1]])
-      norm <- meanVal / data$parkCarsN
-      print(paste("parkCars", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$parkCarsN[[1]]
+      medianVal <- median(data$parkCars[[1]])
+      norm2 <- medianVal / data$parkCarsN[[1]]
+      print(paste("parkCars", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$movCicly[[1]])
       meanVal <- mean(data$movCicly[[1]])
-      norm <- meanVal / data$movCiclyN
-      print(paste("movCicly", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$movCiclyN[[1]]
+      medianVal <- median(data$movCicly[[1]])
+      norm2 <- medianVal / data$movCiclyN[[1]]
+      print(paste("movCicly", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$buildId[[1]])
       meanVal <- mean(data$buildId[[1]])
-      norm <- meanVal / data$buildIdN
-      print(paste("buildId", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$buildIdN[[1]]
+      medianVal <- median(data$buildId[[1]])
+      norm2 <- medianVal / data$buildIdN[[1]]
+      print(paste("buildId", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$buildNRec[[1]])
       meanVal <- mean(data$buildNRec[[1]])
-      norm <- meanVal / data$buildNRecN
-      print(paste("buildNRec", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$buildNRecN[[1]]
+      medianVal <- median(data$buildNRec[[1]])
+      norm2 <- medianVal / data$buildNRecN[[1]]
+      print(paste("buildNRec", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$tree[[1]])
       meanVal <- mean(data$tree[[1]])
-      norm <- meanVal / data$treeN
-      print(paste("tree", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$treeN[[1]]
+      medianVal <- median(data$tree[[1]])
+      norm2 <- medianVal / data$treeN[[1]]
+      print(paste("tree", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$smallPla[[1]])
       meanVal <- mean(data$smallPla[[1]])
-      norm <- meanVal / data$smallPlaN
-      print(paste("smallPla", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$smallPlaN[[1]]
+      medianVal <- median(data$smallPla[[1]])
+      norm2 <- medianVal / data$smallPlaN[[1]]
+      print(paste("smallPla", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$diffBuild[[1]])
       meanVal <- mean(data$diffBuild[[1]])
-      norm <- meanVal / data$diffBuildN
-      print(paste("diffBuild", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$diffBuildN[[1]]
+      medianVal <- median(data$diffBuild[[1]])
+      norm2 <- medianVal / data$diffBuildN[[1]]
+      print(paste("diffBuild", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$streeFur[[1]])
       meanVal <- mean(data$streeFur[[1]])
-      norm <- meanVal / data$streeFurN
-      print(paste("streeFur", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$streeFurN[[1]]
+      medianVal <- median(data$streeFur[[1]])
+      norm2 <- medianVal / data$streeFurN[[1]]
+      print(paste("streeFur", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$basCol[[1]])
       meanVal <- mean(data$basCol[[1]])
-      norm <- meanVal / data$basColN
-      print(paste("basCol", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$basColN[[1]]
+      medianVal <- median(data$basCol[[1]])
+      norm2 <- medianVal / data$basColN[[1]]
+      print(paste("basCol", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$ligh[[1]])
       meanVal <- mean(data$ligh[[1]])
-      norm <- meanVal / data$lighN
-      print(paste("ligh", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$lighN[[1]]
+      medianVal <- median(data$ligh[[1]])
+      norm2 <- medianVal / data$lighN[[1]]
+      print(paste("ligh", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=
+FALSE)
       icData <- icForFeatures(data$accenCol[[1]])
       meanVal <- mean(data$accenCol[[1]])
-      norm <- meanVal / data$accenColN
-      print(paste("accenCol", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$accenColN[[1]]
+      medianVal <- median(data$accenCol[[1]])
+      norm2 <- medianVal / data$accenColN[[1]]
+      print(paste("accenCol", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$peop[[1]])
       meanVal <- mean(data$peop[[1]])
-      norm <- meanVal / data$peopN
-      print(paste("peop", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$peopN[[1]]
+      medianVal <- median(data$peop[[1]])
+      norm2 <- medianVal / data$peopN[[1]]
+      print(paste("peop", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$graff[[1]])
       meanVal <- mean(data$graff[[1]])
-      norm <- meanVal / data$graffN
-      print(paste("graff", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$graffN[[1]]
+      medianVal <- median(data$graff[[1]])
+      norm2 <- medianVal / data$graffN[[1]]
+      print(paste("graff", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$buildDiffAges[[1]])
       meanVal <- mean(data$buildDiffAges[[1]])
-      norm <- meanVal / data$buildDiffAgesN
-      print(paste("buildDiffAges", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$buildDiffAgesN[[1]]
+      medianVal <- median(data$buildDiffAges[[1]])
+      norm2 <- medianVal / data$buildDiffAgesN[[1]]
+      print(paste("buildDiffAges", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$streetWid[[1]])
       meanVal <- mean(data$streetWid[[1]])
-      norm <- meanVal / data$streetWidN
-      print(paste("streetWid", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$streetWidN[[1]]
+      medianVal <- median(data$streetWid[[1]])
+      norm2 <- medianVal / data$streetWidN[[1]]
+      print(paste("streetWid", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$sidewalkWid[[1]])
       meanVal <- mean(data$sidewalkWid[[1]])
-      norm <- meanVal / data$sidewalkWidN
-      print(paste("sidewalkWid", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$sidewalkWidN[[1]]
+      medianVal <- median(data$sidewalkWid[[1]])
+      norm2 <- medianVal / data$sidewalkWidN[[1]]
+      print(paste("sidewalkWid", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$buildHeight[[1]])
       meanVal <- mean(data$buildHeight[[1]])
-      norm <- meanVal / data$buildHeightN
-      print(paste("buildHeight", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$buildHeightN[[1]]
+      medianVal <- median(data$buildHeight[[1]])
+      norm2 <- medianVal / data$buildHeightN[[1]]
+      print(paste("buildHeight", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$longSight[[1]])
       meanVal <- mean(data$longSight[[1]])
-      norm <- meanVal / data$longSightN
-      print(paste("longSight", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$longSightN[[1]]
+      medianVal <- median(data$longSight[[1]])
+      norm2 <- medianVal / data$longSightN[[1]]
+      print(paste("longSight", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$debris[[1]])
       meanVal <- mean(data$debris[[1]])
-      norm <- meanVal / data$debrisN
-      print(paste("debris", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$debrisN[[1]]
+      medianVal <- median(data$debris[[1]])
+      norm2 <- medianVal / data$debrisN[[1]]
+      print(paste("debris", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$pavement[[1]])
       meanVal <- mean(data$pavement[[1]])
-      norm <- meanVal / data$pavementN
-      print(paste("pavement", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$pavementN[[1]]
+      medianVal <- median(data$pavement[[1]])
+      norm2 <- medianVal / data$pavementN[[1]]
+      print(paste("pavement", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$landscape[[1]])
       meanVal <- mean(data$landscape[[1]])
-      norm <- meanVal / data$landscapeN
-      print(paste("landscape", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)
+      norm <- meanVal / data$landscapeN[[1]]
+      medianVal <- median(data$landscape[[1]])
+      norm2 <- medianVal / data$landscapeN[[1]]
+      print(paste("landscape", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
       icData <- icForFeatures(data$propStreetWall[[1]])
       meanVal <- mean(data$propStreetWall[[1]])
-      norm <- meanVal / data$propStreetWallN
-      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      norm <- meanVal / data$propStreetWallN[[1]]
+      medianVal <- median(data$propStreetWall[[1]])
+      norm2 <- medianVal / data$propStreetWallN[[1]]
+      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
       icData <- icForFeatures(data$propWind[[1]])
       meanVal <- mean(data$propWind[[1]])
-      norm <- meanVal / data$propWindN
-      print(paste("propWind", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
-      icData <- icForFeatures(data$propStreetWall[[1]])
-      meanVal <- mean(data$propStreetWall[[1]])
-      norm <- meanVal / data$propStreetWallN
-      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      norm <- meanVal / data$propWindN[[1]]
+      medianVal <- median(data$propWind[[1]])
+      norm2 <- medianVal / data$propWindN[[1]]
+      print(paste("propWind", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
       icData <- icForFeatures(data$propSkyAhead[[1]])
       meanVal <- mean(data$propSkyAhead[[1]])
-      norm <- meanVal / data$propSkyAheadN
-      print(paste("propSkyAhead", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      norm <- meanVal / data$propSkyAheadN[[1]]
+      medianVal <- median(data$propSkyAhead[[1]])
+      norm2 <- medianVal / data$propSkyAheadN[[1]]
+      print(paste("propSkyAhead", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
       icData <- icForFeatures(data$propSkyAcross[[1]])
       meanVal <- mean(data$propSkyAcross[[1]])
-      norm <- meanVal / data$propSkyAcrossN
-      print(paste("propSkyAcross", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      norm <- meanVal / data$propSkyAcrossN[[1]]
+      medianVal <- median(data$propSkyAcross[[1]])
+      norm2 <- medianVal / data$propSkyAcrossN[[1]]
+      print(paste("propSkyAcross", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
       icData <- icForFeatures(data$propActiveUse[[1]])
       meanVal <- mean(data$propActiveUse[[1]])
-      norm <- meanVal / data$propActiveUseN
-      print(paste("propActiveUse", meanVal, meanVal - icData, meanVal + icData, norm), quote=FALSE)      
+      norm <- meanVal / data$propActiveUseN[[1]]
+      medianVal <- median(data$propActiveUse[[1]])
+      norm2 <- medianVal / data$propActiveUseN[[1]]
+      print(paste("propActiveUse", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
 }
 
 #Selecting only qscores

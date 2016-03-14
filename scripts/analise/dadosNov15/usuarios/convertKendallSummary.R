@@ -218,45 +218,62 @@ analyseICForFeatures <- function(data){
 	print(arrange(featureAnalysis, desc(abs(normS))))
 
 	#Urban Qualities simulated values analysis
-      qualities <- data.frame(complexity=0, complexityNorm=0, humanScale=0, humanScaleNorm=0, imageability=0, imageabilityNorm=0, enclosure=0, enclosureNorm=0, coherence=0, coherenceNorm=0, linkage=0, linkageNorm=0, legibility=0, legibilityNorm=0, transparency=0, transparencyNorm=0, tidiness=0, tidinessNorm=0)  
       qualitySum <- mean(data$movCars[[1]]) + mean(data$movCicly[[1]]) + mean(data$parkCars[[1]]) + mean(data$peop[[1]]) + mean(data$diffBuild[[1]]) + mean(data$buildNRec[[1]]) + mean(data$buildDiffAges[[1]]) + mean(data$ligh[[1]]) + mean(data$graff[[1]]) + mean(data$basCol[[1]]) + mean(data$accenCol[[1]]) + mean(data$streeFur[[1]]) + mean(data$tree[[1]]) + mean(data$smallPla[[1]])
-      qualities$complexity <- qualitySum
-      qualities$complexityNorm <- qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$parkCarsN[[1]] + data$peopN[[1]] + data$diffBuildN[[1]] + data$buildNRecN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$graffN[[1]] + data$basColN[[1]] + data$accenColN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]])
+      qualities <- data.frame(feature="complexity", value=qualitySum, norm=qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$parkCarsN[[1]] + data$peopN[[1]] + data$diffBuildN[[1]] + data$buildNRecN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$graffN[[1]] + data$basColN[[1]] + data$accenColN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]]) )
 
       qualitySum <- mean(data$movCars[[1]]) + mean(data$movCicly[[1]]) + mean(data$peop[[1]]) + mean(data$ligh[[1]]) + mean(data$streeFur[[1]]) + mean(data$tree[[1]]) + mean(data$smallPla[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]]) #+ mean(data$buildHeight[[1]])
-      qualities$humanScale <- qualitySum
-      qualities$humanScaleNorm <- qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$peopN[[1]] + data$lighN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="humanScale", value=qualitySum, norm=qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$peopN[[1]] + data$lighN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])))
 
       qualitySum <- mean(data$peop[[1]]) + mean(data$buildId[[1]]) + mean(data$buildNRec[[1]]) + mean(data$basCol[[1]])
-      qualities$imageability <- qualitySum
-      qualities$imageabilityNorm <- qualitySum / (data$peopN[[1]] + data$buildIdN[[1]] + data$buildNRecN[[1]] + data$basColN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="imageability", value=qualitySum, norm=qualitySum / (data$peopN[[1]] + data$buildIdN[[1]] + data$buildNRecN[[1]] + data$basColN[[1]])))
 
       qualitySum <- mean(data$ligh[[1]]) + mean(data$tree[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]])#+ mean(data$buildHeight[[1]])
-      qualities$enclosure <- qualitySum
-      qualities$enclosureNorm <- qualitySum / (data$lighN[[1]] + data$treeN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="enclosure", value=qualitySum, norm=qualitySum / (data$lighN[[1]] + data$treeN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])))
 
       qualitySum <- mean(data$peop[[1]]) + mean(data$buildDiffAges[[1]]) + mean(data$ligh[[1]]) + mean(data$basCol[[1]]) + mean(data$accenCol[[1]])+ mean(data$streeFur[[1]])#+ mean(data$buildHeight[[1]])
-      qualities$coherence <- qualitySum
-      qualities$coherenceNorm <- qualitySum / (data$peopN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$basColN[[1]] + data$accenColN[[1]]+ data$streeFurN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="coherence", value=qualitySum, norm=qualitySum / (data$peopN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$basColN[[1]] + data$accenColN[[1]]+ data$streeFurN[[1]])))
 
       qualitySum <- mean(data$movCars[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]])
-      qualities$linkage <- qualitySum
-      qualities$linkageNorm <- qualitySum / (data$movCarsN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="linkage", value=qualitySum, norm=qualitySum / (data$movCarsN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])))
 
       qualitySum <- mean(data$buildId[[1]]) + mean(data$longSight[[1]])
-      qualities$legibility <- qualitySum
-      qualities$legibilityNorm <- qualitySum / (data$buildIdN[[1]] + data$longSightN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="legibility", value=qualitySum, norm=qualitySum / (data$buildIdN[[1]] + data$longSightN[[1]])))
 
       qualitySum <- mean(data$sidewalkWid[[1]])#+ mean(data$buildHeight[[1]])
-      qualities$transparency <- qualitySum
-      qualities$transparencyNorm <- qualitySum / (data$sidewalkWidN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="transparency", value=qualitySum, norm=qualitySum / (data$sidewalkWidN[[1]])))
 
       qualitySum <- mean(data$graff[[1]]) + mean(data$streeFur[[1]]) + mean(data$debris[[1]]) + mean(data$pavement[[1]]) + mean(data$landscape[[1]])#+ mean(data$buildHeight[[1]])
-      qualities$tidiness <- qualitySum
-      qualities$tidinessNorm <- qualitySum / (data$graffN[[1]] + data$streeFurN[[1]] + data$debrisN[[1]] + data$pavementN[[1]] + data$landscapeN[[1]])
+	qualities <- rbind(qualities, data.frame(feature="tidiness", value=qualitySum, norm=qualitySum / (data$graffN[[1]] + data$streeFurN[[1]] + data$debrisN[[1]] + data$pavementN[[1]] + data$landscapeN[[1]])))
 
-     print(qualities)
-     print(arrange(melt(qualities), desc(abs(value))))
+     print(arrange(qualities, desc(abs(value))))
+
+    #Printing qualities and their respective features
+    print(filter(qualities, feature="complexity"))
+    print(filter(featureAnalysis, feature="movCars" | feature == "movCicly" | feature == "parkCars" | feature == "peop" | feature == "diffBuild" | feature == "buildNRec" | feature == "buildDiffAges" | feature == "ligh" | feature == "graff" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "tree" | feature == "smallPla"))
+
+    print(filter(qualities, feature="humanScale"))
+    print(filter(featureAnalysis, feature="movCars" | feature == "movCicly" | feature == "peop" | feature == "ligh" | feature == "streeFur" | feature == "tree" | feature == "smallPla" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
+
+    print(filter(qualities, feature="imageability"))
+    print(filter(featureAnalysis, feature == "peop" | feature == "buildId" | feature == "buildNRec" | feature == "basCol" ))
+
+    print(filter(qualities, feature="enclosure"))
+    print(filter(featureAnalysis, feature="ligh" | feature == "tree" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
+
+    print(filter(qualities, feature="coherence"))
+    print(filter(featureAnalysis, feature == "peop" | feature == "buildDiffAges" | feature == "ligh" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "buildHeight"))
+
+    print(filter(qualities, feature="linkage"))
+    print(filter(featureAnalysis, feature == "movCars" | feature == "longSight" | feature == "streetWid" ))
+
+    print(filter(qualities, feature="legibility"))
+    print(filter(featureAnalysis, feature == "buildId" | feature == "longSight"))
+
+    print(filter(qualities, feature="transparency"))
+    print(filter(featureAnalysis, feature == "sidewalkWid" | feature == "buildHeight"))
+
+    print(filter(qualities, feature="tidiness"))
+    print(filter(featureAnalysis, feature == "graff" | feature == "streeFur" | feature == "debris" | feature == "pavement" | feature == "landscape"))
 }
 
 

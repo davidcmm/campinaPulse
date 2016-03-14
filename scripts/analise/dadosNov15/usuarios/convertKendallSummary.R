@@ -249,16 +249,16 @@ analyseICForFeatures <- function(data){
 
     #Printing qualities and their respective features
     print(filter(qualities, feature=="complexity"))
-    print(filter(featureAnalysis, feature="movCars" | feature == "movCicly" | feature == "parkCars" | feature == "peop" | feature == "diffBuild" | feature == "buildNRec" | feature == "buildDiffAges" | feature == "ligh" | feature == "graff" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "tree" | feature == "smallPla"))
+    print(filter(featureAnalysis, feature=="movCars" | feature == "movCicly" | feature == "parkCars" | feature == "peop" | feature == "diffBuild" | feature == "buildNRec" | feature == "buildDiffAges" | feature == "ligh" | feature == "graff" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "tree" | feature == "smallPla"))
 
     print(filter(qualities, feature=="humanScale"))
-    print(filter(featureAnalysis, feature="movCars" | feature == "movCicly" | feature == "peop" | feature == "ligh" | feature == "streeFur" | feature == "tree" | feature == "smallPla" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
+    print(filter(featureAnalysis, feature=="movCars" | feature == "movCicly" | feature == "peop" | feature == "ligh" | feature == "streeFur" | feature == "tree" | feature == "smallPla" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
 
     print(filter(qualities, feature=="imageability"))
     print(filter(featureAnalysis, feature == "peop" | feature == "buildId" | feature == "buildNRec" | feature == "basCol" ))
 
     print(filter(qualities, feature=="enclosure"))
-    print(filter(featureAnalysis, feature="ligh" | feature == "tree" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
+    print(filter(featureAnalysis, feature=="ligh" | feature == "tree" | feature == "longSight" | feature == "streetWid" | feature == "buildHeight"))
 
     print(filter(qualities, feature=="coherence"))
     print(filter(featureAnalysis, feature == "peop" | feature == "buildDiffAges" | feature == "ligh" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "buildHeight"))

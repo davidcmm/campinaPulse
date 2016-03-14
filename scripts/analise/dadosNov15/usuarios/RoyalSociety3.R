@@ -480,17 +480,20 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 
     featuresMapG1 <- list(movCars = list(c()) , parkCars = list(c()), movCicly= list(c()), buildId = list(c()), buildNRec = list(c()), tree = list(c()), smallPla = list(c()), diffBuild = list(c()), streeFur = list(c()), basCol = list(c()), ligh = list(c()), accenCol = list(c()), peop = list(c()), graff = list(c()), buildDiffAges = list(c()), streetWid = list(c()), sidewalkWid = list(c()), debris = list(c()), pavement = list(c()), landscape = list(c()), propStreetWall = list(c()), propWind = list(c()), longSight = list(c()), propSkyAhead = list(c()), propSkyAcross = list(c()), buildHeight = list(c()), propActiveUse = list(c()), movCarsN = list(c()) , parkCarsN = list(c()), movCiclyN= list(c()), buildIdN = list(c()), buildNRecN = list(c()), treeN = list(c()), smallPlaN = list(c()), diffBuildN = list(c()), streeFurN = list(c()), basColN = list(c()), lighN = list(c()), accenColN = list(c()), peopN = list(c()), graffN = list(c()), buildDiffAgesN = list(c()), streetWidN = list(c()), sidewalkWidN = list(c()), debrisN = list(c()), pavementN = list(c()), landscapeN = list(c()), propStreetWallN = list(c()), propWindN = list(c()), longSightN = list(c()), propSkyAheadN = list(c()), propSkyAcrossN = list(c()), buildHeightN = list(c()), propActiveUseN = list(c()))
 
+     movCarsMaxAllVal <- parkCarsMaxAllVal <- movCiclyMaxAllVal <- buildIdMaxAllVal <- buildNRecMaxAllVal <- treeMaxAllVal <- smallPlaMaxAllVal <- diffBuildMaxAllVal <- streeFurMaxAllVal <- basColMaxAllVal <- lighMaxAllVal <- accenColMaxAllVal <- peopMaxAllVal <- graffMaxAllVal <- buildDiffAgesMaxAllVal <- streetWidMaxAllVal <- sidewalkWidMaxAllVal <- buildHeightMaxAllVal <- longSightMaxAllVal <- c()
+    debrisMaxAllVal <- pavementMaxAllVal <- landscapeMaxAllVal <- propStreetWallMaxAllVal <- propWindMaxAllVal <- propSkyAheadMaxAllVal <- propSkyAcrossMaxAllVal <- propActiveUseMaxAllVal <- c()
+
     for (ind in seq(2, 101)) {
 		
 	#Original data
 	groupCompleteId1 <- paste("V3.", group1Id, sep="")
 	groupCompleteId2 <- paste("V3.", group2Id, sep="")
-        data <- data %>% do(arrange(., image_url))
+        data <- data %>% do(arrange(., image_url)) 
 	data[[groupCompleteId1]][c(1:107)] <- as.vector(simData1[,ind])
 	data[[groupCompleteId2]][c(1:107)] <- as.vector(simData2[,ind])
 
-	sortedData <- data %>% do(arrange(., desc(V3.Casado))) %>% 
-    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
+	sortedData <- data %>% do(arrange(., desc(V3.Masculino))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
     	data <- arrange(sortedData, rank)
     
 	    movCarsOrig <- data[["mov_cars"]]
@@ -523,7 +526,8 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 
 	    movCars <- parkCars <- movCicly<- buildId <- buildNRec <- tree <- smallPla <- diffBuild <- streeFur <- basCol <- ligh <- accenCol<- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- buildHeight <- longSight <- 0
 	    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
-	    movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
+	    
+		movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
 	    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
 
 	    #First call, comparing for group 1
@@ -633,46 +637,65 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	      featuresMapG1$propSkyAcross[[1]] <- c(featuresMapG1$propSkyAcross[[1]], .Internal(mean(propSkyAcross)))
 	      featuresMapG1$propActiveUse[[1]] <- c(featuresMapG1$propActiveUse[[1]], .Internal(mean(propActiveUse)))
 	    }
-	    debrisMax <- .Internal(mean(debrisMax))
-	    pavementMax <- .Internal(mean(pavementMax))
-	    landscapeMax <- .Internal(mean(landscapeMax))
-	    propStreetWallMax <- .Internal(mean(propStreetWallMax))
-	    propWindMax <- .Internal(mean(propWindMax))
-	    propStreetWallMax <- .Internal(mean(propStreetWallMax))
-	    propWindMax <- .Internal(mean(propWindMax))
-	    propSkyAheadMax <- .Internal(mean(propSkyAheadMax))
-	    propSkyAcrossMax <- .Internal(mean(propSkyAcrossMax))
-	    propActiveUseMax <- .Internal(mean(propActiveUseMax))
+	
+	    #Saving all max values
+	    movCarsMaxAllVal <- c(movCarsMaxAllVal, movCarsMax)
+	    parkCarsMaxAllVal <- c(parkCarsMaxAllVal, parkCarsMax)
+	    movCiclyMaxAllVal <- c(movCiclyMaxAllVal, movCiclyMax)
+	    buildIdMaxAllVal <- c(buildIdMaxAllVal, buildIdMax)
+	    buildNRecMaxAllVal <- c(buildNRecMaxAllVal, buildNRecMax)
+	    treeMaxAllVal <- c(treeMaxAllVal, treeMax)
+	    smallPlaMaxAllVal <- c(smallPlaMaxAllVal, smallPlaMax)
+	    diffBuildMaxAllVal <- c(diffBuildMaxAllVal, diffBuildMax)
+	    streeFurMaxAllVal <- c(streeFurMaxAllVal, streeFurMax)
+	    basColMaxAllVal <- c(basColMaxAllVal, basColMax)
+	    lighMaxAllVal <- c(lighMaxAllVal, lighMax)
+            accenColMaxAllVal <- c(accenColMaxAllVal, accenColMax)
+	    peopMaxAllVal <- c(peopMaxAllVal, peopMax)
+	    graffMaxAllVal <- c(graffMaxAllVal, graffMax)
+	    buildDiffAgesMaxAllVal <- c(buildDiffAgesMaxAllVal, buildDiffAgesMax)
+	    streetWidMaxAllVal <- c(streetWidMaxAllVal, streetWidMax)
+	    sidewalkWidMaxAllVal <- c(sidewalkWidMaxAllVal, sidewalkWidMax)
+	    buildHeightMaxAllVal <- c(buildHeightMaxAllVal, buildHeightMax)
+	    longSightMaxAllVal <- c(longSightMaxAllVal, longSightMax)
+	    debrisMaxAllVal <- c(debrisMaxAllVal, .Internal(mean(debrisMax)))
+	    pavementMaxAllVal <- c(pavementMaxAllVal, .Internal(mean(pavementMax)))
+	    landscapeMaxAllVal <- c(landscapeMaxAllVal, .Internal(mean(landscapeMax)))
+	    propStreetWallMaxAllVal <- c(propStreetWallMaxAllVal, .Internal(mean(propStreetWallMax)))
+	    propWindMaxAllVal <- c(propWindMaxAllVal, .Internal(mean(propWindMax)))
+	    propSkyAheadMaxAllVal <- c(propSkyAheadMaxAllVal, .Internal(mean(propSkyAheadMax)))
+	    propSkyAcrossMaxAllVal <- c(propSkyAcrossMaxAllVal, .Internal(mean(propSkyAcrossMax)))
+	    propActiveUseMaxAllVal <- c(propActiveUseMaxAllVal, .Internal(mean(propActiveUseMax)))
    }
 
    #Normalizing real values
-    featuresMapG1$movCarsN[[1]] <- c(movCarsMax)#(maxMovCars*den)
-    featuresMapG1$parkCarsN[[1]] <-  c(parkCarsMax)#(maxParkCars*den)
-    featuresMapG1$movCiclyN[[1]] <-   c(movCiclyMax)#(maxMovCicly*den)
-    featuresMapG1$buildIdN[[1]] <-  c(buildIdMax)#(maxBuildId*den)
-    featuresMapG1$buildNRecN[[1]] <-  c(buildNRecMax)#(maxBuildNRec*den)
-    featuresMapG1$treeN[[1]] <-  c(treeMax)#(maxTree*den)
-    featuresMapG1$smallPlaN[[1]] <-  c(smallPlaMax)#(maxSmallPla*den)
-    featuresMapG1$diffBuildN[[1]] <-  c(diffBuildMax)#(maxDiffBuild*den)
-    featuresMapG1$streeFurN[[1]] <-  c(streeFurMax)#(maxStreeFur*den)
-    featuresMapG1$basColN[[1]] <-  c(basColMax)#(maxBasCol*den)
-    featuresMapG1$lighN[[1]] <-  c(lighMax)#(maxLigh*den)
-    featuresMapG1$accenColN[[1]] <-  c(accenColMax)#(maxAccenCol*den)
-    featuresMapG1$peopN[[1]] <-  c(peopMax)#(maxPeop*den)
-    featuresMapG1$graffN[[1]] <-  c(graffMax)#(maxGraff*den)
-    featuresMapG1$buildDiffAgesN[[1]] <- c( buildDiffAgesMax)#(maxBuildDiffAges*den)
-    featuresMapG1$streetWidN[[1]] <-  c(streetWidMax)
-    featuresMapG1$sidewalkWidN[[1]] <- c(sidewalkWidMax)
-    featuresMapG1$debrisN[[1]] <-  c(debrisMax)
-    featuresMapG1$pavementN[[1]] <-  c(pavementMax)
-    featuresMapG1$landscapeN[[1]] <- c(landscapeMax)
-    featuresMapG1$propStreetWallN[[1]] <-  c(propStreetWallMax)
-    featuresMapG1$propWindN[[1]] <-  c(propWindMax)
-    featuresMapG1$longSightN[[1]] <-  c(longSightMax)
-    featuresMapG1$propSkyAheadN[[1]] <-  c(propSkyAheadMax)
-    featuresMapG1$propSkyAcrossN[[1]] <-  c(propSkyAcrossMax)
-    featuresMapG1$buildHeightN[[1]] <-  c(buildHeightMax)
-    featuresMapG1$propActiveUseN[[1]] <-  c(propActiveUseMax)
+    featuresMapG1$movCarsN[[1]] <- mean(movCarsMaxAllVal)#(maxMovCars*den)
+    featuresMapG1$parkCarsN[[1]] <-  mean(parkCarsMaxAllVal)#(maxParkCars*den)
+    featuresMapG1$movCiclyN[[1]] <-   mean(movCiclyMaxAllVal)#(maxMovCicly*den)
+    featuresMapG1$buildIdN[[1]] <-  mean(buildIdMaxAllVal)#(maxBuildId*den)
+    featuresMapG1$buildNRecN[[1]] <-  mean(buildNRecMaxAllVal)#(maxBuildNRec*den)
+    featuresMapG1$treeN[[1]] <-  mean(treeMaxAllVal)#(maxTree*den)
+    featuresMapG1$smallPlaN[[1]] <-  mean(smallPlaMaxAllVal)#(maxSmallPla*den)
+    featuresMapG1$diffBuildN[[1]] <-  mean(diffBuildMaxAllVal)#(maxDiffBuild*den)
+    featuresMapG1$streeFurN[[1]] <-  mean(streeFurMaxAllVal)#(maxStreeFur*den)
+    featuresMapG1$basColN[[1]] <-  mean(basColMaxAllVal)#(maxBasCol*den)
+    featuresMapG1$lighN[[1]] <-  mean(lighMaxAllVal)#(maxLigh*den)
+    featuresMapG1$accenColN[[1]] <-  mean(accenColMaxAllVal)#(maxAccenCol*den)
+    featuresMapG1$peopN[[1]] <-  mean(peopMaxAllVal)#(maxPeop*den)
+    featuresMapG1$graffN[[1]] <-  mean(graffMaxAllVal)#(maxGraff*den)
+    featuresMapG1$buildDiffAgesN[[1]] <- mean( buildDiffAgesMaxAllVal)#(maxBuildDiffAges*den)
+    featuresMapG1$streetWidN[[1]] <-  mean(streetWidMaxAllVal)
+    featuresMapG1$sidewalkWidN[[1]] <- mean(sidewalkWidMaxAllVal)
+    featuresMapG1$debrisN[[1]] <-  mean(debrisMaxAllVal)
+    featuresMapG1$pavementN[[1]] <-  mean(pavementMaxAllVal)
+    featuresMapG1$landscapeN[[1]] <- mean(landscapeMaxAllVal)
+    featuresMapG1$propStreetWallN[[1]] <-  mean(propStreetWallMaxAllVal)
+    featuresMapG1$propWindN[[1]] <-  mean(propWindMaxAllVal)
+    featuresMapG1$longSightN[[1]] <-  mean(longSightMaxAllVal)
+    featuresMapG1$propSkyAheadN[[1]] <-  mean(propSkyAheadMaxAllVal)
+    featuresMapG1$propSkyAcrossN[[1]] <-  mean(propSkyAcrossMaxAllVal)
+    featuresMapG1$buildHeightN[[1]] <-  mean(buildHeightMaxAllVal)
+    featuresMapG1$propActiveUseN[[1]] <-  mean(propActiveUseMaxAllVal)
 
 	return ( featuresMapG1 )
 }

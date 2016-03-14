@@ -1,4 +1,5 @@
 #!/bin/Rscript
+#Analyses and calculates confidence intervals for features analysis
 library(dplyr)
 
 icOnValues <- function(mean, sd, n) { 
@@ -15,6 +16,247 @@ icOnValuesSidak <- function(mean, sd, n) {
   return (sd/sqrt(n)*qnorm(1-(value/2)))
 	#value = 1 - (1-0.05/26) #Bonferroni
 	#return (sd/sqrt(n)*qnorm(1-(value/2)))
+}
+
+icForFeatures <- function(x) { 
+	return (sd(x)/sqrt(length(x))*qt(.975,99))#95% confidence interval for a sample of 1000 items
+	#print (100 * qnorm(1-(0.05/2)) * sd(x) / (5 * mean(x)))^2
+	#return (sd(x)/sqrt(length(x))*qnorm(1-(0.05/2)))#95% confidence interval, significance level of 0.05 (alpha) - sample 100
+}
+
+analyseICForFeatures <- function(data){
+	#Features simulated values analysis
+      icData <- icForFeatures(data$movCars[[1]])
+      meanVal <- mean(data$movCars[[1]])
+      norm <- meanVal / data$movCarsN[[1]]
+      medianVal <- median(data$movCars[[1]])
+      norm2 <- medianVal / data$movCarsN[[1]]
+#      print(paste("movCars", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE) 
+      featureAnalysis <- data.frame(feature="movCars", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2)
+      icData <- icForFeatures(data$parkCars[[1]])
+      meanVal <- mean(data$parkCars[[1]])
+      norm <- meanVal / data$parkCarsN[[1]]
+      medianVal <- median(data$parkCars[[1]])
+      norm2 <- medianVal / data$parkCarsN[[1]]
+      featureAnalysis <- rbind(featureAnalysis, data.frame(feature="parkCars", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$movCicly[[1]])
+      meanVal <- mean(data$movCicly[[1]])
+      norm <- meanVal / data$movCiclyN[[1]]
+      medianVal <- median(data$movCicly[[1]])
+      norm2 <- medianVal / data$movCiclyN[[1]]
+      #print(paste("movCicly", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="movCicly", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$buildId[[1]])
+      meanVal <- mean(data$buildId[[1]])
+      norm <- meanVal / data$buildIdN[[1]]
+      medianVal <- median(data$buildId[[1]])
+      norm2 <- medianVal / data$buildIdN[[1]]
+      #print(paste("buildId", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="buildId", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$buildNRec[[1]])
+      meanVal <- mean(data$buildNRec[[1]])
+      norm <- meanVal / data$buildNRecN[[1]]
+      medianVal <- median(data$buildNRec[[1]])
+      norm2 <- medianVal / data$buildNRecN[[1]]
+      #print(paste("buildNRec", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="buildNRec", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$tree[[1]])
+      meanVal <- mean(data$tree[[1]])
+      norm <- meanVal / data$treeN[[1]]
+      medianVal <- median(data$tree[[1]])
+      norm2 <- medianVal / data$treeN[[1]]
+      #print(paste("tree", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="tree", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$smallPla[[1]])
+      meanVal <- mean(data$smallPla[[1]])
+      norm <- meanVal / data$smallPlaN[[1]]
+      medianVal <- median(data$smallPla[[1]])
+      norm2 <- medianVal / data$smallPlaN[[1]]
+      #print(paste("smallPla", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="smallPla", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$diffBuild[[1]])
+      meanVal <- mean(data$diffBuild[[1]])
+      norm <- meanVal / data$diffBuildN[[1]]
+      medianVal <- median(data$diffBuild[[1]])
+      norm2 <- medianVal / data$diffBuildN[[1]]
+     # print(paste("diffBuild", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="diffBuild", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$streeFur[[1]])
+      meanVal <- mean(data$streeFur[[1]])
+      norm <- meanVal / data$streeFurN[[1]]
+      medianVal <- median(data$streeFur[[1]])
+      norm2 <- medianVal / data$streeFurN[[1]]
+     # print(paste("streeFur", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="streeFur", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$basCol[[1]])
+      meanVal <- mean(data$basCol[[1]])
+      norm <- meanVal / data$basColN[[1]]
+      medianVal <- median(data$basCol[[1]])
+      norm2 <- medianVal / data$basColN[[1]]
+     # print(paste("basCol", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="basCol", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$ligh[[1]])
+      meanVal <- mean(data$ligh[[1]])
+      norm <- meanVal / data$lighN[[1]]
+      medianVal <- median(data$ligh[[1]])
+      norm2 <- medianVal / data$lighN[[1]]
+      #print(paste("ligh", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="ligh", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$accenCol[[1]])
+      meanVal <- mean(data$accenCol[[1]])
+      norm <- meanVal / data$accenColN[[1]]
+      medianVal <- median(data$accenCol[[1]])
+      norm2 <- medianVal / data$accenColN[[1]]
+      #print(paste("accenCol", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="accenCol", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$peop[[1]])
+      meanVal <- mean(data$peop[[1]])
+      norm <- meanVal / data$peopN[[1]]
+      medianVal <- median(data$peop[[1]])
+      norm2 <- medianVal / data$peopN[[1]]
+     # print(paste("peop", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="peop", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$graff[[1]])
+      meanVal <- mean(data$graff[[1]])
+      norm <- meanVal / data$graffN[[1]]
+      medianVal <- median(data$graff[[1]])
+      norm2 <- medianVal / data$graffN[[1]]
+    #  print(paste("graff", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="graff", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$buildDiffAges[[1]])
+      meanVal <- mean(data$buildDiffAges[[1]])
+      norm <- meanVal / data$buildDiffAgesN[[1]]
+      medianVal <- median(data$buildDiffAges[[1]])
+      norm2 <- medianVal / data$buildDiffAgesN[[1]]
+#      print(paste("buildDiffAges", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="buildDiffAges", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$streetWid[[1]])
+      meanVal <- mean(data$streetWid[[1]])
+      norm <- meanVal / data$streetWidN[[1]]
+      medianVal <- median(data$streetWid[[1]])
+      norm2 <- medianVal / data$streetWidN[[1]]
+      #print(paste("streetWid", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="streetWid", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$sidewalkWid[[1]])
+      meanVal <- mean(data$sidewalkWid[[1]])
+      norm <- meanVal / data$sidewalkWidN[[1]]
+      medianVal <- median(data$sidewalkWid[[1]])
+      norm2 <- medianVal / data$sidewalkWidN[[1]]
+      #print(paste("sidewalkWid", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="sidewalkWid", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$buildHeight[[1]])
+      meanVal <- mean(data$buildHeight[[1]])
+      norm <- meanVal / data$buildHeightN[[1]]
+      medianVal <- median(data$buildHeight[[1]])
+      norm2 <- medianVal / data$buildHeightN[[1]]
+#      print(paste("buildHeight", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="buildHeight", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$longSight[[1]])
+      meanVal <- mean(data$longSight[[1]])
+      norm <- meanVal / data$longSightN[[1]]
+      medianVal <- median(data$longSight[[1]])
+      norm2 <- medianVal / data$longSightN[[1]]
+      #print(paste("longSight", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="longSight", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$debris[[1]])
+      meanVal <- mean(data$debris[[1]])
+      norm <- meanVal / data$debrisN[[1]]
+      medianVal <- median(data$debris[[1]])
+      norm2 <- medianVal / data$debrisN[[1]]
+      #print(paste("debris", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="debris", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$pavement[[1]])
+      meanVal <- mean(data$pavement[[1]])
+      norm <- meanVal / data$pavementN[[1]]
+      medianVal <- median(data$pavement[[1]])
+      norm2 <- medianVal / data$pavementN[[1]]
+#      print(paste("pavement", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="pavement", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$landscape[[1]])
+      meanVal <- mean(data$landscape[[1]])
+      norm <- meanVal / data$landscapeN[[1]]
+      medianVal <- median(data$landscape[[1]])
+      norm2 <- medianVal / data$landscapeN[[1]]
+#      print(paste("landscape", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="landscape", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$propStreetWall[[1]])
+      meanVal <- mean(data$propStreetWall[[1]])
+      norm <- meanVal / data$propStreetWallN[[1]]
+      medianVal <- median(data$propStreetWall[[1]])
+      norm2 <- medianVal / data$propStreetWallN[[1]]
+#      print(paste("propStreetWall", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propStreetWall", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$propWind[[1]])
+      meanVal <- mean(data$propWind[[1]])
+      norm <- meanVal / data$propWindN[[1]]
+      medianVal <- median(data$propWind[[1]])
+      norm2 <- medianVal / data$propWindN[[1]]
+      #print(paste("propWind", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propWind", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$propSkyAhead[[1]])
+      meanVal <- mean(data$propSkyAhead[[1]])
+      norm <- meanVal / data$propSkyAheadN[[1]]
+      medianVal <- median(data$propSkyAhead[[1]])
+      norm2 <- medianVal / data$propSkyAheadN[[1]]
+      #print(paste("propSkyAhead", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propSkyAhead", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$propSkyAcross[[1]])
+      meanVal <- mean(data$propSkyAcross[[1]])
+      norm <- meanVal / data$propSkyAcrossN[[1]]
+      medianVal <- median(data$propSkyAcross[[1]])
+      norm2 <- medianVal / data$propSkyAcrossN[[1]]
+     # print(paste("propSkyAcross", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)      
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propSkyAcross", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+      icData <- icForFeatures(data$propActiveUse[[1]])
+      meanVal <- mean(data$propActiveUse[[1]])
+      norm <- meanVal / data$propActiveUseN[[1]]
+      medianVal <- median(data$propActiveUse[[1]])
+      norm2 <- medianVal / data$propActiveUseN[[1]]
+      #print(paste("propActiveUse", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)    
+	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propActiveUse", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
+
+	print(arrange(featureAnalysis, desc(abs(normS))))
+
+	#Urban Qualities simulated values analysis
+      qualities <- data.frame(complexity=0, complexityNorm=0, humanScale=0, humanScaleNorm=0, imageability=0, imageabilityNorm=0, enclosure=0, enclosureNorm=0, coherence=0, coherenceNorm=0, linkage=0, linkageNorm=0, legibility=0, legibilityNorm=0, transparency=0, transparencyNorm=0, tidiness=0, tidinessNorm=0)  
+      qualitySum <- mean(data$movCars[[1]]) + mean(data$movCicly[[1]]) + mean(data$parkCars[[1]]) + mean(data$peop[[1]]) + mean(data$diffBuild[[1]]) + mean(data$buildNRec[[1]]) + mean(data$buildDiffAges[[1]]) + mean(data$ligh[[1]]) + mean(data$graff[[1]]) + mean(data$basCol[[1]]) + mean(data$accenCol[[1]]) + mean(data$streeFur[[1]]) + mean(data$tree[[1]]) + mean(data$smallPla[[1]])
+      qualities$complexity <- qualitySum
+      qualities$complexityNorm <- qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$parkCarsN[[1]] + data$peopN[[1]] + data$diffBuildN[[1]] + data$buildNRecN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$graffN[[1]] + data$basColN[[1]] + data$accenColN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]])
+
+      qualitySum <- mean(data$movCars[[1]]) + mean(data$movCicly[[1]]) + mean(data$peop[[1]]) + mean(data$ligh[[1]]) + mean(data$streeFur[[1]]) + mean(data$tree[[1]]) + mean(data$smallPla[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]]) #+ mean(data$buildHeight[[1]])
+      qualities$humanScale <- qualitySum
+      qualities$humanScaleNorm <- qualitySum / (data$movCarsN[[1]] + data$movCiclyN[[1]] + data$peopN[[1]] + data$lighN[[1]] + data$streeFurN[[1]] + data$treeN[[1]] + data$smallPlaN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+
+      qualitySum <- mean(data$peop[[1]]) + mean(data$buildId[[1]]) + mean(data$buildNRec[[1]]) + mean(data$basCol[[1]])
+      qualities$imageability <- qualitySum
+      qualities$imageabilityNorm <- qualitySum / (data$peopN[[1]] + data$buildIdN[[1]] + data$buildNRecN[[1]] + data$basColN[[1]])
+
+      qualitySum <- mean(data$ligh[[1]]) + mean(data$tree[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]])#+ mean(data$buildHeight[[1]])
+      qualities$enclosure <- qualitySum
+      qualities$enclosureNorm <- qualitySum / (data$lighN[[1]] + data$treeN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+
+      qualitySum <- mean(data$peop[[1]]) + mean(data$buildDiffAges[[1]]) + mean(data$ligh[[1]]) + mean(data$basCol[[1]]) + mean(data$accenCol[[1]])+ mean(data$streeFur[[1]])#+ mean(data$buildHeight[[1]])
+      qualities$coherence <- qualitySum
+      qualities$coherenceNorm <- qualitySum / (data$peopN[[1]] + data$buildDiffAgesN[[1]] + data$lighN[[1]] + data$basColN[[1]] + data$accenColN[[1]]+ data$streeFurN[[1]])
+
+      qualitySum <- mean(data$movCars[[1]]) + mean(data$longSight[[1]]) + mean(data$streetWid[[1]])
+      qualities$linkage <- qualitySum
+      qualities$linkageNorm <- qualitySum / (data$movCarsN[[1]] + data$longSightN[[1]] + data$streetWidN[[1]])
+
+      qualitySum <- mean(data$buildId[[1]]) + mean(data$longSight[[1]])
+      qualities$legibility <- qualitySum
+      qualities$legibilityNorm <- qualitySum / (data$buildIdN[[1]] + data$longSightN[[1]])
+
+      qualitySum <- mean(data$sidewalkWid[[1]])#+ mean(data$buildHeight[[1]])
+      qualities$transparency <- qualitySum
+      qualities$transparencyNorm <- qualitySum / (data$sidewalkWidN[[1]])
+
+      qualitySum <- mean(data$graff[[1]]) + mean(data$streeFur[[1]]) + mean(data$debris[[1]]) + mean(data$pavement[[1]]) + mean(data$landscape[[1]])#+ mean(data$buildHeight[[1]])
+      qualities$tidiness <- qualitySum
+      qualities$tidinessNorm <- qualitySum / (data$graffN[[1]] + data$streeFurN[[1]] + data$debrisN[[1]] + data$pavementN[[1]] + data$landscapeN[[1]])
+
+     print(qualities)
+     print(arrange(melt(qualities), desc(abs(value))))
 }
 
 

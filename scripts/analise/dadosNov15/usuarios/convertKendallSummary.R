@@ -215,7 +215,7 @@ analyseICForFeatures <- function(data){
       #print(paste("propActiveUse", meanVal, meanVal - icData, meanVal + icData, norm, norm2), quote=FALSE)    
 	featureAnalysis <- rbind(featureAnalysis, data.frame(feature="propActiveUse", realS=meanVal, lowerS=meanVal-icData, higherS=meanVal+icData, normS=norm, normS2=norm2))
 
-	print(arrange(featureAnalysis, desc(abs(normS))))
+	write.table(arrange(featureAnalysis, desc(abs(normS))), row.names=FALSE, quote=FALSE)
 
 	#Urban Qualities simulated values analysis
       qualitySum <- mean(data$movCars[[1]]) + mean(data$movCicly[[1]]) + mean(data$parkCars[[1]]) + mean(data$peop[[1]]) + mean(data$diffBuild[[1]]) + mean(data$buildNRec[[1]]) + mean(data$buildDiffAges[[1]]) + mean(data$ligh[[1]]) + mean(data$graff[[1]]) + mean(data$basCol[[1]]) + mean(data$accenCol[[1]]) + mean(data$streeFur[[1]]) + mean(data$tree[[1]]) + mean(data$smallPla[[1]])
@@ -245,7 +245,7 @@ analyseICForFeatures <- function(data){
       qualitySum <- mean(data$graff[[1]]) + mean(data$streeFur[[1]]) + mean(data$debris[[1]]) + mean(data$pavement[[1]]) + mean(data$landscape[[1]])#+ mean(data$buildHeight[[1]])
 	qualities <- rbind(qualities, data.frame(feature="tidiness", value=qualitySum, norm=qualitySum / (data$graffN[[1]] + data$streeFurN[[1]] + data$debrisN[[1]] + data$pavementN[[1]] + data$landscapeN[[1]])))
 
-     print(arrange(qualities, desc(abs(value))))
+     write.table(arrange(qualities, desc(abs(value))), row.names=FALSE, quote=FALSE)
 
     #Printing qualities and their respective features
     print(filter(qualities, feature=="complexity"))

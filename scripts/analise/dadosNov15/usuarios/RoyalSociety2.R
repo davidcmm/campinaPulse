@@ -492,8 +492,8 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	data[[groupCompleteId1]] <- as.vector(simData1[,ind])
 	data[[groupCompleteId2]] <- as.vector(simData2[,ind])
 
-	sortedData <- data %>% do(arrange(., desc(V3.Masculino))) %>% 
-    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+	sortedData <- data %>% do(arrange(., desc(V3.Jovem))) %>% 
+    mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
     	data <- arrange(sortedData, rank)
     
 	    movCarsOrig <- data[["mov_cars"]]

@@ -3565,25 +3565,6 @@ res + geom_point(aes(x=feature, y=realS), col="red") + geom_errorbar(aes(ymin=lo
 res <- ggplot(data=filter(newTest, (feature == "propActiveUse" | feature == "propWind" | feature == "propSkyAcross" | feature == "propSkyAhead" | feature == "propStreetWall" | feature == "debris" | feature == "landscape" | feature == "pavement")), aes(x=feature, y=random), col="black") + geom_point() + geom_errorbar(aes(ymin=lowerSid, ymax=higherSid), width=.1) + ylim(c(-1, 1))
 res + geom_point(aes(x=feature, y=realS), col="red") + geom_errorbar(aes(ymin=lowerS, ymax=higherS), width=.1, col="red") + ylab("Coeff") + xlab("Feature") + theme(axis.text.x = element_text(angle=60, hjust=1, size=15), axis.text.y=element_text(size=15))
   
-#Summing features for urban qualities
-paste( "Complexity", sum(abs(filter(newTest, (feature == "movCars" | feature == "movCicly" | feature == "parkedCars" | feature == "peop" | feature == "diffBuild" | feature == "buildNRec" | feature == "buildDiffAges" | feature == "ligh" | feature == "graff" | feature == "basCol" | feature == "accenCol" | feature == "streeFur" | feature == "tree" | feature == "smallPla"))$normS)) )
-
-paste( "Human Scale", sum(abs(filter(newTest, (feature == "movCars" | feature == "movCicly" | feature == "peop" |  feature == "ligh" | feature == "streeFur" | feature == "tree" | feature == "smallPla" | feature == "buildHeight" | feature == "longSight" | feature == "streetWid"))$normS)) )
-
-paste( "Imageability", sum(abs(filter(newTest, (feature == "peop" |  feature == "buildId" | feature == "buildNRec" | feature == "basCol" ))$normS)) )
-
-paste( "Enclosure", sum(abs(filter(newTest, (feature == "ligh" |  feature == "tree" | feature == "buildHeight" | feature == "longSight" | feature == "streetWid"))$normS)) )
-
-paste( "Coherence", sum(abs(filter(newTest, (feature == "peop" |  feature == "buildDiffAges" | feature == "ligh" | feature == "basCol" | feature == "accenCol" | feature == "streeFur"))$normS)) )
-
-paste( "Linkage", sum(abs(filter(newTest, (feature == "movCars" |  feature == "longSight" | feature == "streetWid" ))$normS)) )
-
-paste( "Legibility", sum(abs(filter(newTest, (feature == "buildId" |  feature == "longSight" ))$normS)) )
-
-paste( "Transparency", sum(abs(filter(newTest, (feature == "buildHeight" |  feature == "sidewalkWid" ))$normS)) )
-
-paste( "Tidiness", sum(abs(filter(newTest, (feature == "graff" |  feature == "streeFur" | feature == "debris" | feature == "landscape" | feature == "pavement"))$normS)) )
-
 #Counters sorted by normalized values
 select(arrange(filter(newTest, !(feature == "propWind" | feature == "propActiveUse" | feature == "propSkyAhead" | feature == "propSkyAcross" | feature == "propStreetWall" | feature == "debris" | feature == "landscape" | feature == "pavement")), -abs(normS)), feature, normS, normS2)
 
@@ -3706,7 +3687,7 @@ library(plyr)
 w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=20), legend.title = element_text(size=20))+theme_bw()+annotate("text", x = 4, y = 7, label = "Adj. R^2 = 0.27")
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "Adj. R^2 = 0.27")
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
@@ -3784,8 +3765,8 @@ ggplot(dadosSubS, aes(y=V3, x = bairro)) +
 dadosSubA <- dadosSub[dadosSub$grupo == 'Geral',]
 dadosSubA$V1 <- as.character(dadosSubA$V1)
 dadosSubA$bairro <- as.character(dadosSubA$bairro)
-dadosSubA$V1[dadosSubA$V1 == "agradavel?"] <- "Agradável"
-dadosSubA$V1[dadosSubA$V1 == "seguro?"] <- "Seguro"
+dadosSubA$V1[dadosSubA$V1 == "agradavel?"] <- "Pleasantness"
+dadosSubA$V1[dadosSubA$V1 == "seguro?"] <- "Safety"
 dadosSubA$bairro[dadosSubA$bairro == "centro"] <- "Centro"
 dadosSubA$bairro[dadosSubA$bairro == "liberdade"] <- "Liberdade"
 dadosSubA$bairro[dadosSubA$bairro == "catole"] <- "Catolé"
@@ -3796,6 +3777,49 @@ ggplot(dadosSubA, aes(y=V3, x = bairro)) +
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+
+#Knows x do not know
+dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'CCentro' & dadosSub$bairro == 'centro'  | dadosSub$grupo == 'CLiberdade' & dadosSub$bairro == 'liberdade' | dadosSub$grupo == 'CCatole' & dadosSub$bairro == 'catole'),]
+dadosSubAN <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'NCCentro' & dadosSub$bairro == 'centro' | dadosSub$grupo == 'NCLiberdade' & dadosSub$bairro == 'liberdade' | dadosSub$grupo == 'NCCatole' & dadosSub$bairro == 'catole'),]
+
+dadosSubS <- dadosSub[dadosSub$V1 == 'seguro?'  & (dadosSub$grupo == 'CCentro' & dadosSub$bairro == 'centro'  | dadosSub$grupo == 'CLiberdade' & dadosSub$bairro == 'liberdade' | dadosSub$grupo == 'CCatole' & dadosSub$bairro == 'catole'),]
+dadosSubSN <- dadosSub[dadosSub$V1 == 'seguro?'  & (dadosSub$grupo == 'NCCentro' & dadosSub$bairro == 'centro'  | dadosSub$grupo == 'NCLiberdade' & dadosSub$bairro == 'liberdade' | dadosSub$grupo == 'NCCatole' & dadosSub$bairro == 'catole'),]
+
+know <- rbind(dadosSubA, dadosSubS) 
+notKnow <- rbind(dadosSubAN, dadosSubSN) 
+
+know$V1 <- as.character(know$V1)
+notKnow$V1 <- as.character(notKnow$V1)
+
+know$bairro <- as.character(know$bairro)
+notKnow$bairro <- as.character(notKnow$bairro)
+
+know$V1[know$V1 == "agradavel?"] <- "Pleasantness"
+know$V1[know$V1 == "seguro?"] <- "Safety"
+notKnow$V1[notKnow$V1 == "agradavel?"] <- "Pleasantness"
+notKnow$V1[notKnow$V1 == "seguro?"] <- "Safety"
+
+know$bairro[know$bairro == "centro"] <- "Centro"
+know$bairro[know$bairro == "liberdade"] <- "Liberdade"
+know$bairro[know$bairro == "catole"] <- "Catolé"
+notKnow$bairro[notKnow$bairro == "centro"] <- "Centro"
+notKnow$bairro[notKnow$bairro == "liberdade"] <- "Liberdade"
+notKnow$bairro[notKnow$bairro == "catole"] <- "Catolé"
+
+ggplot(know, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+
+ggplot(notKnow, aes(y=V3, x = bairro)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+
 
 #Filtering groups
 dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'Medio'  | dadosSub$grupo == 'Pos' | dadosSub$grupo == 'Feminino' | dadosSub$grupo == 'Masculino' | dadosSub$grupo == 'Media' | dadosSub$grupo == 'Baixa') & (dadosSub$bairro == 'centro' | dadosSub$bairro == 'liberdade'),]

@@ -483,13 +483,8 @@ temp13 <- merge(novosDados, groupedData13, by.x="image_url", by.y="image_url")
 colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
-#Correlation for RGB bins and QScore
-calculaCorrelacoesRGBBins <- function(dados, colunaQScore, colunaCor, questao){
-    dadosAtuais <- dados[(dados$V1 == questao),] 
-    res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais[[colunaCor]], na.action = na.exclude, method = "kendall")
-    return (res)
-}
-calculaCorrelacoesEHDBins <- function(dados, colunaQScore, colunaCor, questao){
+#Correlation functions for RGB bins and QScore
+calcCorrelForBins <- function(dados, colunaQScore, colunaCor, questao){
     dadosAtuais <- dados[(dados$V1 == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais[[colunaCor]], na.action = na.exclude, method = "kendall")
     return (res)
@@ -507,26 +502,31 @@ index <- seq(180, 256, 5)
 rgbBinsData$ehd135 <- apply(rgbBinsData[c(index)], 1, sum)
 index <- seq(181, 256, 5)
 rgbBinsData$ehdNon <- apply(rgbBinsData[c(index)], 1, sum)
+rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
 for (quest in c("agradavel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
-     res <- calculaCorrelacoesRGBBins(allUsersData, "V3", edge, quest)
+     res <- calcCorrelForBins(allUsersData, "V3", edge, quest)
      print(paste(quest, "Geral", edge))
      print(res)
   }
 }
 
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#Separate diagonals
+summary(regAgrad)
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#One value for diagonals
 summary(regAgrad)
 regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+summary(regSeg)
+regSeg <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
 #Correlation and regression of rgb bins with Qscores
 sink("rgbBins_correlation.dat")
 for (quest in c("agradavel?", "seguro?")){
   for (i in seq(104, 167)){
-     res <- calculaCorrelacoesRGBBins(allUsersData, "V3", paste("V",i,sep=""), quest)
+     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest)
      print(paste(quest, "Geral", paste("V",i,sep="")))
      print(res)
   }
@@ -534,10 +534,47 @@ for (quest in c("agradavel?", "seguro?")){
 sink()
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
 summary(regAgrad)
+regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+summary(regAgrad)
+
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
+regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+summary(regSeg)
 
-#Correlations for each urban feature and basic RGB and lines model. Spearman and Kendall - non-parametric, any assumption
+#Subset of columns to merge with features values
+dadosSubBins <- rgbBinsData[, c("V2", "V1", "V3", "diag", "hor", "vert", "ehdVert","ehdHor", "ehdDiag", "ehdNon", "red", "green", "blue", "grupo", "bairro", "setor")]
+novosDadosBins <- reshape(dadosSubBins, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "ehdVert","ehdHor", "ehdDiag", "ehdNon", "red", "green", "blue", "bairro", "setor"), direction="wide")
+
+colnames(novosDadosBins)[colnames(novosDadosBins) == "V2"] <- "image_url"
+temp <- merge(groupedData1, novosDadosBins, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData3, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData4, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData5, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData6, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData7, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData8, by.x="image_url", by.y="image_url")
+temp<- merge(temp, groupedData9, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData10, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData12, by.x="image_url", by.y="image_url")
+temp <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
+
+agradBins <- filter(temp, V1 == "agradavel?")
+segBins <- filter(temp, V1 == "seguro?")
+
+sink("rgbBins_correlation.dat")
+for (feature in c("street_wid", "sidewalk_wid", "public_art", "mov_cars", "park_cars", "mov_ciclyst", "debris" , "pavement", "landscape", "courtyards", "major_landsc", "build_ident", "build_nrectan", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead", "prop_sky_across", "trees", "small_planters", "build_height", "diff_build", "prop_hist_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "prop_active_use")){
+  for (edge in c("ehdVert", "ehdHor", "ehdDiag", "ehdNon")){
+   res <- calcCorrelForBins(temp, feature, edge, "agradavel?")
+   print(paste(feature, edge))
+   print(res)
+  }
+}
+sink()
+
+#Correlations for each urban feature and mean RGB and hough lines model (opencv). Spearman and Kendall - non-parametric, any assumption
 calculaCorrelacoes <- function (listaDados, colunaQScore, questao, arquivo) {
     sink(arquivo, append = TRUE)
     print(questao)

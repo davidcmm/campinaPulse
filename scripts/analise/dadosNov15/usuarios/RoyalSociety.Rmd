@@ -3058,6 +3058,7 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+agrad.l$diff <- agrad.l$rank - agrad.l$index
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3081,6 +3082,9 @@ citySummary("V3.Feminino", agrad.l)
 # regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
 # summary(regGroup1)
 # summary(regGroup2)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 library(spdep)
@@ -3133,6 +3137,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
+agrad.l$diff <- agrad.l$rank - agrad.l$index
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3171,10 +3176,13 @@ regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars)
 regGroup1 <- lm(rank ~ scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
 #regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
 regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)
-#Features being considered in coefficient first verstion
+#Features being considered in coefficient first version
 regGroup2 <- lm(index ~  scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
 summary(regGroup1)
 summary(regGroup2)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3229,6 +3237,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
+agrad.l$diff <- agrad.l$rank - agrad.l$index
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
@@ -3261,6 +3270,9 @@ citySummary("V3.Solteiro", agrad.l)
 # regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
 # summary(regGroup1)
 # summary(regGroup2)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+summary(regDiff)
   
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l[1:107,], "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3306,6 +3318,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 agrad.l <- agrad %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+agrad.l$diff <- agrad.l$rank - agrad.l$index
 
 #Danieles coefficients
 agrad.l <- calcDanieleCoeff(agrad.l)
@@ -3331,6 +3344,9 @@ regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars)
 regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
 summary(regGroup1)
 summary(regGroup2)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3376,6 +3392,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
+seg.l$diff <- seg.l$rank - seg.l$index
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3391,6 +3408,9 @@ printOutputTwoListsForAll(seg.l2)
 
 citySummary("V3.Masculino", seg.l)
 citySummary("V3.Feminino", seg.l)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3437,6 +3457,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
+seg.l$diff <- seg.l$rank - seg.l$index
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3459,6 +3480,9 @@ printOutputTwoListsForAll(seg.l2)
 
 citySummary("V3.Jovem", seg.l)
 citySummary("V3.Adulto", seg.l)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3504,6 +3528,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
+seg.l$diff <- seg.l$rank - seg.l$index
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3519,6 +3544,9 @@ printOutputTwoListsForAll(seg.l2)
 
 citySummary("V3.Casado", seg.l)
 citySummary("V3.Solteiro", seg.l)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
+summary(regDiff)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3564,6 +3592,7 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 seg.l <- seg %>% 
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
+seg.l$diff <- seg.l$rank - seg.l$index
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3602,6 +3631,10 @@ regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars)
 regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
 summary(regGroup1)
 summary(regGroup2)
+
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
+summary(regDiff)
+
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")

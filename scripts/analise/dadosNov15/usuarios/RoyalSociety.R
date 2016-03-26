@@ -1687,7 +1687,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.M
 #res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?"))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1)
+res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1, "")
 print(res)
 analyseICForFeatures(res)
 
@@ -1709,7 +1709,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Mas
 #res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino", "seguro?"))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(seg.l, iterations, "Masculino", "Feminino", "seguro?", temp1)
+res <- kendallWithWeightsSimReal(seg.l, iterations, "Masculino", "Feminino", "seguro?", temp1, "")
 print(res)
 analyseICForFeatures(res)
 

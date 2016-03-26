@@ -1920,20 +1920,24 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
-#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(agrad.l, iterations, "Casado", "Solteiro", "agradavel?", temp1)
-print(res)
-analyseICForFeatures(res)
+#res <- kendallWithWeightsSimReal(agrad.l, iterations, "Casado", "Solteiro", "agradavel?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #Sector with diff
-#diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
-#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?", "250400905000089"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+res <- kendallWithWeightsSimReal(diff, iterations, "Casado", "Solteiro", "agradavel?", temp1, "250400905000089")
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Casado", "V3.Solteiro")
@@ -1949,13 +1953,13 @@ seg.l <- seg %>%
 #seg.l <- calcDanieleCoeff(seg.l)
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
-#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Casado", "V3.Solteiro", "seguro?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Casado", "V3.Solteiro", "seguro?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(seg.l, iterations, "Casado", "Solteiro", "seguro?", temp1)
-print(res)
-analyseICForFeatures(res)
+#res <- kendallWithWeightsSimReal(seg.l, iterations, "Casado", "Solteiro", "seguro?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Casado", "V3.Solteiro")

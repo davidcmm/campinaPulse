@@ -1919,13 +1919,13 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
-#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Baixa", "V3.Media", "agrad%C3%A1vel?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Baixa", "V3.Media", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(agrad.l, iterations, "Baixa", "Media", "agradavel?", temp1)
-print(res)
-analyseICForFeatures(res)
+#res <- kendallWithWeightsSimReal(agrad.l, iterations, "Baixa", "Media", "agradavel?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Baixa", "V3.Media")
@@ -1942,26 +1942,34 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Baixa", "V3.Media", "seguro?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Baixa", "V3.Media", "seguro?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(seg.l, iterations, "Baixa", "Media", "seguro?", temp1)
+#res <- kendallWithWeightsSimReal(seg.l, iterations, "Baixa", "Media", "seguro?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
+
+#Sectors with difference
+diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?", "25040090500004"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+res <- kendallWithWeightsSimReal(diff, iterations, "Baixa", "Media", "seguro?", temp1, "25040090500004")
 print(res)
 analyseICForFeatures(res)
 
-#Sectors with difference
-#diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
-#print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?", "250400905000089")) 
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
 
-#diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
-#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?")) 
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+res <- kendallWithWeightsSimReal(diff, iterations, "Baixa", "Media", "seguro?", temp1, "250400905000089")
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Baixa", "V3.Media")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Baixa", "V3.Media")

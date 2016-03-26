@@ -464,7 +464,7 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
-kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp){
+kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sector){
 	
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -475,6 +475,11 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
     simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
+    if (length(sector) > 0){
+	simData1 <- filter(simData1, setor == sector)
+	simData2 <- filter(simData2, setor == sector)
+    }
+
     #Amount of images
     amountOfItems <- nrow(data)
 
@@ -700,7 +705,7 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	return ( featuresMapG1 )
 }
 
-kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
+kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sector){
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -966,6 +971,9 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     for (k in seq(1, iterations)){
 
 	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
+	if (length(sector) > 0){#Filtering when considering only a specific sector!
+		randomData <- filter(randomData, setor == sector)
+	}
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
@@ -1917,26 +1925,34 @@ agrad.l <- agrad %>%
 #agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
-#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(agrad.l, iterations, "Jovem", "Adulto", "agradavel?", temp1)
+#res <- kendallWithWeightsSimReal(agrad.l, iterations, "Jovem", "Adulto", "agradavel?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
+
+#Sectors with difference
+diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", "25040090500004"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+res <- kendallWithWeightsSimReal(diff, iterations, "Jovem", "Adulto", "agradavel?", temp1, "25040090500004")
 print(res)
 analyseICForFeatures(res)
 
-#Sectors with difference
-#diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
-#print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", "250400905000089"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
 
-#diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
-#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+res <- kendallWithWeightsSimReal(diff, iterations, "Jovem", "Adulto", "agradavel?", temp1, "250400905000089")
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Jovem", "V3.Adulto")
@@ -1953,20 +1969,24 @@ seg.l <- seg %>%
 #seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
-#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Jovem", "V3.Adulto", "seguro?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Jovem", "V3.Adulto", "seguro?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(seg.l, iterations, "Jovem", "Adulto", "seguro?", temp1)
-print(res)
-analyseICForFeatures(res)
+#res <- kendallWithWeightsSimReal(seg.l, iterations, "Jovem", "Adulto", "seguro?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #Sectores with difference
-#diff <- filter(seg.l, setor == "250400905000062") #YA Cat
-#print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "seguro?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(seg.l, setor == "250400905000062") #YA Cat
+print(paste(">>>> Kendall Distance 0062-Cat", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "seguro?", "250400905000062"))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+
+res <- kendallWithWeightsSimReal(diff, iterations, "Jovem", "Adulto", "seguro?", temp1, "250400905000062")
+print(res)
+analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Jovem", "V3.Adulto")

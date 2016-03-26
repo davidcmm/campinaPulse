@@ -473,12 +473,11 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     data$build_diff_ages[data$build_diff_ages == "No"] <- 0
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
 
+    if (length(sector) > 0){
+	temp <- filter(temp, setor == sector)
+    }
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
     simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
-    if (length(sector) > 0){
-	simData1 <- filter(simData1, setor == sector)
-	simData2 <- filter(simData2, setor == sector)
-    }
 
     #Amount of images
     amountOfItems <- nrow(data)

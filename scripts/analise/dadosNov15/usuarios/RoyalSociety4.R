@@ -463,7 +463,7 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
-kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp){
+kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sector){
 	
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -473,7 +473,12 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
 
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
-    simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
+    simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))    
+    if (length(sector) > 0){
+	simData1 <- filter(simData1, setor == sector)
+	simData2 <- filter(simData2, setor == sector)
+    }
+
     #Amount of images
     amountOfItems <- nrow(data)
 
@@ -699,7 +704,7 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	return ( featuresMapG1 )
 }
 
-kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
+kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sector){
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -965,6 +970,9 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question){
     for (k in seq(1, iterations)){
 
 	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
+	if (length(sector) > 0){#Filtering when considering only a specific sector!
+		randomData <- filter(randomData, setor == sector)
+	}
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)

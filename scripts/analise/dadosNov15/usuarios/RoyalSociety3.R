@@ -493,8 +493,10 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	groupCompleteId1 <- paste("V3.", group1Id, sep="")
 	groupCompleteId2 <- paste("V3.", group2Id, sep="")
         data <- data %>% do(arrange(., image_url)) 
-	data[[groupCompleteId1]][c(1:107)] <- as.vector(simData1[,ind])
-	data[[groupCompleteId2]][c(1:107)] <- as.vector(simData2[,ind])
+	#data[[groupCompleteId1]][c(1:107)] <- as.vector(simData1[,ind])
+	#data[[groupCompleteId2]][c(1:107)] <- as.vector(simData2[,ind])
+	data[[groupCompleteId1]] <- as.vector(simData1[,ind])
+	data[[groupCompleteId2]] <- as.vector(simData2[,ind])
 
 	sortedData <- data %>% do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())

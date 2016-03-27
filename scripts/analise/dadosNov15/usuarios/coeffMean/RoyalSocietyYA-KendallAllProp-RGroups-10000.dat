@@ -1,0 +1,863 @@
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+Attaching package: ‘reshape’
+
+The following object is masked from ‘package:dplyr’:
+
+    rename
+
+There were 13 warnings (use warnings() to see them)
+Version:  1.35.5
+Date:     2015-07-26
+Author:   Philip Leifeld (University of Konstanz)
+
+Please cite the JSS article in your publications -- see citation("texreg").
+[1] "################### Young x Adult - Pleasantness"
+[1] 0.1704367
+[1] ">>>> Kendall Distance  0.17043673012318"
+Using  as id variables
+          variable         value
+           movCars  3.165216e+02
+          parkCars -5.081180e+02
+          movCicly  1.556133e+02
+           buildId -3.891081e+02
+         buildNRec -2.767350e+02
+              tree  1.809272e+02
+          smallPla -4.057221e+00
+         diffBuild  2.909619e+02
+          streeFur  8.642716e+01
+            basCol -5.186288e+01
+              ligh  1.753720e+01
+          accenCol -1.128659e+01
+              peop -5.575234e+01
+             graff -2.600000e+01
+     buildDiffAges -6.100000e+01
+         streetWid  7.743945e+02
+       sidewalkWid -4.273373e+01
+            debris -9.208095e-02
+          pavement -1.797724e-01
+         landscape -1.879103e-02
+    propStreetWall  1.477423e-02
+          propWind -5.602577e-05
+         longSight  1.896775e+01
+      propSkyAhead  2.792697e-02
+     propSkyAcross  5.062138e-02
+       buildHeight  4.346131e+03
+     propActiveUse -4.381770e-02
+          rmovCars  1.953607e-01
+         rparkCars  2.101286e+00
+         rmovCicly  7.770561e-02
+          rbuildId  9.814976e-01
+        rbuildNRec  8.540159e-01
+             rtree -8.778795e-02
+         rsmallPla  6.497550e-02
+        rdiffBuild -2.350522e-02
+         rstreeFur  2.085603e-01
+           rbasCol  2.745644e-01
+             rligh  1.178837e-02
+         raccenCol  5.810747e-01
+             rpeop  1.834218e-01
+            rgraff -1.642000e-01
+    rbuildDiffAges -3.200000e-03
+        rstreetWid  2.098099e+00
+      rsidewalkWid  6.214115e-01
+           rdebris -1.821738e-05
+         rpavement  9.131969e-05
+        rlandscape  4.735189e-05
+   rpropStreetWall -1.415311e-04
+         rpropWind  2.360194e-05
+        rlongSight -6.395077e-01
+     rpropSkyAhead  1.160618e-04
+    rpropSkyAcross  1.332675e-04
+      rbuildHeight  7.482212e+00
+    rpropActiveUse -1.513365e-05
+        rsdMovCars  6.115737e+01
+       rsdParkCars  1.521653e+02
+       rsdMovCicly  2.669483e+01
+        rsdBuildId  1.134951e+02
+      rsdBuildNRec  1.043772e+02
+           rsdTree  7.538986e+01
+       rsdSmallPla  1.055686e+01
+      rsdDiffBuild  7.144589e+01
+       rsdStreeFur  2.956617e+01
+         rsdBasCol  3.029225e+01
+           rsdLigh  1.644326e+01
+       rsdAccenCol  3.646764e+01
+           rsdPeop  9.891219e+01
+          rsdGraff  1.022617e+01
+  rsdBuildDiffAges  1.535949e+01
+      rsdStreetWid  2.511410e+02
+    rsdSidewalkWid  4.216183e+01
+         rsdDebris  3.719421e-02
+       rsdPavement  3.867165e-02
+      rsdLandscape  3.075794e-02
+ rsdPropStreetWall  9.688050e-03
+       rsdPropWind  6.993931e-03
+      rsdLongSight  3.002103e+01
+   rsdPropSkyAhead  1.460051e-02
+  rsdPropSkyAcross  1.332706e-02
+    rsdBuildHeight  7.608193e+02
+  rsdPropActiveUse  1.005546e-02
+          movCarsN  4.540088e-02
+         parkCarsN -2.788996e-02
+         movCiclyN  6.879951e-02
+          buildIdN -4.594189e-02
+        buildNRecN -3.295908e-02
+             treeN  1.608045e-02
+         smallPlaN -4.521169e-03
+        diffBuildN  3.064842e-02
+         streeFurN  1.969963e-02
+           basColN -1.260418e-02
+             lighN  1.004811e-02
+         accenColN -2.444658e-03
+             peopN -5.318417e-03
+            graffN -3.359173e-02
+    buildDiffAgesN -4.224377e-02
+        streetWidN  2.256389e-02
+      sidewalkWidN -8.464319e-03
+           debrisN -1.051438e-01
+         pavementN -1.993360e-01
+        landscapeN -2.126205e-02
+   propStreetWallN  6.488381e-02
+         propWindN -4.420044e-04
+        longSightN  5.106744e-03
+     propSkyAheadN  8.216070e-02
+    propSkyAcrossN  1.607383e-01
+      buildHeightN  7.595071e-02
+    propActiveUseN -1.943776e-01
+         rmovCarsN  2.802193e-05
+        rparkCarsN  1.153370e-04
+        rmovCiclyN  3.435508e-05
+         rbuildIdN  1.158852e-04
+       rbuildNRecN  1.017131e-04
+            rtreeN -7.802418e-06
+        rsmallPlaN  7.240552e-05
+       rdiffBuildN -2.475917e-06
+        rstreeFurN  4.753783e-05
+          rbasColN  6.672712e-05
+            rlighN  6.754267e-06
+        raccenColN  1.258599e-04
+            rpeopN  1.749726e-05
+           rgraffN -2.121447e-04
+   rbuildDiffAgesN -2.216066e-06
+       rstreetWidN  6.113327e-05
+     rsidewalkWidN  1.230837e-04
+          rdebrisN -2.080175e-05
+        rpavementN  1.012575e-04
+       rlandscapeN  5.357865e-05
+  rpropStreetWallN -6.215605e-04
+        rpropWindN  1.862029e-04
+       rlongSightN -1.721766e-04
+    rpropSkyAheadN  3.414520e-04
+   rpropSkyAcrossN  4.231650e-04
+     rbuildHeightN  1.307552e-04
+   rpropActiveUseN -6.713366e-05
+[1] index feature real random sd lower higher lowerSid higherSid norm
+[1] movCars 316.52   0.20   61.16   -1.00   1.39   -1.70   2.09   0.045
+[1] parkCars -508.12   2.10   152.17   -0.88   5.08   -2.61   6.81   -0.028
+[1] movCicly 155.61   0.078   26.69   -0.45   0.60   -0.75   0.90   0.069
+[1] buildId -389.11   0.98   113.50   -1.24   3.21   -2.53   4.49   -0.046
+[1] buildNRec -276.74   0.85   104.38   -1.19   2.90   -2.38   4.08   -0.033
+[1] tree 180.93   -0.088   75.39   -1.57   1.39   -2.42   2.25   0.016
+[1] smallPla -4.06   0.065   10.56   -0.14   0.27   -0.26   0.39   -0.0045
+[1] diffBuild 290.96   -0.024   71.45   -1.42   1.38   -2.23   2.19   0.031
+[1] streeFur 86.43   0.21   29.57   -0.37   0.79   -0.71   1.12   0.02
+[1] basCol -51.86   0.27   30.29   -0.32   0.87   -0.66   1.21   -0.013
+[1] ligh 17.54   0.012   16.44   -0.31   0.33   -0.50   0.52   0.01
+[1] accenCol -11.29   0.58   36.47   -0.13   1.30   -0.55   1.71   -0.0024
+[1] peop -55.75   0.18   98.91   -1.76   2.12   -2.88   3.24   -0.0053
+[1] graff -26.00   -0.16   10.23   -0.36   0.036   -0.48   0.15   -0.034
+[1] buildDiffAges -61.00   -0.0032   15.36   -0.30   0.30   -0.48   0.47   -0.042
+[1] streetWid 774.39   2.10   251.14   -2.82   7.02   -5.67   9.87   0.023
+[1] sidewalkWid -42.73   0.62   42.16   -0.20   1.45   -0.68   1.93   -0.0085
+[1] debris -0.092   -1.8e-05   0.037   -0.00075   0.00071   -0.0012   0.0011   -0.11
+[1] pavement -0.18   9.1e-05   0.039   -0.00067   0.00085   -0.0011   0.0013   -0.20
+[1] landscape -0.019   4.7e-05   0.031   -0.00056   0.00065   -9e-04   0.001   -0.021
+[1] propStreetWall 0.015   -0.00014   0.0097   -0.00033   4.8e-05   -0.00044   0.00016   0.065
+[1] propWind -5.6e-05   2.4e-05   0.007   -0.00011   0.00016   -0.00019   0.00024   -0.00044
+[1] longSight 18.97   -0.64   30.02   -1.23   -0.051   -1.57   0.29   0.0051
+[1] propSkyAhead 0.028   0.00012   0.015   -0.00017   4e-04   -0.00034   0.00057   0.082
+[1] propSkyAcross 0.051   0.00013   0.013   -0.00013   0.00039   -0.00028   0.00055   0.16
+[1] buildHeight 4346.13   7.48   760.82   -7.43   22.39   -16.06   31.03   0.076
+[1] propActiveUse -0.044   -1.5e-05   0.01   -0.00021   0.00018   -0.00033   3e-04   -0.19
+[1] 0.1960784
+[1] ">>>> Kendall Distance 004-Cen 0.196078431372549"
+Using  as id variables
+          variable         value
+           movCars -3.565155e+00
+          parkCars  7.281901e+01
+          movCicly  3.021884e+00
+           buildId  1.833333e-01
+         buildNRec -2.665000e+01
+              tree  1.582091e+00
+          smallPla -2.017123e+00
+         diffBuild  3.591667e+01
+          streeFur -8.586125e-01
+            basCol  1.844110e+00
+              ligh -1.215010e+00
+          accenCol  1.865363e+01
+              peop  1.282770e+01
+             graff  1.000000e+00
+     buildDiffAges -7.000000e+00
+         streetWid  8.378947e+00
+       sidewalkWid -9.055910e+00
+            debris  1.604311e-02
+          pavement -5.332585e-01
+         landscape -1.967877e-03
+    propStreetWall  1.833241e-01
+          propWind -3.687263e-02
+         longSight  6.127273e+00
+      propSkyAhead  1.017273e-01
+     propSkyAcross  2.853499e-02
+       buildHeight  2.741149e+02
+     propActiveUse -1.301860e-01
+          rmovCars  2.391118e-01
+         rparkCars -3.514738e-01
+         rmovCicly -4.528067e-02
+          rbuildId  7.695789e-02
+        rbuildNRec  1.445153e-01
+             rtree  4.457728e-02
+         rsmallPla  4.010270e-02
+        rdiffBuild -6.646667e-02
+         rstreeFur  1.466037e-01
+           rbasCol  3.299148e-02
+             rligh  3.651912e-02
+         raccenCol -1.088490e-01
+             rpeop -7.424597e-03
+            rgraff -1.230000e-02
+    rbuildDiffAges  3.760000e-02
+        rstreetWid  6.253123e-01
+      rsidewalkWid  1.130978e-01
+           rdebris  3.235450e-03
+         rpavement  3.732660e-03
+        rlandscape  5.063770e-04
+   rpropStreetWall -8.709928e-04
+         rpropWind  2.101339e-04
+        rlongSight  4.328636e-02
+     rpropSkyAhead  2.441147e-04
+    rpropSkyAcross  1.748130e-04
+      rbuildHeight  1.098036e+00
+    rpropActiveUse  4.110008e-04
+        rsdMovCars  1.553441e+01
+       rsdParkCars  3.614105e+01
+       rsdMovCicly  3.869633e+00
+        rsdBuildId  1.194314e+01
+      rsdBuildNRec  7.235541e+00
+           rsdTree  9.601484e+00
+       rsdSmallPla  4.234369e+00
+      rsdDiffBuild  1.185848e+01
+       rsdStreeFur  7.529379e+00
+         rsdBasCol  5.883352e+00
+           rsdLigh  3.234576e+00
+       rsdAccenCol  8.857659e+00
+           rsdPeop  1.447797e+01
+          rsdGraff  3.256226e+00
+  rsdBuildDiffAges  3.656135e+00
+      rsdStreetWid  6.218327e+01
+    rsdSidewalkWid  1.038174e+01
+         rsdDebris  1.421775e-01
+       rsdPavement  2.325976e-01
+      rsdLandscape  1.891109e-01
+ rsdPropStreetWall  4.782020e-02
+       rsdPropWind  3.470225e-02
+      rsdLongSight  7.410337e+00
+   rsdPropSkyAhead  9.736773e-02
+  rsdPropSkyAcross  7.824218e-02
+    rsdBuildHeight  8.997302e+01
+  rsdPropActiveUse  3.484261e-02
+          movCarsN -1.085524e-02
+         parkCarsN  8.513590e-02
+         movCiclyN  4.008936e-02
+          buildIdN  6.563081e-04
+        buildNRecN -2.021922e-01
+             treeN  5.609726e-03
+         smallPlaN -3.739873e-02
+        diffBuildN  1.314425e-01
+         streeFurN -4.756592e-03
+           basColN  1.192182e-02
+             lighN -1.805964e-02
+         accenColN  8.248757e-02
+             peopN  3.626051e-02
+            graffN  1.538462e-02
+    buildDiffAgesN -9.722222e-02
+        streetWidN  6.126917e-03
+      sidewalkWidN -3.863382e-02
+           debrisN  2.710451e-02
+         pavementN -5.202903e-01
+        landscapeN -2.401227e-03
+   propStreetWallN  8.846603e-01
+         propWindN -2.458788e-01
+        longSightN  3.581677e-02
+     propSkyAheadN  2.319752e-01
+    propSkyAcrossN  7.789395e-02
+      buildHeightN  1.204985e-01
+    propActiveUseN -8.347583e-01
+         rmovCarsN  7.280514e-04
+        rparkCarsN -4.109235e-04
+        rmovCiclyN -6.007089e-04
+         rbuildIdN  2.754987e-04
+       rbuildNRecN  1.096430e-03
+            rtreeN  1.580606e-04
+        rsmallPlaN  7.435293e-04
+       rdiffBuildN -2.432449e-04
+        rstreeFurN  8.121635e-04
+          rbasColN  2.132836e-04
+            rlighN  5.428121e-04
+        raccenColN -4.813373e-04
+            rpeopN -2.098737e-05
+           rgraffN -1.892308e-04
+   rbuildDiffAgesN  5.222222e-04
+       rstreetWidN  4.572455e-04
+     rsidewalkWidN  4.824917e-04
+          rdebrisN  5.466226e-03
+        rpavementN  3.641885e-03
+       rlandscapeN  6.178873e-04
+  rpropStreetWallN -4.203118e-03
+        rpropWindN  1.401242e-03
+       rlongSightN  2.530290e-04
+    rpropSkyAheadN  5.566704e-04
+   rpropSkyAcrossN  4.771992e-04
+     rbuildHeightN  4.826869e-04
+   rpropActiveUseN  2.635354e-03
+[1] index feature real random sd lower higher lowerSid higherSid norm
+[1] movCars -3.57   0.24   15.53   -0.065   0.54   -0.24   0.72   -0.011
+[1] parkCars 72.82   -0.35   36.14   -1.06   0.36   -1.47   0.77   0.085
+[1] movCicly 3.02   -0.045   3.87   -0.12   0.031   -0.17   0.074   0.04
+[1] buildId 0.18   0.077   11.94   -0.16   0.31   -0.29   0.45   0.00066
+[1] buildNRec -26.65   0.14   7.24   0.0027   0.29   -0.079   0.37   -0.20
+[1] tree 1.58   0.045   9.60   -0.14   0.23   -0.25   0.34   0.0056
+[1] smallPla -2.02   0.04   4.23   -0.043   0.12   -0.091   0.17   -0.037
+[1] diffBuild 35.92   -0.066   11.86   -0.30   0.17   -0.43   0.30   0.13
+[1] streeFur -0.86   0.15   7.53   -0.00097   0.29   -0.086   0.38   -0.0048
+[1] basCol 1.84   0.033   5.88   -0.082   0.15   -0.15   0.22   0.012
+[1] ligh -1.22   0.037   3.23   -0.027   0.10   -0.064   0.14   -0.018
+[1] accenCol 18.65   -0.11   8.86   -0.28   0.065   -0.38   0.17   0.082
+[1] peop 12.83   -0.0074   14.48   -0.29   0.28   -0.46   0.44   0.036
+[1] graff 1.00   -0.012   3.26   -0.076   0.052   -0.11   0.088   0.015
+[1] buildDiffAges -7.00   0.038   3.66   -0.034   0.11   -0.076   0.15   -0.097
+[1] streetWid 8.38   0.63   62.18   -0.59   1.84   -1.30   2.55   0.0061
+[1] sidewalkWid -9.06   0.11   10.38   -0.09   0.32   -0.21   0.43   -0.039
+[1] debris 0.016   0.0032   0.14   0.00045   0.006   -0.0012   0.0076   0.027
+[1] pavement -0.53   0.0037   0.23   -0.00083   0.0083   -0.0035   0.011   -0.52
+[1] landscape -0.002   0.00051   0.19   -0.0032   0.0042   -0.0053   0.0064   -0.0024
+[1] propStreetWall 0.18   -0.00087   0.048   -0.0018   6.6e-05   -0.0024   0.00061   0.88
+[1] propWind -0.037   0.00021   0.035   -0.00047   0.00089   -0.00086   0.0013   -0.25
+[1] longSight 6.13   0.043   7.41   -0.10   0.19   -0.19   0.27   0.036
+[1] propSkyAhead 0.10   0.00024   0.097   -0.0017   0.0022   -0.0028   0.0033   0.23
+[1] propSkyAcross 0.029   0.00017   0.078   -0.0014   0.0017   -0.0022   0.0026   0.078
+[1] buildHeight 274.11   1.10   89.97   -0.67   2.86   -1.69   3.88   0.12
+[1] propActiveUse -0.13   0.00041   0.035   -0.00027   0.0011   -0.00067   0.0015   -0.83
+[1] 0.2105263
+[1] ">>>> Kendall Distance 0089-Lib 0.210526315789474"
+Using  as id variables
+          variable         value
+           movCars  2.744389e+00
+          parkCars  1.962026e+01
+          movCicly  3.769401e+00
+           buildId  6.476190e+00
+         buildNRec -1.003175e+01
+              tree  6.035509e+01
+          smallPla  2.950957e+00
+         diffBuild -5.761387e+01
+          streeFur  1.221129e+01
+            basCol -1.770614e+01
+              ligh -7.233894e+00
+          accenCol  1.134211e+01
+              peop -4.999250e+01
+             graff  3.000000e+00
+     buildDiffAges  3.000000e+00
+         streetWid  7.148189e+01
+       sidewalkWid -3.670213e+00
+            debris -2.461507e-01
+          pavement -1.890785e-01
+         landscape  3.158911e-01
+    propStreetWall  1.790067e-02
+          propWind  1.073260e-02
+         longSight  7.000000e+00
+      propSkyAhead  1.475000e-01
+     propSkyAcross  1.030136e-01
+       buildHeight -2.510675e+01
+     propActiveUse  2.928374e-02
+          rmovCars -1.170941e-01
+         rparkCars -1.648096e-01
+         rmovCicly -1.379989e-01
+          rbuildId  8.990476e-03
+        rbuildNRec  1.979365e-03
+             rtree  1.059205e-01
+         rsmallPla -9.397784e-03
+        rdiffBuild -9.834488e-02
+         rstreeFur  3.292833e-02
+           rbasCol  2.211404e-03
+             rligh -5.919096e-03
+         raccenCol  4.391228e-02
+             rpeop -2.225162e-01
+            rgraff -2.620000e-02
+    rbuildDiffAges -2.620000e-02
+        rstreetWid -2.788083e-01
+      rsidewalkWid -2.189991e-02
+           rdebris -2.359569e-03
+         rpavement -2.035999e-03
+        rlandscape  3.219994e-05
+   rpropStreetWall -3.767765e-04
+         rpropWind  6.514840e-05
+        rlongSight  3.661667e-02
+     rpropSkyAhead -1.566962e-03
+    rpropSkyAcross  2.946770e-04
+      rbuildHeight -2.902974e-01
+    rpropActiveUse -6.704433e-04
+        rsdMovCars  5.766768e+00
+       rsdParkCars  1.109050e+01
+       rsdMovCicly  5.982498e+00
+        rsdBuildId  7.342645e+00
+      rsdBuildNRec  8.590827e+00
+           rsdTree  1.743756e+01
+       rsdSmallPla  1.550285e+00
+      rsdDiffBuild  1.302797e+01
+       rsdStreeFur  4.242510e+00
+         rsdBasCol  6.200466e+00
+           rsdLigh  3.641136e+00
+       rsdAccenCol  8.815934e+00
+           rsdPeop  2.881453e+01
+          rsdGraff  2.220046e+00
+  rsdBuildDiffAges  2.220046e+00
+      rsdStreetWid  3.781599e+01
+    rsdSidewalkWid  6.720130e+00
+         rsdDebris  1.813747e-01
+       rsdPavement  1.363244e-01
+      rsdLandscape  1.289375e-01
+ rsdPropStreetWall  3.787613e-02
+       rsdPropWind  5.125800e-03
+      rsdLongSight  5.874773e+00
+   rsdPropSkyAhead  7.260574e-02
+  rsdPropSkyAcross  5.641703e-02
+    rsdBuildHeight  4.732949e+01
+  rsdPropActiveUse  5.549549e-02
+          movCarsN  2.332295e-02
+         parkCarsN  7.550651e-02
+         movCiclyN  4.083986e-02
+          buildIdN  5.619835e-02
+        buildNRecN -4.423912e-02
+             treeN  1.412198e-01
+         smallPlaN  1.118713e-01
+        diffBuildN -2.403823e-01
+         streeFurN  1.229821e-01
+           basColN -1.278017e-01
+             lighN -9.345849e-02
+         accenColN  6.865973e-02
+             peopN -1.161654e-01
+            graffN  1.666667e-01
+    buildDiffAgesN  1.666667e-01
+        streetWidN  6.863836e-02
+      sidewalkWidN -2.515790e-02
+           debrisN -2.428463e-01
+         pavementN -2.608452e-01
+        landscapeN  3.666440e-01
+   propStreetWallN  9.117589e-02
+         propWindN  3.677332e-01
+        longSightN  4.477612e-02
+     propSkyAheadN  4.539142e-01
+    propSkyAcrossN  3.858818e-01
+      buildHeightN -2.582714e-02
+    propActiveUseN  1.092332e-01
+         rmovCarsN -9.951134e-04
+        rparkCarsN -6.342523e-04
+        rmovCiclyN -1.495159e-03
+         rbuildIdN  7.801653e-05
+       rbuildNRecN  8.728825e-06
+            rtreeN  2.478346e-04
+        rsmallPlaN -3.562715e-04
+       rdiffBuildN -4.103243e-04
+        rstreeFurN  3.316269e-04
+          rbasColN  1.596176e-05
+            rlighN -7.647192e-05
+        raccenColN  2.658241e-04
+            rpeopN -5.170513e-04
+           rgraffN -1.455556e-03
+   rbuildDiffAgesN -1.455556e-03
+       rstreetWidN -2.677174e-04
+     rsidewalkWidN -1.501155e-04
+          rdebrisN -2.327893e-03
+        rpavementN -2.808783e-03
+       rlandscapeN  3.737337e-05
+  rpropStreetWallN -1.919087e-03
+        rpropWindN  2.232192e-03
+       rlongSightN  2.342217e-04
+    rpropSkyAheadN -4.822145e-03
+   rpropSkyAcrossN  1.103840e-03
+     rbuildHeightN -2.986269e-04
+   rpropActiveUseN -2.500864e-03
+[1] index feature real random sd lower higher lowerSid higherSid norm
+[1] movCars 2.74   -0.12   5.77   -0.23   -0.0041   -0.30   0.061   0.023
+[1] parkCars 19.62   -0.16   11.09   -0.38   0.053   -0.51   0.18   0.076
+[1] movCicly 3.77   -0.14   5.98   -0.26   -0.021   -0.32   0.047   0.041
+[1] buildId 6.48   0.009   7.34   -0.13   0.15   -0.22   0.24   0.056
+[1] buildNRec -10.03   0.002   8.59   -0.17   0.17   -0.26   0.27   -0.044
+[1] tree 60.36   0.11   17.44   -0.24   0.45   -0.43   0.65   0.14
+[1] smallPla 2.95   -0.0094   1.55   -0.04   0.021   -0.057   0.039   0.11
+[1] diffBuild -57.61   -0.098   13.03   -0.35   0.16   -0.50   0.30   -0.24
+[1] streeFur 12.21   0.033   4.24   -0.05   0.12   -0.098   0.16   0.12
+[1] basCol -17.71   0.0022   6.20   -0.12   0.12   -0.19   0.19   -0.13
+[1] ligh -7.23   -0.0059   3.64   -0.077   0.065   -0.12   0.11   -0.093
+[1] accenCol 11.34   0.044   8.82   -0.13   0.22   -0.23   0.32   0.069
+[1] peop -49.99   -0.22   28.81   -0.79   0.34   -1.11   0.67   -0.12
+[1] graff 3.00   -0.026   2.22   -0.07   0.017   -0.095   0.043   0.17
+[1] buildDiffAges 3.00   -0.026   2.22   -0.07   0.017   -0.095   0.043   0.17
+[1] streetWid 71.48   -0.28   37.82   -1.02   0.46   -1.45   0.89   0.069
+[1] sidewalkWid -3.67   -0.022   6.72   -0.15   0.11   -0.23   0.19   -0.025
+[1] debris -0.25   -0.0024   0.18   -0.0059   0.0012   -0.008   0.0033   -0.24
+[1] pavement -0.19   -0.002   0.14   -0.0047   0.00064   -0.0063   0.0022   -0.26
+[1] landscape 0.32   3.2e-05   0.13   -0.0025   0.0026   -0.004   0.004   0.37
+[1] propStreetWall 0.018   -0.00038   0.038   -0.0011   0.00037   -0.0015   8e-04   0.091
+[1] propWind 0.011   6.5e-05   0.0051   -3.5e-05   0.00017   -9.3e-05   0.00022   0.37
+[1] longSight 7.00   0.037   5.87   -0.079   0.15   -0.15   0.22   0.045
+[1] propSkyAhead 0.15   -0.0016   0.073   -0.003   -0.00014   -0.0038   0.00068   0.45
+[1] propSkyAcross 0.10   0.00029   0.056   -0.00081   0.0014   -0.0015   0.002   0.39
+[1] buildHeight -25.11   -0.29   47.33   -1.22   0.64   -1.75   1.17   -0.026
+[1] propActiveUse 0.029   -0.00067   0.055   -0.0018   0.00042   -0.0024   0.001   0.11
+[1] "################### Young x Adult - Safety"
+[1] 0.193505
+[1] ">>>> Kendall Distance  0.193505039193729"
+[1] "################### Young x Adult - Pleasantness"
+[1] "################### Young x Adult - Safety"
+[1] 0.193505
+[1] ">>>> Kendall Distance  0.193505039193729"
+          variable         value
+           movCars  2.333099e+02
+          parkCars -4.805809e+02
+          movCicly -1.678556e+02
+           buildId -4.179707e+02
+         buildNRec -6.163133e+02
+              tree  6.751804e+02
+          smallPla -3.211796e+01
+         diffBuild -6.648607e+02
+          streeFur -4.829912e+01
+            basCol -1.711205e+02
+              ligh -6.274798e+01
+          accenCol -1.685639e+02
+              peop -7.440966e+02
+             graff -2.100000e+01
+     buildDiffAges -5.300000e+01
+         streetWid -1.426727e+02
+       sidewalkWid  3.237562e+02
+            debris -2.457479e-02
+          pavement  2.073256e-01
+         landscape  2.562775e-01
+    propStreetWall  2.138609e-02
+          propWind -4.361778e-02
+         longSight -1.312835e+01
+      propSkyAhead -5.401946e-02
+     propSkyAcross  1.002726e-02
+       buildHeight  6.513034e+02
+     propActiveUse -1.507002e-02
+          rmovCars -1.241121e+00
+         rparkCars -1.168877e+00
+         rmovCicly -6.912583e-01
+          rbuildId  1.458160e-01
+        rbuildNRec  2.174574e+00
+             rtree  2.493133e+00
+         rsmallPla  3.447960e-01
+        rdiffBuild -9.171472e-01
+         rstreeFur  1.535027e+00
+           rbasCol  7.280057e-01
+             rligh -9.132398e-02
+         raccenCol -1.378468e-01
+             rpeop -1.329892e-01
+            rgraff -4.965000e-01
+    rbuildDiffAges  4.661000e-01
+        rstreetWid  1.379917e+00
+      rsidewalkWid  1.116532e+00
+           rdebris -1.274123e-03
+         rpavement  6.807210e-05
+        rlandscape -5.470090e-04
+   rpropStreetWall  2.002299e-04
+         rpropWind  1.517878e-05
+        rlongSight -3.710635e-01
+     rpropSkyAhead  5.879393e-04
+    rpropSkyAcross  5.310962e-04
+      rbuildHeight  1.112434e+01
+    rpropActiveUse -9.559533e-05
+        rsdMovCars  2.919367e+02
+       rsdParkCars  4.346996e+02
+       rsdMovCicly  5.319538e+01
+        rsdBuildId  1.461424e+02
+      rsdBuildNRec  1.719799e+02
+           rsdTree  2.431024e+02
+       rsdSmallPla  2.970061e+01
+      rsdDiffBuild  1.740214e+02
+       rsdStreeFur  9.135230e+01
+         rsdBasCol  7.248946e+01
+           rsdLigh  3.847557e+01
+       rsdAccenCol  9.353936e+01
+           rsdPeop  1.707073e+02
+          rsdGraff  2.320137e+01
+  rsdBuildDiffAges  3.742096e+01
+      rsdStreetWid  6.034918e+02
+    rsdSidewalkWid  1.622436e+02
+         rsdDebris  6.546201e-02
+       rsdPavement  8.177517e-02
+      rsdLandscape  7.690728e-02
+ rsdPropStreetWall  1.901365e-02
+       rsdPropWind  1.634557e-02
+      rsdLongSight  8.137320e+01
+   rsdPropSkyAhead  3.447906e-02
+  rsdPropSkyAcross  3.052940e-02
+    rsdBuildHeight  1.369118e+03
+  rsdPropActiveUse  1.866188e-02
+          movCarsN  3.346525e-02
+         parkCarsN -2.648976e-02
+         movCiclyN -7.421203e-02
+          buildIdN -4.934970e-02
+        buildNRecN -7.340278e-02
+             treeN  5.924213e-02
+         smallPlaN -3.522341e-02
+        diffBuildN -7.003297e-02
+         streeFurN -1.086304e-02
+           basColN -4.158725e-02
+             lighN -3.725568e-02
+         accenColN -3.651067e-02
+             peopN -7.101702e-02
+            graffN -2.713178e-02
+    buildDiffAgesN -3.670360e-02
+        streetWidN -4.157120e-03
+      sidewalkWidN  6.205529e-02
+           debrisN -2.956383e-02
+         pavementN  2.374581e-01
+        landscapeN  2.881727e-01
+   propStreetWallN  9.392102e-02
+         propWindN -3.441140e-01
+        longSightN -3.534587e-03
+     propSkyAheadN -1.589244e-01
+    propSkyAcrossN  3.291065e-02
+      buildHeightN  1.118767e-02
+    propActiveUseN -6.540126e-02
+         rmovCarsN -1.780225e-04
+        rparkCarsN -6.442886e-05
+        rmovCiclyN -3.056180e-04
+         rbuildIdN  1.721646e-05
+       rbuildNRecN  2.589913e-04
+            rtreeN  2.187542e-04
+        rsmallPlaN  3.781340e-04
+       rdiffBuildN -9.660752e-05
+        rstreeFurN  3.452458e-04
+          rbasColN  1.769265e-04
+            rlighN -5.422225e-05
+        raccenColN -2.985740e-05
+            rpeopN -1.269257e-05
+           rgraffN -6.414729e-04
+   rbuildDiffAgesN  3.227839e-04
+       rstreetWidN  4.020727e-05
+     rsidewalkWidN  2.140089e-04
+          rdebrisN -1.532788e-03
+        rpavementN  7.796566e-05
+       rlandscapeN -6.150873e-04
+  rpropStreetWallN  8.793472e-04
+        rpropWindN  1.197500e-04
+       rlongSightN -9.990254e-05
+    rpropSkyAheadN  1.729708e-03
+   rpropSkyAcrossN  1.743121e-03
+     rbuildHeightN  1.910866e-04
+   rpropActiveUseN -4.148670e-04
+[1] index feature real random sd lower higher lowerSid higherSid norm
+[1] movCars 233.31   -1.24   291.94   -6.96   4.48   -10.28   7.79   0.033
+[1] parkCars -480.58   -1.17   434.70   -9.69   7.35   -14.62   12.28   -0.026
+[1] movCicly -167.86   -0.69   53.20   -1.73   0.35   -2.34   0.95   -0.074
+[1] buildId -417.97   0.15   146.14   -2.72   3.01   -4.38   4.67   -0.049
+[1] buildNRec -616.31   2.17   171.98   -1.20   5.55   -3.15   7.50   -0.073
+[1] tree 675.18   2.49   243.10   -2.27   7.26   -5.03   10.02   0.059
+[1] smallPla -32.12   0.34   29.70   -0.24   0.93   -0.57   1.26   -0.035
+[1] diffBuild -664.86   -0.92   174.02   -4.33   2.49   -6.30   4.47   -0.07
+[1] streeFur -48.30   1.54   91.35   -0.26   3.33   -1.29   4.36   -0.011
+[1] basCol -171.12   0.73   72.49   -0.69   2.15   -1.52   2.97   -0.042
+[1] ligh -62.75   -0.091   38.48   -0.85   0.66   -1.28   1.10   -0.037
+[1] accenCol -168.56   -0.14   93.54   -1.97   1.70   -3.03   2.76   -0.037
+[1] peop -744.10   -0.13   170.71   -3.48   3.21   -5.42   5.15   -0.071
+[1] graff -21.00   -0.50   23.20   -0.95   -0.042   -1.21   0.22   -0.027
+[1] buildDiffAges -53.00   0.47   37.42   -0.27   1.20   -0.69   1.62   -0.037
+[1] streetWid -142.67   1.38   603.49   -10.45   13.21   -17.30   20.06   -0.0042
+[1] sidewalkWid 323.76   1.12   162.24   -2.06   4.30   -3.90   6.14   0.062
+[1] debris -0.025   -0.0013   0.065   -0.0026   8.9e-06   -0.0033   0.00075   -0.03
+[1] pavement 0.21   6.8e-05   0.082   -0.0015   0.0017   -0.0025   0.0026   0.24
+[1] landscape 0.26   -0.00055   0.077   -0.0021   0.00096   -0.0029   0.0018   0.29
+[1] propStreetWall 0.021   2e-04   0.019   -0.00017   0.00057   -0.00039   0.00079   0.094
+[1] propWind -0.044   1.5e-05   0.016   -0.00031   0.00034   -0.00049   0.00052   -0.34
+[1] longSight -13.13   -0.37   81.37   -1.97   1.22   -2.89   2.15   -0.0035
+[1] propSkyAhead -0.054   0.00059   0.034   -8.8e-05   0.0013   -0.00048   0.0017   -0.16
+[1] propSkyAcross 0.01   0.00053   0.031   -6.7e-05   0.0011   -0.00041   0.0015   0.033
+[1] buildHeight 651.30   11.12   1369.12   -15.71   37.96   -31.24   53.49   0.011
+[1] propActiveUse -0.015   -9.6e-05   0.019   -0.00046   0.00027   -0.00067   0.00048   -0.065
+[1] 0.1785714
+[1] ">>>> Kendall Distance 0062-Cat 0.178571428571429"
+          variable         value
+           movCars  1.960000e+00
+          parkCars -2.444357e+00
+          movCicly -9.100000e+00
+           buildId -2.555556e-01
+         buildNRec -6.066667e+00
+              tree  1.382925e+01
+          smallPla -2.003475e+00
+         diffBuild -2.500000e+00
+          streeFur  4.019944e-01
+            basCol -6.315789e-01
+              ligh  1.125108e-01
+          accenCol  2.894737e-01
+              peop -6.911797e+00
+             graff  0.000000e+00
+     buildDiffAges -3.000000e+00
+         streetWid -1.463333e+01
+       sidewalkWid  1.618333e+01
+            debris -5.603698e-01
+          pavement -1.779866e-01
+         landscape  3.647292e-01
+    propStreetWall  1.833333e-01
+          propWind -9.444444e-02
+         longSight -5.000000e-01
+      propSkyAhead -6.000000e-02
+     propSkyAcross -1.675686e-01
+       buildHeight  3.089921e+01
+     propActiveUse  1.068944e-01
+          rmovCars  2.949923e-02
+         rparkCars -1.346424e-02
+         rmovCicly -4.175895e-02
+          rbuildId -3.721111e-03
+        rbuildNRec -2.515333e-02
+             rtree  1.049457e-01
+         rsmallPla -1.986078e-02
+        rdiffBuild -1.182214e-01
+         rstreeFur -2.825859e-02
+           rbasCol -1.657368e-02
+             rligh  4.285869e-03
+         raccenCol  1.454211e-02
+             rpeop -6.710028e-02
+            rgraff  8.900000e-03
+    rbuildDiffAges -3.800000e-03
+        rstreetWid  9.845398e-02
+      rsidewalkWid  1.589446e-01
+           rdebris -5.706912e-03
+         rpavement -7.053436e-03
+        rlandscape -6.737205e-04
+   rpropStreetWall  5.626931e-04
+         rpropWind -4.226896e-04
+        rlongSight  2.350000e-02
+     rpropSkyAhead -7.214762e-04
+    rpropSkyAcross -1.060640e-03
+      rbuildHeight  7.024225e-02
+    rpropActiveUse -2.735635e-04
+        rsdMovCars  1.876824e+00
+       rsdParkCars  1.394008e+00
+       rsdMovCicly  4.247582e+00
+        rsdBuildId  2.179603e+00
+      rsdBuildNRec  2.836752e+00
+           rsdTree  8.102068e+00
+       rsdSmallPla  1.430226e+00
+      rsdDiffBuild  8.536647e+00
+       rsdStreeFur  2.533775e+00
+         rsdBasCol  2.127707e+00
+           rsdLigh  5.270212e-01
+       rsdAccenCol  1.246219e+00
+           rsdPeop  4.603460e+00
+          rsdGraff  1.004849e+00
+  rsdBuildDiffAges  1.862561e+00
+      rsdStreetWid  2.807116e+01
+    rsdSidewalkWid  1.091602e+01
+         rsdDebris  3.674640e-01
+       rsdPavement  5.577613e-01
+      rsdLandscape  3.048566e-01
+ rsdPropStreetWall  9.281832e-02
+       rsdPropWind  4.061855e-02
+      rsdLongSight  2.261639e+00
+   rsdPropSkyAhead  1.541778e-01
+  rsdPropSkyAcross  1.737128e-01
+    rsdBuildHeight  2.215957e+01
+  rsdPropActiveUse  8.128650e-02
+          movCarsN  1.297320e-01
+         parkCarsN -2.607290e-01
+         movCiclyN -3.866279e-01
+          buildIdN -1.699926e-02
+        buildNRecN -2.493151e-01
+             treeN  2.008655e-01
+         smallPlaN -1.670244e-01
+        diffBuildN -4.047803e-02
+         streeFurN  1.946817e-02
+           basColN -3.443329e-02
+             lighN  3.122672e-02
+         accenColN  1.815182e-02
+             peopN -2.382765e-01
+            graffN  0.000000e+00
+    buildDiffAgesN -2.500000e-01
+        streetWidN -4.956640e-02
+      sidewalkWidN  2.501433e-01
+           debrisN -7.974975e-01
+         pavementN -1.623433e-01
+        landscapeN  4.554224e-01
+   propStreetWallN  1.151402e+00
+         propWindN -2.025532e+00
+        longSightN -1.960784e-02
+     propSkyAheadN -1.714286e-01
+    propSkyAcrossN -5.004620e-01
+      buildHeightN  1.509605e-01
+    propActiveUseN  4.255315e-01
+         rmovCarsN  1.952548e-03
+        rparkCarsN -1.436173e-03
+        rmovCiclyN -1.774195e-03
+         rbuildIdN -2.475240e-04
+       rbuildNRecN -1.033699e-03
+            rtreeN  1.524303e-03
+        rsmallPlaN -1.655741e-03
+       rdiffBuildN -1.914148e-03
+        rstreeFurN -1.368534e-03
+          rbasColN -9.035868e-04
+            rlighN  1.189518e-03
+        raccenColN  9.118812e-04
+            rpeopN -2.313207e-03
+           rgraffN  1.271429e-03
+   rbuildDiffAgesN -3.166667e-04
+       rstreetWidN  3.334858e-04
+     rsidewalkWidN  2.456782e-03
+          rdebrisN -8.121867e-03
+        rpavementN -6.433505e-03
+       rlandscapeN -8.412472e-04
+  rpropStreetWallN  3.533923e-03
+        rpropWindN -9.065343e-03
+       rlongSightN  9.215686e-04
+    rpropSkyAheadN -2.061361e-03
+   rpropSkyAcrossN -3.167717e-03
+     rbuildHeightN  3.431739e-04
+   rpropActiveUseN -1.089018e-03
+[1] index feature real random sd lower higher lowerSid higherSid norm
+[1] movCars 1.96   0.029   1.88   -0.0073   0.066   -0.029   0.088   0.13
+[1] parkCars -2.44   -0.013   1.39   -0.041   0.014   -0.057   0.03   -0.26
+[1] movCicly -9.10   -0.042   4.25   -0.13   0.041   -0.17   0.09   -0.39
+[1] buildId -0.26   -0.0037   2.18   -0.046   0.039   -0.071   0.064   -0.017
+[1] buildNRec -6.07   -0.025   2.84   -0.081   0.03   -0.11   0.063   -0.25
+[1] tree 13.83   0.10   8.10   -0.054   0.26   -0.15   0.36   0.20
+[1] smallPla -2.00   -0.02   1.43   -0.048   0.0082   -0.064   0.024   -0.17
+[1] diffBuild -2.50   -0.12   8.54   -0.29   0.049   -0.38   0.15   -0.04
+[1] streeFur 0.40   -0.028   2.53   -0.078   0.021   -0.11   0.05   0.019
+[1] basCol -0.63   -0.017   2.13   -0.058   0.025   -0.082   0.049   -0.034
+[1] ligh 0.11   0.0043   0.53   -0.006   0.015   -0.012   0.021   0.031
+[1] accenCol 0.29   0.015   1.25   -0.0099   0.039   -0.024   0.053   0.018
+[1] peop -6.91   -0.067   4.60   -0.16   0.023   -0.21   0.075   -0.24
+[1] graff 0.00   0.0089   1.00   -0.011   0.029   -0.022   0.04   0.00
+[1] buildDiffAges -3.00   -0.0038   1.86   -0.04   0.033   -0.061   0.054   -0.25
+[1] streetWid -14.63   0.098   28.07   -0.45   0.65   -0.77   0.97   -0.05
+[1] sidewalkWid 16.18   0.16   10.92   -0.055   0.37   -0.18   0.50   0.25
+[1] debris -0.56   -0.0057   0.37   -0.013   0.0015   -0.017   0.0057   -0.80
+[1] pavement -0.18   -0.0071   0.56   -0.018   0.0039   -0.024   0.01   -0.16
+[1] landscape 0.36   -0.00067   0.30   -0.0066   0.0053   -0.01   0.0088   0.46
+[1] propStreetWall 0.18   0.00056   0.093   -0.0013   0.0024   -0.0023   0.0034   1.15
+[1] propWind -0.094   -0.00042   0.041   -0.0012   0.00037   -0.0017   0.00083   -2.03
+[1] longSight -0.50   0.024   2.26   -0.021   0.068   -0.046   0.093   -0.02
+[1] propSkyAhead -0.06   -0.00072   0.15   -0.0037   0.0023   -0.0055   0.004   -0.17
+[1] propSkyAcross -0.17   -0.0011   0.17   -0.0045   0.0023   -0.0064   0.0043   -0.50
+[1] buildHeight 30.90   0.07   22.16   -0.36   0.50   -0.62   0.76   0.15
+[1] propActiveUse 0.11   -0.00027   0.081   -0.0019   0.0013   -0.0028   0.0022   0.43

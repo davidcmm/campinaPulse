@@ -567,7 +567,7 @@ segBins <- filter(temp, V1 == "seguro?")
 sink("rgbBins_correlation.dat")
 for (feature in c("street_wid", "sidewalk_wid", "public_art", "mov_cars", "park_cars", "mov_ciclyst", "debris" , "pavement", "landscape", "courtyards", "major_landsc", "build_ident", "build_nrectan", "prop_street_wall", "prop_wind", "long_sight", "prop_sky_ahead", "prop_sky_across", "trees", "small_planters", "build_height", "diff_build", "prop_hist_build", "street_furnit", "basic_col", "lights", "accent_col", "people", "prop_active_use")){
   for (edge in c("ehdVert", "ehdHor", "ehdDiag", "ehdNon")){
-   res <- calcCorrelForBins(temp, feature, edge, "agradavel?")
+   res <- calcCorelForBins(temp, feature, edge, "agradavel?")
    print(paste(feature, edge))
    print(res)
   }
@@ -3056,6 +3056,32 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
 ## Men x Women - Pleasantness
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Selects which images disagrees in ranking order
+filterDiffRowsOrder <- function(data){
+    amountOfItems <- nrow(data)
+    data <- arrange(data, rank)
+    diffRowsImages <- c()
+    
+    #First call, comparing for group 1
+    for( i in seq(1, amountOfItems) ){
+        rankLine1 <- data[i,]
+        
+        if(i+1 <= amountOfItems){
+          
+            for( j in seq(i+1, amountOfItems) ){
+                rankLine2 <- data[j,]
+                
+                if( rankLine1[["rank"]] < rankLine2[["rank"]] & rankLine1[["index"]] > rankLine2[["index"]] ){
+                    diffRowsImages <- c(diffRowsImages, rankLine1$image_url, rankLine2$image_url)
+                }
+            }
+        }
+    }
+    
+    return (filter(data, image_url %in% unique(diffRowsImages)))
+}
+
+
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
@@ -3075,16 +3101,21 @@ printOutputTwoListsForAll(agrad.l2)
 citySummary("V3.Masculino", agrad.l)
 citySummary("V3.Feminino", agrad.l)
 
-#Top 20 images based on diff, regression for men and women QScore
-# top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
-# 
-# regGroup1 <- lm(rank ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
-# regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad.l)
-# summary(regGroup1)
-# summary(regGroup2)
-
+#Regression for ranking difference
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
+
+#Regression of QScores x QScores
+regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=agrad.l, na.action=na.exclude)
+agrad.l$resid <- regAgrad$residuals
+agrad.l <- arrange(agrad.l, resid)
+head(select(arrange(agrad.l, resid), V3.Masculino, V3.Feminino, resid, image_url, bairro), n=20)
+top20Diff <- arrange(agrad.l, desc(resid)) %>% slice(1:40)
+reg <- lm(resid ~ small_planters + build_nrectan + build_height + trees + people + graffiti + accent_col + build_diff_ages +  street_furnit + diff_build, na.action = na.exclude, data = top20Diff)
+summary(reg)
+
+head(select(arrange(agrad.l, rank), image_url, rank, index))
+head(select(arrange(agrad.l, index), image_url, rank, index))
 
 #Spatial regression - consider spatial dependency and correlation!
 library(spdep)
@@ -3181,8 +3212,17 @@ regGroup2 <- lm(index ~  scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst)
 summary(regGroup1)
 summary(regGroup2)
 
-regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
+
+top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regAgrad$residuals
+top20Diff <- arrange(top20Diff, resid)
+head(select(arrange(top20Diff, resid), rank, index, resid, image_url, bairro), n=20)
+#top20Diff <- arrange(test, desc(resid)) %>% slice(1:40)
+reg <- lm(resid ~ build_height + mov_ciclyst + build_ident + people + build_diff_ages + park_cars + mov_cars + build_nrectan + basic_col + sidewalk_wid, na.action = na.exclude, data = top20Diff)
+summary(reg)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3273,6 +3313,12 @@ citySummary("V3.Solteiro", agrad.l)
 
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
+
+regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=agrad.l, na.action=na.exclude)
+test <- filter(agrad.l, !is.na(V3.Solteiro))
+test$resid <- regAgrad$residuals
+test <- arrange(test, resid)
+head(select(arrange(test, resid), V3.Casado, V3.Solteiro, resid, image_url, bairro), n=20)
   
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l[1:107,], "moran100/streetsQScoresLatLongAgraAll2.dat")

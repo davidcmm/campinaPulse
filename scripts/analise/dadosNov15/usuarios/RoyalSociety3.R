@@ -478,6 +478,9 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     }
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
     simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
+	print(nrow(simData1))
+	print(nrow(simData2))
+	print(nrow(data))
 
     #Amount of images
     amountOfItems <- nrow(data)
@@ -493,8 +496,10 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	groupCompleteId1 <- paste("V3.", group1Id, sep="")
 	groupCompleteId2 <- paste("V3.", group2Id, sep="")
         data <- data %>% do(arrange(., image_url)) 
-	data[[groupCompleteId1]][c(1:107)] <- as.vector(simData1[,ind])
-	data[[groupCompleteId2]][c(1:107)] <- as.vector(simData2[,ind])
+	#data[[groupCompleteId1]][c(1:107)] <- as.vector(simData1[,ind])
+	#data[[groupCompleteId2]][c(1:107)] <- as.vector(simData2[,ind])
+	data[[groupCompleteId1]] <- as.vector(simData1[,ind])
+	data[[groupCompleteId2]] <- as.vector(simData2[,ind])
 
 	sortedData <- data %>% do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
@@ -1286,10 +1291,10 @@ agrad.l <- agrad %>%
 
 #Sector with diff
 diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
-print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
-res <- melt(kendallWithWeights(diff, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?", "250400905000089"))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Casado, diff$V3.Solteiro)))
+#res <- melt(kendallWithWeights(diff, iterations, "V3.Casado", "V3.Solteiro", "agrad%C3%A1vel?", "250400905000089"))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
 
 res <- kendallWithWeightsSimReal(diff, iterations, "Casado", "Solteiro", "agradavel?", temp1, "250400905000089")
 print(res)

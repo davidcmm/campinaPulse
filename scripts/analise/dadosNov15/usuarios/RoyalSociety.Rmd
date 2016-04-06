@@ -3106,13 +3106,13 @@ regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_cicl
 summary(regDiff)
 
 #Regression of QScores x QScores
-regAgrad <- lm(V3.Masculino ~ V3.Feminino, data=agrad.l, na.action=na.exclude)
+regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
 agrad.l$resid <- regAgrad$residuals
 agrad.l <- arrange(agrad.l, resid)
 head(select(arrange(agrad.l, resid), V3.Masculino, V3.Feminino, resid, image_url, bairro), n=20)
 top20Diff <- arrange(agrad.l, desc(resid)) %>% slice(1:40)
 reg <- lm(resid ~ small_planters + build_nrectan + build_height + trees + people + graffiti + accent_col + build_diff_ages +  street_furnit + diff_build, na.action = na.exclude, data = top20Diff)
-summary(reg)
+summary(regAgrad)
 
 head(select(arrange(agrad.l, rank), image_url, rank, index))
 head(select(arrange(agrad.l, index), image_url, rank, index))
@@ -3215,13 +3215,15 @@ summary(regGroup2)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
 
-top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
-regAgrad <- lm(V3.Jovem ~ V3.Adulto, data=top20Diff, na.action=na.exclude)
+#top20Diff <- arrange(agrad.l, desc(diff)) #%>% slice(1:40)
+top20Diff <- agrad.l
+regAgrad <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
 top20Diff$resid <- regAgrad$residuals
-top20Diff <- arrange(top20Diff, resid)
-head(select(arrange(top20Diff, resid), rank, index, resid, image_url, bairro), n=20)
-#top20Diff <- arrange(test, desc(resid)) %>% slice(1:40)
-reg <- lm(resid ~ build_height + mov_ciclyst + build_ident + people + build_diff_ages + park_cars + mov_cars + build_nrectan + basic_col + sidewalk_wid, na.action = na.exclude, data = top20Diff)
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+head(select(top20Diff, rank, index, resid, image_url, bairro), n=20)
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ build_height + mov_ciclyst + build_ident + people + as.integer(build_diff_ages) + park_cars + mov_cars, na.action = na.exclude, data = test)
+#reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
 summary(reg)
 
 #Spatial regression - consider spatial dependency and correlation!
@@ -3791,6 +3793,9 @@ calcMax <- function(values){
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+select(arrange(agrad, desc(V3.Geral)), image_url, V3.Geral, V1)#General ranking
+select(arrange(seg, desc(V3.Geral)), image_url, V3.Geral, V1)
+
 grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
 temp <- rbind(grupo1, grupo2)

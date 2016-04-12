@@ -532,15 +532,26 @@ for (quest in c("agradavel?", "seguro?")){
   }
 }
 sink()
+
+regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+summary(regAgrad)
+texreg(regAgrad)
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
 summary(regAgrad)
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
 summary(regAgrad)
 
+regSeg <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+summary(regSeg)
+texreg(regSeg)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
+
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))
+ggplot(dataToPlot, aes(x=value, fill=variable)) +
+     geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency")
 
 #Subset of columns to merge with features values
 dadosSubBins <- rgbBinsData[, c("V2", "V1", "V3", "diag", "hor", "vert", "ehdVert","ehdHor", "ehdDiag", "ehdNon", "red", "green", "blue", "grupo", "bairro", "setor")]
@@ -2025,12 +2036,46 @@ citySummary <- function(groupName, data){
 }
 
 #Correlation of features
-novo <- select(temp, street_wid, sidewalk_wid, public_art, mov_cars,park_cars ,mov_ciclyst,debris ,pavement ,landscape ,courtyards ,major_landsc ,build_ident ,build_nrectan ,prop_street_wall ,prop_wind ,long_sight ,prop_sky_ahead ,prop_sky_across , trees ,small_planters ,build_height , diff_build ,prop_hist_build ,street_furnit ,basic_col ,lights ,accent_col ,people ,prop_active_use)
+novo <- select(temp, street_wid, sidewalk_wid, public_art, mov_cars, park_cars, mov_ciclyst, debris, pavement, landscape, courtyards, major_landsc, build_ident, build_nrectan, prop_street_wall, prop_wind, long_sight, prop_sky_ahead, prop_sky_across, trees, small_planters, build_height, diff_build, prop_hist_build, street_furnit, basic_col, lights, accent_col, people, prop_active_use)
 
 correlacao <- cor(x = novo)
 library(lattice)
 rb.palette <- colorRampPalette(c("yellow", "red"), space = "rgb")
-levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", )
+levelplot(correlacao, main = "Urban Features Correlation", col.regions = rb.palette(120), cuts=100, at = seq(0, 1, 0.01), xlab = "Urban Features", ylab = "Urban Features", scales=list(x=list(rot=90)))
+
+#Variation of features
+pdf(file = "images/variationFeatures.pdf")
+par(mfrow=c(2,2))
+hist(agrad.l$street_wid)
+hist(agrad.l$sidewalk_wid)
+hist(agrad.l$public_art)
+hist(agrad.l$mov_cars)
+hist(agrad.l$park_cars)
+hist(agrad.l$mov_ciclyst)
+hist(agrad.l$debris)
+hist(agrad.l$pavement)
+hist(agrad.l$landscape)
+hist(agrad.l$courtyards)
+hist(agrad.l$major_landsc)
+hist(agrad.l$build_ident)
+hist(agrad.l$build_nrectan)
+hist(agrad.l$prop_street_wall)
+hist(agrad.l$prop_wind)
+hist(agrad.l$long_sight)
+hist(agrad.l$prop_sky_ahead)
+hist(agrad.l$prop_sky_across)
+hist(agrad.l$trees)
+hist(agrad.l$small_planters)
+hist(agrad.l$build_height)
+hist(agrad.l$diff_build)
+hist(agrad.l$prop_hist_build)
+hist(agrad.l$street_furnit)
+hist(agrad.l$basic_col)
+hist(agrad.l$lights)
+hist(agrad.l$accent_col)
+hist(agrad.l$people)
+hist(agrad.l$prop_active_use)
+dev.off()
 
 #General QScore regression
 # library(leaps)
@@ -3080,6 +3125,39 @@ filterDiffRowsOrder <- function(data){
     
     return (filter(data, image_url %in% unique(diffRowsImages)))
 }
+#Analyses regression data and linear relationship between features and residuals!
+plotRegAndLinear <- function(reg, test){
+  plot(reg)
+  plot(test$resid, test$street_wid)
+  plot(test$resid, test$sidewalk_wid)
+  plot(test$resid, test$public_art)
+  plot(test$resid, test$mov_cars)
+  plot(test$resid, test$park_cars)
+  plot(test$resid, test$mov_ciclyst)
+  plot(test$resid, test$debris)
+  plot(test$resid, test$pavement)
+  plot(test$resid, test$landscape)
+  plot(test$resid, test$courtyards)
+  plot(test$resid, test$major_landsc)
+  plot(test$resid, test$build_ident)
+  plot(test$resid, test$build_nrectan)
+  plot(test$resid, test$prop_street_wall)
+  plot(test$resid, test$prop_wind)
+  plot(test$resid, test$long_sight)
+  plot(test$resid, test$prop_sky_ahead)
+  plot(test$resid, test$prop_sky_across)
+  plot(test$resid, test$trees)
+  plot(test$resid, test$small_planters)
+  plot(test$resid, test$build_height)
+  plot(test$resid, test$diff_build)
+  plot(test$resid, test$prop_hist_build)
+  plot(test$resid, test$street_furnit)
+  plot(test$resid, test$basic_col)
+  plot(test$resid, test$lights)
+  plot(test$resid, test$accent_col)
+  plot(test$resid, test$people)
+  plot(test$resid, test$prop_active_use)
+}
 
 
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
@@ -3102,20 +3180,27 @@ citySummary("V3.Masculino", agrad.l)
 citySummary("V3.Feminino", agrad.l)
 
 #Regression for ranking difference
-regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
-summary(regDiff)
+#regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
+#summary(regDiff)
 
 #Regression of QScores x QScores
 regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
 agrad.l$resid <- regAgrad$residuals
 agrad.l <- arrange(agrad.l, resid)
-head(select(arrange(agrad.l, resid), V3.Masculino, V3.Feminino, resid, image_url, bairro), n=20)
-top20Diff <- arrange(agrad.l, desc(resid)) %>% slice(1:40)
-reg <- lm(resid ~ small_planters + build_nrectan + build_height + trees + people + graffiti + accent_col + build_diff_ages +  street_furnit + diff_build, na.action = na.exclude, data = top20Diff)
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+#reg <- lm(resid ~ small_planters + build_nrectan + build_height + trees + people + graffiti + accent_col + build_diff_ages +  street_furnit + diff_build, na.action = na.exclude, data = top20Diff)
+reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_nrectan + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + landscape, na.action = na.exclude, data = test)#debris, pavement and build_id removed
 summary(regAgrad)
 
 head(select(arrange(agrad.l, rank), image_url, rank, index))
 head(select(arrange(agrad.l, index), image_url, rank, index))
+
+res <- ggplot(data=agrad.l, aes(x=V3.Masculino, y=V3.Feminino), col="black") + geom_point()
+
+#Analysing regression!
+plotRegAndLinear(reg, test)
 
 #Spatial regression - consider spatial dependency and correlation!
 library(spdep)
@@ -3215,16 +3300,32 @@ summary(regGroup2)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
 
+#Regression of rank x rank
 #top20Diff <- arrange(agrad.l, desc(diff)) #%>% slice(1:40)
 top20Diff <- agrad.l
-regAgrad <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
 top20Diff$resid <- regAgrad$residuals
 top20Diff <- arrange(top20Diff, desc(abs(resid)))
-head(select(top20Diff, rank, index, resid, image_url, bairro), n=20)
-test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
-reg <- lm(resid ~ build_height + mov_ciclyst + build_ident + people + as.integer(build_diff_ages) + park_cars + mov_cars, na.action = na.exclude, data = test)
-#reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:50)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ build_height + mov_ciclyst + build_nrectan + people + as.integer(build_diff_ages) + park_cars + mov_cars, na.action = na.exclude, data = test)
+reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_nrectan + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + landscape, na.action = na.exclude, data = test)#debris, pavement and build_id removed
 summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
+xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
+
+#Analysing regression!
+plotRegAndLinear(reg, test)
+
+for (quest in c("agradavel?")){
+   for (feature in c("street_wid" , "sidewalk_wid" , "mov_cars" , "park_cars" , "mov_ciclyst" , "build_nrectan" , "long_sight" ,  "trees" , "small_planters" , "build_height" , "diff_build" , "street_furnit" , "basic_col" , "lights" , "accent_col" , "people" , "prop_wind" , "prop_active_use" , "prop_sky_ahead" , "landscape")){#"graffiti" "build_diff_ages" 
+     res <- calcCorrelForBins(test, "diff", feature, quest)
+     print(paste(quest, "Resid", feature))
+     print(res)
+  }
+}
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3396,6 +3497,24 @@ summary(regGroup2)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
 summary(regDiff)
 
+#Residuals rank x rank
+top20Diff <- agrad.l
+regAgrad <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regAgrad$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ mov_ciclyst + build_ident + people + build_height + build_nrectan + as.integer(build_diff_ages) + as.integer(graffiti), na.action = na.exclude, data = test)
+reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_nrectan + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + landscape, na.action = na.exclude, data = test)#debris, pavement and build_id removed
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
+xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
+
+#Analysing regression!
+plotRegAndLinear(reg, test)
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3531,6 +3650,17 @@ citySummary("V3.Adulto", seg.l)
 
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
+
+top20Diff <- seg.l
+regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regSeg$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_build + build_ident +long_sight, na.action = na.exclude, data = test)
+#reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")

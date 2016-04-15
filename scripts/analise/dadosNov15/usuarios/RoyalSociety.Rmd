@@ -538,20 +538,34 @@ summary(regAgrad)
 texreg(regAgrad)
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
 summary(regAgrad)
+texreg(regAgrad, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
 summary(regAgrad)
 
 regSeg <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
-texreg(regSeg)
+texreg(list(regAgrad, regSeg), stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
+texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
-dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
 ggplot(dataToPlot, aes(x=value, fill=variable)) +
      geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency")
+
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "centro"), red, green, blue))#Centro
+ggplot(dataToPlot, aes(x=value, fill=variable)) +
+     geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
+
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "catole"), red, green, blue))#catole
+ggplot(dataToPlot, aes(x=value, fill=variable)) +
+     geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
+
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "liberdade"), red, green, blue))#liberdade
+ggplot(dataToPlot, aes(x=value, fill=variable)) +
+     geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
 
 #Subset of columns to merge with features values
 dadosSubBins <- rgbBinsData[, c("V2", "V1", "V3", "diag", "hor", "vert", "ehdVert","ehdHor", "ehdDiag", "ehdNon", "red", "green", "blue", "grupo", "bairro", "setor")]
@@ -3128,6 +3142,7 @@ filterDiffRowsOrder <- function(data){
 #Analyses regression data and linear relationship between features and residuals!
 plotRegAndLinear <- function(reg, test){
   plot(reg)
+  
   plot(test$resid, test$street_wid)
   plot(test$resid, test$sidewalk_wid)
   plot(test$resid, test$public_art)
@@ -3179,11 +3194,7 @@ printOutputTwoListsForAll(agrad.l2)
 citySummary("V3.Masculino", agrad.l)
 citySummary("V3.Feminino", agrad.l)
 
-#Regression for ranking difference
-#regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
-#summary(regDiff)
-
-#Regression of QScores x QScores
+#Regression of Rank x Rank
 regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
 agrad.l$resid <- regAgrad$residuals
 agrad.l <- arrange(agrad.l, resid)
@@ -3198,6 +3209,13 @@ head(select(arrange(agrad.l, rank), image_url, rank, index))
 head(select(arrange(agrad.l, index), image_url, rank, index))
 
 res <- ggplot(data=agrad.l, aes(x=V3.Masculino, y=V3.Feminino), col="black") + geom_point()
+
+#Qscores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Analysing regression!
 plotRegAndLinear(reg, test)
@@ -3288,11 +3306,12 @@ citySummary("V3.Adulto", agrad.l)
 top20Diff <- filter(agrad.l, setor == "25040090500004" | setor == "250400905000089")
 top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
 
-regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)
-#Features being considered in coefficient first verstion
-regGroup1 <- lm(rank ~ scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+#Features being considered in coefficient first version
 #regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
-regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
 #Features being considered in coefficient first version
 regGroup2 <- lm(index ~  scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(build_ident) + scale(build_nrectan) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people), na.action = na.exclude, data = agrad.l)
 summary(regGroup1)
@@ -3327,6 +3346,13 @@ for (quest in c("agradavel?")){
      print(res)
   }
 }
+
+#Qscores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3372,7 +3398,6 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 # 
 # summary(regGeralAgrad)
 # texreg(regGeralAgrad, stars = c(0.001, 0.01, 0.05, 0.1))
-
 ```
 
 ## Married x Single - Pleasantness
@@ -3405,24 +3430,12 @@ printOutputTwoListsForAll(agrad.l2)
 citySummary("V3.Casado", agrad.l)
 citySummary("V3.Solteiro", agrad.l)
 
-#Top 20 images based on diff, regression for men and women QScore
-# top20Diff <- filter(agrad.l, bairro == "liberdade")
-# top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+#Qscores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 
-# regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
-#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
-# regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
-# summary(regGroup1)
-# summary(regGroup2)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 
-regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
-summary(regDiff)
-
-regAgrad <- lm(V3.Casado ~ V3.Solteiro, data=agrad.l, na.action=na.exclude)
-test <- filter(agrad.l, !is.na(V3.Solteiro))
-test$resid <- regAgrad$residuals
-test <- arrange(test, resid)
-head(select(arrange(test, resid), V3.Casado, V3.Solteiro, resid, image_url, bairro), n=20)
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Regression of rank x rank
 #top20Diff <- arrange(agrad.l, desc(diff)) #%>% slice(1:40)
@@ -3505,17 +3518,12 @@ printOutputTwoListsForAll(agrad.l2)
 citySummary("V3.Baixa", agrad.l)
 citySummary("V3.Media", agrad.l)
 
-#Top 20 images based on diff, regression for men and women QScore
-top20Diff <- arrange(agrad.l, desc(diff)) %>% slice(1:40)
+#QScores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 
-regGroup1 <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
-#regGroup2 <- lm(index ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = top20Diff)
-regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(debris) + scale(pavement) + scale(landscape) + scale(build_ident) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(prop_sky_across) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = top20Diff)
-summary(regGroup1)
-summary(regGroup2)
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 
-regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people, na.action = na.exclude, data = agrad.l)
-summary(regDiff)
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Residuals rank x rank
 top20Diff <- agrad.l
@@ -3600,6 +3608,13 @@ citySummary("V3.Feminino", seg.l)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
 
+#QScores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3672,6 +3687,13 @@ citySummary("V3.Adulto", seg.l)
 
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
+
+#QScores x features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Rank x Rank
 top20Diff <- seg.l
@@ -3748,6 +3770,13 @@ citySummary("V3.Solteiro", seg.l)
 
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
+
+#QScores x Features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3837,6 +3866,13 @@ summary(regGroup2)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
 
+#QScores x Features
+regGroup <- lm(rank ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
 #Rank x Rank
 top20Diff <- seg.l
 regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
@@ -3848,7 +3884,6 @@ reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_bui
 reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
-
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -4226,5 +4261,4 @@ ggplot(dadosSubS, aes(y=V3, x = bairro)) +
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
   theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+ facet_wrap( ~ grupo, ncol=2)
-
 ```

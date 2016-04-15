@@ -33,7 +33,7 @@ icData <- apply(qscoreSim, 1, ic)
 temp$distance <- icData
 
 #Subset of columns
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
+dadosSub <- temp[, c("V2", "V1", "V75", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance", "setor")]
 
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 
@@ -3254,6 +3254,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
+agrad.l$diff <- agrad.l$V3.Jovem - agrad.l$V3.Adulto
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3422,6 +3423,25 @@ test <- filter(agrad.l, !is.na(V3.Solteiro))
 test$resid <- regAgrad$residuals
 test <- arrange(test, resid)
 head(select(arrange(test, resid), V3.Casado, V3.Solteiro, resid, image_url, bairro), n=20)
+
+#Regression of rank x rank
+#top20Diff <- arrange(agrad.l, desc(diff)) #%>% slice(1:40)
+top20Diff <- agrad.l
+regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
+top20Diff$resid <- regAgrad$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:50)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ build_height + mov_ciclyst + build_nrectan + people + as.integer(build_diff_ages) + park_cars + mov_cars, na.action = na.exclude, data = test)
+reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_nrectan + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + landscape, na.action = na.exclude, data = test)#debris, pavement and build_id removed
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
+xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
+
+#Analysing regression!
+plotRegAndLinear(reg, test)
   
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(agrad.l[1:107,], "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3560,6 +3580,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
+seg.l$diff <- seg.l$V3.Masculino - seg.l$V3.Feminino
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3625,6 +3646,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
+seg.l$diff <- seg.l$V3.Jovem - seg.l$V3.Adulto
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3651,6 +3673,7 @@ citySummary("V3.Adulto", seg.l)
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
 
+#Rank x Rank
 top20Diff <- seg.l
 regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
 top20Diff$resid <- regSeg$residuals
@@ -3658,7 +3681,7 @@ top20Diff <- arrange(top20Diff, desc(abs(resid)))
 xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
 test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
 reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_build + build_ident +long_sight, na.action = na.exclude, data = test)
-#reg <- lm(resid ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -3771,6 +3794,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
+seg.l$diff <- seg.l$V3.Baixa - seg.l$V3.Media
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3812,6 +3836,18 @@ summary(regGroup2)
 
 regDiff <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = seg.l)
 summary(regDiff)
+
+#Rank x Rank
+top20Diff <- seg.l
+regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regSeg$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_build + build_ident +long_sight, na.action = na.exclude, data = test)
+reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 
 #Spatial regression - consider spatial dependency and correlation!

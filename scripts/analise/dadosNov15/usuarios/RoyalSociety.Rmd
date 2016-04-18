@@ -111,6 +111,7 @@ dadosg13 <- read.csv("regressao100/g13.csv")
 dadosg13$image_url <- substituiURL(dadosg13)
 
 #Inter rater-reliability
+sink("consense100/reliability-features.dat")
 files <- list.files("consense100/")
 for(dataFile in files){
   print(dataFile)
@@ -119,6 +120,7 @@ for(dataFile in files){
   res <- kripp.alpha(matriz, method="ordinal")
   print(res)
 }
+sink()
 
 #Summing features values  - left and right
 somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){

@@ -6,6 +6,7 @@ from sets import Set
 import random
 import numpy
 import json
+import csv
 #import pdb
 
 #photos considered in comparisons
@@ -341,6 +342,67 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
 	output.close()
 
+def evaluateVotesStreetSeen(lines, outputFileName):
+	""" Considering all votes for each pair of photos"""
+	votes = {possibleQuestions[1]:{}}
+	allQScores = {possibleQuestions[1]:{}}
+	
+	#Reading from streetseen task-run CSV
+	index = 0
+	for line in lines:
+		if index == 0:
+			index = 1
+		else:
+			question = possibleQuestions[1]
+			preferredPhoto = line[13]
+			notPreferredPhoto = line[20]
+	
+			#Creating votes dictionary
+			if not votes[question].has_key(preferredPhoto):
+				votes[question][preferredPhoto] = {}
+			if not votes[question][preferredPhoto].has_key(notPreferredPhoto):
+				votes[question][preferredPhoto][notPreferredPhoto] = set([])
+
+			#Saving votes from task-run
+			votes[question][preferredPhoto][notPreferredPhoto].add(left)
+
+			allPhotos.add(preferredPhoto)
+			allPhotos.add(notPreferredPhoto)
+
+	print str(votes)
+
+	#Evaluating votes in order to choose winning photos or ties
+	for i in range(0, amountOfSamples):
+		resetCounters()
+
+		for question, qDic in votes.iteritems():
+			for photo1, photosDic in qDic.iteritems():
+				for photo2, votesList in photosDic.iteritems():
+					answer = random.sample(votesList, 1)[0]#Generating answer to consider
+			
+					if answer == left:
+						saveWin(photo1, photo2, question)
+					elif answer == right:
+						saveWin(photo2, photo1, question)
+					elif answer == notKnown:
+						saveDraw(photo1, photo2, question)	
+
+		qscores = computeQScores(allPhotos)
+		for question, qDic in qscores.iteritems():
+			if question == possibleQuestions[1]:
+				for photo, qscore in qDic.iteritems():
+					print question
+					if not allQScores[question].has_key(photo):
+						allQScores[question][photo] = []
+					allQScores[question][photo].append(qscore)
+
+	#Output file
+	output = open(outputFileName, 'w')
+	for question, qDic in allQScores.iteritems():
+		for photo, qscoreList in qDic.iteritems():
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
+	output.close()
+
 def evaluateVotePerIteration(lines, outputFileNames):
 	""" Considering votes per replica iteration for each pair of photos"""
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
@@ -428,19 +490,29 @@ def readTasksDefinitions(linesTasks):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2>"
+		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2> <project type: campina or streetseen>"
 		sys.exit(1)
 	
 	if len(sys.argv) > 3:
 		amountOfSamples = int(sys.argv[2])
 
-	dataFile = open(sys.argv[1], 'r')
-	tasksFile = open(sys.argv[3], 'r')
-	lines = dataFile.readlines()
-	linesTasks = tasksFile.readlines()
+	if len(sys.argv) > 4:
+		projectType = sys.argv[4]
+	else:
+		projectType = "campina"
 
-	#evaluateFirstVote(lines, "first.dat")
-	evaluateAllVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks))
-	#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
+	if projectType == "campina":
+		dataFile = open(sys.argv[1], 'r')
+		tasksFile = open(sys.argv[3], 'r')
+		lines = dataFile.readlines()
+		linesTasks = tasksFile.readlines()
 
-	dataFile.close()
+		#evaluateFirstVote(lines, "first.dat")
+		evaluateAllVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks))
+		#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
+
+		dataFile.close()
+	else:
+		lines = csv.reader(open(sys.argv[1], 'r'))
+
+		evaluateVotesStreetSeen(lines, "all_street_seen.dat")

@@ -369,8 +369,6 @@ def evaluateVotesStreetSeen(lines, outputFileName):
 			allPhotos.add(preferredPhoto)
 			allPhotos.add(notPreferredPhoto)
 
-	print str(votes)
-
 	#Evaluating votes in order to choose winning photos or ties
 	for i in range(0, amountOfSamples):
 		resetCounters()
@@ -391,7 +389,6 @@ def evaluateVotesStreetSeen(lines, outputFileName):
 		for question, qDic in qscores.iteritems():
 			if question == possibleQuestions[1]:
 				for photo, qscore in qDic.iteritems():
-					print question
 					if not allQScores[question].has_key(photo):
 						allQScores[question][photo] = []
 					allQScores[question][photo].append(qscore)

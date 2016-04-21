@@ -350,9 +350,7 @@ def evaluateVotesStreetSeen(lines, outputFileName):
 	#Reading from streetseen task-run CSV
 	index = 0
 	for line in lines:
-		if index == 0:
-			index = 1
-		else:
+		if index > 0:
 			question = possibleQuestions[1]
 			preferredPhoto = line[13]
 			notPreferredPhoto = line[20]
@@ -368,15 +366,26 @@ def evaluateVotesStreetSeen(lines, outputFileName):
 
 			allPhotos.add(preferredPhoto)
 			allPhotos.add(notPreferredPhoto)
+		index = index + 1
 
+	#print "All photos " + str(len(allPhotos))
+	#differentTasks = 0
+	
 	#Evaluating votes in order to choose winning photos or ties
 	for i in range(0, amountOfSamples):
 		resetCounters()
 
 		for question, qDic in votes.iteritems():
 			for photo1, photosDic in qDic.iteritems():
+				#print ">>>> KEY: " + photo1 + " " + str(len(photosDic.keys()))
 				for photo2, votesList in photosDic.iteritems():
 					answer = random.sample(votesList, 1)[0]#Generating answer to consider
+
+					#if votes.has_key(photo2):
+					#	if not votes[photo2].has_key(photo1):
+					#		differentTasks = differentTasks + 1
+					#else:
+					#	differentTasks = differentTasks + 1
 			
 					if answer == left:
 						saveWin(photo1, photo2, question)
@@ -392,6 +401,8 @@ def evaluateVotesStreetSeen(lines, outputFileName):
 					if not allQScores[question].has_key(photo):
 						allQScores[question][photo] = []
 					allQScores[question][photo].append(qscore)
+
+	#print "Different tasks " + str(differentTasks)
 
 	#Output file
 	output = open(outputFileName, 'w')

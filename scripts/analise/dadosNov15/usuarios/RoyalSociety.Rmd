@@ -804,6 +804,8 @@ res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais$prop_active_use, na.act
     sink()
 }
 
+tempGeral <- agrad %>% do(arrange(., desc(V3.Geral))) %>% mutate(rank = 1:n())
+tempGeral <- seg %>% do(arrange(., desc(V3.Geral))) %>% mutate(rank = 1:n())
 calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Geral", "agradavel?", "correlacao-agrad-kendall.dat")
 # 
 # calculaCorrelacoes( list(temp, temp2, temp3, temp4, temp5, temp6, temp7, temp8, temp9, temp10, temp11, temp12, temp13), "V3.Masculino", 'agradavel?', "correlacao-agrad-masc.dat")
@@ -3641,6 +3643,19 @@ regGroup2 <- lm(index ~  street_wid +  mov_cars + park_cars + mov_ciclyst + land
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
+#Rank x Rank
+top20Diff <- seg.l
+regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regSeg$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_build + build_ident +long_sight, na.action = na.exclude, data = test)
+reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3811,6 +3826,19 @@ regGroup2 <- lm(index ~  street_wid + sidewalk_wid + mov_cars + park_cars + mov_
 regGroup2 <- lm(index ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti, na.action = na.exclude, data = seg.l)#Features with agreement over 40%
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+#Rank x Rank
+top20Diff <- seg.l
+regSeg <- lm(rank ~ index, data=top20Diff, na.action=na.exclude)
+top20Diff$resid <- regSeg$residuals
+top20Diff <- arrange(top20Diff, desc(abs(resid)))
+xtable(head(select(top20Diff, rank, index, resid, image_url), n=20))
+test <- top20Diff %>% slice(1:108)#Cutting 40 photos with greater residuals!
+reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_build + build_ident +long_sight, na.action = na.exclude, data = test)
+reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
+summary(reg)
+texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -4218,7 +4246,14 @@ ggplot(dadosSubA, aes(y=V3, x = bairro)) +
   geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("QScore")+ylim(2, 8)+
-  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))+facet_grid(.~ V1)#QSCore x Neig, Question
+
+ggplot(dadosSubA, aes(y=V3, x = V1)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 3, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("QScore")+ylim(2, 8)+
+  theme(axis.text=element_text(size=16), axis.title=element_text(size=16), strip.text = element_text(size=16))#QSCore x Question
 
 #Knows x do not know
 dadosSubA <- dadosSub[dadosSub$V1 == 'agradavel?' & (dadosSub$grupo == 'CCentro' & dadosSub$bairro == 'centro'  | dadosSub$grupo == 'CLiberdade' & dadosSub$bairro == 'liberdade' | dadosSub$grupo == 'CCatole' & dadosSub$bairro == 'catole'),]

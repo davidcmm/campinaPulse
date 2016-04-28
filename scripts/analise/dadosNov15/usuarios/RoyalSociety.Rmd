@@ -3224,6 +3224,9 @@ summary(regAgrad)
 head(select(arrange(agrad.l, rank), image_url, rank, index))
 head(select(arrange(agrad.l, index), image_url, rank, index))
 
+library(car)
+durbinWatsonTest(regAgrad)#H0: no correlation in residuals!
+
 res <- ggplot(data=agrad.l, aes(x=V3.Masculino, y=V3.Feminino), col="black") + geom_point()
 
 #Qscores x features
@@ -3347,6 +3350,8 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
 xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
+
+durbinWatsonTest(regAgrad)#H0: no correlation in residuals!
 
 #Analysing regression!
 plotRegAndLinear(reg, test)
@@ -3473,6 +3478,8 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
 xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
 
+durbinWatsonTest(regAgrad)#H0: no correlation in residuals!
+
 #Analysing regression!
 plotRegAndLinear(reg, test)
   
@@ -3563,6 +3570,8 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 xtable(head(select(arrange(agrad.l, rank), image_url, rank, index), n=10))
 xtable(head(select(arrange(agrad.l, index), image_url, rank, index), n=10))
+
+durbinWatsonTest(regAgrad)#H0: no correlation in residuals!
 
 #Analysing regression!
 plotRegAndLinear(reg, test)
@@ -3655,6 +3664,7 @@ reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst 
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
+durbinWatsonTest(regSeg)#H0: no correlation in residuals!
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3752,6 +3762,8 @@ reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst 
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
+durbinWatsonTest(regSeg)#H0: no correlation in residuals!
+
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
@@ -3839,6 +3851,7 @@ reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst 
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
+durbinWatsonTest(regSeg)#H0: no correlation in residuals!
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
@@ -3950,6 +3963,8 @@ reg <- lm(resid ~ mov_ciclyst + build_nrectan + people + sidewalk_wid + diff_bui
 reg <- lm(diff ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_nrectan +  + long_sight + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_wind + prop_active_use + prop_sky_ahead + prop_sky_across + debris + landscape + pavement, na.action = na.exclude, data = test)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
+
+durbinWatsonTest(regSeg)#H0: no correlation in residuals!
 
 #Spatial regression - consider spatial dependency and correlation!
 res <- getLatLong(seg.l, "moran100/streetsQScoresLatLongAgraAll2.dat")

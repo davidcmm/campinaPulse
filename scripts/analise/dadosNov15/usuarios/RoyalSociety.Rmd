@@ -4008,8 +4008,8 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 #Merging random users ci data and real simulation ci data
-test <- read.table("teste.dat", header=TRUE)#random values and sim mean
-test2 <- read.table("teste2.dat", header=TRUE)#QScore simulation confidence intervals
+test <- read.table("teste.dat", header=TRUE)#QScore simulation confidence intervals mean
+test2 <- read.table("teste2.dat", header=TRUE)#random values and sim
 
 newTest <- merge(test, test2, by.x="feature", by.y="feature")
 
@@ -4072,6 +4072,63 @@ calcMax <- function(values){
 }
 
 ```
+
+
+#Comparing different amount of comparisons sample size
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+all_40 <- arrange(read.table("all_40.dat"), V2)
+all_40$exp <- "40"
+all_50 <- arrange(read.table("all_50.dat"), V2)
+all_50$exp <- "50"
+all_60 <- arrange(read.table("all_60.dat"), V2)
+all_60$exp <- "60"
+all_70 <- arrange(read.table("all_70.dat"), V2)
+all_70$exp <- "70"
+all_80 <- arrange(read.table("all_80.dat"), V2)
+all_80$exp <- "80"
+all_90 <- arrange(read.table("all_90.dat"), V2)
+all_90$exp <- "90"
+all_100 <- arrange(read.table("all_100.dat"), V2)
+all_100$exp <- "100"
+
+source("analisaICPorFoto.R")
+qscoreSim <- all_40 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_40$distance <- icData
+qscoreSim <- all_50 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_50$distance <- icData
+qscoreSim <- all_60 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_60$distance <- icData
+qscoreSim <- all_70 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_70$distance <- icData
+qscoreSim <- all_80 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_80$distance <- icData
+qscoreSim <- all_90 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_90$distance <- icData
+qscoreSim <- all_100 [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+all_100$distance <- icData
+
+all <- rbind(all_40, all_50, all_60, all_70, all_80, all_90, all_100)
+colnames(all)[colnames(all) == "V2"] <- "image_url"
+all$image_url <- substituiURL(all)
+
+temp1 <- lapply(as.character(all$image_url), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][1])
+neigs1 <- unlist(lapply(temp1, '[[', 1))
+all$bairro <- neigs1
+
+#Plotting qscores variations and confidence intervals per neighborhood!
+ggplot(data=filter(all, bairro == "catole"), aes(x=image_url, y=V3, colour=exp)) + geom_point() + facet_grid(V1~bairro) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance), width=.1)
+ggplot(data=filter(all, bairro == "liberdade"), aes(x=image_url, y=V3, colour=exp)) + geom_point() + facet_grid(V1~bairro) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance), width=.1)
+ggplot(data=filter(all, bairro == "centro"), aes(x=image_url, y=V3, colour=exp)) + geom_point() + facet_grid(V1~bairro) + geom_errorbar(aes(ymin=V3-distance, ymax=V3+distance), width=.1)
+
+```
+
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}

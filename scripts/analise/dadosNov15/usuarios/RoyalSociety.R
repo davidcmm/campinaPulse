@@ -983,6 +983,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
 
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
+
+	print(paste("Size ", amountOfRandData))
         
        for( i in seq(1, amountOfRandData) ) {
             rankLine1 <- newData[i,]
@@ -990,6 +992,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
             if(i+1 <= amountOfRandData){
                 for( j in seq(i+1, amountOfRandData) ){
                     rankLine2 <- newData[j,]
+
+			print(paste(i, " ", j))
                     
                     if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 
@@ -1272,10 +1276,10 @@ print("################### Men x Women - Pleasantness")
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?", ""))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?", ""))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
 #res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1, "")
 #print(res)
 #analyseICForFeatures(res)

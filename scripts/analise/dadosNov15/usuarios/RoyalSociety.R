@@ -81,7 +81,7 @@ dadosg12$image_url <- substituiURL(dadosg12)
 dadosg13 <- read.csv("regressao100/g13.csv")
 dadosg13$image_url <- substituiURL(dadosg13)
 
-#Somando esquerda e direita
+#Summing features values  - left and right
 somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     dados1[is.na(dados1)] <- 0
     dados2[is.na(dados2)] <- 0
@@ -89,21 +89,21 @@ somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     soma = dados1 + dados2
     desvios = (desvio1 + desvio2)/2
     
-    
     desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
+#     if (is.na(desvio)){ 
+#         valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+#         valores <- ifelse(valores < 0, 0, valores)
+#         valores <- ifelse(valores > uplimit, uplimit, valores)
+#         return (mean(valores))
+#     }else{
         soma <- ifelse(soma < 0, 0, soma)
         soma <- ifelse(soma > uplimit, uplimit, soma)
         return (mean(soma))
-    }
+#     }
+  #return (mean(soma))
 }
 
-#Somando esquerda e direita
+#Mean of features values - left and right
 mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
    for (i in 1:length(dados1)){
        if(is.na(dados1[i])){
@@ -118,22 +118,23 @@ mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
     desvios = (desvio1 + desvio2)/2
     
     desvio = sd(soma)
-    if (is.na(desvio)){ 
-        valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
-        valores <- ifelse(valores < 0, 0, valores)
-        valores <- ifelse(valores > uplimit, uplimit, valores)
-        return (mean(valores))
-    }else{
+#     if (is.na(desvio)){ 
+#         valores = rnorm(mean = mean(soma, na.rm = TRUE), sd = mean(desvios, na.rm = TRUE), n = 3)
+#         valores <- ifelse(valores < 0, 0, valores)
+#         valores <- ifelse(valores > uplimit, uplimit, valores)
+#         return (mean(valores))
+#     }else{
         soma <- ifelse(soma < 0, 0, soma)
         soma <- ifelse(soma > uplimit, uplimit, soma)
         return (mean(soma))
-    }
+#     }
+#   return(mean(soma))
 }
 
 
-#Gerando valores para os casos com apenas 1 resposta a partir do desvio obtido em outras respostas para a mesma questão
+#Creating values for the cases where only 1 answer was obtained considering the desviations of other features answers
 geraValores <- function(lista, question, desvios, uplimit){
-   desvio = sd(lista)
+   #desvio = sd(lista)
    return (mean(lista, na.rm = TRUE))
 }
 
@@ -463,7 +464,7 @@ temp$area[temp$bairro == "catole"] <- "oeste"
 agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
-#Kendall adaptation to consider weights as the difference in amount of features between images
+#Kendall adaptation to consider weights as the difference in amount of features between images. Using all Qscores computed for each group
 kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sector){
 	
     data$graffiti <- as.character(data$graffiti)
@@ -473,7 +474,7 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     data$build_diff_ages[data$build_diff_ages == "No"] <- 0
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
 
-    if (length(sector) > 0){
+    if (length(sector) > 1){
 	temp <- filter(temp, setor == sector)
     }
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
@@ -970,7 +971,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
     for (k in seq(1, iterations)){
 
 	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
-	if (length(sector) > 0){#Filtering when considering only a specific sector!
+	if (length(sector) > 1){#Filtering when considering only a specific sector!
 		randomData <- filter(randomData, setor == sector)
 	}
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
@@ -982,6 +983,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
 
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
+
+	print(paste("Size ", amountOfRandData))
         
        for( i in seq(1, amountOfRandData) ) {
             rankLine1 <- newData[i,]
@@ -989,6 +992,8 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
             if(i+1 <= amountOfRandData){
                 for( j in seq(i+1, amountOfRandData) ){
                     rankLine2 <- newData[j,]
+
+			print(paste(i, " ", j))
                     
                     if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 
@@ -1271,13 +1276,13 @@ print("################### Men x Women - Pleasantness")
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?"))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
+#res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Masculino", "V3.Feminino", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1, "")
-print(res)
-analyseICForFeatures(res)
+#res <- kendallWithWeightsSimReal(agrad.l, iterations, "Masculino", "Feminino", "agradavel?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(agrad.l2, "V3.Masculino", "V3.Feminino")
@@ -1291,12 +1296,12 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
-#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino", "seguro?"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
-res <- kendallWithWeightsSimReal(seg.l, iterations, "Masculino", "Feminino", "seguro?", temp1, "")
-print(res)
-analyseICForFeatures(res)
+res <- melt(kendallWithWeights(seg.l, iterations, "V3.Masculino", "V3.Feminino", "seguro?", ""))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
+#res <- kendallWithWeightsSimReal(seg.l, iterations, "Masculino", "Feminino", "seguro?", temp1, "")
+#print(res)
+#analyseICForFeatures(res)
 
 #printOutputOneListPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")
 #printOutputTwoListsPerFeature(seg.l2, "V3.Masculino", "V3.Feminino")

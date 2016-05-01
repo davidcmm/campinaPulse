@@ -991,7 +991,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
                 for( j in seq(i+1, amountOfRandData) ){
                     rankLine2 <- newData[j,]
 
-		    if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) &!is.na(rankLine2[[group2Id]] ) {
+		    if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) &!is.na(rankLine2[[group2Id]]) ) {
                     
 		            if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 

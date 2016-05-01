@@ -1055,7 +1055,6 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
 			    #print(e$message) # or whatever error handling code you want
 			  }
 			)
-
 		     }
 		}
            }

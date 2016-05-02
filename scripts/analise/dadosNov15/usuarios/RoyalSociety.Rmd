@@ -2035,6 +2035,7 @@ normalizedKendallTauDistance2 <- function(data1, data2){
   y <- data2
   
   tau = numberOfInversions(order(x)[rank(y)])
+  print(tau)
   nItens = length(x)
   maxNumberOfInverstions <- (nItens*(nItens-1))/2
   normalized = tau/maxNumberOfInverstions
@@ -4073,6 +4074,34 @@ calcMax <- function(values){
 
 ```
 
+
+#Comparing two images x 4 four images results
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+allold <- read.table("all_old.dat")
+allold <- allold %>% do(arrange(., desc(V3))) %>% 
+    mutate(rank = 1:n())
+allnew <- read.table("all_new.dat")
+allnew <- allnew %>% do(arrange(., desc(V3))) %>% 
+    mutate(rank = 1:n())
+
+allold <- arrange(allold, V2)
+allnew <- arrange(allnew, V2)
+
+agradold <- filter(allold, V1 == "agrad%C3%A1vel?")
+agradnew <- filter(allnew, V1 == "agrad%C3%A1vel?")
+
+segold <- filter(allold, V1 == "seguro?")
+segnew <- filter(allnew, V1 == "seguro?")
+
+cor.test(agradold$V3, agradnew$V3, method="kendall")
+cor.test(agradold$rank, agradnew$rank, method="kendall")
+
+cor.test(segold$V3, segnew$V3, method="kendall")
+cor.test(segold$rank, segnew$rank, method="kendall")
+
+normalizedKendallTauDistance2(segold$V3, segnew$V3)
+normalizedKendallTauDistance2(agradold$V3, agradnew$V3)
+```
 
 #Comparing different amount of comparisons sample size
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}

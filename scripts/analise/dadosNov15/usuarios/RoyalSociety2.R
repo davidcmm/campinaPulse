@@ -465,7 +465,7 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images. Using all Qscores computed for each group
-kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sector){
+kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sectors){
 	
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -474,8 +474,14 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     data$build_diff_ages[data$build_diff_ages == "No"] <- 0
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
 
-    if (length(sector) > 1){
-	temp <- filter(temp, setor == sector)
+    if (length(sectors) > 1){
+	if(length(sectors) == 1){
+		temp <- filter(temp, setor == sectors[1])	
+	}else if (length(sectors) == 2){
+		temp <- filter(temp, setor == sectors[1] | setor == sectors[2])	
+	}else if (length(sectors) == 3){
+		temp <- filter(temp, setor == sectors[1] | setor == sectors[2] | setor == sectors[3])	
+	}
     }
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
     simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))
@@ -532,8 +538,8 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	    movCars <- parkCars <- movCicly<- buildId <- buildNRec <- tree <- smallPla <- diffBuild <- streeFur <- basCol <- ligh <- accenCol<- peop <- graff <- buildDiffAges <- streetWid <- sidewalkWid <- buildHeight <- longSight <- 0
 	    debris <- pavement <- landscape <- propStreetWall <- propWind <- propSkyAhead <- propSkyAcross <-  propActiveUse <- c()
 	    
-		movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
-	    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
+	movCarsMax <- parkCarsMax <- movCiclyMax <- buildIdMax <- buildNRecMax <- treeMax <- smallPlaMax <- diffBuildMax <- streeFurMax <- basColMax <- lighMax <- accenColMax <- peopMax <- graffMax <- buildDiffAgesMax <- streetWidMax <- sidewalkWidMax <- buildHeightMax <- longSightMax <- 0
+    debrisMax <- pavementMax <- landscapeMax <- propStreetWallMax <- propWindMax <- propSkyAheadMax <- propSkyAcrossMax <- propActiveUseMax <- c()
 
 	    #First call, comparing for group 1
 	    for( i in seq(1, amountOfItems) ){
@@ -705,7 +711,7 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	return ( featuresMapG1 )
 }
 
-kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sector){
+kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sectors){
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -971,9 +977,15 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
     for (k in seq(1, iterations)){
 
 	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
-	if (length(sector) > 1){#Filtering when considering only a specific sector!
-		randomData <- filter(randomData, setor == sector)
-	}
+	if (length(sectors) > 1){#Filtering when considering only a specific sector!
+		if(length(sectors) == 1){
+			temp <- filter(temp, setor == sectors[1])	
+		}else if (length(sectors) == 2){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2])	
+		}else if (length(sectors) == 3){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2] | setor == sectors[3])	
+		}
+    	}
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
@@ -1276,7 +1288,7 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 #All places
-#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 #res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)
@@ -1285,15 +1297,15 @@ agrad.l <- agrad %>%
 #analyseICForFeatures(res)
 
 #Sectors with difference
-#diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
-#print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", "25040090500004"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(agrad.l, setor == "25040090500004" | setor == "250400905000013" | setor == "250400905000023") #YA Centro
+print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", c("25040090500004", "250400905000013", "250400905000023")))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
 
-#res <- kendallWithWeightsSimReal(diff, iterations, "Jovem", "Adulto", "agradavel?", temp1, "25040090500004")
-#print(res)
-#analyseICForFeatures(res)
+res <- kendallWithWeightsSimReal(diff, iterations, "Jovem", "Adulto", "agradavel?", temp1, c("25040090500004", "250400905000013", "250400905000023"))
+print(res)
+analyseICForFeatures(res)
 
 #diff <- filter(agrad.l, setor == "250400905000089") #YA Lib
 #print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
@@ -1317,10 +1329,10 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
-res <- melt(kendallWithWeights(seg.l, iterations, "V3.Jovem", "V3.Adulto", "seguro?", ""))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Jovem", "V3.Adulto", "seguro?", ""))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
 #res <- kendallWithWeightsSimReal(seg.l, iterations, "Jovem", "Adulto", "seguro?", temp1, "")
 #print(res)
 #analyseICForFeatures(res)

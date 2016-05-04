@@ -465,7 +465,7 @@ agrad <- filter(temp, V1 == "agradavel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images. Using all Qscores computed for each group
-kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sector){
+kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, question, temp, sectors){
 	
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -474,9 +474,15 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
     data$build_diff_ages[data$build_diff_ages == "No"] <- 0
     data$build_diff_ages[data$build_diff_ages == "yes"] <- 1
 
-    if (length(sector) > 1){
-	temp <- filter(temp, setor == sector)
-    }
+    if (length(sectors) > 1){#Filtering when considering only a specific sector!
+		if(length(sectors) == 1){
+			temp <- filter(temp, setor == sectors[1])	
+		}else if (length(sectors) == 2){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2])	
+		}else if (length(sectors) == 3){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2] | setor == sectors[3])	
+		}
+    	}
     simData1 <- unique(arrange(filter(temp, grupo == group1Id & V1 == question)[ c(1, 4:104) ], V2))
     simData2 <- unique(arrange(filter(temp, grupo == group2Id & V1 == question)[ c(1, 4:104) ], V2))    
 
@@ -705,7 +711,7 @@ kendallWithWeightsSimReal <- function(data, iterations, group1Id, group2Id, ques
 	return ( featuresMapG1 )
 }
 
-kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sector){
+kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, sectors){
     
     data$graffiti <- as.character(data$graffiti)
     data$graffiti[data$graffiti == "No"] <- 0
@@ -971,9 +977,15 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
     for (k in seq(1, iterations)){
 
 	randomData <- filter(read.table(paste("/local/david/pybossa_env/campinaPulse/scripts/analise/dadosNov15/usuarios/samplesIds/geralSetoresAJ_", k, ".dat", sep=""), header=TRUE), V1 == question)
-	if (length(sector) > 1){#Filtering when considering only a specific sector!
-		randomData <- filter(randomData, setor == sector)
-	}
+	if (length(sectors) > 1){#Filtering when considering only a specific sector!
+		if(length(sectors) == 1){
+			temp <- filter(temp, setor == sectors[1])	
+		}else if (length(sectors) == 2){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2])	
+		}else if (length(sectors) == 3){
+			temp <- filter(temp, setor == sectors[1] | setor == sectors[2] | setor == sectors[3])	
+		}
+    	}
 	sub <- randomData[, c("V2", "V3", "grupo", "bairro")]
 	newData <- reshape(sub, timevar="grupo", idvar=c("V2", "bairro"), direction="wide")
 	amountOfRandData <- nrow(newData)
@@ -991,7 +1003,7 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
                 for( j in seq(i+1, amountOfRandData) ){
                     rankLine2 <- newData[j,]
                     
-		    if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) &!is.na(rankLine2[[group2Id]] ) {
+		    if ( !is.na(rankLine1[[group1Id]]) & !is.na(rankLine2[[group1Id]]) & !is.na(rankLine1[[group2Id]]) &!is.na(rankLine2[[group2Id]]) ) {
 		            if ( (rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]]) | (rankLine1[[group1Id]] > rankLine2[[group1Id]] & rankLine1[[group2Id]] < rankLine2[[group2Id]]) ) {
 
 				if( rankLine1[[group1Id]] < rankLine2[[group1Id]] & rankLine1[[group2Id]] > rankLine2[[group2Id]] ) {
@@ -1297,24 +1309,24 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
-res <- melt(kendallWithWeights(seg.l, iterations, "V3.Baixa", "V3.Media", "seguro?", ""))
-print(res, row.names=FALSE)
-convertSummary(res, iterations)
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
+#res <- melt(kendallWithWeights(seg.l, iterations, "V3.Baixa", "V3.Media", "seguro?", ""))
+#print(res, row.names=FALSE)
+#convertSummary(res, iterations)
 #res <- kendallWithWeightsSimReal(seg.l, iterations, "Baixa", "Media", "seguro?", temp1, "")
 #print(res)
 #analyseICForFeatures(res)
 
 #Sectors with difference
-#diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
-#print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
-#res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?", "25040090500004"))
-#print(res, row.names=FALSE)
-#convertSummary(res, iterations)
+diff <- filter(seg.l, setor == "250400905000089" | setor == "250400905000095") #LH Lib
+print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?", c("250400905000089", "250400905000095")))
+print(res, row.names=FALSE)
+convertSummary(res, iterations)
 
-#res <- kendallWithWeightsSimReal(diff, iterations, "Baixa", "Media", "seguro?", temp1, "25040090500004")
-#print(res)
-#analyseICForFeatures(res)
+res <- kendallWithWeightsSimReal(diff, iterations, "Baixa", "Media", "seguro?", temp1, c("250400905000089", "250400905000095"))
+print(res)
+analyseICForFeatures(res)
 
 #diff <- filter(seg.l, setor == "250400905000089") #LH Cen e Lib
 #print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))

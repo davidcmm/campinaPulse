@@ -19,6 +19,7 @@ possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
 left = 'Left'
 right = 'Right'
 notKnown = 'NotKnown'
+completeTie = 'equal'
 
 #dictionaries used to save photos comparisons results
 winsPhotosPerQuestion = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
@@ -215,7 +216,7 @@ def evaluateFirstVote(lines, outputFileName):
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(qscore)+'\n')
 	output.close()
 
-def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
+def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, percentOfComparisonsToDeal=1):
 	""" Considering all votes for each pair of photos and performing a simulation (bootstrap based)"""
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
@@ -241,9 +242,13 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 
 			taskDef = tasksDefinitions[taskID]
 			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
-			photos.remove(photo1)
-			photos.remove(photo2)
-
+			if(photo1 != completeTie ){
+				photos.remove(photo1)
+				photos.remove(photo2)
+			}else{
+				photo1 = photos.pop()
+				photo2 = photos.pop()
+			}
 			photo3 = photos.pop()
 			photo4 = photos.pop()
 
@@ -268,12 +273,21 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 				votes[question][photo3][photo4] = set([])
 
 			#Saving votes from task-run
-			votes[question][photo1][photo2].add(left)
-			votes[question][photo1][photo3].add(left)
-			votes[question][photo1][photo4].add(left)
-			votes[question][photo2][photo3].add(right)
-			votes[question][photo2][photo4].add(right)
-			votes[question][photo3][photo4].add(notKnown)
+			if (photo1 != completeTie){
+				votes[question][photo1][photo2].add(left)
+				votes[question][photo1][photo3].add(left)
+				votes[question][photo1][photo4].add(left)
+				votes[question][photo2][photo3].add(right)
+				votes[question][photo2][photo4].add(right)
+				votes[question][photo3][photo4].add(notKnown)
+			}else{
+				votes[question][photo1][photo2].add(notKnown)
+				votes[question][photo1][photo3].add(notKnown)
+				votes[question][photo1][photo4].add(notKnown)
+				votes[question][photo2][photo3].add(notKnown)
+				votes[question][photo2][photo4].add(notKnown)
+				votes[question][photo3][photo4].add(notKnown)
+			}
 
 			allPhotos.add(photo1)
 			allPhotos.add(photo2)
@@ -318,15 +332,17 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions):
 
 		for question, qDic in votes.iteritems():
 			for photo1, photosDic in qDic.iteritems():
-				for photo2, votesList in photosDic.iteritems():
-					answer = random.sample(votesList, 1)[0]#Generating answer to consider
+				value = random.random()
+				if value <= percentOfComparisonsToDeal:
+					for photo2, votesList in photosDic.iteritems():
+						answer = random.sample(votesList, 1)[0]#Generating answer to consider
 			
-					if answer == left:
-						saveWin(photo1, photo2, question)
-					elif answer == right:
-						saveWin(photo2, photo1, question)
-					elif answer == notKnown:
-						saveDraw(photo1, photo2, question)	
+						if answer == left:
+							saveWin(photo1, photo2, question)
+						elif answer == right:
+							saveWin(photo2, photo1, question)
+						elif answer == notKnown:
+							saveDraw(photo1, photo2, question)	
 
 		qscores = computeQScores(allPhotos)
 		for question, qDic in qscores.iteritems():
@@ -516,7 +532,7 @@ if __name__ == "__main__":
 		linesTasks = tasksFile.readlines()
 
 		#evaluateFirstVote(lines, "first.dat")
-		evaluateAllVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks))
+		evaluateAllVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks), 1)
 		#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
 
 		dataFile.close()

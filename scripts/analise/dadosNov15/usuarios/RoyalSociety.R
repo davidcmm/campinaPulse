@@ -984,8 +984,6 @@ kendallWithWeights <- function(data, iterations, group1Id, group2Id, question, s
 	movCarsR <- parkCarsR <- movCiclyR <- buildIdR <- buildNRecR <- treeR <- smallPlaR <- diffBuildR <- streeFurR <- basColR <- lighR <-  accenColR <- peopR <- graffR <- buildDiffAgesR <- streetWidR <- sidewalkWidR <- longSightR <- buildHeightR <- 0
         debrisR <- pavementR <- landscapeR <- propStreetWallR <- propWindR <- propSkyAheadR <- propSkyAcrossR <- propActiveUseR <- c()
 
-	print(paste("Size ", amountOfRandData))
-        
        for( i in seq(1, amountOfRandData) ) {
             rankLine1 <- newData[i,]
             

@@ -1319,7 +1319,7 @@ seg.l <- seg %>%
 
 #Sectors with difference
 diff <- filter(seg.l, setor == "250400905000089" | setor == "250400905000095") #LH Lib
-print(paste(">>>> Kendall Distance 0004-Cen", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
+print(paste(">>>> Kendall Distance 0089-Lib", normalizedKendallTauDistance2(diff$V3.Baixa, diff$V3.Media)))
 res <- melt(kendallWithWeights(diff, iterations, "V3.Baixa", "V3.Media", "seguro?", c("250400905000089", "250400905000095")))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)

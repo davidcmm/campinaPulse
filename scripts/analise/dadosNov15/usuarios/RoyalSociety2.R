@@ -1288,7 +1288,7 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 
 #All places
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
+#print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 #res <- melt(kendallWithWeights(agrad.l, iterations, "V3.Jovem", "V3.Adulto", "agrad%C3%A1vel?", ""))
 #print(res, row.names=FALSE)
 #convertSummary(res, iterations)

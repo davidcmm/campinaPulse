@@ -2111,8 +2111,9 @@ dev.off()
 #General QScore regression
 # library(leaps)
 # 
-# regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
-# plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+#regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + sidewalk_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + prop_hist_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = agrad, nbest = 1, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+regsubsetsAgrad.out <<- regsubsets(V3.Geral ~ street_wid + mov_cars + park_cars + mov_ciclyst +  landscape + build_ident + graffiti + trees + build_height + diff_build + people, na.action = na.exclude, data = agrad, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 
 #regGeralAgrad <- lm(agrad$V3.Geral ~ agrad$street_wid + agrad$sidewalk_wid + agrad$public_art + agrad$mov_cars + agrad$park_cars + agrad$mov_ciclyst + agrad$debris + agrad$pavement + agrad$landscape + agrad$courtyards + agrad$major_landsc + agrad$build_ident + agrad$build_nrectan + agrad$prop_street_wall + agrad$prop_wind + agrad$long_sight + agrad$prop_sky_ahead + agrad$prop_sky_across + agrad$trees + agrad$small_planters + agrad$build_height + agrad$diff_build + agrad$prop_hist_build + agrad$outdoor_table + agrad$street_furnit + agrad$basic_col + agrad$lights + agrad$accent_col + agrad$people + agrad$prop_active_use, na.action = na.exclude)
 # regGeralAgrad <- lm(V3.Geral ~ street_wid + public_art + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + courtyards + major_landsc + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + small_planters + build_height + prop_hist_build + street_furnit + basic_col + accent_col + people, na.action = na.exclude, data = agrad)
@@ -3191,6 +3192,17 @@ plotRegAndLinear <- function(reg, test){
   plot(test$resid, test$prop_active_use)
 }
 
+#Know and do not know neig
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.CCentro, agrad.l$V3.NCCentro)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.CCatole, agrad.l$V3.NCCatole)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.CLiberdade, agrad.l$V3.NCLiberdade)))
+
+agrad.l2 <- filter(agrad.l, bairro == "centro")
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l2$V3.CCentro, agrad.l2$V3.NCCentro)))
+agrad.l2 <- filter(agrad.l, bairro == "catole")
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.CCatole, agrad.l$V3.NCCatole)))
+agrad.l2 <- filter(agrad.l, bairro == "liberdade")
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.CLiberdade, agrad.l$V3.NCLiberdade)))
 
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())

@@ -3207,6 +3207,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.C
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3309,6 +3310,7 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
 agrad.l$diff <- agrad.l$V3.Jovem - agrad.l$V3.Adulto
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3441,6 +3443,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
@@ -3541,6 +3544,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 #Danieles coefficients
 agrad.l <- calcDanieleCoeff(agrad.l)
@@ -3635,6 +3639,7 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$diff <- seg.l$V3.Masculino - seg.l$V3.Feminino
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3726,6 +3731,7 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$diff <- seg.l$V3.Jovem - seg.l$V3.Adulto
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3822,6 +3828,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3920,6 +3927,26 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Bai
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
+
+
+#Investing ranking differences and multinomial model
+seg.l <- arrange(seg.l, diff)
+
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+segLib <- filter(seg.l, bairro == "liberdade")
+head(select(arrange(segLib, desc(abs(diff))), rank, index, diff, image_url), n=20)
+
+seg.l$mode[seg.l$diff <= -20] <- "baixa"
+seg.l$mode[seg.l$diff >= 20] <- "media"
+seg.l$mode[seg.l$diff > -20 & seg.l$diff < 20] <- "zero"
+
+library(mlogit)
+dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero")
+summary(model)
+data.frame(exp(model$coefficients))
+exp(confint(model))
 
 #Sectors with difference
 diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib
@@ -4173,6 +4200,30 @@ ggplot(data=filter(all, bairro == "centro"), aes(x=image_url, y=V3, colour=exp))
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Ranking x Features - Stepwise regression
+agradGeral <- arrange(agrad, desc(V3.Geral))  %>% mutate(rank = 1:n())
+segGeral <- arrange(seg, desc(V3.Geral))  %>% mutate(rank = 1:n())
+
+agradGeral$know <- 0
+agradGeral$know[agradGeral$bairro == "centro"] <- 108
+agradGeral$know[agradGeral$bairro == "catole"] <- 72
+agradGeral$know[agradGeral$bairro == "liberdade"] <- 38
+segGeral$know <- 0
+segGeral$know[segGeral$bairro == "centro"] <- 108
+segGeral$know[segGeral$bairro == "catole"] <- 72
+segGeral$know[segGeral$bairro == "liberdade"] <- 38
+
+regsubsetsAgrad.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = agradGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
+regsubsetsSeg.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = segGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
+plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
+
+regGroup1 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro, na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
+regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
+
+texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+#Prepare data for spatial pleas x safety plot
 select(arrange(agrad, desc(V3.Geral)), image_url, V3.Geral, V1)#General ranking
 select(arrange(seg, desc(V3.Geral)), image_url, V3.Geral, V1)
 

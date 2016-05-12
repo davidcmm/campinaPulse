@@ -3320,6 +3320,51 @@ res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
+#Investigating ranking differences and multinomial model
+agrad.l <- arrange(agrad.l, diff)
+
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+
+agrad.l$mode[agrad.l$diff <= -35] <- "jovem"#Classifiying according to a threshold
+agrad.l$mode[agrad.l$diff >= 35] <- "adulto"
+agrad.l$mode[agrad.l$diff > -35 & agrad.l$diff < 35] <- "zero"
+agrad.l$mode <- "zero"#Classifiying top and bottom X images
+agrad.l[1:35,]$mode <- "jovem"
+agrad.l[73:108,]$mode <- "adulto"
+
+newagrad.l <- rbind(agrad.l[1:35,], sample_n(agrad.l[36:72,], 35), agrad.l[73:108,])
+newagrad.l <- rbind(filter(agrad.l, mode == "jovem"), sample_n(filter(agrad.l, mode == "zero"), 25), filter(agrad.l, mode == "adulto"))
+
+library(mlogit)
+dataMulti <- select(newagrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero", weights = ) 
+summary(model)
+data.frame(exp(model$coefficients))
+exp(confint(model))
+
+ggplot(seg.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#35 to define bump?
+
+#Analysing penalizations?
+safety$mode = "consensus"
+safety[safety$diff < -15, "mode"] = "B > A"
+safety[safety$diff > 15, "mode"] = "A > B"
+safety$mode = as.factor(safety$mode)
+safety$mode = relevel(safety$mode, ref = "consensus")
+
+dataMulti <- select(safety, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
+
+classWeights = dataMulti %>% 
+group_by(mode) %>% 
+summarise(n = n()) %>% 
+weight 
+
+library(pmlr)
+pmlrmodel <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, 
+data = dataMulti, 
+penalized = TRUE)
+summary(pmlrmodel)
+
 #Sectors with difference
 diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
 print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
@@ -3929,19 +3974,24 @@ print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
 
-#Investing ranking differences and multinomial model
+#Investigating ranking differences and multinomial model
 seg.l <- arrange(seg.l, diff)
 
 head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 segLib <- filter(seg.l, bairro == "liberdade")
 head(select(arrange(segLib, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-seg.l$mode[seg.l$diff <= -20] <- "baixa"
+seg.l$mode[seg.l$diff <= -20] <- "baixa"#Classifiying according to a threshold
 seg.l$mode[seg.l$diff >= 20] <- "media"
 seg.l$mode[seg.l$diff > -20 & seg.l$diff < 20] <- "zero"
+seg.l$mode <- "zero"#Classifiying top and bottom X images
+seg.l[1:15,]$mode <- "baixa"
+seg.l[93:108,]$mode <- "media"
+
+newseg.l <- rbind(seg.l[1:15,], sample_n(seg.l[16:92,], 15), seg.l[93:108,])
 
 library(mlogit)
-dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+dataMulti <- select(newseg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
 newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
 model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero")
 summary(model)

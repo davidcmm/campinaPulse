@@ -3325,17 +3325,19 @@ agrad.l <- arrange(agrad.l, diff)
 
 head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-agrad.l$mode[agrad.l$diff <= -35] <- "jovem"#Classifiying according to a threshold
-agrad.l$mode[agrad.l$diff >= 35] <- "adulto"
-agrad.l$mode[agrad.l$diff > -35 & agrad.l$diff < 35] <- "zero"
+agrad.l$mode[agrad.l$diff <= -30] <- "jovem"#Classifiying according to a threshold
+agrad.l$mode[agrad.l$diff >= 30] <- "adulto"
+agrad.l$mode[agrad.l$diff > -30 & agrad.l$diff < 30] <- "zero"
 agrad.l$mode <- "zero"#Classifiying top and bottom X images
 agrad.l[1:35,]$mode <- "jovem"
 agrad.l[73:108,]$mode <- "adulto"
+agrad.l$mode = as.factor(agrad.l$mode)
+agrad.l$mode = relevel(agrad.l$mode, ref = "zero")
 
 newagrad.l <- rbind(agrad.l[1:35,], sample_n(agrad.l[36:72,], 35), agrad.l[73:108,])
 newagrad.l <- rbind(filter(agrad.l, mode == "jovem"), sample_n(filter(agrad.l, mode == "zero"), 25), filter(agrad.l, mode == "adulto"))
 
-library(mlogit)
+library(mlogit)#Multinomial typical model
 dataMulti <- select(newagrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
 newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
 model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero", weights = ) 
@@ -3343,7 +3345,7 @@ summary(model)
 data.frame(exp(model$coefficients))
 exp(confint(model))
 
-ggplot(seg.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#35 to define bump?
+ggplot(agrad.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#-35/30 to define bump?
 
 #Analysing penalizations?
 safety$mode = "consensus"
@@ -3352,7 +3354,7 @@ safety[safety$diff > 15, "mode"] = "A > B"
 safety$mode = as.factor(safety$mode)
 safety$mode = relevel(safety$mode, ref = "consensus")
 
-dataMulti <- select(safety, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
 
 classWeights = dataMulti %>% 
 group_by(mode) %>% 

@@ -3320,6 +3320,47 @@ res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
+#Investing ranking differences and multinomial model
+agrad.l <- arrange(agrad.l, diff)
+
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+agradCenter <- filter(agrad.l, bairro == "centro")
+head(select(arrange(agradCenter, desc(abs(diff))), rank, index, diff, image_url), n=20)
+
+agrad.l$mode[agrad.l$diff <= -30] <- "jovem"
+agrad.l$mode[agrad.l$diff >= 30] <- "adulto"
+agrad.l$mode[agrad.l$diff > -30 & agrad.l$diff < 30] <- "zero"
+agrad.l$logSWID <- log(agrad.l$street_wid)*agrad.l$street_wid#Testing linearity
+agrad.l$logMCARS <- log(agrad.l$mov_cars)*agrad.l$mov_cars#Testing linearity
+agrad.l$logPCARS <- log(agrad.l$park_cars)*agrad.l$park_cars#Testing linearity
+agrad.l$logMCIC <- log(agrad.l$mov_ciclyst)*agrad.l$mov_ciclyst#Testing linearity
+agrad.l$logLAND <- log(agrad.l$landscape)*agrad.l$landscape#Testing linearity
+agrad.l$logBID <- log(agrad.l$build_ident)*agrad.l$build_ident#Testing linearity
+agrad.l$logTREE <- log(agrad.l$trees)*agrad.l$trees#Testing linearity
+agrad.l$logBHEI <- log(agrad.l$build_height)*agrad.l$build_height#Testing linearity
+agrad.l$logDBUI <- log(agrad.l$diff_build)*agrad.l$diff_build#Testing linearity
+agrad.l$logPEOP <- log(agrad.l$people)*agrad.l$people#Testing linearity
+
+agradCenter$mode[agradCenter$diff <= -10] <- "jovem"
+agradCenter$mode[agradCenter$diff >= 10] <- "adulto"
+agradCenter$mode[agradCenter$diff > -10 & agradCenter$diff < 10] <- "zero"
+
+library(mlogit)
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, logSWID, logMCARS, logPCARS, logMCIC, logLAND, logBID, logTREE, logBHEI, logDBUI, logPEOP)
+newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
+model3 <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + build_ident + build_height + trees + people + diff_build + graffiti, data = newDataMulti, reflevel="zero")
+#summary(mlogit(mode ~ 1 | street_wid + landscape + mov_cars + park_cars + mov_ciclyst + build_ident + build_height + people, data = newDataMulti, reflevel="zero")) #-> Removing expected concordant features: trees, graffiti and diff_build related to people!
+summary(model)
+data.frame(exp(model$coefficients))
+exp(confint(model))
+#Testing linearity
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + logSWID + logMCARS + logPCARS +  logLAND + logTREE + logBHEI + logDBUI + logPEOP, data = newDataMulti, reflevel="zero")#logMCIC logBID
+summary(model)
+library(car)#Testing multicolinearity
+vif(model)
+1/vif(model)
+
+
 #Sectors with difference
 diff <- filter(agrad.l, setor == "25040090500004") #YA Centro
 print(paste(">>>> Kendall Distance 004-Cen", normalizedKendallTauDistance2(diff$V3.Jovem, diff$V3.Adulto)))
@@ -3932,21 +3973,42 @@ convertSummary(res, iterations)
 #Investing ranking differences and multinomial model
 seg.l <- arrange(seg.l, diff)
 
-head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+test <- rbind(head(arrange(seg.l, desc(abs(diff))), n=20), tail(arrange(seg.l, desc(abs(diff))), n=20))
 segLib <- filter(seg.l, bairro == "liberdade")
 head(select(arrange(segLib, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-seg.l$mode[seg.l$diff <= -20] <- "baixa"
-seg.l$mode[seg.l$diff >= 20] <- "media"
-seg.l$mode[seg.l$diff > -20 & seg.l$diff < 20] <- "zero"
+seg.l$mode[seg.l$diff <= -30] <- "baixa"
+seg.l$mode[seg.l$diff >= 30] <- "media"
+seg.l$mode[seg.l$diff > -30 & seg.l$diff < 30] <- "zero"
+seg.l$logSWID <- log(seg.l$street_wid)*seg.l$street_wid#Testing linearity
+seg.l$logMCARS <- log(seg.l$mov_cars)*seg.l$mov_cars#Testing linearity
+seg.l$logPCARS <- log(seg.l$park_cars)*seg.l$park_cars#Testing linearity
+seg.l$logMCIC <- log(seg.l$mov_ciclyst)*seg.l$mov_ciclyst#Testing linearity
+seg.l$logLAND <- log(seg.l$landscape)*seg.l$landscape#Testing linearity
+seg.l$logBID <- log(seg.l$build_ident)*seg.l$build_ident#Testing linearity
+seg.l$logTREE <- log(seg.l$trees)*seg.l$trees#Testing linearity
+seg.l$logBHEI <- log(seg.l$build_height)*seg.l$build_height#Testing linearity
+seg.l$logDBUI <- log(seg.l$diff_build)*seg.l$diff_build#Testing linearity
+seg.l$logPEOP <- log(seg.l$people)*seg.l$people#Testing linearity
+
+segLib$mode[segLib$diff <= -20] <- "baixa"
+segLib$mode[segLib$diff >= 20] <- "media"
+segLib$mode[segLib$diff > -20 & segLib$diff < 20] <- "zero"
 
 library(mlogit)
-dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, logSWID, logMCARS, logPCARS, logMCIC, logLAND, logBID, logTREE, logBHEI, logDBUI, logPEOP, bairro)
 newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
-model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti + bairro, data = newDataMulti, reflevel="zero")
 summary(model)
 data.frame(exp(model$coefficients))
 exp(confint(model))
+
+#Testing linearity
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + logSWID + logMCARS + logPCARS +  logLAND + logTREE + logBHEI + logDBUI + logPEOP, data = newDataMulti, reflevel="zero")#logMCIC logBID
+summary(model)
+library(car)#Testing multicolinearity
+vif(model)
+1/vif(model)
 
 #Sectors with difference
 diff <- filter(seg.l, setor == "25040090500004") #LH Cen e Lib

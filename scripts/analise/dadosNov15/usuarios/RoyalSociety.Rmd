@@ -3224,6 +3224,47 @@ printOutputTwoListsForAll(agrad.l2)
 citySummary("V3.Masculino", agrad.l)
 citySummary("V3.Feminino", agrad.l)
 
+#Investigating ranking differences and multinomial model
+agrad.l <- arrange(agrad.l, diff)
+
+agrad.l$mode[agrad.l$diff <= -15] <- "men"#Classifiying according to a threshold
+agrad.l$mode[agrad.l$diff >= 30] <- "women"
+agrad.l$mode[agrad.l$diff > -15 & agrad.l$diff < 30] <- "consensus"
+agrad.l$mode = as.factor(agrad.l$mode)
+agrad.l$mode = relevel(agrad.l$mode, ref = "consensus")
+agrad.l$weight <- abs(agrad.l$diff) / sum(abs(agrad.l$diff))
+
+agrad.l$logSWID <- log(agrad.l$street_wid)*agrad.l$street_wid#Testing linearity
+agrad.l$logMCARS <- log(agrad.l$mov_cars)*agrad.l$mov_cars#Testing linearity
+agrad.l$logPCARS <- log(agrad.l$park_cars)*agrad.l$park_cars#Testing linearity
+agrad.l$logMCIC <- log(agrad.l$mov_ciclyst)*agrad.l$mov_ciclyst#Testing linearity
+agrad.l$logLAND <- log(agrad.l$landscape)*agrad.l$landscape#Testing linearity
+agrad.l$logBID <- log(agrad.l$build_ident)*agrad.l$build_ident#Testing linearity
+agrad.l$logTREE <- log(agrad.l$trees)*agrad.l$trees#Testing linearity
+agrad.l$logBHEI <- log(agrad.l$build_height)*agrad.l$build_height#Testing linearity
+agrad.l$logDBUI <- log(agrad.l$diff_build)*agrad.l$diff_build#Testing linearity
+agrad.l$logPEOP <- log(agrad.l$people)*agrad.l$people#Testing linearity
+
+library(mlogit)#Multinomial typical model
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, weight)
+newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero", weigths = weight) 
+summary(model)
+data.frame(exp(model$coefficients))
+exp(confint(model))
+
+ggplot(agrad.l, aes(x=diff)) + geom_histogram(binwidth=5) + geom_density(alpha=.2, fill="#FF6666") + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_continuous(breaks=seq(-50, 50, 10)) + xlim(-50,50) + ggtitle("Men x Women - Pleasantness Diff -20 & 30")
+
+#Analysing penalizations?
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
+
+library(pmlr)
+pmlrmodel <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti, 
+data = dataMulti, 
+penalized = TRUE,
+method="likelihood")
+summary(pmlrmodel)
+
 #Regression of Rank x Rank
 regAgrad <- lm(rank ~ index, data=agrad.l, na.action=na.exclude)
 agrad.l$resid <- regAgrad$residuals
@@ -3327,14 +3368,15 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=
 agradCenter <- filter(agrad.l, bairro == "centro")
 head(select(arrange(agradCenter, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-agrad.l$mode[agrad.l$diff <= -30] <- "jovem"#Classifiying according to a threshold
-agrad.l$mode[agrad.l$diff >= 30] <- "adulto"
-agrad.l$mode[agrad.l$diff > -30 & agrad.l$diff < 30] <- "zero"
+agrad.l$mode[agrad.l$diff <= -35] <- "young"#Classifiying according to a threshold
+agrad.l$mode[agrad.l$diff >= 30] <- "adult"
+agrad.l$mode[agrad.l$diff > -35 & agrad.l$diff < 30] <- "consensus"
 agrad.l$mode <- "zero"#Classifiying top and bottom X images
 agrad.l[1:35,]$mode <- "jovem"
 agrad.l[73:108,]$mode <- "adulto"
 agrad.l$mode = as.factor(agrad.l$mode)
-agrad.l$mode = relevel(agrad.l$mode, ref = "zero")
+agrad.l$mode = relevel(agrad.l$mode, ref = "consensus")
+agrad.l$weight <- abs(agrad.l$diff) / sum(abs(agrad.l$diff))
 
 newagrad.l <- rbind(agrad.l[1:35,], sample_n(agrad.l[36:72,], 35), agrad.l[73:108,])
 newagrad.l <- rbind(filter(agrad.l, mode == "jovem"), sample_n(filter(agrad.l, mode == "zero"), 25), filter(agrad.l, mode == "adulto"))
@@ -3355,33 +3397,23 @@ agradCenter$mode[agradCenter$diff >= 10] <- "adulto"
 agradCenter$mode[agradCenter$diff > -10 & agradCenter$diff < 10] <- "zero"
 
 library(mlogit)#Multinomial typical model
-dataMulti <- select(newagrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, weight)
 newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
-model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero", weights = ) 
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero") 
 summary(model)
 data.frame(exp(model$coefficients))
 exp(confint(model))
 
-ggplot(agrad.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#-35/30 to define bump?
+ggplot(agrad.l, aes(x=diff)) + geom_histogram(binwidth=5) + geom_density(alpha=.2, fill="#FF6666") + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_continuous(breaks=seq(-50, 50, 10)) + xlim(-50,50) + ggtitle("Young x Adult - Pleasantness Diff -35 & 30")
 
 #Analysing penalizations?
-safety$mode = "consensus"
-safety[safety$diff < -15, "mode"] = "B > A"
-safety[safety$diff > 15, "mode"] = "A > B"
-safety$mode = as.factor(safety$mode)
-safety$mode = relevel(safety$mode, ref = "consensus")
-
 dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
 
-classWeights = dataMulti %>% 
-group_by(mode) %>% 
-summarise(n = n()) %>% 
-weight 
-
 library(pmlr)
-pmlrmodel <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, 
+pmlrmodel <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti, 
 data = dataMulti, 
-penalized = TRUE)
+penalized = TRUE,
+method="likelihood")
 summary(pmlrmodel)
 
 #Testing linearity
@@ -3523,6 +3555,51 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.C
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
+
+#Investigating ranking differences and multinomial model
+agrad.l <- arrange(agrad.l, diff)
+
+agrad.l$mode[agrad.l$diff <= -45] <- "casado"#Classifiying according to a threshold
+agrad.l$mode[agrad.l$diff >= 45] <- "solteiro"
+agrad.l$mode[agrad.l$diff > -45 & agrad.l$diff < 45] <- "zero"
+agrad.l$mode = as.factor(agrad.l$mode)
+agrad.l$mode = relevel(agrad.l$mode, ref = "zero")
+agrad.l$weight <- abs(agrad.l$diff) / sum(abs(agrad.l$diff))
+
+newagrad.l <- rbind(agrad.l[1:35,], sample_n(agrad.l[36:72,], 35), agrad.l[73:108,])
+newagrad.l <- rbind(filter(agrad.l, mode == "jovem"), sample_n(filter(agrad.l, mode == "zero"), 25), filter(agrad.l, mode == "adulto"))
+
+agrad.l$logSWID <- log(agrad.l$street_wid)*agrad.l$street_wid#Testing linearity
+agrad.l$logMCARS <- log(agrad.l$mov_cars)*agrad.l$mov_cars#Testing linearity
+agrad.l$logPCARS <- log(agrad.l$park_cars)*agrad.l$park_cars#Testing linearity
+agrad.l$logMCIC <- log(agrad.l$mov_ciclyst)*agrad.l$mov_ciclyst#Testing linearity
+agrad.l$logLAND <- log(agrad.l$landscape)*agrad.l$landscape#Testing linearity
+agrad.l$logBID <- log(agrad.l$build_ident)*agrad.l$build_ident#Testing linearity
+agrad.l$logTREE <- log(agrad.l$trees)*agrad.l$trees#Testing linearity
+agrad.l$logBHEI <- log(agrad.l$build_height)*agrad.l$build_height#Testing linearity
+agrad.l$logDBUI <- log(agrad.l$diff_build)*agrad.l$diff_build#Testing linearity
+agrad.l$logPEOP <- log(agrad.l$people)*agrad.l$people#Testing linearity
+
+library(mlogit)#Multinomial typical model
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, weight)
+newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = newDataMulti, reflevel="zero")#Error with weights! 
+summary(model)
+data.frame(exp(model$coefficients))
+exp(confint(model))
+
+ggplot(agrad.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#-35/30 to define bump?
+
+#Analysing penalizations?
+dataMulti <- select(agrad.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
+
+library(pmlr)
+pmlrmodel <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, 
+data = dataMulti, 
+penalized = TRUE,
+method="likelihood")
+summary(pmlrmodel)
+
 
 #Sector with diff
 diff <- filter(agrad.l, setor == "250400905000089") #MS Lib
@@ -4007,9 +4084,9 @@ test <- rbind(head(arrange(seg.l, desc(abs(diff))), n=20), tail(arrange(seg.l, d
 segLib <- filter(seg.l, bairro == "liberdade")
 head(select(arrange(segLib, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-seg.l$mode[seg.l$diff <= -30] <- "baixa"
-seg.l$mode[seg.l$diff >= 30] <- "media"
-seg.l$mode[seg.l$diff > -30 & seg.l$diff < 30] <- "zero"
+seg.l$mode[seg.l$diff <= -35] <- "baixa"
+seg.l$mode[seg.l$diff >= 35] <- "media"
+seg.l$mode[seg.l$diff > -35 & seg.l$diff < 35] <- "zero"
 seg.l$logSWID <- log(seg.l$street_wid)*seg.l$street_wid#Testing linearity
 seg.l$logMCARS <- log(seg.l$mov_cars)*seg.l$mov_cars#Testing linearity
 seg.l$logPCARS <- log(seg.l$park_cars)*seg.l$park_cars#Testing linearity
@@ -4027,16 +4104,27 @@ seg.l$mode[seg.l$diff > -20 & seg.l$diff < 20] <- "zero"
 seg.l$mode <- "zero"#Classifiying top and bottom X images
 seg.l[1:15,]$mode <- "baixa"
 seg.l[93:108,]$mode <- "media"
+seg.l$weight <- abs(seg.l$diff) #/ sum(abs(seg.l$diff))
+seg.l$mode = as.factor(seg.l$mode)
+seg.l$mode = relevel(seg.l$mode, ref = "zero")
 
 newseg.l <- rbind(seg.l[1:15,], sample_n(seg.l[16:92,], 15), seg.l[93:108,])
 
 library(mlogit)
-dataMulti <- select(newseg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti)
+dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build,  people, graffiti, weight, diff)
 newDataMulti <- mlogit.data(dataMulti, shape = "wide", id.var = 1, choice = "mode")
-model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti + bairro, data = newDataMulti, reflevel="zero")
+model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti, data = newDataMulti, reflevel="zero", weights = weight)
 summary(model)
 data.frame(exp(model$coefficients))
 exp(confint(model))
+
+ggplot(seg.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#-35/30 to define bump?
+
+#Penalized model
+library(pmlr)
+dataMulti <- select(seg.l, image_url, mode, street_wid, mov_cars, park_cars, mov_ciclyst, landscape, build_ident, trees, build_height, diff_build, people, graffiti)
+pmlrmodel3Saf <- pmlr(mode ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, data = dataMulti, penalized = TRUE, method="likelihood", joint = TRUE)
+
 
 #Testing linearity
 model <- mlogit(mode ~ 1 | street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + logSWID + logMCARS + logPCARS +  logLAND + logTREE + logBHEI + logDBUI + logPEOP, data = newDataMulti, reflevel="zero")#logMCIC logBID

@@ -60,91 +60,98 @@ def parseUserData(lines):
 
 		if len(data[1]) > 0:
 			#Separating by age
-			age = int(profile[0].lower())
-			if age <= 24:
-				young.add(userID)
-				tasksYoung.update(tasksIDSeg)
-				tasksYoung.update(tasksIDAgra)
-			#elif age >= 35 and age <= 44:
-			elif age >= 25:
-				old.add(userID)
-				tasksOld.update(tasksIDSeg)
-				tasksOld.update(tasksIDAgra)
+			if len(profile[0]) > 0:
+				age = int(profile[0].lower())
+				print age
+				if age <= 24:
+					young.add(userID)
+					tasksYoung.update(tasksIDSeg)
+					tasksYoung.update(tasksIDAgra)
+				#elif age >= 35 and age <= 44:
+				elif age >= 25:
+					old.add(userID)
+					tasksOld.update(tasksIDSeg)
+					tasksOld.update(tasksIDAgra)
 
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
-			sex = profile[1].lower()
-			if sex[0] == 'f':
-				feminine.add(userID)
-				tasksFem.update(tasksIDSeg)
-				tasksFem.update(tasksIDAgra)
-			else:
-				masculine.add(userID)
-				tasksMasc.update(tasksIDSeg)
-				tasksMasc.update(tasksIDAgra)
+			if len(profile[1]) > 0:
+				sex = profile[1].lower()
+				if sex[0] == 'f':
+					feminine.add(userID)
+					tasksFem.update(tasksIDSeg)
+					tasksFem.update(tasksIDAgra)
+				else:
+					masculine.add(userID)
+					tasksMasc.update(tasksIDSeg)
+					tasksMasc.update(tasksIDAgra)
 		
 			#Separating by income
-			income = profile[2]
-			if income == possibleIncomesOld[0] or income == possibleIncomesOld[1] or income == possibleIncomesNew[0] or income == possibleIncomesNew[1]:
-				low.add(userID)
-				tasksLow.update(tasksIDSeg)
-				tasksLow.update(tasksIDAgra)
-			elif income == possibleIncomesOld[2] or income == possibleIncomesOld[3] or income == possibleIncomesNew[2] or income == possibleIncomesNew[3]:
-				high.add(userID)
-				tasksHigh.update(tasksIDSeg)
-				tasksHigh.update(tasksIDAgra)
+			if len(profile[2]) > 0:
+				income = profile[2]
+				if income == possibleIncomesOld[0] or income == possibleIncomesOld[1] or income == possibleIncomesNew[0] or income == possibleIncomesNew[1]:
+					low.add(userID)
+					tasksLow.update(tasksIDSeg)
+					tasksLow.update(tasksIDAgra)
+				elif income == possibleIncomesOld[2] or income == possibleIncomesOld[3] or income == possibleIncomesNew[2] or income == possibleIncomesNew[3]:
+					high.add(userID)
+					tasksHigh.update(tasksIDSeg)
+					tasksHigh.update(tasksIDAgra)
 		
 			#Separating by education degree
-			education = profile[3]
-			if education[0].lower() == 'e':
-				highSchool.add(userID)
-				tasksHighSchool.update(tasksIDSeg)
-				tasksHighSchool.update(tasksIDAgra)
-			elif education[0].lower == 'm' or education[0].lower() == 'd':
-				posGrad.add(userID)
-				tasksPosGrad.update(tasksIDSeg)
-				tasksPosGrad.update(tasksIDAgra)
+			if len(profile[3]) > 0:
+				education = profile[3]
+				if education[0].lower() == 'e':
+					highSchool.add(userID)
+					tasksHighSchool.update(tasksIDSeg)
+					tasksHighSchool.update(tasksIDAgra)
+				elif education[0].lower == 'm' or education[0].lower() == 'd':
+					posGrad.add(userID)
+					tasksPosGrad.update(tasksIDSeg)
+					tasksPosGrad.update(tasksIDAgra)
 
 			#Separating by relationship
-			rel = profile[6].lower()
-			if rel[0] == 's':
-				single.add(userID)
-				tasksSingle.update(tasksIDSeg)
-				tasksSingle.update(tasksIDAgra)
-			elif rel[0] == 'c':
-				married.add(userID)
-				tasksMarried.update(tasksIDSeg)
-				tasksMarried.update(tasksIDAgra)
+			if len(profile[6]) > 0:
+				rel = profile[6].lower()
+				if rel[0] == 's':
+					single.add(userID)
+					tasksSingle.update(tasksIDSeg)
+					tasksSingle.update(tasksIDAgra)
+				elif rel[0] == 'c':
+					married.add(userID)
+					tasksMarried.update(tasksIDSeg)
+					tasksMarried.update(tasksIDAgra)
 
 			#Separating by known places
-			places = profile[7].lower()
-			if len(places) > 0:
-				if "cen" in places.strip():
-					centro.add(userID)
-					tasksCentro.update(tasksIDSeg)
-					tasksCentro.update(tasksIDAgra)
-				else:
-					notCentro.add(userID)
-					tasksNotCentro.update(tasksIDSeg)
-					tasksNotCentro.update(tasksIDAgra)
+			if len(profile[7]) > 0:
+				places = profile[7].lower()
+				if len(places) > 0:
+					if "cen" in places.strip():
+						centro.add(userID)
+						tasksCentro.update(tasksIDSeg)
+						tasksCentro.update(tasksIDAgra)
+					else:
+						notCentro.add(userID)
+						tasksNotCentro.update(tasksIDSeg)
+						tasksNotCentro.update(tasksIDAgra)
 
-				if "lib" in places.strip():
-					liberdade.add(userID)
-					tasksLiberdade.update(tasksIDSeg)
-					tasksLiberdade.update(tasksIDAgra)
-				else:
-					notLiberdade.add(userID)
-					tasksNotLiberdade.update(tasksIDSeg)
-					tasksNotLiberdade.update(tasksIDAgra)
+					if "lib" in places.strip():
+						liberdade.add(userID)
+						tasksLiberdade.update(tasksIDSeg)
+						tasksLiberdade.update(tasksIDAgra)
+					else:
+						notLiberdade.add(userID)
+						tasksNotLiberdade.update(tasksIDSeg)
+						tasksNotLiberdade.update(tasksIDAgra)
 
-				if "cat" in places.strip():
-					catole.add(userID)
-					tasksCatole.update(tasksIDSeg)
-					tasksCatole.update(tasksIDAgra)
-				else:
-					notCatole.add(userID)
-					tasksNotCatole.update(tasksIDSeg)
-					tasksNotCatole.update(tasksIDAgra)
+					if "cat" in places.strip():
+						catole.add(userID)
+						tasksCatole.update(tasksIDSeg)
+						tasksCatole.update(tasksIDAgra)
+					else:
+						notCatole.add(userID)
+						tasksNotCatole.update(tasksIDSeg)
+						tasksNotCatole.update(tasksIDAgra)
 
 	singleFile = open("solteiro.dat", "w")
 	#singleFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
@@ -178,7 +185,7 @@ def parseUserData(lines):
 	for userID in young:
 		youngFile.write(str(userID)+"\n")
 	youngFile.close()
-	oldFile = open("adulto.dat", "w")
+	oldFile = open("adulto2.dat", "w")
 #	oldFile.write(str(list(tasksYoung.intersection(tasksOld)))+"\n")
 	oldFile.write("[]\n")
 	for userID in old:

@@ -3491,6 +3491,11 @@ regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_car
 regGroup2 <- lm(index ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + prop_street_wall + prop_wind +  prop_sky_across + as.integer(graffiti) + trees + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col +  people + prop_active_use, na.action = na.exclude, data = agrad.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_nrectan)+ scale(prop_sky_ahead) low agreement: sidewalk_wid + long_sight + small_planters + lights + accent_col
 regGroup2 <- lm(index ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people+ graffiti + red + green + blue, na.action = na.exclude, data = agrad.l)#Features with agreement over 40%
 
+#Diff x features
+filtered <- filter(agrad.l, mode == "young" | mode == "adult")
+regGroup1 <- lm(diff ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, na.action = na.exclude, data = filtered)#Features with agreement over 40%
+regGroup2 <- lm(diff ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people+ graffiti, na.action = na.exclude, data = agrad.l)#Features with agreement over 40%
+
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Spatial regression - consider spatial dependency and correlation!
@@ -4076,7 +4081,6 @@ res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
 convertSummary(res, iterations)
 
-
 #Investigating ranking differences and multinomial model
 seg.l <- arrange(seg.l, diff)
 
@@ -4084,9 +4088,9 @@ test <- rbind(head(arrange(seg.l, desc(abs(diff))), n=20), tail(arrange(seg.l, d
 segLib <- filter(seg.l, bairro == "liberdade")
 head(select(arrange(segLib, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
-seg.l$mode[seg.l$diff <= -35] <- "baixa"
-seg.l$mode[seg.l$diff >= 35] <- "media"
-seg.l$mode[seg.l$diff > -35 & seg.l$diff < 35] <- "zero"
+seg.l$mode[seg.l$diff <= -30] <- "low"
+seg.l$mode[seg.l$diff >= 35] <- "high"
+seg.l$mode[seg.l$diff > -30 & seg.l$diff < 35] <- "consensus"
 seg.l$logSWID <- log(seg.l$street_wid)*seg.l$street_wid#Testing linearity
 seg.l$logMCARS <- log(seg.l$mov_cars)*seg.l$mov_cars#Testing linearity
 seg.l$logPCARS <- log(seg.l$park_cars)*seg.l$park_cars#Testing linearity
@@ -4106,7 +4110,7 @@ seg.l[1:15,]$mode <- "baixa"
 seg.l[93:108,]$mode <- "media"
 seg.l$weight <- abs(seg.l$diff) #/ sum(abs(seg.l$diff))
 seg.l$mode = as.factor(seg.l$mode)
-seg.l$mode = relevel(seg.l$mode, ref = "zero")
+seg.l$mode = relevel(seg.l$mode, ref = "consensus")
 
 newseg.l <- rbind(seg.l[1:15,], sample_n(seg.l[16:92,], 15), seg.l[93:108,])
 
@@ -4118,7 +4122,7 @@ summary(model)
 data.frame(exp(model$coefficients))
 exp(confint(model))
 
-ggplot(seg.l, aes(x=diff)) + geom_density(adjust = .5) + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_discrete(breaks=seq(-50, 50, 10))#-35/30 to define bump?
+ggplot(seg.l, aes(x=diff)) + geom_histogram(binwidth=5) + geom_density(alpha=.2, fill="#FF6666") + theme_bw() + theme(panel.grid.major = element_line(colour = "blue")) + scale_x_continuous(breaks=seq(-50, 50, 10)) + xlim(-50,50) + ggtitle("Low x High - Safety Diff -30 & 35")
 
 #Penalized model
 library(pmlr)
@@ -4174,6 +4178,11 @@ regGroup1 <- lm(rank ~  street_wid +  mov_cars + park_cars + mov_ciclyst + lands
 regGroup2 <- lm(index ~  scale(street_wid) + scale(sidewalk_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_nrectan) + scale(prop_street_wall) + scale(prop_wind) + scale(long_sight) + scale(prop_sky_ahead) + scale(as.integer(graffiti)) + scale(trees) + scale(small_planters) + scale(build_height) + scale(as.integer(build_diff_ages)) + scale(diff_build) + scale(street_furnit) + scale(basic_col) + scale(lights) + scale(accent_col) + scale(people) + scale(prop_active_use), na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 regGroup2 <- lm(index ~  street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + as.integer(graffiti) + trees + small_planters + build_height + as.integer(build_diff_ages) + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = seg.l)#Removing multicolinearity: scale(debris) + scale(pavement) + scale(build_ident)+ scale(prop_sky_across)
 regGroup2 <- lm(index ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people + graffiti, na.action = na.exclude, data = seg.l)#Features with agreement over 40%
+
+#Diff x features
+filtered <- filter(seg.l, mode == "low" | mode == "high")
+regGroup1 <- lm(diff ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people, na.action = na.exclude, data = filtered)#Features with agreement over 40%
+regGroup2 <- lm(diff ~  street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + build_height + diff_build + people+ graffiti, na.action = na.exclude, data = seg.l)#Features with agreement over 40%
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 

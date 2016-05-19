@@ -105,16 +105,24 @@ features = ['mov_cars', 'park_cars', 'debris', 'landscape',
 # In[6]:
 
 np.warnings.filterwarnings("ignore")
-groups = [('Jovem', 'Adulto'), ('Masculino', 'Feminino'), ('Baixa', 'Media')]
+groups = [('Jovem', 'Adulto'), ('Masculino', 'Feminino'), ('Baixa', 'Media'), ('Casado', 'Solteiro')]
 for first_min_second in groups:
     
     print('!!!!!!!!!!!!!!!')
     print(first_min_second)
     print('!!!!!!!!!!!!!!!')
     
-    rankg1 = df['V3.%s' % first_min_second[0]].argsort().values#Increasing order!
-    rankg2 = df['V3.%s' % first_min_second[1]].argsort().values
+    rankg1 = df['V3.%s' % first_min_second[0]].argsort()
+    rankg2 = df['V3.%s' % first_min_second[1]].argsort()
+    
+    rankg1 = 107 - rankg1.values#Ascending order!
+    rankg2 = 107 - rankg2.values
+    
     response = np.array((rankg1 - rankg2), dtype='d')# ** 3
+
+    #rankg1 = df['V3.%s' % first_min_second[0]].argsort().values#Increasing order!
+    #rankg2 = df['V3.%s' % first_min_second[1]].argsort().values
+    #response = np.array((rankg1 - rankg2), dtype='d')# ** 3
     #response = MinMaxScaler().fit_transform(response[:, None])[:, 0]
     response = pd.DataFrame(response, columns=['Rank%s-Rank%s' % first_min_second])
     

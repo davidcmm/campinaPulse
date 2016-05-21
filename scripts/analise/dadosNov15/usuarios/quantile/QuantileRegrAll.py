@@ -97,15 +97,16 @@ Image(filename='ex2.png')
 
 df = pd.read_csv('pleasantness.dat', sep=' ')
 df['graffiti'] = np.array(df['graffiti'] == 'Yes', dtype='d')
-features = ['mov_cars', 'park_cars', 'debris', 'landscape', 
+features = ['mov_cars', 'park_cars', 'landscape', 
             'mov_ciclyst', 'street_wid', 'build_ident', 'trees', 
-            'diff_build', 'people', 'build_height', 'graffiti']#, 'red', 'green', 'blue']
+            'diff_build', 'people', 'build_height', 'graffiti']#, 'red', 'green', 'blue', 'debris']
 
 
 # In[6]:
 
 np.warnings.filterwarnings("ignore")
 groups = [('Jovem', 'Adulto'), ('Masculino', 'Feminino'), ('Baixa', 'Media'), ('Casado', 'Solteiro')]
+yLimits = {}
 for first_min_second in groups:
     
     print('!!!!!!!!!!!!!!!')
@@ -158,9 +159,11 @@ for first_min_second in groups:
         qs.append(q)
         rsqs.append(adjr2)
         
-        for name in fitted.params[fitted.pvalues < 0.05].index:
-            values[name][i] = fitted.params[name]
-        
+    	for name in fitted.params[fitted.pvalues < 0.05].index:
+            if fitted.params[name] != 0:
+                print (fitted.params[name])
+                values[name][i] = fitted.params[name]
+            
         util.append(sum(fitted.pvalues < 0.05))
         
         if q > 0.5 and adjr2 > max_right:
@@ -175,8 +178,8 @@ for first_min_second in groups:
     good_left = fitted_left.params[fitted_left.pvalues < 0.05]
     
     fitted_right = model.fit(q=max_right_q)
-    good_right = fitted_right.params[fitted.pvalues < 0.05]
-    
+    good_right = fitted_right.params[fitted_right.pvalues < 0.05]    
+
     print('Looking into model quality. Extremes are better, indicating that it is where features matter')
     plt.title('<- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
     plt.plot(qs, rsqs, 'wo')
@@ -192,14 +195,49 @@ for first_min_second in groups:
     plt.show()
     
     print('Looking into important variables')
+    if first_min_second[0] == 'Jovem':
+        yLimits[first_min_second] = [-150, 150]
+    elif first_min_second[0] == 'Masculino':
+        yLimits[first_min_second] = [-160, 160]
+    elif first_min_second[0] == 'Casado':
+        yLimits[first_min_second] = [-160, 160]
+    elif first_min_second[0] == 'Baixa':
+        yLimits[first_min_second] = [-150, 150]
+        
+    
+    plt.title('<- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
+    plt.xlabel('Quantile')
+    plt.ylabel('Features\n <- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
+    axes = plt.gca()
+    axes.set_xlim([0,1])
+    axes.set_ylim(yLimits[first_min_second])
+
+    use_colours = {"street_wid": "gray", "mov_cars": "red", "park_cars": "lightsalmon"
+                   , "mov_ciclyst": "yellow", "landscape": "blue", "build_ident": "lightblue", 
+                   "trees": "green", "build_height": "darkgray", "diff_build": "purple", 
+                   "people": "orange", "graffiti": "black", "is_catole": "salmon", "is_centro": "springgreen",
+                   "is_liberdade": "magenta"}
+
     for name in values:
         y = values[name]
         if y.any():
-            plt.title('<- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
-            plt.plot(qs, y, 'ro')
-            plt.xlabel('Quantile')
-            plt.ylabel(name + '\n <- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
-            plt.show()
+            #plt.title('<- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
+            #plt.plot(qs, y, 'ro')
+            #plt.xlabel('Quantile')
+            #plt.ylabel(name + '\n <- %s ; %s ->' % (first_min_second[1], first_min_second[0]))
+            #axes = plt.gca()
+            #axes.set_xlim([0,1])
+            #axes.set_ylim(yLimits[first_min_second])
+            #plt.show()
+
+	    plt.figure(1) 
+            #plt.plot(qs, y, 'ro')#plt.plot(qs, y, 'ro')
+            plt.scatter(qs,y,c=[use_colours[name] for name in values],s=50)
+
+	    for i in range(0,10):
+                print(name+"\t"+str(qs[i])+"\t"+str(y[i]))
+
+    plt.show()
     
 #     print('=====================')
 #     print('What if we consider the "peak" models')

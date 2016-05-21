@@ -3350,7 +3350,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Jovem))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
-agrad.l$diff <- agrad.l$V3.Jovem - agrad.l$V3.Adulto
+agrad.l$diff2 <- agrad.l$V3.Jovem - agrad.l$V3.Adulto
 head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
@@ -4232,7 +4232,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
-seg.l$diff <- seg.l$V3.Baixa - seg.l$V3.Media
+seg.l$diff2 <- seg.l$V3.Baixa - seg.l$V3.Media
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -4540,6 +4540,27 @@ ggplot(data=filter(all, bairro == "centro"), aes(x=image_url, y=V3, colour=exp))
 
 ```
 
+
+#Quantile Regression Plots
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+quantileData <- read.table("quantile/significantFeaturesQuantilePleas.dat", header=TRUE)
+
+facet_names_quant <- list(
+  'Baixa_Media'="Low x High",
+  'Masculino_Feminino'="Men x Women", 
+  'Casado_Solteiro'="Married x Single", 
+  'Jovem_Adulto'="Young x Adult"
+)
+
+facet_labeller_quant <- function(variable,value){
+  return(facet_names_quant[value])
+}
+
+ggplot(data=quantileData, aes(x=quantile, y=value, colour=feature)) + geom_point() + facet_grid(grupo~., labeller = facet_labeller_quant) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Features Values")
+
+quantileData <- read.table("quantile/significantFeaturesQuantileSaf.dat", header=TRUE)
+ggplot(data=quantileData, aes(x=quantile, y=value, colour=feature)) + geom_point() + facet_grid(grupo~., labeller = facet_labeller_quant) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Features Values")
+```
 
 #Pleasantness x Safety
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}

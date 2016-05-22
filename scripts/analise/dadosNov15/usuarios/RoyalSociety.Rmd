@@ -3207,7 +3207,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.C
 agrad.l <- agrad %>% do(arrange(., desc(V3.Masculino))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
-head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.Masculino, V3.Feminino), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3351,7 +3351,7 @@ agrad.l <- agrad %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
 agrad.l$diff2 <- agrad.l$V3.Jovem - agrad.l$V3.Adulto
-head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.Jovem, V3.Adulto), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
@@ -3551,7 +3551,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
-head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.Casado, V3.Solteiro), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
@@ -3697,7 +3697,7 @@ agrad.l <- agrad %>%
     do(arrange(., desc(V3.Baixa))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
-head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.Baixa, V3.Media), n=20)
 
 #Danieles coefficients
 agrad.l <- calcDanieleCoeff(agrad.l)
@@ -3833,7 +3833,7 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Feminino))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$diff <- seg.l$V3.Masculino - seg.l$V3.Feminino
-head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Masculino, V3.Feminino), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -3971,7 +3971,7 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Adulto))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$diff <- seg.l$V3.Jovem - seg.l$V3.Adulto
-head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Jovem, V3.Adulto), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -4105,7 +4105,7 @@ seg.l <- seg %>%
     do(arrange(., desc(V3.Casado))) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Solteiro))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
-head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url), n=20)
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Casado, V3.Solteiro), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -4233,6 +4233,7 @@ seg.l <- seg %>%
     mutate(rank = 1:n()) %>% do(arrange(., desc(V3.Media))) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$diff2 <- seg.l$V3.Baixa - seg.l$V3.Media
+head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Baixa, V3.Media), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
@@ -4543,8 +4544,6 @@ ggplot(data=filter(all, bairro == "centro"), aes(x=image_url, y=V3, colour=exp))
 
 #Quantile Regression Plots
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-quantileData <- read.table("quantile/significantFeaturesQuantilePleas.dat", header=TRUE)
-
 facet_names_quant <- list(
   'Baixa_Media'="Low x High",
   'Masculino_Feminino'="Men x Women", 
@@ -4556,10 +4555,46 @@ facet_labeller_quant <- function(variable,value){
   return(facet_names_quant[value])
 }
 
-ggplot(data=quantileData, aes(x=quantile, y=value, colour=feature)) + geom_point() + facet_grid(grupo~., labeller = facet_labeller_quant) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Features Values")
+quantileData <- read.table("quantile/significantFeaturesQuantilePleas.dat", header=TRUE)
+quantileData$shap[quantileData$feature == "is_catole"] <- 0
+quantileData$shap[quantileData$feature == "is_centro"] <- 1
+quantileData$shap[quantileData$feature == "is_liberdade"] <- 2
+quantileData$shap[quantileData$feature == "landscape"] <- 3
+quantileData$shap[quantileData$feature == "mov_ciclyst"] <- 4
+quantileData$shap[quantileData$feature == "park_cars"] <- 5
+quantileData$shap[quantileData$feature == "people"] <- 6
+quantileData$shap[quantileData$feature == "trees"] <- 7
+  
+currentData <- filter(quantileData, grupo == "Jovem_Adulto")
+currentData$feature = factor(currentData$feature)
+currentData$shap = factor(currentData$shap)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients") + theme(legend.text=element_text(size=15))
+
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature)) + geom_point(size=5, aes(shape=shap)) + scale_shape_manual(values=1:nlevels(quantileData$shap)) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients") + theme(legend.text=element_text(size=15))#Shape across plots?
+
+currentData <- filter(quantileData, grupo == "Baixa_Media")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+
+currentData <- filter(quantileData, grupo == "Masculino_Feminino")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+
+currentData <- filter(quantileData, grupo == "Casado_Solteiro")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
 
 quantileData <- read.table("quantile/significantFeaturesQuantileSaf.dat", header=TRUE)
-ggplot(data=quantileData, aes(x=quantile, y=value, colour=feature)) + geom_point() + facet_grid(grupo~., labeller = facet_labeller_quant) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Features Values")
+quantileData$feature = factor(quantileData$feature)
+  
+currentData <- filter(quantileData, grupo == "Jovem_Adulto")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+
+currentData <- filter(quantileData, grupo == "Baixa_Media")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+
+currentData <- filter(quantileData, grupo == "Masculino_Feminino")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+
+currentData <- filter(quantileData, grupo == "Casado_Solteiro")
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
 ```
 
 #Pleasantness x Safety

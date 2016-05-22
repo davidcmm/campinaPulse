@@ -161,7 +161,8 @@ for first_min_second in groups:
         
     	for name in fitted.params[fitted.pvalues < 0.05].index:
             if fitted.params[name] != 0:
-                print (fitted.params[name])
+		print(first_min_second[0]+"_"+first_min_second[1]+"\t"+name+"\t"+str(fitted.params[name])
+                      +"\t"+str(q)+"\t"+str(fitted.pvalues[name]))
                 values[name][i] = fitted.params[name]
             
         util.append(sum(fitted.pvalues < 0.05))
@@ -233,9 +234,6 @@ for first_min_second in groups:
 	    plt.figure(1) 
             #plt.plot(qs, y, 'ro')#plt.plot(qs, y, 'ro')
             plt.scatter(qs,y,c=[use_colours[name] for name in values],s=50)
-
-	    for i in range(0,10):
-                print(name+"\t"+str(qs[i])+"\t"+str(y[i]))
 
     plt.show()
     

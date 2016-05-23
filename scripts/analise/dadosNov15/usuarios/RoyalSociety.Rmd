@@ -566,8 +566,7 @@ regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 +
 summary(regSeg)
 
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
-ggplot(dataToPlot, aes(x=value, fill=variable)) +
-     geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency")
+ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + theme_bw() + ylab("Absolute Frequency") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + labs(fill="") 
 
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "centro"), red, green, blue))#Centro
 ggplot(dataToPlot, aes(x=value, fill=variable)) +
@@ -4564,37 +4563,60 @@ quantileData$shap[quantileData$feature == "mov_ciclyst"] <- 4
 quantileData$shap[quantileData$feature == "park_cars"] <- 5
 quantileData$shap[quantileData$feature == "people"] <- 6
 quantileData$shap[quantileData$feature == "trees"] <- 7
+
+quantileData$feature <- as.character(quantileData$feature)
+quantileData$feature[quantileData$feature == "street_wid"] <- "Street Width"
+quantileData$feature[quantileData$feature == "build_height"] <- "Building Height"
+quantileData$feature[quantileData$feature == "is_centro"] <- "Center Neig"
+quantileData$feature[quantileData$feature == "is_catole"] <- "Catolé Neig"
+quantileData$feature[quantileData$feature == "is_liberdade"] <- "Liberdade Neig"
+quantileData$feature[quantileData$feature == "landscape"] <- "Maintenance"
+quantileData$feature[quantileData$feature == "mov_cars"] <- "Moving Cars"
+quantileData$feature[quantileData$feature == "park_cars"] <- "Parked Cars"
+quantileData$feature[quantileData$feature == "mov_ciclyst"] <- "Moving Ciclysts"
+quantileData$feature[quantileData$feature == "trees"] <- "Trees"
+quantileData$feature[quantileData$feature == "diff_build"] <- "Different Buildings"
+quantileData$feature[quantileData$feature == "build_ident"] <- "Buildings with Identifiers"
+quantileData$feature[quantileData$feature == "graffiti"] <- "Graffiti"
+quantileData$feature[quantileData$feature == "people"] <- "People"
+
+library(plyr)
+
+h = 8.27
+w = 11.69
+pdf("images/quantYA_Pleas.pdf", width = w, height = h)
   
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
 currentData$feature = factor(currentData$feature)
-currentData$shap = factor(currentData$shap)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients") + theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(currentData$feature)) + geom_point(alpha = 0.7, size=4, stroke=2) + theme_bw() + ylim(-180, 180) + xlim(0, 1) + xlab("Quantiles") + ylab("Regression Coefficients") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
+dev.off()
 
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature)) + geom_point(size=5, aes(shape=shap)) + scale_shape_manual(values=1:nlevels(quantileData$shap)) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients") + theme(legend.text=element_text(size=15))#Shape across plots?
+
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature)) + geom_point(size=5, aes(shape=shap)) + scale_shape_manual(values=1:nlevels(quantileData$shap)) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients") + theme(legend.text=element_text(size=15))#Shape across plots?
 
 currentData <- filter(quantileData, grupo == "Baixa_Media")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 currentData <- filter(quantileData, grupo == "Masculino_Feminino")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 currentData <- filter(quantileData, grupo == "Casado_Solteiro")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 quantileData <- read.table("quantile/significantFeaturesQuantileSaf.dat", header=TRUE)
 quantileData$feature = factor(quantileData$feature)
   
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 currentData <- filter(quantileData, grupo == "Baixa_Media")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 currentData <- filter(quantileData, grupo == "Masculino_Feminino")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 
 currentData <- filter(quantileData, grupo == "Casado_Solteiro")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Coefficients")+ theme(legend.text=element_text(size=15))
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 ```
 
 #Pleasantness x Safety

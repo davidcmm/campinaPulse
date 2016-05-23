@@ -116,8 +116,8 @@ for first_min_second in groups:
     rankg1 = df['V3.%s' % first_min_second[0]].argsort()
     rankg2 = df['V3.%s' % first_min_second[1]].argsort()
     
-    rankg1 = 107 - rankg1.values#Ascending order!
-    rankg2 = 107 - rankg2.values
+    rankg1 = rankg1.values#Ascending order!
+    rankg2 = rankg2.values
     
     response = np.array((rankg1 - rankg2), dtype='d')# ** 3
 
@@ -149,11 +149,11 @@ for first_min_second in groups:
     for name in explanatory.columns:
         values[name] = np.zeros(10)
         i = 0
-        for q in np.linspace(0.05, 0.95, 10):
+        for q in np.linspace(0.05, 0.95, 5):
             values[name][i] = 0
             i += 1
             
-    for i, q in enumerate(np.linspace(0.05, 0.95, 10)):
+    for i, q in enumerate(np.linspace(0.05, 0.95, 5)):
         fitted = model.fit(q=q)
         adjr2 = fitted.prsquared
         qs.append(q)

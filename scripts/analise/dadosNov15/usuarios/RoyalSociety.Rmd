@@ -3212,6 +3212,7 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
+cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3355,6 +3356,7 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
+cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3554,6 +3556,7 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
+cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3700,6 +3703,7 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
+cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3834,6 +3838,7 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Ma
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -3971,6 +3976,7 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Jo
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4099,11 +4105,12 @@ texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 seg.l <- seg %>% do(arrange(., V3.Casado)) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., V3.Solteiro)) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
-head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Casado, V3.Solteiro), n=20)
+head(select(arrange(seg.l, diff), rank, index, diff, image_url, V3.Casado, V3.Solteiro), n=20)
 
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4231,6 +4238,7 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Ba
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4534,6 +4542,25 @@ ggplot(data=filter(all, bairro == "centro"), aes(x=image_url, y=V3, colour=exp))
 
 #Quantile Regression Plots
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Adjusted R2 graphs
+adjr2Data <- read.table("quantile/adjr2Features.dat", header=TRUE)
+adjr2Data$Groups <- as.character(adjr2Data$Groups)
+adjr2Data$Groups[adjr2Data$Groups == "Baixa_Media"] <- "Low x High Income"
+adjr2Data$Groups[adjr2Data$Groups == "Casado_Solteiro"] <- "Married x Single"
+adjr2Data$Groups[adjr2Data$Groups == "Jovem_Adulto"] <- "Young x Adult"
+adjr2Data$Groups[adjr2Data$Groups == "Masculino_Feminino"] <- "Men x Women"
+
+h = 11.3
+w = 16
+pdf("images/adjr2_Pleas.pdf", width = w, height = h)
+ggplot(filter(adjr2Data, question == "pleas"), aes(x=quantile, y=adjr2, colour=Groups)) + geom_line(size=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Adj. R2") + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25))
+dev.off()
+
+pdf("images/adjr2_Saf.pdf", width = w, height = h)
+ggplot(filter(adjr2Data, question == "saf"), aes(x=quantile, y=adjr2, colour=Groups)) + geom_line(size=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Adj. R2") + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25))
+dev.off()
+
+#Features graphs
 facet_names_quant <- list(
   'Baixa_Media'="Low x High",
   'Masculino_Feminino'="Men x Women", 
@@ -4545,27 +4572,32 @@ facet_labeller_quant <- function(variable,value){
   return(facet_names_quant[value])
 }
 
+renameFeatures <- function(quantileData){
+  quantileData$feature <- as.character(quantileData$feature)
+  quantileData$feature[quantileData$feature == "street_wid"] <- "Street Width"
+  quantileData$feature[quantileData$feature == "build_height"] <- "Building Height"
+  quantileData$feature[quantileData$feature == "is_centro"] <- "Center Neig"
+  quantileData$feature[quantileData$feature == "is_catole"] <- "Catolé Neig"
+  quantileData$feature[quantileData$feature == "is_liberdade"] <- "Liberdade Neig"
+  quantileData$feature[quantileData$feature == "landscape"] <- "Maintenance"
+  quantileData$feature[quantileData$feature == "mov_cars"] <- "Moving Cars"
+  quantileData$feature[quantileData$feature == "park_cars"] <- "Parked Cars"
+  quantileData$feature[quantileData$feature == "mov_ciclyst"] <- "Moving Ciclysts"
+  quantileData$feature[quantileData$feature == "trees"] <- "Trees"
+  quantileData$feature[quantileData$feature == "diff_build"] <- "Different Buildings"
+  quantileData$feature[quantileData$feature == "build_ident"] <- "Buildings\nwith Identifiers"
+  quantileData$feature[quantileData$feature == "graffiti"] <- "Graffiti"
+  quantileData$feature[quantileData$feature == "people"] <- "People"
+  return (quantileData)
+}
+
 #Reading pleasantness data and changing features labels
 quantileData <- read.table("quantile/significantFeaturesQuantilePleas.dat", header=TRUE)
-quantileData$feature <- as.character(quantileData$feature)
-quantileData$feature[quantileData$feature == "street_wid"] <- "Street Width"
-quantileData$feature[quantileData$feature == "build_height"] <- "Building Height"
-quantileData$feature[quantileData$feature == "is_centro"] <- "Center Neig"
-quantileData$feature[quantileData$feature == "is_catole"] <- "Catolé Neig"
-quantileData$feature[quantileData$feature == "is_liberdade"] <- "Liberdade Neig"
-quantileData$feature[quantileData$feature == "landscape"] <- "Maintenance"
-quantileData$feature[quantileData$feature == "mov_cars"] <- "Moving Cars"
-quantileData$feature[quantileData$feature == "park_cars"] <- "Parked Cars"
-quantileData$feature[quantileData$feature == "mov_ciclyst"] <- "Moving Ciclysts"
-quantileData$feature[quantileData$feature == "trees"] <- "Trees"
-quantileData$feature[quantileData$feature == "diff_build"] <- "Different Buildings"
-quantileData$feature[quantileData$feature == "build_ident"] <- "Buildings with Identifiers"
-quantileData$feature[quantileData$feature == "graffiti"] <- "Graffiti"
-quantileData$feature[quantileData$feature == "people"] <- "People"
+quantileData <- renameFeatures(quantileData)
 
 #Fixing shapes
 shapes <- c(1:14)
-names(shapes) <- c("Center Neig", "Catolé Neig", "Liberdade Neig", "Street Width", "Building Height", "Maintenance", "Moving Cars", "Parked Cars", "Moving Ciclysts", "Trees", "Different Buildings", "Buildings with Identifiers", "Graffiti", "People")
+names(shapes) <- c("Center Neig", "Catolé Neig", "Liberdade Neig", "Street Width", "Building Height", "Maintenance", "Moving Cars", "Parked Cars", "Moving Ciclysts", "Trees", "Different Buildings", "Buildings\nwith Identifiers", "Graffiti", "People")
 
 #Set up colors
 gg_color_hue <- function(n) { # ggplot default colors
@@ -4575,13 +4607,12 @@ gg_color_hue <- function(n) { # ggplot default colors
 colors <- gg_color_hue(14)
 names(colors) <- names(shapes)
 
-library(plyr)
-h = 11.3
-w = 16
+h = 12.6
+w = 18
 pdf("images/quantYA_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.9, 0.1, 0.9), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Adults", "More of the features \n are better for Young", "More of the features \n are better for Adults", "Less of the features \n are better for Young"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes adults rank better", "Greater amounts of the features\n makes young rank better", "Greater amounts of the features\n makes adults rank better", "Lower amounts of the features\n makes young rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 #Testing with facets!
@@ -4606,20 +4637,20 @@ ggplot(agrad.l, aes(y=fit9, x=image_url, colour="red")) + geom_point()
 ggplot(agrad.l, aes(y=diff, x=image_url, colour="black")) + geom_point()
 
 #Other groups plots!
-h = 11.3
-w = 16
+h = 12.6
+w = 18
 pdf("images/quantLH_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Baixa_Media")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.9, 0.1, 0.9), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for High", "More of the features \n are better for Low", "More of the features \n are better for High", "Less of the features \n are better for Low"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes high rank better", "Greater amounts of the features\n makes low rank better", "Greater amounts of the features\n makes high rank better", "Lower amounts of the features\n makes low rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
-h = 11.3
-w = 16
+h = 13.3
+w = 19
 pdf("images/quantMW_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Masculino_Feminino")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.9, 0.1, 0.9), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Women", "More of the features \n are better for Men", "More of the features \n are better for Women", "Less of the features \n are better for Men"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes women rank better", "Greater amounts of the features\n makes men rank better", "Greater amounts of the features\n makes women rank better", "Lower amounts of the features\n makes men rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 # currentData <- filter(quantileData, grupo == "Casado_Solteiro")
@@ -4628,21 +4659,7 @@ dev.off()
 
 #Safety Features and changing features labels
 quantileData <- read.table("quantile/significantFeaturesQuantileSaf.dat", header=TRUE)
-quantileData$feature <- as.character(quantileData$feature)
-quantileData$feature[quantileData$feature == "street_wid"] <- "Street Width"
-quantileData$feature[quantileData$feature == "build_height"] <- "Building Height"
-quantileData$feature[quantileData$feature == "is_centro"] <- "Center Neig"
-quantileData$feature[quantileData$feature == "is_catole"] <- "Catolé Neig"
-quantileData$feature[quantileData$feature == "is_liberdade"] <- "Liberdade Neig"
-quantileData$feature[quantileData$feature == "landscape"] <- "Maintenance"
-quantileData$feature[quantileData$feature == "mov_cars"] <- "Moving Cars"
-quantileData$feature[quantileData$feature == "park_cars"] <- "Parked Cars"
-quantileData$feature[quantileData$feature == "mov_ciclyst"] <- "Moving Ciclysts"
-quantileData$feature[quantileData$feature == "trees"] <- "Trees"
-quantileData$feature[quantileData$feature == "diff_build"] <- "Different Buildings"
-quantileData$feature[quantileData$feature == "build_ident"] <- "Buildings\nwith Identifiers"
-quantileData$feature[quantileData$feature == "graffiti"] <- "Graffiti"
-quantileData$feature[quantileData$feature == "people"] <- "People"
+quantileData <- renameFeatures(quantileData)
 
 #Fixing shapes
 shapes <- c(1:14)
@@ -4656,27 +4673,27 @@ gg_color_hue <- function(n) { # ggplot default colors
 colors <- gg_color_hue(14)
 names(colors) <- names(shapes)
   
-h = 11.3
-w = 16
+h = 13.3
+w = 19
 pdf("images/quantYA_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.9, 0.1, 0.9), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Adults", "More of the features \n are better for Young", "More of the features \n are better for Adults", "Less of the features \n are better for Young"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes adults rank better", "Greater amounts of the features\n makes young rank better", "Greater amounts of the features\n makes adults rank better", "Lower amounts of the features\n makes young rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
-h = 11.3
-w = 16
+h = 13.3
+w = 19
 pdf("images/quantLH_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Baixa_Media")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.7, 0.1, 0.7), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for High", "More of the features \n are better for Low", "More of the features \n are better for High", "Less of the features \n are better for Low"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes high rank better", "Greater amounts of the features\n makes low rank better", "Greater amounts of the features\n makes high rank better", "Lower amounts of the features\n makes low rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 # currentData <- filter(quantileData, grupo == "Masculino_Feminino")
 # ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(currentData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Women", "More of the features \n are better for Men", "More of the features \n are better for Women", "Less of the features \n are better for Men"), col = c("red", "green", "green", "red"), size=15)
-h = 11.3
-w = 16
+h = 13.3
+w = 19
 pdf("images/quantMS_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Casado_Solteiro")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=12, stroke=5) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.1, 0.7, 0.1, 0.7), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Single", "More of the features \n are better for Married", "More of the features \n are better for Single", "Less of the features \n are better for Married"), col = c("red", "green", "green", "red"), size=9)
+ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.line = element_blank(), axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes single rank better", "Greater amounts of the features\n makes married rank better", "Greater amounts of the features\n makes single rank better", "Lower amounts of the features\n makes married rank better"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 ```
 
@@ -4797,12 +4814,10 @@ geral <- select(filter(dadosCopy, grupo == "Geral"), grupo, V1, V2, V3, bairro)
 geral$bairro <- as.character(geral$bairro)
 geral$bairro[geral$bairro == "catole"] <- "Catolé"
 geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
-geral$bairro[geral$bairro == "centro"] <- "Centro"
+geral$bairro[geral$bairro == "centro"] <- "City Center"
 
 novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), direction="wide")
 novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "neighborhood"))
-
-library(plyr)
 
 w = 5
 h = 4

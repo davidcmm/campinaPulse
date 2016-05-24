@@ -4591,9 +4591,28 @@ currentData$feature = factor(currentData$feature)
 ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(currentData$feature)) + geom_point(alpha = 0.7, size=4, stroke=2) + theme_bw() + ylim(-180, 180) + xlim(0, 1) + xlab("Quantiles") + ylab("Regression Coefficients") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 dev.off()
 
+#Testing 0.1 and 0.9 models for pleasantness!
+agrad.l$graffiti <- as.character(agrad.l$graffiti)
+agrad.l$graffiti[agrad.l$graffiti == "No"] <- 0
+agrad.l$graffiti[agrad.l$graffiti == "Yes"] <- 1
+agrad.l$fit1[agrad.l$bairro == "centro"] <- -60.858284
+agrad.l$fit1[agrad.l$bairro == "catole"] <-  - 56.745554
+agrad.l$fit1[agrad.l$bairro == "liberdade"] <- -54.823793
+agrad.l$fit1 <- agrad.l$fit1 + 9.144034 * agrad.l$mov_cars + -0.551885 * agrad.l$park_cars + 6.306614 * agrad.l$landscape + 6.708103 * agrad.l$mov_ciclyst + 0.699665  * agrad.l$street_wid + 0.917549 * agrad.l$build_ident + -7.049202 * agrad.l$trees + -2.666035 * agrad.l$diff_build + -7.511952 * agrad.l$people + -0.515751 * agrad.l$build_height + 11.985548 * as.integer(agrad.l$graffiti)
 
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature)) + geom_point(size=5, aes(shape=shap)) + scale_shape_manual(values=1:nlevels(quantileData$shap)) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients") + theme(legend.text=element_text(size=15))#Shape across plots?
+agrad.l$fit9[agrad.l$bairro == "centro"] <-  86.525481
+agrad.l$fit9[agrad.l$bairro == "catole"] <- 85.832263
+agrad.l$fit9[agrad.l$bairro == "liberdade"] <- 58.885727
+agrad.l$fit9 <- agrad.l$fit9 + -3.641701 * agrad.l$mov_cars + -5.542892 * agrad.l$park_cars + 4.164123 * agrad.l$landscape + 18.453747 * agrad.l$mov_ciclyst + -1.662147  * agrad.l$street_wid + -1.566326 * agrad.l$build_ident + 5.140833 * agrad.l$trees + 7.225984 * agrad.l$diff_build + -1.434146 * agrad.l$people + -0.634431 * agrad.l$build_height + 34.108561 * as.integer(agrad.l$graffiti)
 
+ggplot(agrad.l, aes(y=fit1, x=image_url, colour="red")) + geom_point()
+ggplot(agrad.l, aes(y=fit9, x=image_url, colour="red")) + geom_point()
+ggplot(agrad.l, aes(y=diff, x=image_url, colour="black")) + geom_point()
+
+#Testing with facets!
+ggplot(data=currentData, aes(x=feature, y=value, colour=feature, shape=feature)) + geom_point(alpha = 0.7, size=4, stroke=2) + theme_bw() + facet_grid(.~quantile) + ylim(-180, 180)  + ylab("Regression Coefficients") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20), axis.text.x=element_blank()) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=9)#+ xlim(0, 1) axis.text.x=element_text(angle=-90)+ xlab("Quantiles")
+
+#Other groups plots!
 currentData <- filter(quantileData, grupo == "Baixa_Media")
 ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(quantileData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("II", "I", "III", "IV"), col = c("red", "green", "green", "red"), size=15)
 

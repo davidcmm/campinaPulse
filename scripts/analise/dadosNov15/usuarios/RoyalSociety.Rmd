@@ -4591,8 +4591,23 @@ renameFeatures <- function(quantileData){
   return (quantileData)
 }
 
+ adjustPValues <- function(data){
+   newPValues <- c()
+   for(currentQ in unique(data$quantile)){
+     print("Changing")
+     print(currentQ)
+     currentPValues <- filter(data, quantile == currentQ)$pvalue
+     print(currentPValues)
+     
+     newValues <- p.adjust(currentPValues, method = "BH", n=14)
+     newPValues <- c(newPValues, newValues)
+     print(newValues)
+   }
+   return (newPValues)
+ }
+
 #Reading pleasantness data and changing features labels
-quantileData <- read.table("quantile/significantFeaturesQuantilePleas.dat", header=TRUE)
+quantileData <- read.table("quantile/significantFeaturesQuantilePleasBH.dat", header=TRUE)
 quantileData <- renameFeatures(quantileData)
 
 #Fixing shapes
@@ -4612,7 +4627,8 @@ w = 18
 pdf("images/quantYA_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by adults", "Evidence of features\nliked by young", "Evidence of features\nliked by adults", "Evidence of features\ndisliked by young"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked more by adults", "Evidence of features\nliked by young", "Evidence of features\nliked by adults", "Evidence of features\ndisliked by young"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 #Testing with facets!
@@ -4642,7 +4658,8 @@ w = 18
 pdf("images/quantLH_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Baixa_Media")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by high", "Evidence of features\nliked by low", "Evidence of features\nliked by high", "Evidence of features\ndisliked by low"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by high", "Evidence of features\nliked by low", "Evidence of features\nliked by high", "Evidence of features\ndisliked by low"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 h = 13.3
@@ -4650,15 +4667,22 @@ w = 19
 pdf("images/quantMW_Pleas.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Masculino_Feminino")
 currentData$feature = factor(currentData$feature)
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by women", "Evidence of features\nliked by men", "Evidence of features\nliked by women", "Evidence of features\ndisliked by men"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by women", "Evidence of features\nliked by men", "Evidence of features\nliked by women", "Evidence of features\ndisliked by men"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
+# h = 13.3
+# w = 19
+# pdf("images/quantMS_Pleas.pdf", width = w, height = h)
 # currentData <- filter(quantileData, grupo == "Casado_Solteiro")
 # currentData$feature = factor(currentData$feature)
-# ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, shape=feature)) + scale_shape_manual(values=1:nlevels(currentData$feature)) + geom_point(size=5) + theme_bw() + ylim(-180, 180) + xlab("Quantiles") + ylab("Regression Coefficients")+ theme(legend.text=element_text(size=15))+ geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.05, 0.6, 0.05, 0.6), y = c(150, 150, -150, -150), label = c("Less of the features \n are better for Single", "More of the features \n are better for Married", "More of the features \n are better for Single", "Less of the features \n are better for Married"), col = c("red", "green", "green", "red"), size=15)
+# currentData$adjPvalue <- adjustPValues(currentData)
+# ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes women rank better", "Greater amounts of the features\n makes men rank better", "Greater amounts of the features\n makes women rank better", "Lower amounts of the features\n makes men rank better"), col = c("red", "green", "green", "red"), size=9)
+# dev.off()
+
 
 #Safety Features and changing features labels
-quantileData <- read.table("quantile/significantFeaturesQuantileSaf.dat", header=TRUE)
+quantileData <- read.table("quantile/significantFeaturesQuantileSafBH.dat", header=TRUE)
 quantileData <- renameFeatures(quantileData)
 
 #Fixing shapes
@@ -4677,14 +4701,16 @@ h = 13.3
 w = 19
 pdf("images/quantYA_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Jovem_Adulto")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by adults", "Evidence of features\nliked by young", "Evidence of features\nliked by adults", "Evidence of features\ndisliked by young"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by adults", "Evidence of features\nliked by young", "Evidence of features\nliked by adults", "Evidence of features\ndisliked by young"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 h = 13.3
 w = 19
 pdf("images/quantLH_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Baixa_Media")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by high", "Evidence of features\nliked by low", "Evidence of features\nliked by high", "Evidence of features\ndisliked by low"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by high", "Evidence of features\nliked by low", "Evidence of features\nliked by high", "Evidence of features\ndisliked by low"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 
 # currentData <- filter(quantileData, grupo == "Masculino_Feminino")
@@ -4693,7 +4719,8 @@ h = 13.3
 w = 19
 pdf("images/quantMS_Saf.pdf", width = w, height = h)
 currentData <- filter(quantileData, grupo == "Casado_Solteiro")
-ggplot(data=currentData, aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Lower amounts of the features\n makes single rank better", "Greater amounts of the features\n makes married rank better", "Greater amounts of the features\n makes single rank better", "Lower amounts of the features\n makes married rank better"), col = c("red", "green", "green", "red"), size=9)
+currentData$adjPvalue <- adjustPValues(currentData)
+ggplot(data=filter(currentData, adjPvalue < 0.05), aes(x=quantile, y=value, colour=feature, label=feature, shape=feature)) + scale_shape_manual(values=shapes[c(as.character(currentData$feature))]) + scale_color_manual(values=colors[c(as.character(currentData$feature))]) + geom_point(alpha = 0.7, size=10, stroke=2) + theme_bw() + theme_classic() + xlab("Quantile") + ylab("Coefficient Values") + scale_y_continuous(limit = c(-180, 180), breaks = c(-180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180)) + scale_x_continuous(limit = c(0, 1), breaks = c(0.1, 0.3, 0.5, 0.7, 0.9)) + theme(axis.text=element_text(size=25), axis.title=element_text(size=25), legend.text = element_text(size=25), legend.title = element_text(size=25)) + geom_abline(intercept=0, col="black") + geom_vline(xintercept = 0.5, col="black") + annotate("text", x = c(0.15, 0.85, 0.15, 0.85), y = c(150, 150, -150, -150), label = c("Evidence of features\ndisliked by single", "Evidence of features\nliked by married", "Evidence of features\nliked by single", "Evidence of features\ndisliked by married"), col = c("red", "green", "green", "red"), size=9)
 dev.off()
 ```
 

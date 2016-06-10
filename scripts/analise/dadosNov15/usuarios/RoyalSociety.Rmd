@@ -4580,7 +4580,9 @@ ggplot(filter(adjr2Data, question == "seguro"), aes(x=quantile, y=adjr2, colour=
 dev.off()
 
 #Quantile analysis - Pleasantness models
-agrad.l <- agrad %>% do(arrange(., V3.Masculino)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Feminino)) %>% mutate(index = 1:n())
+newAgrad <- head(arrange(head(arrange(agrad, build_ident), n=107), build_height), n=106)
+
+agrad.l <- newAgrad %>% do(arrange(., V3.Masculino)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Feminino)) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
 
 agrad.l$centro <- 0
@@ -4591,9 +4593,9 @@ agrad.l$liberdade <- 0
 agrad.l$liberdade[agrad.l$bairro == "liberdade"] <- 1
 
 quantiles <- c(0.1, 0.3, 0.5, 0.7, 0.9)
-quant1 <- rq(diff ~ street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + diff_build + people + graffiti + catole + liberdade, tau=0.9, data=agrad.l)#Same model with Statsmodel in Python!
 quant1 <- rq(diff ~ street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + diff_build + people + graffiti + catole + liberdade, tau=quantiles, data=agrad.l)#Same model with Statsmodel in Python!
-summary.rq(quant1, se = "boot")#Pleasantness
+quant1 <- rq(diff ~ street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + diff_build + people + graffiti + catole + liberdade, tau=0.1, data=agrad.l)#Same model with Statsmodel in Python!
+summary.rq(quant1, se = "boot", R=400, method="xy")#Pleasantness
 
 pdf("images/quantilePlotsLH_Pleas.pdf", width = w, height = h)
 plot(summary(quant1), parm="street_wid")#Coefficients per quantile
@@ -4622,7 +4624,9 @@ ggplot(agrad.l, aes(y=diff, x=graffiti)) + geom_point() + geom_quantile(quantile
 dev.off()
 
 #Safety models
-seg.l <- seg %>% do(arrange(., V3.Baixa)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Media)) %>% mutate(index = 1:n())
+newSeg <- head(arrange(head(arrange(seg, build_ident), n=107), build_height), n=106)
+
+seg.l <- newSeg %>% do(arrange(., V3.Masculino)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Feminino)) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$centro <- 0
 seg.l$centro[seg.l$bairro == "centro"] <- 1
@@ -4632,8 +4636,8 @@ seg.l$liberdade <- 0
 seg.l$liberdade[seg.l$bairro == "liberdade"] <- 1
 
 quantiles <- c(0.1, 0.3, 0.5, 0.7, 0.9)
-quant1 <- rq(diff ~ street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + diff_build + people+ graffiti + catole + liberdade, tau=quantiles, data=seg.l)
-summary.rq(quant1, se = "boot")#Safety
+quant1 <- rq(diff ~ street_wid +  mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + diff_build + people+ graffiti + catole + liberdade, tau=0.9, data=seg.l)
+summary.rq(quant1, se = "boot", R=100000, method="xy")#Safety
 
 pdf("images/quantilePlotsLH_Saf.pdf", width = w, height = h)
 plot(summary(quant1), parm="street_wid")#Coefficients per quantile

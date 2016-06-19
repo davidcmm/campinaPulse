@@ -4626,9 +4626,9 @@ ggplot(agrad.l, aes(y=diff, x=graffiti)) + geom_point() + geom_quantile(quantile
 dev.off()
 
 #Safety models
-newSeg <- head(arrange(head(arrange(seg, build_ident), n=107), build_height), n=106)#Removing outliers!
+newSeg <- head(arrange(head(arrange(seg, build_ident), n=107), build_height), n=106)
 
-seg.l <- seg %>% do(arrange(., V3.Baixa)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Media)) %>% mutate(index = 1:n())
+seg.l <- newSeg %>% do(arrange(., V3.Masculino)) %>% mutate(rank = 1:n()) %>% do(arrange(., V3.Feminino)) %>% mutate(index = 1:n())
 seg.l$diff <- seg.l$rank - seg.l$index
 seg.l$centro <- 0
 seg.l$centro[seg.l$bairro == "centro"] <- 1

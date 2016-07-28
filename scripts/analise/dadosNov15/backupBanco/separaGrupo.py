@@ -252,14 +252,31 @@ def parseUserData(lines):
 		notCatoleFile.write(str(userID)+"\n")
 	notCatoleFile.close()
 
+def createOneFileWithAllProfiledUsers(inputFiles):
+	usersWithProfile = Set([])
+	for userFile in inputFiles:
+		dataFile = open(userFile, 'r')
+		lines = dataFile.readlines()[1:]#Removing tasks list in the beginning of the file
+
+		for line in lines:
+			usersWithProfile.add(line.strip(" \n"))
+
+	usersWithProfileFile = open("usersWProfile.dat", "w")
+	usersWithProfileFile.write("[]\n")
+	for userID in usersWithProfile:
+		usersWithProfileFile.write(str(userID)+"\n")
+
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios>"
+		print "Uso: <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios> ou <serie de arquivos com ids de usuarios>"
 		sys.exit(1)
-	dataFile = open(sys.argv[1], 'r')
-	lines = dataFile.readlines()
-	dataFile.close()
+	
+	if len(sys.argv) == 2:	#Parse input file with ids, tasks and profiles to separte per group!
+		dataFile = open(sys.argv[1], 'r')
+		lines = dataFile.readlines()
+		dataFile.close()
 
-	usersTasks = parseUserData(lines)
-
+		usersTasks = parseUserData(lines)
+	else: #Mix files with users ids into only one file
+		createOneFileWithAllProfiledUsers(sys.argv[1:])

@@ -9,14 +9,14 @@ import json
 import csv
 
 completeTie = 'equal'
-left = 'Left'
-right = 'Right'
-notKnown = 'NotKnown'
+left = 'left'
+right = 'right'
+notKnown = 'notknown'
 
 def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefinitions):
 
 	#Header
-	print "photo1\tphoto2\tchoice\tuserID\tage\tgender\tincome\teducation\tcity\tmarital\tstreet_wid1\tmov_cars1\tpark_cars1\tmov_ciclyst1\tlandscape1\tbuild_ident1\ttrees1\tbuild_height1\tdiff_build1\tpeople1\tgraffiti1\tbairro1\tstreet_wid2\tmov_cars2\tpark_cars2\tmov_ciclyst2\tlandscape2\tbuild_ident2\ttrees2\tbuild_height2\tdiff_build2\tpeople2\tgraffiti2\tbairro2"
+	print "question\tphoto1\tphoto2\tchoice\tuserID\tage\tgender\tincome\teducation\tcity\tmarital\tstreet_wid1\tmov_cars1\tpark_cars1\tmov_ciclyst1\tlandscape1\tbuild_ident1\ttrees1\tbuild_height1\tdiff_build1\tpeople1\tgraffiti1\tbairro1\tstreet_wid2\tmov_cars2\tpark_cars2\tmov_ciclyst2\tlandscape2\tbuild_ident2\ttrees2\tbuild_height2\tdiff_build2\tpeople2\tgraffiti2\tbairro2"
 
 	for line in lines:
 		data = line.split("+")
@@ -30,6 +30,7 @@ def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefiniti
 
 			if executionID[0].lower() == 'n':#MaxDiff design
 				answer = json.loads(userAnswer)
+				question = answer['question'].strip(' \t\n\r"')
 				photo1 = answer['theMost'].strip(' \t\n\r"')
 				photo2 = answer['theLess'].strip(' \t\n\r"')
 
@@ -53,19 +54,19 @@ def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefiniti
 
 				#Saving votes from task-run
 				if photo1 != completeTie:
-					print(photo1 + "\t" + photo2 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
-					print(photo1 + "\t" + photo3 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
-					print(photo1 + "\t" + photo4 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
-					print(photo2 + "\t" + photo3 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
-					print(photo2 + "\t" + photo4 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
-					print(photo3 + "\t" + photo4 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo3Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo2 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo3 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo4 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo2 + "\t" + photo3 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
+					print(question + "\t" + photo2 + "\t" + photo4 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo3 + "\t" + photo4 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo3Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
 				else:
-					print(photo1 + "\t" + photo2 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
-					print(photo1 + "\t" + photo3 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
-					print(photo1 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
-					print(photo2 + "\t" + photo3 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
-					print(photo2 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
-					print(photo3 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo3Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo2 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo3 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo2 + "\t" + photo3 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo3Info).strip(' \t\n\r'))
+					print(question + "\t" + photo2 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo2Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
+					print(question + "\t" + photo3 + "\t" + photo4 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo3Info).strip(' \t\n\r') + "\t" + "\t".join(photo4Info).strip(' \t\n\r'))
 			
 			else:#Pairwise comparison
 				if userAnswer[0] == '{':
@@ -85,16 +86,16 @@ def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefiniti
 				photo2Info = imagesDefinitions["/".join(photo2.split("/")[5:])]
 		
 				if answer.lower() == left:
-					print(photo1 + "\t" + photo2 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo2 + "\t" + "-1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
 				elif answer.lower() == right:
-					print(photo1 + "\t" + photo2 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo2 + "\t" + "1" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
 				else:
 					#print(photo1)
 					#print(photo2)
 					#print(" ".join(userInfo))
 					#print(photo1Info)
 					#print(" ".join(photo2Info))
-					print(photo1 + "\t" + photo2 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
+					print(question + "\t" + photo1 + "\t" + photo2 + "\t" + "0" + "\t" + userID + "\t" + "\t".join(userInfo) + "\t" + "\t".join(photo1Info).strip(' \t\n\r') + "\t" + "\t".join(photo2Info).strip(' \t\n\r'))
 
 	return tasksDef
 

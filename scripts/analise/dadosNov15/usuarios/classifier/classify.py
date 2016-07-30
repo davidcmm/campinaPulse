@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -53,6 +53,47 @@ def convertImageInfo(imageInfo):
 			newValues.append(float(imageInfo[i].strip(' \t\n\r')))
 
 	return newValues
+
+def testComposition(indexesToTrain, predictorsAgrad, currentSet):
+	#Testing composition
+	young = 0
+	adult = 0
+	low = 0
+	high = 0
+	men = 0
+	women = 0
+	single = 0
+	married = 0
+	genderDic = {"masculino" : 0, "feminino" : 1}
+	incomeDic = {"baixa" : 0, "media baixa" : 1, "media" : 2, "media alta" : 3, "alta" : 4}
+	educDic = {"ensino medio" : 0, "graduacao" : 1, "mestrado" : 2, "doutorado" : 3}
+	maritalDic = {"solteiro" : 0, "casado" : 1, "divorciado" : 2, "vi\\u00favo" : 3}
+
+	for index in indexesToTrain:
+		answer = predictorsAgrad[index]
+		if answer[0] <= 24:
+			young = young + 1
+		elif answer[0] >= 25:
+			adult = adult + 1
+
+		if answer[1] == 0:
+			men = men + 1
+		elif answer[1] == 1:
+			women = women + 1
+
+		if answer[2] == 0 or answer[2] == 1:
+			low = low + 1
+		elif answer[2] == 2 or answer[2] == 3:
+			high = high + 1
+
+		if answer[4] == 0:
+			single = single + 1
+		elif answer[4] == 1:
+			married = married + 1
+
+	print ">>>> COMPOSITION OF " + currentSet  + ": Y-" + str(young) + " A-" + str(adult) + " M-" + str(men) + " W-" + str(women) + " L-" + str(low) + " H-" + str(high) + " S-" + str(single) + " M-" + str(married)
+
+
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
@@ -129,6 +170,11 @@ if __name__ == "__main__":
 	indexesToTrain = random.sample( range(0,len(answerAgrad)), int(len(answerAgrad)*train_percent) )#Separating training data and test data!
 	indexesToTest = list( set(range(0, len(answerAgrad))) - set(indexesToTrain) )
 
+	#Testing composition
+	testComposition(indexesToTrain, predictorsAgrad, "TRAIN")  
+	testComposition(indexesToTest, predictorsAgrad, "TEST")  
+
+	#Creating train and test datasets
 	predictorsInput = np.array(predictorsAgrad)[indexesToTrain]
 	answersInput = np.array(answerAgrad)[indexesToTrain]
 	predictorsOutput = np.array(predictorsAgrad)[indexesToTest]
@@ -138,20 +184,28 @@ if __name__ == "__main__":
 	print ">>>>>> Pleasantness " + str(len(indexesToTrain)) + " " + str(len(indexesToTest)) 
 	print "Classifier\tmean accuracy\t(precision,\trecall,\tf1)"
 	for name, clf in zip(classifiersNames, classifiers):
-		clf.fit(predictorsInput, answersInput)
-		y_pred = clf.fit( predictorsInput, answersInput ).predict( predictorsOutput )
-		score = clf.score(predictorsOutput, answersOutput)
-		myAcc = (answersOutput == y_pred).sum() * 1.0 / (len(y_pred))
-		print "CORRE " + str((answersOutput == y_pred).sum()) + " " + str(len(y_pred))
+		#clf.fit(predictorsInput, answersInput)
+		y_pred = clf.fit( predictorsInput, answersInput ).predict( predictorsOutput )#Predicted values
+		score = clf.score(predictorsOutput, answersOutput)#Accuracy score
+		#myAcc = (answersOutput == y_pred).sum() * 1.0 / (len(y_pred))
+		#myAcc = accuracy_score(answersOutput, y_pred)
+		#print "CORRE " + str(myAcc)
 
-		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='macro')
-		print name + " " + str(score) + " " + str(metrics)
+		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
+		print name + " " + str(score) + " MACRO " + str(metrics)
+		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
+		print name + " " + str(score) + " MICRO " + str(metrics)
 
 
 	#Safety
 	indexesToTrain = random.sample( range(0,len(answerSeg)), int(len(answerSeg)*train_percent) )#Separating training data and test data!
 	indexesToTest = list( set(range(0, len(answerSeg))) - set(indexesToTrain) )
 
+	#Testing composition
+	testComposition(indexesToTrain, predictorsSeg, "TRAIN")
+	testComposition(indexesToTest, predictorsSeg, "TEST")    
+
+	#Creating train and test datasets
 	predictorsInput = np.array(predictorsSeg)[indexesToTrain]
 	answersInput = np.array(answerSeg)[indexesToTrain]
 	predictorsOutput = np.array(predictorsSeg)[indexesToTest]
@@ -165,8 +219,16 @@ if __name__ == "__main__":
 		y_pred = clf.fit( predictorsInput, answersInput ).predict( predictorsOutput )
 		score = clf.score(predictorsOutput, answersOutput)
 
-		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='macro')
-		print name + " " + str(score) + " " + str(metrics)
+		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
+		print name + " " + str(score) + " MACRO " + str(metrics)
+		metrics = precision_recall_fscore_support(answersOutput, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
+		print name + " " + str(score) + " MICRO " + str(metrics)
+
+
+
+
+
+
 
 	#>>>> Example with iris dataset
 	#iris = datasets.load_iris()

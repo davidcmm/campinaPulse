@@ -93,7 +93,7 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 				#Vamo ver o F1. To usando micro, pode ser o macro. No paper, tem que mostrar os 2 mesmo.
 				print('F1 score no teste, nunca use isto para escolher parametros. ' + \
 				  'Aceite o valor, tuning de parametros so antes com o grid search', 
-				  f1_score(answer_test, y_pred, average='micro'))
+				  f1_score(answer_test, y_pred, average='micro'), f1_score(answer_test, y_pred, average='macro'))
 				print()
 				print()
 
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 		'p' : [2,3]	
 	},
 	"Linear SVM" : {
-		'C' : [0.001, 0.1, 1],
+		'C' : [0.001, 0.1, 1, 10, 100, 1000],
 		'class_weight' : ['balanced', None]
 	},
 	"RBF SVM" : {

@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, ExtraTr
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score, confusion_matrix
 from sklearn.grid_search import GridSearchCV
 
 import matplotlib.pyplot as plt
@@ -22,6 +22,9 @@ import sys
 import numpy as np
 import json
 import random
+import collections
+
+import matplotlib.pyplot as plt
 
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
@@ -146,6 +149,17 @@ def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, an
 			except:
 				print "ERROR!"
 
+def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(3)
+    plt.xticks(tick_marks, [-1, 0, 1], rotation=45)
+    plt.yticks(tick_marks, [-1, 0, 1])
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
@@ -179,6 +193,13 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MACRO " + str(metrics)
 			metrics = precision_recall_fscore_support(y_test, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
 			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MICRO " + str(metrics)
+	
+			print "COUNTER TEST " + str(collections.Counter(y_test))
+			cm = confusion_matrix(y_test, y_pred)
+			print "MATRIX " + str(cm)
+			plt.figure()
+			plot_confusion_matrix(cm)
+			plt.show()
 
 
 if __name__ == "__main__":
@@ -266,16 +287,7 @@ if __name__ == "__main__":
 		
 	elif phase == 'test':
 
-<<<<<<< HEAD
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg)
-			
-=======
-				#Feature importances me diz a importancia de cada feature. Maior == mais importante.
-				#Depois voce pode mapear para o nome das suas features
-				print ">>>> " + pair[0] + " " + clf_name
-				print "PRED " + str(', '.join(list_of_predictors))
-				print(clf.feature_importances_)
->>>>>>> cf4964dbbccca951f4192a27dd74ad54ac7b442a
 	else:
 		print "Phase not selected correctly: train or test!"
 		sys.exit(1)

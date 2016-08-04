@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, ExtraTr
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
-from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score, confusion_matrix
 from sklearn.grid_search import GridSearchCV
 
 import matplotlib.pyplot as plt
@@ -22,6 +22,9 @@ import sys
 import numpy as np
 import json
 import random
+import collections
+
+import matplotlib.pyplot as plt
 
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
@@ -146,6 +149,17 @@ def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, an
 			except:
 				print "ERROR!"
 
+def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(3)
+    plt.xticks(tick_marks, [-1, 0, 1], rotation=45)
+    plt.yticks(tick_marks, [-1, 0, 1])
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
@@ -179,6 +193,13 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MACRO " + str(metrics)
 			metrics = precision_recall_fscore_support(y_test, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
 			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MICRO " + str(metrics)
+	
+			print "COUNTER TEST " + str(collections.Counter(y_test))
+			cm = confusion_matrix(y_test, y_pred)
+			print "MATRIX " + str(cm)
+			plt.figure()
+			plot_confusion_matrix(cm)
+			plt.show()
 
 
 if __name__ == "__main__":
@@ -218,7 +239,7 @@ if __name__ == "__main__":
 		df_to_use = df
 
 	#Features to consider and splitting into dataframes for each question
-	list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+	list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'ensino medio',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 	agrad_df = convertColumnsToDummy(agrad_df)

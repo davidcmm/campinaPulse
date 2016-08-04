@@ -62,6 +62,7 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 	i = 0
 	predictors = np.array(predictors)
 	answer = np.array(answer)
+	classifiers_to_scale = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Naive Bayes"]
 	for classifier_index in range(0, len(classifiers)):
 
 		print "### Classifier " + str(classifiers_names[classifier_index])
@@ -71,6 +72,9 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 
 			for train, test in StratifiedKFold(answer, n_folds=5): #5folds
 
+				if classifier_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
+					predictors = StandardScaler().fit_transform(predictors)
+				
 				classifier = GridSearchCV(classifiers[classifier_index], 
 				      param_grid=parameters_to_optimize, cv=3)
 				predictors_train = predictors[train]
@@ -168,12 +172,13 @@ if __name__ == "__main__":
 	},
 	"RBF SVM" : {
 		'C' : [0.001, 0.1, 1],
-		'gamma' : ['Auto', 'RS*'],
+		#'gamma' : ['Auto', 'RS*'],
+		'gamma' : [0.25, 0.5, 1, 2, 4],
 		'class_weight' : ['balanced', None]
 	}
 	}
-	classifiers_names = ["Linear SVM", "RBF SVM", "Naive Bayes"] #["Extra Trees", "Nearest Neighbors", 
-	classifiers = [SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]#ExtraTreesClassifier(n_jobs=-1, criterion='entropy'), KNeighborsClassifier(3),  ]
+	classifiers_names = ["Extra Trees", "Nearest Neighbors", "Linear SVM", "RBF SVM", "Naive Bayes"] #["Extra Trees", "Nearest Neighbors", "Linear SVM", 
+	classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy'), KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]#ExtraTreesClassifier(n_jobs=-1, criterion='entropy'), KNeighborsClassifier(3), SVC(kernel="linear", C=0.025) ]
 	
 	if phase == 'train':
 		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers)

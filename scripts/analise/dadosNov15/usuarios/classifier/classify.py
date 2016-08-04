@@ -23,80 +23,6 @@ import numpy as np
 import json
 import random
 
-#Map user profile information into numbers!
-genderDic = {"masculino" : 0, "feminino" : 1}
-incomeDic = {"baixa" : 0, "media baixa" : 1, "media" : 2, "media alta" : 3, "alta" : 4}
-educDic = {"ensino medio" : 0, "graduacao" : 1, "mestrado" : 2, "doutorado" : 3}
-maritalDic = {"solteiro" : 0, "casado" : 1, "divorciado" : 2, "vi\\u00favo" : 3}
-
-train_percent = 0.8
-
-def convertUserInfo(userInfo):
-	#age, gender, income, education, city, marital status
-	age = userInfo[0].strip(' \t\n\r')
-	gender = userInfo[1].strip(' \t\n\r')
-	income = userInfo[2].strip(' \t\n\r')
-	education = userInfo[3].strip(' \t\n\r')
-	marital = userInfo[5].strip(' \t\n\r')
-
-	return [int(age), genderDic[gender], incomeDic[income], educDic[education], maritalDic[marital]]
-
-#Map image urban elements into numbers!
-def convertImageInfo(imageInfo):
-	neigDic = {"centro" : 0, "liberdade" : 1, "catole" : 2}
-	graffitiDic = {"Yes" : 1, "No" : 0}
-	
-	newValues = []
-	for i in range(0, len(imageInfo)):
-		if i == 10 or i == 22:
-			newValues.append(graffitiDic[imageInfo[i].strip(' \t\n\r')])
-		elif i == 11 or i == 23:
-			newValues.append(neigDic[imageInfo[i].strip(' \t\n\r')])
-		else:
-			newValues.append(float(imageInfo[i].strip(' \t\n\r')))
-
-	return newValues
-
-def testComposition(indexesToTrain, predictorsAgrad, currentSet):
-	#Testing composition
-	young = 0
-	adult = 0
-	low = 0
-	high = 0
-	men = 0
-	women = 0
-	single = 0
-	married = 0
-	genderDic = {"masculino" : 0, "feminino" : 1}
-	incomeDic = {"baixa" : 0, "media baixa" : 1, "media" : 2, "media alta" : 3, "alta" : 4}
-	educDic = {"ensino medio" : 0, "graduacao" : 1, "mestrado" : 2, "doutorado" : 3}
-	maritalDic = {"solteiro" : 0, "casado" : 1, "divorciado" : 2, "vi\\u00favo" : 3}
-
-	for index in indexesToTrain:
-		answer = predictorsAgrad[index]
-		if answer[0] <= 24:
-			young = young + 1
-		elif answer[0] >= 25:
-			adult = adult + 1
-
-		if answer[1] == 0:
-			men = men + 1
-		elif answer[1] == 1:
-			women = women + 1
-
-		if answer[2] == 0 or answer[2] == 1:
-			low = low + 1
-		elif answer[2] == 2 or answer[2] == 3:
-			high = high + 1
-
-		if answer[4] == 0:
-			single = single + 1
-		elif answer[4] == 1:
-			married = married + 1
-
-	print ">>>> COMPOSITION OF " + currentSet  + ": Y-" + str(young) + " A-" + str(adult) + " M-" + str(men) + " W-" + str(women) + " L-" + str(low) + " H-" + str(high) + " S-" + str(single) + " M-" + str(married)
-
-
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
 	#df[['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1', 'bairro1', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2', 'bairro2']]
@@ -109,23 +35,23 @@ def testComposition(indexesToTrain, predictorsAgrad, currentSet):
 def convertColumnsToDummy(df):
 	#Users categorical information to dummy!	
 	res = pd.get_dummies(df['gender'])
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['income'])
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['marital'])
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['education'])
-	df.join(res)
+	df = df.join(res)
 
 	#Images categorical information to dummy!
 	res = pd.get_dummies(df['bairro1'], prefix="bairro1")
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['graffiti1'], prefix="graffiti1")
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['bairro2'], prefix="bairro2")
-	df.join(res)
+	df = df.join(res)
 	res = pd.get_dummies(df['graffiti2'], prefix="graffiti2")
-	df.join(res)
+	df = df.join(res)
 	
 	return df
 
@@ -138,8 +64,8 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 	answer = np.array(answer)
 	for classifier_index in range(0, len(classifiers)):
 
-		print "### Classifier " + str(classifiers_names[classifierIndex])
-		if parameters_dic.has_key(classifiers_names[classifierIndex]):
+		print "### Classifier " + str(classifiers_names[classifier_index])
+		if parameters_dic.has_key(classifiers_names[classifier_index]):
 			parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
 			print "### Param to opt " + str(parameters_to_optimize)
 
@@ -168,6 +94,16 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 				print()
 
 
+def stripDataFrame(df):
+	df['gender'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['gender']]
+	df['marital'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['marital']]
+	df['income'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['income']]
+	df['graffiti1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti1']]
+	df['graffiti2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti2']]
+	df['bairro1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro1']]
+	df['bairro2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro2']]
+
+	return df
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
@@ -176,6 +112,9 @@ if __name__ == "__main__":
 
 	df = pd.read_table(sys.argv[1], sep='\t', encoding='utf8', header=0)
 	phase = sys.argv[2].lower()
+
+	#Remove unecessary chars!
+	df = stripDataFrame(df)
 
 	if len(sys.argv) == 4:
 		filter_group = sys.argv[3]

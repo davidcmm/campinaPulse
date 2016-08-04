@@ -145,15 +145,17 @@ if __name__ == "__main__":
 	else:
 		df_to_use = df
 
+	list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 	agrad_df = convertColumnsToDummy(agrad_df)
 	answer_agrad = agrad_df['choice']#Preferred images
-	predictors_agrad = agrad_df[['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']].values #Predictors
+	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
 
 	seg_df = df_to_use[(df_to_use.question == "seguro?")]
 	seg_df = convertColumnsToDummy(seg_df)
 	answer_seg = seg_df['choice']#Preferred images
-	predictors_seg = seg_df[['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']].values #Predictors
+	predictors_seg = seg_df[list_of_predictors].values #Predictors
 
 	#Classifiers to be used
 	parameters_dic = { "Extra Trees" : {
@@ -199,6 +201,7 @@ if __name__ == "__main__":
 				#Feature importances me diz a importancia de cada feature. Maior == mais importante.
 				#Depois voce pode mapear para o nome das suas features
 				print ">>>> " + pair[0] + " " + clf_name
+				print "PRED " + str(', '.join(list_of_predictors))
 				print(clf.feature_importances_)
 	else:
 		print "Phase not selected correctly: train or test!"

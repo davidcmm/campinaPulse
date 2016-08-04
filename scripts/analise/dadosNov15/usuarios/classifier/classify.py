@@ -72,7 +72,7 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 
 			for train, test in StratifiedKFold(answer, n_folds=5): #5folds
 
-				if classifier_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
+				if classifiers_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
 					predictors = StandardScaler().fit_transform(predictors)
 				
 				classifier = GridSearchCV(classifiers[classifier_index], 

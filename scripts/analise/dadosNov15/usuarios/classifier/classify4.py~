@@ -280,11 +280,11 @@ if __name__ == "__main__":
 		'class_weight' : ['balanced', None]
 	}
 	}
-	classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
+	classifiers_names = ["Linear SVM"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
+	classifiers = [SVC(kernel="linear", C=0.025)]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 	
 	if phase == 'train-config':
 
-		classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers)
 		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers)
 

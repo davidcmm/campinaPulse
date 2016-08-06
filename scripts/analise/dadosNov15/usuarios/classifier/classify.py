@@ -230,7 +230,7 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 
 	print "Question\tClassifier\ttrain sample size\ttest sample size\tmean accuracy\t(precision,\trecall,\tf1)"
 	for entry in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
-		for classifier_index in range(0, len(entry[3])):
+		for classifier_index in range(0, len(entry[3])-1):
 			clf = entry[3][classifier_index]
 			clf_name = classifiers_names[classifier_index]
 
@@ -348,7 +348,7 @@ if __name__ == "__main__":
 		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 		
 	elif phase == 'test':
-
+		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 	else:
 		print "Phase not selected correctly: train or test!"

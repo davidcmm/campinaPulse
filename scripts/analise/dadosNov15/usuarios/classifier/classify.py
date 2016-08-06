@@ -63,12 +63,12 @@ def convertColumnsToDummy(df):
 	
 	return df
 
-def train_classifiers(question, predictors, answer, parameters_dic, classifiers_names, classifiers):
+def train_classifiers(question, predictors, answer, parameters_dic, classifiers_names, classifiers, group=""):
 	""" Performs trainings with classifiers in order to discover the best configuration of each classifier """
 
 	global classifiers_to_scale
 	#Question being evaluated
-	print ">>>>>> " + question
+	print ">>>>>> G " + group + " Q " + question
 
 	i = 0
 	predictors = np.array(predictors)
@@ -122,34 +122,34 @@ def stripDataFrame(df):
 
 	return df
 
-def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg):
+def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
 	#Building classifiers according to best configuration per group
 	if group == 'masculino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=20, n_jobs=-1, oob_score=False) ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=32, min_samples_split=16, n_estimators=20, n_jobs=-1, oob_score=False) ]
 	elif group == 'feminino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False) ]
 	elif group == 'jovem':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False) ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False) ]
 	elif group == 'adulto':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False) ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False) ]
 	elif group == 'baixa':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False) ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=40, n_jobs=-1, oob_score=False) ]
 	elif group == 'media':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False)]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=2, n_estimators=20, n_jobs=-1, oob_score=False) ]
 	elif group == 'solteiro':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=60, n_jobs=-1, oob_score=False)]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False) ]
 	elif group == 'casado':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False) ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False)]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False) ]
 	else:#All users
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
 		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False) ]
@@ -167,7 +167,7 @@ def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, an
 
 			#Feature importances me diz a importancia de cada feature. Maior == mais importante.
 			#Depois voce pode mapear para o nome das suas features
-			print ">>>> " + pair[0] + " " + clf_name
+			print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
 			print "FEATURES " + str(", ".join(list_of_predictors))
 			try:
 				print(clf.feature_importances_)
@@ -185,36 +185,44 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
-def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group):
+def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
 	global classifiers_to_scale
 
-	#Building classifiers according to best configuration per group
+	#Building classifiers according to best configuration per group (FALTA LINEAR!)
 	if group == 'masculino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=32, min_samples_split=16, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.5, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	elif group == 'feminino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=4, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	elif group == 'jovem':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	elif group == 'adulto':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+	
 	elif group == 'baixa':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	elif group == 'media':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=8, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=2, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	elif group == 'solteiro':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=8, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+	
 	elif group == 'casado':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight='balanced', gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
 	else:#All users
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
@@ -241,9 +249,9 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 			y_pred = clf.predict(X_test)#Estimated values
 
 			metrics = precision_recall_fscore_support(y_test, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
-			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MACRO " + str(metrics)
+			print ">>>> G " + group + " Q " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MACRO " + str(metrics)
 			metrics = precision_recall_fscore_support(y_test, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
-			print ">>>> " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MICRO " + str(metrics)
+			print ">>>> G " + group + " Q " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MICRO " + str(metrics)
 	
 			print "COUNTER TEST " + str(collections.Counter(y_test))
 			cm = confusion_matrix(y_test, y_pred)
@@ -332,12 +340,12 @@ if __name__ == "__main__":
 	if phase == 'train-config':
 
 		classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
-		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers)
-		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers)
+		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
+		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
 
 	elif phase == 'importances':
 
-		test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg)
+		test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 		
 	elif phase == 'test':
 

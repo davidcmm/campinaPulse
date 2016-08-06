@@ -281,10 +281,10 @@ if __name__ == "__main__":
 	}
 	}
 	classifiers_names = ["RBF SVM"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
+	classifiers = [SVC(gamma=2, C=1)]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 	
 	if phase == 'train-config':
 
-		classifiers = [SVC(gamma=2, C=1)]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers)
 		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers)
 

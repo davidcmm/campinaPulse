@@ -122,7 +122,7 @@ def stripDataFrame(df):
 
 	return df
 
-def test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
 	#Building classifiers according to best configuration per group
@@ -345,7 +345,7 @@ if __name__ == "__main__":
 
 	elif phase == 'importances':
 
-		test_features_importances(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 		
 	elif phase == 'test':
 

@@ -23,6 +23,7 @@ import numpy as np
 import json
 import random
 import collections
+import operator
 
 import matplotlib.pyplot as plt
 
@@ -122,9 +123,7 @@ def stripDataFrame(df):
 
 	return df
 
-def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
-	""" Checks the importances of features considering the best configuration of classifiers previously tested """
-
+def load_extra_3classes(group):
 	#Building classifiers according to best configuration per group
 	if group == 'masculino':
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=20, n_jobs=-1, oob_score=False) ]
@@ -154,6 +153,16 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
 		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False) ]
 
+	return [classifiers_agrad, classifiers_seg]
+
+
+def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+	""" Checks the importances of features considering the best configuration of classifiers previously tested """
+
+	classifiers = load_extra_3classes(group)
+	classifiers_agrad = classifiers[0]
+	classifiers_seg = classifiers[1]
+
 	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
 		for classifier_index in range(0, len(pair[3])):
 			clf = pair[3][classifier_index]
@@ -167,10 +176,18 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 
 			#Feature importances me diz a importancia de cada feature. Maior == mais importante.
 			#Depois voce pode mapear para o nome das suas features
-			print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
-			print "FEATURES " + str(", ".join(list_of_predictors))
 			try:
-				print(clf.feature_importances_)
+				importances_dic = {}
+				importances = clf.feature_importances_
+				for index in range(0, len(list_of_predictors)):
+					importances_dic[list_of_predictors[index]] = importances[index]
+				
+				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				#print str(sorted_dic)
+				print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				#print "FEATURES " + str(", ".join(list_of_predictors))
+				#print(clf.feature_importances_)
 			except:
 				print "ERROR!"
 
@@ -185,11 +202,8 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
-def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
-	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
-	global classifiers_to_scale
-
+def load_classifiers_3classes(group):
 	#Building classifiers according to best configuration per group (FALTA LINEAR!)
 	if group == 'masculino':
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=20, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
@@ -227,6 +241,17 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
 		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+
+	return [classfiers_agrad, classifiers_seg]
+
+def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
+
+	global classifiers_to_scale
+
+	classifiers = load_classifiers_3classes(group)
+	classifiers_agrad = classifiers[0]
+	classifiers_seg = classifiers[1]
 
 	print "Question\tClassifier\ttrain sample size\ttest sample size\tmean accuracy\t(precision,\trecall,\tf1)"
 	for entry in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:

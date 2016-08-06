@@ -7,6 +7,7 @@ import random
 import numpy
 import json
 import csv
+import pandas as pd
 
 completeTie = 'equal'
 left = 'left'
@@ -175,13 +176,31 @@ def readImagesDefinitions(lines):
 	return imagesDef
 
 
+def convertTo2Classes(input_3cl_file):
+	input_3cl = pd.read_table(input_3cl_file, sep='\t', encoding='utf8', header=0)
+
+	#Convert to left; not-left
+	left_input = input_3cl.copy()
+	new_data = left_input.choice.replace(0, 1)
+	left_input['choice'] = new_data
+	left_input.to_csv("classifier_input_lnl.dat", sep = "\t")
+
+	#Convert to right; not-right
+	right_input = input_3cl.copy()
+	new_data = right_input.choice.replace(0, -1)
+	right_input['choice'] = new_data
+	right_input.to_csv("classifier_input_rnr.dat", sep = "\t")
+
 if __name__ == "__main__":
 	if len(sys.argv) < 4:
-		print "Uso: <arquivo com execuções das tarefas> <arquivo com definicoes de tarefas> <arquivo com dados dos usuarios> <arquivos com dados das imagens>"
+		print "Uso: <action: create or convert> <arquivo com execuções das tarefas> <arquivo com definicoes de tarefas> <arquivo com dados dos usuarios> <arquivos com dados das imagens>"
 		sys.exit(1)
 
-	tasksDef = readTasksDefinitions(open(sys.argv[2], 'r').readlines())
-	usersDef = readUsersDefinitions(open(sys.argv[3], 'r').readlines())
-	imagesDef = readImagesDefinitions(open(sys.argv[4], 'r').readlines())
+	if sys.argv[1].lower() == 'create':
+		tasksDef = readTasksDefinitions(open(sys.argv[3], 'r').readlines())
+		usersDef = readUsersDefinitions(open(sys.argv[4], 'r').readlines())
+		imagesDef = readImagesDefinitions(open(sys.argv[5], 'r').readlines())
 
-	tasksExecution = readTasksExecution(open(sys.argv[1], 'r').readlines(), tasksDef, usersDef, imagesDef)
+		tasksExecution = readTasksExecution(open(sys.argv[2], 'r').readlines(), tasksDef, usersDef, imagesDef)
+	elif sys.argv[1].lower() == 'convert':
+		convertTo2Classes("classifier_input_3classes.dat")

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for input_file in classifier_input_lnl.dat classifier_input_rnr.dat ; do
+for input_file in classifier_input_rnr.dat ; do
+#classifier_input_3classes.dat ; do
 
 	outputSpec=''
 	if [ ${input_file} == 'classifier_input_lnl.dat' ] ; then

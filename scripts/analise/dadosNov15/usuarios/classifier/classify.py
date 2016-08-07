@@ -123,45 +123,12 @@ def stripDataFrame(df):
 
 	return df
 
-def load_extra_3classes(group):
-	#Building classifiers according to best configuration per group
-	if group == 'masculino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=20, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=32, min_samples_split=16, n_estimators=20, n_jobs=-1, oob_score=False) ]
-	elif group == 'feminino':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=60, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False) ]
-	elif group == 'jovem':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=2, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False) ]
-	elif group == 'adulto':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False) ]
-	elif group == 'baixa':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=16, n_estimators=40, n_jobs=-1, oob_score=False) ]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=40, n_jobs=-1, oob_score=False) ]
-	elif group == 'media':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=8, n_estimators=20, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=2, n_estimators=20, n_jobs=-1, oob_score=False) ]
-	elif group == 'solteiro':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=60, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=16, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False) ]
-	elif group == 'casado':
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=32, n_estimators=40, n_jobs=-1, oob_score=False) ]
-	else:#All users
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False)]
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False) ]
-
-	return [classifiers_agrad, classifiers_seg]
-
-
 def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
-	classifiers = load_extra_3classes(group)
-	classifiers_agrad = classifiers[0]
-	classifiers_seg = classifiers[1]
+	classifiers = load_classifiers_lnl(group)#load_classifiers_3classes(group)
+	classifiers_agrad = [classifiers[0][0]]
+	classifiers_seg = [classifiers[1][0]]
 
 	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
 		for classifier_index in range(0, len(pair[3])):

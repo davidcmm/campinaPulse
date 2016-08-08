@@ -179,17 +179,21 @@ def readImagesDefinitions(lines):
 def convertTo2Classes(input_3cl_file):
 	input_3cl = pd.read_table(input_3cl_file, sep='\t', encoding='utf8', header=0)
 
+	#Remove draws
+	wodraw_input = input_3cl[(input_3cl.choice != 0)]
+	wodraw_input.to_csv("classifier_input_wodraw.dat", sep = "\t")
+
 	#Convert to left; not-left
-	left_input = input_3cl.copy()
-	new_data = left_input.choice.replace(0, 1)
-	left_input['choice'] = new_data
-	left_input.to_csv("classifier_input_lnl.dat", sep = "\t")
+	#left_input = input_3cl.copy()
+	#new_data = left_input.choice.replace(0, 1)
+	#left_input['choice'] = new_data
+	#left_input.to_csv("classifier_input_lnl.dat", sep = "\t")
 
 	#Convert to right; not-right
-	right_input = input_3cl.copy()
-	new_data = right_input.choice.replace(0, -1)
-	right_input['choice'] = new_data
-	right_input.to_csv("classifier_input_rnr.dat", sep = "\t")
+	#right_input = input_3cl.copy()
+	#new_data = right_input.choice.replace(0, -1)
+	#right_input['choice'] = new_data
+	#right_input.to_csv("classifier_input_rnr.dat", sep = "\t")
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:

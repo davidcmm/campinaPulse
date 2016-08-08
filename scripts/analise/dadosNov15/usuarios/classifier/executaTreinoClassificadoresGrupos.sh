@@ -2,13 +2,16 @@
 
 heur=$1
 
-for input_file in classifier_input_lnl.dat classifier_input_rnr.dat ; do
+for input_file in classifier_input_wodraw.dat ; do
+#classifier_input_lnl.dat classifier_input_rnr.dat ; do
 
 	outputSpec=''
 	if [ ${input_file} == 'classifier_input_lnl.dat' ] ; then
 		outputSpec='lnl'
 	elif [ ${input_file} == 'classifier_input_rnr.dat' ] ; then
 		outputSpec='rnr'
+	elif [ ${input_file} == 'classifier_input_wodraw.dat' ] ; then
+		outputSpec='wodraw'
 	else
 		outputSpec='3classes'
 	fi

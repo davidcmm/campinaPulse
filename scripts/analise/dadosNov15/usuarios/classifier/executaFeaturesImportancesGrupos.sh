@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for input_file in classifier_input_rnr.dat ; do
+for input_file in classifier_input_wodraw.dat ; do
+#classifier_input_rnr.dat ; do
 #classifier_input_3classes.dat ; do
 
 	outputSpec=''
@@ -8,6 +9,8 @@ for input_file in classifier_input_rnr.dat ; do
 		outputSpec='lnl'
 	elif [ ${input_file} == 'classifier_input_rnr.dat' ] ; then
 		outputSpec='rnr'
+	elif [ ${input_file} == 'classifier_input_wodraw.dat' ] ; then
+		outputSpec='wodraw'
 	else
 		outputSpec='3classes'
 	fi

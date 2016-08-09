@@ -14,6 +14,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score, confusion_matrix
 from sklearn.grid_search import GridSearchCV
+from sklearn.feature_selection import RFECV
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -157,21 +158,48 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 			#Feature importances me diz a importancia de cada feature. Maior == mais importante.
 			#Depois voce pode mapear para o nome das suas features
 			try:
+				#importances_dic = {}
+				#importances = clf.feature_importances_
+				#for index in range(0, len(list_of_predictors)):
+				#	importances_dic[list_of_predictors[index]] = importances[index]
+				#
+				#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				##print str(sorted_dic)
+				#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				##print "FEATURES " + str(", ".join(list_of_predictors))
+				##print(clf.feature_importances_)
+		
+				#plot_importances(clf, pair)
+
+				# RECURSIVE! Create the RFE object and compute a cross-validated score.
+				svc = SVC(kernel="linear")
+				# The "accuracy" scoring is proportional to the number of correct
+				# classifications
+				rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(pair[2], 5),
+					      scoring='accuracy')
+				rfecv.fit(pair[1], pair[2])
+
+				print("Optimal number of features : %d" % rfecv.n_features_)
+				print "Ranking " + str(rfecv.ranking_)
+
 				importances_dic = {}
-				importances = clf.feature_importances_
+				importances = rfecv.ranking_
 				for index in range(0, len(list_of_predictors)):
 					importances_dic[list_of_predictors[index]] = importances[index]
 				
-				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1))
 				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
 				#print str(sorted_dic)
 				print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
-				#print "FEATURES " + str(", ".join(list_of_predictors))
-				#print(clf.feature_importances_)
-		
-				plot_importances(clf, pair)
+
+			except Exception as inst:
+				print "Exception! "
+				print type(inst) 
+				print inst.args 
 			except:
-				print "ERROR!"
+    				print "Unexpected error:", sys.exc_info()[0]
+			
 
 def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
@@ -345,7 +373,7 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 
 	global classifiers_to_scale
 
-	classifiers = load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
+	classifiers = load_classifiers_3classes(group)#load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
 	classifiers_agrad = classifiers[0]
 	classifiers_seg = classifiers[1]
 
@@ -469,7 +497,7 @@ if __name__ == "__main__":
 		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 		
 	elif phase == 'test':
-		list_of_predictors = ['landscape1']
+		#list_of_predictors = ['landscape1']
 		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 	else:

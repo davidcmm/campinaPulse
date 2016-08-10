@@ -14,7 +14,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score, confusion_matrix
 from sklearn.grid_search import GridSearchCV
-from sklearn.feature_selection import RFECV
+from sklearn.feature_selection import RFECV, SelectFromModel
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -26,7 +26,7 @@ import random
 import collections
 import operator
 
-import matplotlib.pyplot as plt
+from scipy import stats
 
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
@@ -129,12 +129,34 @@ def plot_importances(clf, pair):
 	std = np.std([tree.feature_importances_ for tree in clf.estimators_],
 		     axis=0)
 	indices = np.argsort(importances)[::-1]
+
+	#Compute confidence interval values to plot!
+	if len(clf.estimators_) >= 30:
+		ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+	else:
+		ci = stats.t.interval(0.95, df=len(clf.estimators_)-1, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+	#Calculating distances from mean!
+	low_limit = ci[0]
+	top_limit = ci[1]
+	var = np.array([(top_limit[index]-low_limit[index])/2 for index in range(0, len(low_limit))])
+
 	plt.figure()
+	#fig, ax = plt.subplots()
 	plt.title("Feature importances")
 	plt.bar(range(pair[1].shape[1]), importances[indices],
-	       color="r", yerr=std[indices], align="center")
+		color="r", yerr=var[indices], align="center")
+	#       color="r", yerr=std[indices], align="center")
 	plt.xticks(range(pair[1].shape[1]), indices)
 	plt.xlim([-1, pair[1].shape[1]])
+	
+	#ax.grid(True)
+	#ticklines = ax.get_xticklines() + ax.get_yticklines()
+	#gridlines = ax.get_xgridlines() + ax.get_ygridlines()
+	#for line in ticklines:
+	#    line.set_linewidth(1)
+#
+#	for line in gridlines:
+#	    line.set_linestyle('-')
 	plt.show()
 
 def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
@@ -149,50 +171,57 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 			clf = pair[3][classifier_index]
 			clf_name = classifiers_names[classifier_index]
 
-			#Ok, parece que min_samples_leaf=16, min_samples_split=16 e uma boa. Quais as features importantes?
-			#Vou retreinar na base toda e ver. Note que nao vou avaliar nada agora. Poderia fazer a mesma coisa
-			#que fiz aqui para cada fold acima e tirar a media, e outra abordagem.
-			#clf = ExtraTreesClassifier(min_samples_leaf=16, min_samples_split=16)
+			#Training with all data!
 			clf.fit(pair[1], pair[2])
 
-			#Feature importances me diz a importancia de cada feature. Maior == mais importante.
-			#Depois voce pode mapear para o nome das suas features
 			try:
-				#importances_dic = {}
-				#importances = clf.feature_importances_
-				#for index in range(0, len(list_of_predictors)):
-				#	importances_dic[list_of_predictors[index]] = importances[index]
-				#
-				#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
-				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
-				##print str(sorted_dic)
-				#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
-				##print "FEATURES " + str(", ".join(list_of_predictors))
-				##print(clf.feature_importances_)
-		
-				#plot_importances(clf, pair)
-
-				# RECURSIVE! Create the RFE object and compute a cross-validated score.
-				svc = SVC(kernel="linear")
-				# The "accuracy" scoring is proportional to the number of correct
-				# classifications
-				rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(pair[2], 5),
-					      scoring='accuracy')
-				rfecv.fit(pair[1], pair[2])
-
-				print("Optimal number of features : %d" % rfecv.n_features_)
-				print "Ranking " + str(rfecv.ranking_)
-
 				importances_dic = {}
-				importances = rfecv.ranking_
+				importances = clf.feature_importances_
 				for index in range(0, len(list_of_predictors)):
 					importances_dic[list_of_predictors[index]] = importances[index]
 				
-				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1))
+				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
 				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
 				#print str(sorted_dic)
 				print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				#print "FEATURES " + str(", ".join(list_of_predictors))
+				#print(clf.feature_importances_)
+		
+				plot_importances(clf, pair)
 
+				# RECURSIVE! Create the RFE object and compute a cross-validated score.
+				#svc = SVC(kernel="linear")
+				#if pair[0] == "Pleasantness":
+				#	svc = load_classifiers_wodraw(group)[0][0]
+				#else:
+				#	svc = load_classifiers_wodraw(group)[1][0]
+				# The "accuracy" scoring is proportional to the number of correct classifications
+				#rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(pair[2], 5),
+				#	      scoring='accuracy')
+				#rfecv.fit(pair[1], pair[2])
+
+				#print("Optimal number of features : %d" % rfecv.n_features_)
+				#print "Ranking " + str(rfecv.ranking_)
+
+				#importances_dic = {}
+				#importances = rfecv.ranking_
+				#for index in range(0, len(list_of_predictors)):
+				#	importances_dic[list_of_predictors[index]] = importances[index]
+				#
+				#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1))
+				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				##print str(sorted_dic)
+				#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				# RECURSIVE!
+
+				#SELECT FROM MODEL! Quais as features?
+				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				#model = SelectFromModel(clf, prefit=True)
+				#X_new = model.transform(pair[1])
+				#print model.inverse_transform(X_new)
+				#print X_new
+				#SELECT FROM MODEL!
+  
 			except Exception as inst:
 				print "Exception! "
 				print type(inst) 
@@ -215,12 +244,12 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
 def load_classifiers_wodraw(group):
 	#Building classifiers according to best configuration per group (SO EXTRA ATUALIZADO!)
 	if group == 'masculino':
-		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy',           max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=16, min_weight_fraction_leaf=0.0, n_estimators=40, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy',           max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=32, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.5, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=16, min_weight_fraction_leaf=0.0, n_estimators=40, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=32, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.5, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
 	elif group == 'feminino':
-		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy',           max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=32, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=4, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
-		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy',           max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=4, min_samples_split=4, min_weight_fraction_leaf=0.0, n_estimators=60, n_jobs=-1,            oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=32, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=4, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=4, min_samples_split=4, min_weight_fraction_leaf=0.0, n_estimators=60, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
 	elif group == 'jovem':
 		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=60, n_jobs=-1,           oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=16, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]

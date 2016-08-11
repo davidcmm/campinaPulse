@@ -124,7 +124,7 @@ def stripDataFrame(df):
 
 	return df
 
-def plot_importances(clf, pair):
+def plot_importances(clf, pair, group):
 	importances = clf.feature_importances_
 	std = np.std([tree.feature_importances_ for tree in clf.estimators_],
 		     axis=0)
@@ -157,7 +157,9 @@ def plot_importances(clf, pair):
 #
 #	for line in gridlines:
 #	    line.set_linestyle('-')
+	plt.savefig('importances_'+group+"_"+pair[0]+'.png') 
 	plt.show()
+	plt.close()
 
 def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
@@ -187,7 +189,7 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 				#print "FEATURES " + str(", ".join(list_of_predictors))
 				#print(clf.feature_importances_)
 		
-				plot_importances(clf, pair)
+				plot_importances(clf, pair, group)
 
 				# RECURSIVE! Create the RFE object and compute a cross-validated score.
 				#svc = SVC(kernel="linear")

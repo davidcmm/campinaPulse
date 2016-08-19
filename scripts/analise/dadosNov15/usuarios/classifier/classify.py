@@ -40,209 +40,6 @@ from scipy import stats
 
 classifiers_to_scale = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Naive Bayes"]
 
-def convertColumnsToDummy(df):
-	""" Converts categorical features to dummy variables in the data frame """
-
-	#Users categorical information to dummy!	
-	res = pd.get_dummies(df['gender'])
-	df = df.join(res)
-	res = pd.get_dummies(df['income'])
-	df = df.join(res)
-	res = pd.get_dummies(df['marital'])
-	df = df.join(res)
-	res = pd.get_dummies(df['education'])
-	df = df.join(res)
-
-	#Images categorical information to dummy!
-	res = pd.get_dummies(df['bairro1'], prefix="bairro1")
-	df = df.join(res)
-	res = pd.get_dummies(df['graffiti1'], prefix="graffiti1")
-	df = df.join(res)
-	res = pd.get_dummies(df['bairro2'], prefix="bairro2")
-	df = df.join(res)
-	res = pd.get_dummies(df['graffiti2'], prefix="graffiti2")
-	df = df.join(res)
-	
-	return df
-
-def train_classifiers(question, predictors, answer, parameters_dic, classifiers_names, classifiers, group=""):
-	""" Performs trainings with classifiers in order to discover the best configuration of each classifier """
-
-	global classifiers_to_scale
-	#Question being evaluated
-	print ">>>>>> G " + group + " Q " + question
-
-	i = 0
-	predictors = np.array(predictors)
-	answer = np.array(answer)
-	
-	for classifier_index in range(0, len(classifiers)):
-
-		print "### Classifier " + str(classifiers_names[classifier_index])
-		if parameters_dic.has_key(classifiers_names[classifier_index]):
-			parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
-			print "### Param to opt " + str(parameters_to_optimize)
-
-			for train, test in StratifiedKFold(answer, n_folds=5): #5folds
-
-				if classifiers_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
-					predictors = StandardScaler().fit_transform(predictors)
-				
-				classifier = GridSearchCV(classifiers[classifier_index], 
-				      param_grid=parameters_to_optimize, cv=3)
-				predictors_train = predictors[train]
-				answer_train = answer[train]
-				clf = classifier.fit(predictors_train, answer_train)
-
-				i += 1
-				print('Fold', i)
-				print(clf.best_estimator_)
-				print()
-		
-				predictors_test = predictors[test]
-				answer_test = answer[test]
-				y_pred = clf.predict(predictors_test)
-
-				#Vamo ver o F1. To usando micro, pode ser o macro. No paper, tem que mostrar os 2 mesmo.
-				print('F1 score no teste, nunca use isto para escolher parametros. ' + \
-				  'Aceite o valor, tuning de parametros so antes com o grid search', 
-				  f1_score(answer_test, y_pred, average='micro'), f1_score(answer_test, y_pred, average='macro'))
-				print()
-				print()
-
-
-def stripDataFrame(df):
-	""" Removes unused chars from dataframes columns values """
-
-	df['gender'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['gender']]
-	df['marital'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['marital']]
-	df['income'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['income']]
-	df['graffiti1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti1']]
-	df['graffiti2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti2']]
-	df['bairro1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro1']]
-	df['bairro2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro2']]
-
-	return df
-
-def plot_importances(clf, pair, group):
-	importances = clf.feature_importances_
-	std = np.std([tree.feature_importances_ for tree in clf.estimators_],
-		     axis=0)
-	indices = np.argsort(importances)[::-1]
-
-	#Compute confidence interval values to plot!
-	if len(clf.estimators_) >= 30:
-		ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
-	else:
-		ci = stats.t.interval(0.95, df=len(clf.estimators_)-1, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
-	#Calculating distances from mean!
-	low_limit = ci[0]
-	top_limit = ci[1]
-	var = np.array([(top_limit[index]-low_limit[index])/2 for index in range(0, len(low_limit))])
-
-	plt.figure()
-	#fig, ax = plt.subplots()
-	plt.title("Feature importances")
-	plt.bar(range(pair[1].shape[1]), importances[indices],
-		color="r", yerr=var[indices], align="center")
-	#       color="r", yerr=std[indices], align="center")
-	plt.xticks(range(pair[1].shape[1]), indices)
-	plt.xlim([-1, pair[1].shape[1]])
-	
-	#ax.grid(True)
-	#ticklines = ax.get_xticklines() + ax.get_yticklines()
-	#gridlines = ax.get_xgridlines() + ax.get_ygridlines()
-	#for line in ticklines:
-	#    line.set_linewidth(1)
-#
-#	for line in gridlines:
-#	    line.set_linestyle('-')
-	plt.savefig('importances_'+group+"_"+pair[0]+'.png') 
-	plt.show()
-	plt.close()
-
-def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
-	""" Checks the importances of features considering the best configuration of classifiers previously tested """
-
-	classifiers = load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
-	classifiers_agrad = [classifiers[0][0]]
-	classifiers_seg = [classifiers[1][0]]
-
-	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
-		for classifier_index in range(0, len(pair[3])):
-			clf = pair[3][classifier_index]
-			clf_name = classifiers_names[classifier_index]
-
-			#Training with all data!
-			clf.fit(pair[1], pair[2])
-
-			try:
-				importances_dic = {}
-				importances = clf.feature_importances_
-				for index in range(0, len(list_of_predictors)):
-					importances_dic[list_of_predictors[index]] = importances[index]
-				
-				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
-				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
-				#print str(sorted_dic)
-				print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
-				#print "FEATURES " + str(", ".join(list_of_predictors))
-				#print(clf.feature_importances_)
-		
-				plot_importances(clf, pair, group)
-
-				# RECURSIVE! Create the RFE object and compute a cross-validated score.
-				#svc = SVC(kernel="linear")
-				#if pair[0] == "Pleasantness":
-				#	svc = load_classifiers_wodraw(group)[0][0]
-				#else:
-				#	svc = load_classifiers_wodraw(group)[1][0]
-				# The "accuracy" scoring is proportional to the number of correct classifications
-				#rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(pair[2], 5),
-				#	      scoring='accuracy')
-				#rfecv.fit(pair[1], pair[2])
-
-				#print("Optimal number of features : %d" % rfecv.n_features_)
-				#print "Ranking " + str(rfecv.ranking_)
-
-				#importances_dic = {}
-				#importances = rfecv.ranking_
-				#for index in range(0, len(list_of_predictors)):
-				#	importances_dic[list_of_predictors[index]] = importances[index]
-				#
-				#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1))
-				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
-				##print str(sorted_dic)
-				#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
-				# RECURSIVE!
-
-				#SELECT FROM MODEL! Quais as features?
-				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
-				#model = SelectFromModel(clf, prefit=True)
-				#X_new = model.transform(pair[1])
-				#print model.inverse_transform(X_new)
-				#print X_new
-				#SELECT FROM MODEL!
-  
-			except Exception as inst:
-				print "Exception! "
-				print type(inst) 
-				print inst.args 
-			except:
-    				print "Unexpected error:", sys.exc_info()[0]
-			
-
-def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(3)
-    plt.xticks(tick_marks, [-1, 0, 1], rotation=45)
-    plt.yticks(tick_marks, [-1, 0, 1])
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-
 def load_classifiers_wodraw(group):
 	#Building classifiers according to best configuration per group (SO EXTRA ATUALIZADO!)
 	if group == 'masculino':
@@ -398,6 +195,229 @@ def load_classifiers_rnr(group):
 
 	return [classifiers_agrad, classifiers_seg]
 
+def convertColumnsToDummy(df):
+	""" Converts categorical features to dummy variables in the data frame """
+
+	#Users categorical information to dummy!	
+	res = pd.get_dummies(df['gender'])
+	df = df.join(res)
+	res = pd.get_dummies(df['income'])
+	df = df.join(res)
+	res = pd.get_dummies(df['marital'])
+	df = df.join(res)
+	res = pd.get_dummies(df['education'])
+	df = df.join(res)
+
+	#Images categorical information to dummy!
+	res = pd.get_dummies(df['bairro1'], prefix="bairro1")
+	df = df.join(res)
+	res = pd.get_dummies(df['graffiti1'], prefix="graffiti1")
+	df = df.join(res)
+	res = pd.get_dummies(df['bairro2'], prefix="bairro2")
+	df = df.join(res)
+	res = pd.get_dummies(df['graffiti2'], prefix="graffiti2")
+	df = df.join(res)
+	
+	return df
+
+def train_classifiers(question, predictors, answer, parameters_dic, classifiers_names, classifiers, group=""):
+	""" Performs trainings with classifiers in order to discover the best configuration of each classifier """
+
+	global classifiers_to_scale
+	#Question being evaluated
+	print ">>>>>> G " + group + " Q " + question
+
+	i = 0
+	predictors = np.array(predictors)
+	answer = np.array(answer)
+
+	selected_classifiers = []
+	
+	for classifier_index in range(0, len(classifiers)):
+
+		print "### Classifier " + str(classifiers_names[classifier_index])
+		if parameters_dic.has_key(classifiers_names[classifier_index]):
+			parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
+			print "### Param to opt " + str(parameters_to_optimize)
+
+			best = None
+			best_f1 = 0
+
+			for train, test in StratifiedKFold(answer, n_folds=5): #5folds
+
+				scaling = StandardScaler()
+
+				predictors_train = predictors[train]
+				answer_train = answer[train]
+				predictors_test = predictors[test]
+				answer_test = answer[test]
+
+				if classifiers_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
+					scaling.fit(predictors_train)
+					X_train_scaled = scaling.transform(predictors_train)
+					X_test_scaled = scaling.transform(predictors_test)
+				else:
+					X_train_scaled = predictors_train
+					X_test_scaled = predictors_test
+
+
+				#if classifiers_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
+	#				predictors = StandardScaler().fit_transform(predictors)
+				
+				classifier = GridSearchCV(classifiers[classifier_index], 
+				      param_grid=parameters_to_optimize, cv=3)
+				clf = classifier.fit(X_train_scaled, answer_train)
+
+				i += 1
+				print('Fold', i)
+				print(clf.best_estimator_)
+				print()
+		
+				y_pred = clf.predict(X_test_scaled)
+
+				#Vamo ver o F1. To usando micro, pode ser o macro. No paper, tem que mostrar os 2 mesmo.
+				f1_micro = f1_score(answer_test, y_pred, average='micro')
+				f1_macro = f1_score(answer_test, y_pred, average='macro')
+				print('F1 score no teste, nunca use isto para escolher parametros. ' + \
+				  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
+				  , f1_macro)
+				print()
+				print()
+
+				#Storing the best configuration
+				if f1_micro > best_f1:
+					best_f1 = f1_micro
+					best = clf.best_estimator_
+
+		selected_classifiers.append(best)
+
+	print str(selected_classifiers)
+
+
+def stripDataFrame(df):
+	""" Removes unused chars from dataframes columns values """
+
+	df['gender'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['gender']]
+	df['marital'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['marital']]
+	df['income'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['income']]
+	df['graffiti1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti1']]
+	df['graffiti2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['graffiti2']]
+	df['bairro1'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro1']]
+	df['bairro2'] = [x.lstrip(' \t\n\r').rstrip(' \t\n\r') for x in df['bairro2']]
+
+	return df
+
+def plot_importances(clf, pair, group):
+	importances = clf.feature_importances_
+	std = np.std([tree.feature_importances_ for tree in clf.estimators_],
+		     axis=0)
+	indices = np.argsort(importances)[::-1]
+
+	#Compute confidence interval values to plot!
+	if len(clf.estimators_) >= 30:
+		ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+	else:
+		ci = stats.t.interval(0.95, df=len(clf.estimators_)-1, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+	#Calculating distances from mean!
+	low_limit = ci[0]
+	top_limit = ci[1]
+	var = np.array([(top_limit[index]-low_limit[index])/2 for index in range(0, len(low_limit))])
+
+	plt.figure()
+	#fig, ax = plt.subplots()
+	plt.title("Feature importances")
+	plt.bar(range(pair[1].shape[1]), importances[indices],
+		color="r", yerr=var[indices], align="center")
+	#       color="r", yerr=std[indices], align="center")
+	plt.xticks(range(pair[1].shape[1]), indices)
+	plt.xlim([-1, pair[1].shape[1]])
+	
+	plt.savefig('importances_'+group+"_"+pair[0]+'.png') 
+	plt.show()
+	plt.close()
+
+def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+	""" Checks the importances of features considering the best configuration of classifiers previously tested """
+
+	classifiers = load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
+	classifiers_agrad = [classifiers[0][0]]
+	classifiers_seg = [classifiers[1][0]]
+
+	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
+		for classifier_index in range(0, len(pair[3])):
+			clf = pair[3][classifier_index]
+			clf_name = classifiers_names[classifier_index]
+
+			#Training with all data!
+			clf.fit(pair[1], pair[2])
+
+			try:
+				importances_dic = {}
+				importances = clf.feature_importances_
+				for index in range(0, len(list_of_predictors)):
+					importances_dic[list_of_predictors[index]] = importances[index]
+				
+				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				#print str(sorted_dic)
+				print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				#print "FEATURES " + str(", ".join(list_of_predictors))
+				#print(clf.feature_importances_)
+		
+				plot_importances(clf, pair, group)
+
+				# RECURSIVE! Create the RFE object and compute a cross-validated score.
+				#svc = SVC(kernel="linear")
+				#if pair[0] == "Pleasantness":
+				#	svc = load_classifiers_wodraw(group)[0][0]
+				#else:
+				#	svc = load_classifiers_wodraw(group)[1][0]
+				# The "accuracy" scoring is proportional to the number of correct classifications
+				#rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(pair[2], 5),
+				#	      scoring='accuracy')
+				#rfecv.fit(pair[1], pair[2])
+
+				#print("Optimal number of features : %d" % rfecv.n_features_)
+				#print "Ranking " + str(rfecv.ranking_)
+
+				#importances_dic = {}
+				#importances = rfecv.ranking_
+				#for index in range(0, len(list_of_predictors)):
+				#	importances_dic[list_of_predictors[index]] = importances[index]
+				#
+				#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1))
+				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				##print str(sorted_dic)
+				#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+				# RECURSIVE!
+
+				#SELECT FROM MODEL! Quais as features?
+				#print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name
+				#model = SelectFromModel(clf, prefit=True)
+				#X_new = model.transform(pair[1])
+				#print model.inverse_transform(X_new)
+				#print X_new
+				#SELECT FROM MODEL!
+  
+			except Exception as inst:
+				print "Exception! "
+				print type(inst) 
+				print inst.args 
+			except:
+    				print "Unexpected error:", sys.exc_info()[0]
+			
+
+def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(3)
+    plt.xticks(tick_marks, [-1, 0, 1], rotation=45)
+    plt.yticks(tick_marks, [-1, 0, 1])
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
@@ -414,19 +434,25 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 			clf = entry[3][classifier_index]
 			clf_name = classifiers_names[classifier_index]
 
+			X_train, X_test, y_train, y_test = train_test_split(entry[1], entry[2], test_size=.2)#Splitting into train and test sets!
+			scaling = StandardScaler()
+
 			if classifiers_names[classifier_index] in classifiers_to_scale:#Some classifiers needs to scale input!
-				predictors = StandardScaler().fit_transform(entry[1])
+				scaling.fit(X_train)
+				X_train_scaled = scaling.transform(X_train)
+				X_test_scaled = scaling.transform(X_test)
 				answer = entry[2]
 			else:
 				predictors = entry[1]
 				answer = entry[2]
+				X_train_scaled = X_train
+				X_test_scaled = X_test
 
-			X_train, X_test, y_train, y_test = train_test_split(predictors, answer, test_size=.2)#Splitting into train and test sets!
 	
-			clf.fit(X_train, y_train)
+			clf.fit(X_train_scaled, y_train)
 
-        		score = clf.score(X_test, y_test)#Accuracy
-			y_pred = clf.predict(X_test)#Estimated values
+        		score = clf.score(X_test_scaled, y_test)#Accuracy
+			y_pred = clf.predict(X_test_scaled)#Estimated values
 
 			metrics = precision_recall_fscore_support(y_test, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
 			print ">>>> G " + group + " Q " + entry[0] + " " + clf_name + " " + str(len(X_train)) + " " + str(len(X_test)) + " " + str(score) + " MACRO " + str(metrics)
@@ -532,7 +558,7 @@ if __name__ == "__main__":
 		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 	else:
-		print "Phase not selected correctly: train or test!"
+		print "Phase not selected correctly: train-config, importances or test!"
 		sys.exit(1)
 
 	

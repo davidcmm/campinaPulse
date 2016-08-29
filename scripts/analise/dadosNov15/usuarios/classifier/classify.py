@@ -294,7 +294,7 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 
 	print str(selected_classifiers)
 
-def train_classifiers_leave_user_out(question, list_of_predictors, df, answer, parameters_dic, classifiers_names, classifiers, group=""):
+def train_classifiers_leave_user_out(question, list_of_predictors, df, parameters_dic, classifiers_names, classifiers, group=""):
 	""" Performs trainings with classifiers removing one user at a time and then calculates accuracy, micro and macro values """
 
 	global classifiers_to_scale

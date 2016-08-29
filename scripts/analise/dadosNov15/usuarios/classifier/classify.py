@@ -294,6 +294,98 @@ def train_classifiers(question, predictors, answer, parameters_dic, classifiers_
 
 	print str(selected_classifiers)
 
+def train_classifiers_leave_user_out(question, list_of_predictors, df, answer, parameters_dic, classifiers_names, classifiers, group=""):
+	""" Performs trainings with classifiers removing one user at a time and then calculates accuracy, micro and macro values """
+
+	global classifiers_to_scale
+	user_ids = df['userID'].unique()
+
+	#Question being evaluated
+	print ">>>>>> G " + group + " Q " + question
+
+	history_micro = []
+	history_macro = []
+	history_acc = []
+
+	for user_id in user_ids:#Remove each user sequentially!
+	
+		current_df = df[(df.userID != user_id)]
+		predictors = np.array(current_df[list_of_predictors].values)
+		answer = np.array(current_df['choice'])
+		i = 0
+	
+		for classifier_index in range(0, len(classifiers)):
+
+			print "### User " + str(user_id) + " Classifier " + str(classifiers_names[classifier_index])
+
+			if parameters_dic.has_key(classifiers_names[classifier_index]):
+				parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
+
+				best_clf = None
+				best_f1 = []
+
+				for train, test in StratifiedKFold(answer, n_folds=5): #5folds
+
+					predictors_train = predictors[train]
+					answer_train = answer[train]
+					predictors_test = predictors[test]
+					answer_test = answer[test]
+
+					X_train_scaled = predictors_train #Only extra trees is currently being used!
+					X_test_scaled = predictors_test
+
+
+					classifier = GridSearchCV(classifiers[classifier_index], 
+					      param_grid=parameters_to_optimize, cv=3)
+					clf = classifier.fit(X_train_scaled, answer_train)
+
+					i += 1
+					#print('Fold', i)
+					#print(clf.best_estimator_)
+					#print()
+		
+					y_pred = clf.predict(X_test_scaled)
+
+					#Check f1
+					f1_micro = f1_score(answer_test, y_pred, average='micro')
+					f1_macro = f1_score(answer_test, y_pred, average='macro')
+					#print('F1 score no teste, nunca use isto para escolher parametros. ' + \
+					#  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
+					#  , f1_macro)
+					#print()
+					#print()
+
+					#Storing the best configuration
+					if f1_micro > best_f1[0]:
+						best_f1 = [f1_micro, f1_macro]
+						best_clf = clf.best_estimator_
+		
+				#Test best classifier removing current user!
+				X_train, X_test, y_train, y_test = train_test_split(predictors, answer, test_size=.2)#Splitting into train and test sets!
+				#Only extra trees is currently being used
+				X_train_scaled = X_train
+				X_test_scaled = X_test
+
+				best_clf.fit(X_train_scaled, y_train)#Fitting for test
+
+				accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
+				y_pred = best_clf.predict(X_test_scaled)#Estimated values
+
+				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
+				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
+				history_micro.append(metrics_micro)
+				history_macro.append(metrics_macro)
+				history_acc.append(accuracy)
+
+	std_acc = np.std(np.array(history_acc), axis=0)
+	mean_acc = np.mean(np.array(history_acc), axis=0)
+	std_micros = np.std(np.array(history_micro), axis=0)
+	mean_micros = np.mean(np.array(history_micro), axis=0)
+	std_macros = np.std(np.array(history_macro), axis=0)
+	mean_macros = np.mean(np.array(history_macro), axis=0)
+	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+				
 
 def stripDataFrame(df):
 	""" Removes unused chars from dataframes columns values """
@@ -486,8 +578,9 @@ if __name__ == "__main__":
 		filter_group = ""
 		group = ""
 
+	list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+
 	if len(filter_group) > 0:
-		list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
 		if 'gender' in filter_group:
 			df_to_use = df[(df.gender == group)]
@@ -502,18 +595,18 @@ if __name__ == "__main__":
 			if group == 'adulto':
 				df_to_use = df[(df.age >= 25)]
 			elif group == 'jovem':
-				df_to_use = df[(df.age >= 24)]
+				df_to_use = df[(df.age <= 24)]
 	else:
 		df_to_use = df
 
 		#Features to consider and splitting into dataframes for each question
-		list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 		#list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'ensino medio',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 	agrad_df = convertColumnsToDummy(agrad_df)
 	answer_agrad = agrad_df['choice']#Preferred images
 	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
+	
 
 	seg_df = df_to_use[(df_to_use.question == "seguro?")]
 	seg_df = convertColumnsToDummy(seg_df)
@@ -550,6 +643,11 @@ if __name__ == "__main__":
 		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
 		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
 
+	elif phase == 'train-user-out':
+		classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
+		train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
+		train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
+
 	elif phase == 'importances':
 
 		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
@@ -558,6 +656,7 @@ if __name__ == "__main__":
 		#list_of_predictors = ['landscape1']
 		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+
 	else:
 		print "Phase not selected correctly: train-config, importances or test!"
 		sys.exit(1)

@@ -307,7 +307,7 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	history_macro = []
 	history_acc = []
 
-	for user_id in user_ids[0:2]:#Remove each user sequentially!
+	for user_id in user_ids:#Remove each user sequentially!
 	
 		current_df_train = df[(df.userID != user_id)]
 		current_df_test = df[(df.userID == user_id)]
@@ -376,18 +376,27 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 				accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
 				y_pred = best_clf.predict(X_test_scaled)#Estimated values
 
-				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro', labels=['1', '0', '-1'])#Calculates for each label and compute the mean!
-				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro', labels=['1', '0', '-1'])#Total false positives, negatives and true positives -> more similar to accuracy
-				history_micro.append(metrics_micro)
-				history_macro.append(metrics_macro)
+				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+				history_micro.append(metrics_micro[0:3])
+				history_macro.append(metrics_macro[0:3])
 				history_acc.append(accuracy)
+				
+				#print ">>> Pos"
+				#print str(history_acc)
+				#print str(history_micro)
+				#print str(history_macro)
 
+	#print ">>> Final"
+	#print str(history_acc)
+	#print str(history_micro)
+	#print str(history_macro)
 	std_acc = np.std(np.array(history_acc), axis=0)
 	mean_acc = np.mean(np.array(history_acc), axis=0)
-	std_micros = np.std(np.array(history_micro), axis=0)
-	mean_micros = np.mean(np.array(history_micro), axis=0)
-	std_macros = np.std(np.array(history_macro), axis=0)
-	mean_macros = np.mean(np.array(history_macro), axis=0)
+	std_micro = np.std(np.array(history_micro), axis=0)
+	mean_micro = np.mean(np.array(history_micro), axis=0)
+	std_macro = np.std(np.array(history_macro), axis=0)
+	mean_macro = np.mean(np.array(history_macro), axis=0)
 	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
 	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
 				

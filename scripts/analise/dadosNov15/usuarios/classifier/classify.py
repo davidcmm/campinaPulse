@@ -307,7 +307,7 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	history_macro = []
 	history_acc = []
 
-	for user_id in user_ids:#Remove each user sequentially!
+	for user_id in user_ids[0:2]:#Remove each user sequentially!
 	
 		current_df_train = df[(df.userID != user_id)]
 		current_df_test = df[(df.userID == user_id)]

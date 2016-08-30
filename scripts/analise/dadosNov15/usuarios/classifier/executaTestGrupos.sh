@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for input_file in classifier_input_wodraw.dat ; do
+for input_file in classifier_input_wodraw.dat classifier_input_3classes.dat ; do
 #classifier_input_rnr.dat ; do
 
 	outputSpec=''
@@ -14,7 +14,7 @@ for input_file in classifier_input_wodraw.dat ; do
 		outputSpec='3classes'
 	fi
 
-	echo "#### Only with urban elements features ####" >> classifier_output_groups_wo_user_features_${outputSpec}.dat
+	echo "#### Only with urban elements features - Split before train ####" >> classifier_output_groups_wo_user_features_${outputSpec}.dat
 	echo ">> Masculino" >> classifier_output_groups_wo_user_features_${outputSpec}.dat
 	python classify.py ${input_file} test gender-masculino >> classifier_output_groups_wo_user_features_${outputSpec}.dat
 	echo ">> Feminino" >> classifier_output_groups_wo_user_features_${outputSpec}.dat

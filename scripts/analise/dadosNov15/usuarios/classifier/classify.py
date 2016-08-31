@@ -27,7 +27,7 @@ import collections
 import operator
 
 from scipy import stats
-from sets import *
+from sets import Set
 
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
@@ -550,22 +550,22 @@ def test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, grou
 	X_train, X_test, y_train, y_test = train_test_split(predictors_agrad, answer_agrad, test_size=.2)#Splitting into train and test sets!
 	correct_predictions = 0
 	wrong_predictions = 0
-	for index in range(0, len(X_test)):
-		if y_test[index] == random.sample(unique_answer_agrad):
+	for value in y_test:
+		if value == random.sample(unique_answer_agrad, 1):
 			correct_predictions = correct_predictions + 1
 		else:
 			wrong_predictions = wrong_predictions + 1
-	print ">>> Acc_pleasantness" + str( correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + correct_predictions + "\t" + wrong_predictions
+	print ">>> Acc_pleasantness\t" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
 
 	X_train, X_test, y_train, y_test = train_test_split(predictors_seg, answer_seg, test_size=.2)#Splitting into train and test sets!
 	correct_predictions = 0
 	wrong_predictions = 0
-	for index in range(0, len(X_test)):
-		if y_test[index] == random.sample(unique_answer_seg):
+	for value in y_test:
+		if value == random.sample(unique_answer_seg, 1):
 			correct_predictions = correct_predictions + 1
 		else:
 			wrong_predictions = wrong_predictions + 1
-	print ">>> Acc_safety" + str( correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + correct_predictions + "\t" + wrong_predictions
+	print ">>> Acc_safety" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
 	
 
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):

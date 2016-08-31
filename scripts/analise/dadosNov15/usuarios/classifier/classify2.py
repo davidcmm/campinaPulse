@@ -501,7 +501,7 @@ if __name__ == "__main__":
 			if group == 'adulto':
 				df_to_use = df[(df.age >= 25)]
 			elif group == 'jovem':
-				df_to_use = df[(df.age >= 24)]
+				df_to_use = df[(df.age <= 24)]
 	else:
 		df_to_use = df
 

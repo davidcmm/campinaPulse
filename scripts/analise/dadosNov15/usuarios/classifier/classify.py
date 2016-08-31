@@ -27,6 +27,7 @@ import collections
 import operator
 
 from scipy import stats
+from sets import *
 
 #PANDAS OPERATIONS!
 	#df[['age', 'gender', 'income', 'education', 'city', 'marital']]
@@ -540,6 +541,33 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.xlabel('Predicted label')
 
 
+def test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group):
+	""" Tests performance of a random classifier! """
+
+	unique_answer_agrad = Set(answer_agrad)
+	unique_answer_seg = Set(answer_seg)
+
+	X_train, X_test, y_train, y_test = train_test_split(predictors_agrad, answer_agrad, test_size=.2)#Splitting into train and test sets!
+	correct_predictions = 0
+	wrong_predictions = 0
+	for index in range(0, len(X_test)):
+		if y_test[index] == random.sample(unique_answer_agrad):
+			correct_predictions = correct_predictions + 1
+		else:
+			wrong_predictions = wrong_predictions + 1
+	print ">>> Acc_pleasantness" + str( correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + correct_predictions + "\t" + wrong_predictions
+
+	X_train, X_test, y_train, y_test = train_test_split(predictors_seg, answer_seg, test_size=.2)#Splitting into train and test sets!
+	correct_predictions = 0
+	wrong_predictions = 0
+	for index in range(0, len(X_test)):
+		if y_test[index] == random.sample(unique_answer_seg):
+			correct_predictions = correct_predictions + 1
+		else:
+			wrong_predictions = wrong_predictions + 1
+	print ">>> Acc_safety" + str( correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + correct_predictions + "\t" + wrong_predictions
+	
+
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
@@ -684,6 +712,9 @@ if __name__ == "__main__":
 		#list_of_predictors = ['landscape1']
 		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+
+	elif phase == 'random':
+		test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 
 	else:
 		print "Phase not selected correctly: train-config, importances or test!"

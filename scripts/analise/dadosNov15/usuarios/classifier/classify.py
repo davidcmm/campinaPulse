@@ -306,6 +306,8 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	history_micro = []
 	history_macro = []
 	history_acc = []
+	history_features_importances = []
+	importances_dic = {}
 
 	for user_id in user_ids:#Remove each user sequentially!
 	
@@ -381,6 +383,8 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 				history_micro.append(metrics_micro[0:3])
 				history_macro.append(metrics_macro[0:3])
 				history_acc.append(accuracy)
+
+				history_features_importances.append(best_clf.feature_importances_)
 				
 				#print ">>> Pos"
 				#print str(history_acc)
@@ -399,6 +403,16 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	mean_macro = np.mean(np.array(history_macro), axis=0)
 	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
 	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+
+	#Features importances!
+	std_importances = np.std(np.array(history_features_importances), axis=0)
+	mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	for index in range(0, len(list_of_predictors)):
+		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	
+	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	print ">>>> Importances "
+	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 				
 
 def stripDataFrame(df):

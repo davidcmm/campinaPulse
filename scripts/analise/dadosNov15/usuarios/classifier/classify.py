@@ -458,10 +458,14 @@ def plot_importances(clf, pair, group):
 	plt.show()
 	plt.close()
 
-def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group="", load_3classes=False):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
-	classifiers = load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
+	if load_3classes:
+		classifiers = load_classifiers_3classes(group)
+	else:
+		classifiers = load_classifiers_wodraw(group)
+
 	classifiers_agrad = [classifiers[0][0]]
 	classifiers_seg = [classifiers[1][0]]
 
@@ -568,12 +572,16 @@ def test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, grou
 	print ">>> Acc_safety" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
 	
 
-def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group=""):
+def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group="", load_3classes=False):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
 	global classifiers_to_scale
 
-	classifiers = load_classifiers_3classes(group)#load_classifiers_wodraw(group)#load_classifiers_rnr(group)#load_classifiers_3classes(group)
+	if load_3classes:
+		classifiers = load_classifiers_3classes(group)
+	else:
+		classifiers = load_classifiers_wodraw(group)
+
 	classifiers_agrad = classifiers[0]
 	classifiers_seg = classifiers[1]
 
@@ -621,8 +629,15 @@ if __name__ == "__main__":
 		print "Uso: <arquivo com dados das preferencias de fotos, dados das fotos e dos usuarios> <phase - train-config, importances or test> <filter, e.g., <gender, marital, age, income>-masculino>"
 		sys.exit(1)
 
-	df = pd.read_table(sys.argv[1], sep='\t', encoding='utf8', header=0)
+	input_file = sys.argv[1]
+	df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 	phase = sys.argv[2].lower()
+
+	
+	if "3classes" in input_file.lower():
+		load_3classes = True
+	else:
+		load_3classes = False
 
 	#Remove unecessary chars!
 	df = stripDataFrame(df)
@@ -663,7 +678,6 @@ if __name__ == "__main__":
 	answer_agrad = agrad_df['choice']#Preferred images
 	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
 	
-
 	seg_df = df_to_use[(df_to_use.question == "seguro?")]
 	seg_df = convertColumnsToDummy(seg_df)
 	answer_seg = seg_df['choice']#Preferred images
@@ -706,12 +720,12 @@ if __name__ == "__main__":
 
 	elif phase == 'importances':
 
-		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
 		
 	elif phase == 'test':
 		#list_of_predictors = ['landscape1']
 		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
-		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
 
 	elif phase == 'random':
 		test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)

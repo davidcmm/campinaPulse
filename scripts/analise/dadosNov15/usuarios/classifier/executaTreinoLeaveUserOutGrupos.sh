@@ -19,22 +19,22 @@ else
 fi
 
 
-echo "#### Only with urban elements features ####" >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Masculino" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out gender-masculino >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Feminino" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out gender-feminino >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Jovem" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out age-jovem >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Adulto" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out age-adulto >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Baixa" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out income-baixa >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Media" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out income-media >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Solteiro" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out marital-solteiro >> classifier_testsExtra_userout_${outputSpec}.dat
-echo ">> Casado" >> classifier_testsExtra_userout_${outputSpec}.dat
-python classify.py ${input_file} train-user-out marital-casado >> classifier_testsExtra_userout_${outputSpec}.dat
+echo "#### Only with urban elements features - Split before train ####" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Masculino" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out gender-masculino >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Feminino" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out gender-feminino >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Jovem" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out age-jovem >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Adulto" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out age-adulto >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Baixa" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out income-baixa >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Media" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out income-media >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Solteiro" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out marital-solteiro >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+echo ">> Casado" >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
+python classify.py ${input_file} train-user-out marital-casado >> classifier_output_groups_userout_wo_user_features_${outputSpec}.dat
 	
 #done

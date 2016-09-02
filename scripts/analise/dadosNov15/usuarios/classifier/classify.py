@@ -429,7 +429,66 @@ def stripDataFrame(df):
 
 	return df
 
+def plot_importances_from_file(importances_file, df, load_3classes):
+	""" Plot features importances already existent in an output file """
+	data = open(importances_file, "r").readlines()
+	header_index = 0
+
+	if load_3classes:
+		answer_type = "3classes"
+	else:
+		answer_type = "wodraw"
+
+	while header_index <= len(data):
+		header = data[header_index].split(" ")
+		group = header[2]
+		question = header[4]
+
+		#Compute group size!
+		df_to_use = df[(df.gender == group)]
+		group_size = len(df_to_use)
+		
+		importances_data = data[header_index+2:header_index+32]
+		importances = []
+		std = []
+		features = []
+		for line in importances_data:
+			new_line = line.replace("[", "").replace("]", "").replace(",", "")
+			line_data = new_line.split(" ")
+			features.append(line_data[0])
+			importances.append(line_data[1])
+			std.append(line_data[2])
+		
+		indices = np.argsort(importances)[::-1]#Sorting from greater to lower importances
+
+		#Compute confidence interval values to plot!
+		if group_size >= 30:
+			ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(group_size) )
+		else:
+			ci = stats.t.interval(0.95, df=group_size-1, loc=importances, scale= std / np.sqrt(group_size) )
+		#Calculating distances from mean!
+		low_limit = ci[0]
+		top_limit = ci[1]
+		var = np.array([(top_limit[index]-low_limit[index])/2 for index in range(0, len(low_limit))])
+
+		#Figure!
+		plt.figure()
+		plt.title("Feature importances")
+		plt.bar(range(len(importances)), importances[indices],
+			color="r", yerr=var[indices], align="center")
+		plt.xticks(range(len(importances)), indices)
+		plt.xlim([-1, len(importances)])
+	
+		plt.savefig('importances_'+group+"_"+question+"_"+answer_type+'.png') 
+		plt.show()
+		plt.close()
+
+		#Updating index
+		header_index = header_index + 32
+
 def plot_importances(clf, pair, group):
+	""" Plot features importances from a classifier """
+
 	importances = clf.feature_importances_
 	std = np.std([tree.feature_importances_ for tree in clf.estimators_],
 		     axis=0)
@@ -626,121 +685,121 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
-		print "Uso: <arquivo com dados das preferencias de fotos, dados das fotos e dos usuarios> <phase - train-config, importances or test> <filter, e.g., <gender, marital, age, income>-masculino>"
+		print "Uso: <file with photos preferences, photos data and user data> <phase - train-config, train-user-out, importances, importances-file, test or random> <filter, e.g., <gender, marital, age, income>-masculino>"
 		sys.exit(1)
 
 	input_file = sys.argv[1]
-	df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 	phase = sys.argv[2].lower()
 
-	
 	if "3classes" in input_file.lower():
 		load_3classes = True
 	else:
 		load_3classes = False
 
-	#Remove unecessary chars!
-	df = stripDataFrame(df)
+	if phase.lower() == "importances-file":#Plot features importances already computed!
+		if len(sys.argv) != 3:
+			print "Uso importances-file: <importances file> <phase: importances-file> <file with photos preferences, photos data and user data>"
+			sys.exit(1)
+		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
+		importances_file = sys.argv[3]
+		plot_importances_from_file(importances_file, df, load_3classes)
 
-	if len(sys.argv) == 4:
-		filter_group = sys.argv[3]
-		group = filter_group.split("-")[1]
-	else:
-		filter_group = ""
-		group = ""
+	else:#Train, test classifiers!
+		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 
-	list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
-	if len(filter_group) > 0:
+		#Remove unecessary chars!
+		df = stripDataFrame(df)
 
-		if 'gender' in filter_group:
-			df_to_use = df[(df.gender == group)]
-		elif 'marital' in filter_group:
-			df_to_use = df[(df.marital == group)]
-		elif 'income' in filter_group:
-			if group == 'media':		
-				df_to_use = df[(df.income == "media") | (df.income == "media alta")]
-			elif group == 'baixa':
-				df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
-		elif 'age' in filter_group:
-			if group == 'adulto':
-				df_to_use = df[(df.age >= 25)]
-			elif group == 'jovem':
-				df_to_use = df[(df.age <= 24)]
-	else:
-		df_to_use = df
+		if len(sys.argv) == 4:
+			filter_group = sys.argv[3]
+			group = filter_group.split("-")[1]
+		else:
+			filter_group = ""
+			group = ""
 
-		#Features to consider and splitting into dataframes for each question
-		#list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'ensino medio',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+		list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
-	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
-	agrad_df = convertColumnsToDummy(agrad_df)
-	answer_agrad = agrad_df['choice']#Preferred images
-	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
+		if len(filter_group) > 0:
+
+			if 'gender' in filter_group:
+				df_to_use = df[(df.gender == group)]
+			elif 'marital' in filter_group:
+				df_to_use = df[(df.marital == group)]
+			elif 'income' in filter_group:
+				if group == 'media':		
+					df_to_use = df[(df.income == "media") | (df.income == "media alta")]
+				elif group == 'baixa':
+					df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
+			elif 'age' in filter_group:
+				if group == 'adulto':
+					df_to_use = df[(df.age >= 25)]
+				elif group == 'jovem':
+					df_to_use = df[(df.age <= 24)]
+		else:
+			df_to_use = df
+
+			#Features to consider and splitting into dataframes for each question
+			#list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'ensino medio',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+
+		agrad_df = df_to_use[(df_to_use.question != "seguro?")]
+		agrad_df = convertColumnsToDummy(agrad_df)
+		answer_agrad = agrad_df['choice']#Preferred images
+		predictors_agrad = agrad_df[list_of_predictors].values #Predictors
 	
-	seg_df = df_to_use[(df_to_use.question == "seguro?")]
-	seg_df = convertColumnsToDummy(seg_df)
-	answer_seg = seg_df['choice']#Preferred images
-	predictors_seg = seg_df[list_of_predictors].values #Predictors
+		seg_df = df_to_use[(df_to_use.question == "seguro?")]
+		seg_df = convertColumnsToDummy(seg_df)
+		answer_seg = seg_df['choice']#Preferred images
+		predictors_seg = seg_df[list_of_predictors].values #Predictors
 
-	#Classifiers to be used
-	parameters_dic = { "Extra Trees" : {
-	    'n_estimators': [20, 40, 60],
-	    'criterion': ['entropy'],
-	    'min_samples_split': [2, 4, 8, 16, 32],
-	    'min_samples_leaf': [2, 4, 8, 16, 32]
-	}, 
-	"Nearest Neighbors" : {
-		'n_neighbors' : [2, 4, 8, 16, 32],
-		'p' : [2,3]	
-	},
-	"Linear SVM" : {
-		'C' : [0.001, 0.1, 1, 10, 100, 1000],
-		'class_weight' : ['balanced', None]
-	},
-	"RBF SVM" : {
-		'C' : [0.001, 0.1, 1],
-		#'gamma' : ['Auto', 'RS*'],
-		'gamma' : [0.25, 0.5, 1, 2, 4],
-		'class_weight' : ['balanced', None]
-	}
-	}
-	classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
+		#Classifiers to be used
+		parameters_dic = { "Extra Trees" : {
+		    'n_estimators': [20, 40, 60],
+		    'criterion': ['entropy'],
+		    'min_samples_split': [2, 4, 8, 16, 32],
+		    'min_samples_leaf': [2, 4, 8, 16, 32]
+		}, 
+		"Nearest Neighbors" : {
+			'n_neighbors' : [2, 4, 8, 16, 32],
+			'p' : [2,3]	
+		},
+		"Linear SVM" : {
+			'C' : [0.001, 0.1, 1, 10, 100, 1000],
+			'class_weight' : ['balanced', None]
+		},
+		"RBF SVM" : {
+			'C' : [0.001, 0.1, 1],
+			#'gamma' : ['Auto', 'RS*'],
+			'gamma' : [0.25, 0.5, 1, 2, 4],
+			'class_weight' : ['balanced', None]
+		}
+		}
+		classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
 	
-	if phase == 'train-config':
+		if phase == 'train-config':
 
-		classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
-		train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
-		train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
+			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
+			train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
+			train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
 
-	elif phase == 'train-user-out':
-		classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
-		train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
-		train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
+		elif phase == 'train-user-out':
+			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
+			train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
+			train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
 
-	elif phase == 'importances':
+		elif phase == 'importances':
 
-		test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
+			test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
 		
-	elif phase == 'test':
-		#list_of_predictors = ['landscape1']
-		classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
-		test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
+		elif phase == 'test':
+			#list_of_predictors = ['landscape1']
+			classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
+			test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
 
-	elif phase == 'random':
-		test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
+		elif phase == 'random':
+			test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 
-	else:
-		print "Phase not selected correctly: train-config, importances or test!"
-		sys.exit(1)
+		else:
+			print "Phase not selected correctly: train-config, importances or test!"
+			sys.exit(1)
 
-	
-	#>>>> Example with iris dataset
-	#iris = datasets.load_iris()
-	#print str(iris.data) + " " + str(len(iris.data))
-	#print str(iris.target) + " " + str(len(iris.target))
-
-	#gnb = GaussianNB()
-	#y_pred = gnb.fit(iris.data, iris.target).predict(iris.data)
-	#print str(type(iris.data)) + " " + str(type(iris.target))
-	#print("Number of mislabeled points out of a total %d points : %d" % (iris.data.shape[0],(iris.target != y_pred).sum()))

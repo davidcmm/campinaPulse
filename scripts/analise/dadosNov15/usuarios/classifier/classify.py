@@ -476,7 +476,8 @@ def plot_importances_from_file(importances_file, df, load_3classes):
 		plt.title("Feature importances")
 		plt.bar(range(len(importances)), importances[indices],
 			color="r", yerr=var[indices], align="center")
-		plt.xticks(range(len(importances)), indices)
+		plt.xticks(range(len(importances)), features[indices])
+		plt.xticks(rotation=70)
 		plt.xlim([-1, len(importances)])
 	
 		plt.savefig('importances_'+group+"_"+question+"_"+answer_type+'.png') 

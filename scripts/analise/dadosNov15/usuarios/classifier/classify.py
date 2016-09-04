@@ -75,13 +75,17 @@ def load_classifiers_wodraw(group):
 		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=4,            min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=16, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight='balanced', coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=2, min_samples_split=16,            min_weight_fraction_leaf=0.0, n_estimators=60, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
+	else:#All users (more common param for each group - Extra)
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=2, n_estimators=60, n_jobs=-1, oob_score=False) ]
+
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=4, min_samples_split=8, n_estimators=40, n_jobs=-1, oob_score=False) ]
+
 	return [classifiers_agrad, classifiers_seg]
 
 def load_classifiers_3classes(group):
 	#Building classifiers according to best configuration per group (FALTA LINEAR!)
 	if group == 'masculino':
-		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None,
-           min_samples_leaf=8, min_samples_split=4, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=4, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=32, min_weight_fraction_leaf=0.0, n_estimators=40, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=32, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.5, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
 	elif group == 'feminino':
@@ -112,10 +116,10 @@ def load_classifiers_3classes(group):
 		classifiers_agrad = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=4, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=20, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=1, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 		classifiers_seg = [ ExtraTreesClassifier(bootstrap=False, class_weight=None, criterion='entropy', max_depth=None, max_features='auto', max_leaf_nodes=None, min_samples_leaf=8, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=40, n_jobs=-1, oob_score=False, random_state=None, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',  metric_params=None, n_jobs=1, n_neighbors=16, p=3, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape=None, degree=3, gamma=0.25, kernel='rbf', max_iter=-1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
 
-	else:#All users
-		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+	else:#All users (more common param for each group)
+		classifiers_agrad = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=16, n_estimators=20, n_jobs=-1, oob_score=False) ]
 
-		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=60, n_jobs=-1, oob_score=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, n_neighbors=32, p=2, weights='uniform'), SVC(C=1, cache_size=200, class_weight=None, gamma=0.25, kernel='rbf'), GaussianNB(), SVC(C=0.001, cache_size=200, class_weight=None, gamma='auto', kernel='linear') ]
+		classifiers_seg = [ ExtraTreesClassifier(class_weight=None, criterion='entropy', min_samples_leaf=8, min_samples_split=4, n_estimators=40, n_jobs=-1, oob_score=False) ]
 
 	return [classifiers_agrad, classifiers_seg]
 
@@ -318,6 +322,7 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 		predictors = np.array(current_df_train[list_of_predictors].values)
 		answer = np.array(current_df_train['choice'])
 		i = 0
+
 	
 		for classifier_index in range(0, len(classifiers)):
 
@@ -415,6 +420,82 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	print ">>>> Importances "
 	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 				
+
+def train_classifiers_leave_user_out2(question, list_of_predictors, df, group="", load_3classes=False):
+	""" Consider modal train configuration and then calculates accuracy, micro and macro values leaving one user out per execution """
+
+	global classifiers_to_scale
+	user_ids = df['userID'].unique()
+
+	#Question being evaluated
+	print ">>>>>> G " + group + " Q " + question
+
+	history_micro = []
+	history_macro = []
+	history_acc = []
+	history_features_importances = []
+	importances_dic = {}
+
+	if load_3classes:
+		classifiers = load_classifiers_3classes(group)
+	else:
+		classifiers = load_classifiers_wodraw(group)
+
+	best_clf = classifiers[0]
+
+	for user_id in user_ids:#Remove each user sequentially!
+	
+		current_df_train = df[(df.userID != user_id)]
+		current_df_test = df[(df.userID == user_id)]
+
+		predictors = np.array(current_df_train[list_of_predictors].values)
+		answer = np.array(current_df_train['choice'])
+		i = 0
+	
+		print "### User " + str(user_id) + " Classifier " + str(classifiers_names[classifier_index])
+
+		#Test best classifier removing current user!
+		X_train = np.array(current_df_train[list_of_predictors].values)
+		y_train = np.array(current_df_train['choice'])
+		X_test = np.array(current_df_test[list_of_predictors].values)
+		y_test = np.array(current_df_test['choice'])							
+
+		#Only extra trees is currently being used
+		X_train_scaled = X_train
+		X_test_scaled = X_test
+
+		best_clf.fit(X_train_scaled, y_train)#Fitting for test
+
+		accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
+		y_pred = best_clf.predict(X_test_scaled)#Estimated values
+
+		metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+		metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+		history_micro.append(metrics_micro[0:3])
+		history_macro.append(metrics_macro[0:3])
+		history_acc.append(accuracy)
+
+		history_features_importances.append(best_clf.feature_importances_)
+		
+	std_acc = np.std(np.array(history_acc), axis=0)
+	mean_acc = np.mean(np.array(history_acc), axis=0)
+	std_micro = np.std(np.array(history_micro), axis=0)
+	mean_micro = np.mean(np.array(history_micro), axis=0)
+	std_macro = np.std(np.array(history_macro), axis=0)
+	mean_macro = np.mean(np.array(history_macro), axis=0)
+	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+
+	#Features importances!
+	std_importances = np.std(np.array(history_features_importances), axis=0)
+	mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	for index in range(0, len(list_of_predictors)):
+		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	
+	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	print ">>>> Importances "
+	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+
 
 def stripDataFrame(df):
 	""" Removes unused chars from dataframes columns values """
@@ -692,6 +773,7 @@ if __name__ == "__main__":
 	input_file = sys.argv[1]
 	phase = sys.argv[2].lower()
 
+	#Using 3 classes or two classes as output
 	if "3classes" in input_file.lower():
 		load_3classes = True
 	else:
@@ -708,18 +790,18 @@ if __name__ == "__main__":
 	else:#Train, test classifiers!
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 
-
 		#Remove unecessary chars!
 		df = stripDataFrame(df)
 
+		list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+
+		#Socio group to filter data
 		if len(sys.argv) == 4:
 			filter_group = sys.argv[3]
 			group = filter_group.split("-")[1]
 		else:
 			filter_group = ""
 			group = ""
-
-		list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
 		if len(filter_group) > 0:
 
@@ -743,6 +825,7 @@ if __name__ == "__main__":
 			#Features to consider and splitting into dataframes for each question
 			#list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'ensino medio',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'graduacao', 'mestrado', 'doutorado', 'ensino medio', 'solteiro', 'casado', 'divorciado', 'vi\u00favo', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
+		#Pleasantness and safety data
 		agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 		agrad_df = convertColumnsToDummy(agrad_df)
 		answer_agrad = agrad_df['choice']#Preferred images
@@ -753,7 +836,7 @@ if __name__ == "__main__":
 		answer_seg = seg_df['choice']#Preferred images
 		predictors_seg = seg_df[list_of_predictors].values #Predictors
 
-		#Classifiers to be used
+		#Classifiers parameters to be tested
 		parameters_dic = { "Extra Trees" : {
 		    'n_estimators': [20, 40, 60],
 		    'criterion': ['entropy'],
@@ -778,18 +861,18 @@ if __name__ == "__main__":
 		classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
 	
 		if phase == 'train-config':
-
 			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 			train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
 			train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
 
 		elif phase == 'train-user-out':
 			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
-			train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
-			train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
+			#train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
+			#train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
+			train_classifiers_leave_user_out2("Pleasantness", list_of_predictors, agrad_df, group, load_3classes)
+			train_classifiers_leave_user_out2("Safety", list_of_predictors, seg_df, group, load_3classes)
 
 		elif phase == 'importances':
-
 			test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
 		
 		elif phase == 'test':
@@ -801,6 +884,6 @@ if __name__ == "__main__":
 			test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 
 		else:
-			print "Phase not selected correctly: train-config, importances or test!"
+			print "Phase not selected correctly: train-config, train-user-out, importances, importances-file, test or random!"
 			sys.exit(1)
 

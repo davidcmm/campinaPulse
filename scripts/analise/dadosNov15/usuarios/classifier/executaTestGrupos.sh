@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for input_file in classifier_input_wodraw.dat classifier_input_3classes.dat ; do
+for input_file in classifier_input_wodraw.dat ; do
 #classifier_input_rnr.dat ; do
 
 	outputSpec=''

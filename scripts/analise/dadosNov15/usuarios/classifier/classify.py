@@ -561,12 +561,15 @@ def plot_importances_from_file(importances_file, df, load_3classes):
 			new_line = line.replace("[", "").replace("]", "").replace(",", "")
 			line_data = new_line.split(" ")
 			features.append(line_data[0])
-			importances.append(line_data[1])
-			std.append(line_data[2])
+			importances.append( float(line_data[1].strip(' \t\n\r')) )
+			std.append( float(line_data[2].strip(' \t\n\r')) )
 		
 		indices = np.argsort(importances)[::-1]#Sorting from greater to lower importances
 
 		#Compute confidence interval values to plot!
+		print str(importances)
+		print str(std)
+		print str(group_size)
 		if group_size >= 30:
 			ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(group_size) )
 		else:
@@ -576,17 +579,22 @@ def plot_importances_from_file(importances_file, df, load_3classes):
 		top_limit = ci[1]
 		var = np.array([(top_limit[index]-low_limit[index])/2 for index in range(0, len(low_limit))])
 
+		np_importances = np.array(importances)
+		np_var = np.array(var)
+		np_features = np.array(features)
+
 		#Figure!
+		print "IND " + str(indices)
 		plt.figure()
 		plt.title("Feature importances")
-		plt.bar(range(len(importances)), importances[indices],
-			color="r", yerr=var[indices], align="center")
-		plt.xticks(range(len(importances)), features[indices])
+		plt.bar(indices, np_importances[indices],
+			color="r", yerr=np_var[indices], align="center")
+		plt.xticks(range(len(importances)), np_features[indices])
 		plt.xticks(rotation=70)
 		plt.xlim([-1, len(importances)])
 	
 		plt.savefig('importances_'+group+"_"+question+"_"+answer_type+'.png') 
-		plt.show()
+		#plt.show()
 		plt.close()
 
 		#Updating index
@@ -752,7 +760,7 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 
 	print "Question\tClassifier\ttrain sample size\ttest sample size\tmean accuracy\t(precision,\trecall,\tf1)"
 	for entry in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
-		for classifier_index in range(0, len(entry[3])-1):
+		for classifier_index in range(0, len(entry[3])):
 			clf = entry[3][classifier_index]
 			clf_name = classifiers_names[classifier_index]
 
@@ -804,8 +812,8 @@ if __name__ == "__main__":
 		load_3classes = False
 
 	if phase.lower() == "importances-file":#Plot features importances already computed!
-		if len(sys.argv) != 3:
-			print "Uso importances-file: <importances file> <phase: importances-file> <file with photos preferences, photos data and user data>"
+		if len(sys.argv) != 4:
+			print "Uso importances-file: <file with photos preferences, photos data and user data> <phase: importances-file> <importances file>"
 			sys.exit(1)
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 		importances_file = sys.argv[3]

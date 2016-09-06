@@ -437,11 +437,14 @@ def train_classifiers_leave_user_out2(question, list_of_predictors, df, group=""
 	importances_dic = {}
 
 	if load_3classes:
-		classifiers = load_classifiers_3classes(group)
+		classifiers = load_classifiers_3classes("")#Loading mean classifiers
 	else:
-		classifiers = load_classifiers_wodraw(group)
+		classifiers = load_classifiers_wodraw("")
 
-	best_clf = classifiers[0]
+	if question == "Pleasantness":
+		best_clf = classifiers[0][0]
+	else:
+		best_clf = classifiers[1][0]
 
 	for user_id in user_ids:#Remove each user sequentially!
 	
@@ -452,7 +455,7 @@ def train_classifiers_leave_user_out2(question, list_of_predictors, df, group=""
 		answer = np.array(current_df_train['choice'])
 		i = 0
 	
-		print "### User " + str(user_id) + " Classifier " + str(classifiers_names[classifier_index])
+		print "### User " + str(user_id) + " Classifier Extra" 
 
 		#Test best classifier removing current user!
 		X_train = np.array(current_df_train[list_of_predictors].values)
@@ -795,7 +798,7 @@ if __name__ == "__main__":
 
 		#list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 		#Features to consider and splitting into dataframes for each question
-		list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'divorciado', 'vi\u00favo',  'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
+		list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
 
 		#Socio group to filter data
 		if len(sys.argv) == 4:
@@ -809,18 +812,32 @@ if __name__ == "__main__":
 
 			if 'gender' in filter_group:
 				df_to_use = df[(df.gender == group)]
+				if group == 'masculino':
+					list_of_predictors.remove('feminino')
+				else:
+					list_of_predictors.remove('masculino')
 			elif 'marital' in filter_group:
 				df_to_use = df[(df.marital == group)]
+				if group == 'casado':
+					list_of_predictors.remove('solteiro')
+				else:
+					list_of_predictors.remove('casado')
 			elif 'income' in filter_group:
 				if group == 'media':		
 					df_to_use = df[(df.income == "media") | (df.income == "media alta")]
+					list_of_predictors.remove('baixa')
+					list_of_predictors.remove('media baixa')
 				elif group == 'baixa':
 					df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
+					list_of_predictors.remove('media')
+					list_of_predictors.remove('media alta')
 			elif 'age' in filter_group:
 				if group == 'adulto':
 					df_to_use = df[(df.age >= 25)]
+					list_of_predictors.remove('jovem')
 				elif group == 'jovem':
 					df_to_use = df[(df.age <= 24)]
+					list_of_predictors.remove('adulto')
 		else:
 			df_to_use = df
 

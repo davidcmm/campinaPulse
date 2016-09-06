@@ -561,8 +561,8 @@ def plot_importances_from_file(importances_file, df, load_3classes):
 			new_line = line.replace("[", "").replace("]", "").replace(",", "")
 			line_data = new_line.split(" ")
 			features.append(line_data[0])
-			importances.append(line_data[1])
-			std.append(line_data[2])
+			importances.append( float(line_data[1].strip(' \t\n\r')) )
+			std.append( float(line_data[2].strip(' \t\n\r')) )
 		
 		indices = np.argsort(importances)[::-1]#Sorting from greater to lower importances
 
@@ -579,8 +579,8 @@ def plot_importances_from_file(importances_file, df, load_3classes):
 		#Figure!
 		plt.figure()
 		plt.title("Feature importances")
-		plt.bar(range(len(importances)), importances[indices],
-			color="r", yerr=var[indices], align="center")
+		plt.bar( range(len(importances)), importances[indices],
+			color="r", yerr=var[indices], align="center" )
 		plt.xticks(range(len(importances)), features[indices])
 		plt.xticks(rotation=70)
 		plt.xlim([-1, len(importances)])
@@ -804,8 +804,8 @@ if __name__ == "__main__":
 		load_3classes = False
 
 	if phase.lower() == "importances-file":#Plot features importances already computed!
-		if len(sys.argv) != 3:
-			print "Uso importances-file: <importances file> <phase: importances-file> <file with photos preferences, photos data and user data>"
+		if len(sys.argv) != 4:
+			print "Uso importances-file: <file with photos preferences, photos data and user data> <phase: importances-file> <importances file>"
 			sys.exit(1)
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 		importances_file = sys.argv[3]

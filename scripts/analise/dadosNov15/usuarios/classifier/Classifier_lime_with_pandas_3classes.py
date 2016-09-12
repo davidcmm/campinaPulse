@@ -352,7 +352,7 @@ for index_df in range(0, len(data_frames)):
     relevance_map = {}
     probabilities_map = {}
 
-    print(">>> Question\t" + str(index_df))
+    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) )
     
     for user_id in user_ids:#Remove each user sequentially
         print("User\t" + str(user_id))

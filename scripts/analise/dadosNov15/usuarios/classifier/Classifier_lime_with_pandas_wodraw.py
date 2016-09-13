@@ -286,133 +286,132 @@ list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'm
                       'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
                       'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
                       'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
-filter_group = ""
-group = ""
 
-if len(filter_group) > 0:
+for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
-    if 'gender' in filter_group:
-        df_to_use = df[(df.gender == group)]
-        if group == 'masculino':
-            list_of_predictors.remove('feminino')
-        else:
-            list_of_predictors.remove('masculino')
-    elif 'marital' in filter_group:
-        df_to_use = df[(df.marital == group)]
-        if group == 'casado':
-            list_of_predictors.remove('solteiro')
-        else:
-            list_of_predictors.remove('casado')
-    elif 'income' in filter_group:
-        if group == 'media':		
-            df_to_use = df[(df.income == "media") | (df.income == "media alta")]
-            list_of_predictors.remove('baixa')
-            list_of_predictors.remove('media baixa')
-        elif group == 'baixa':
-            df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
-            list_of_predictors.remove('media')
-            list_of_predictors.remove('media alta')
-    elif 'age' in filter_group:
-        if group == 'adulto':
-            df_to_use = df[(df.age >= 25)]
-            list_of_predictors.remove('jovem')
-        elif group == 'jovem':
-            df_to_use = df[(df.age <= 24)]
-            list_of_predictors.remove('adulto')
-else:
-    df_to_use = df
-    
-#Pleasantness and safety data
-agrad_df = df_to_use[(df_to_use.question != "seguro?")]
-agrad_df = convertColumnsToDummy(agrad_df)
-answer_agrad = agrad_df['choice']#Preferred images
-predictors_agrad = agrad_df[list_of_predictors].values #Predictors
+	filter_group = groups_data[0]
+	group = groups_data[1]
 
-seg_df = df_to_use[(df_to_use.question == "seguro?")]
-seg_df = convertColumnsToDummy(seg_df)
-answer_seg = seg_df['choice']#Preferred images
-predictors_seg = seg_df[list_of_predictors].values #Predictors
+	if len(filter_group) > 0:
 
-if load_3classes:
-    classifiers = load_classifiers_3classes("modal")
-else:
-    classifiers = load_classifiers_wodraw("modal")
-classifiers_agrad = classifiers[0]
-classifiers_seg = classifiers[1]
+	    if 'gender' in filter_group:
+		df_to_use = df[(df.gender == group)]
+		if group == 'masculino':
+		    list_of_predictors.remove('feminino')
+		else:
+		    list_of_predictors.remove('masculino')
+	    elif 'marital' in filter_group:
+		df_to_use = df[(df.marital == group)]
+		if group == 'casado':
+		    list_of_predictors.remove('solteiro')
+		else:
+		    list_of_predictors.remove('casado')
+	    elif 'income' in filter_group:
+		if group == 'media':		
+		    df_to_use = df[(df.income == "media") | (df.income == "media alta")]
+		    list_of_predictors.remove('baixa')
+		    list_of_predictors.remove('media baixa')
+		elif group == 'baixa':
+		    df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
+		    list_of_predictors.remove('media')
+		    list_of_predictors.remove('media alta')
+	    elif 'age' in filter_group:
+		if group == 'adulto':
+		    df_to_use = df[(df.age >= 25)]
+		    list_of_predictors.remove('jovem')
+		elif group == 'jovem':
+		    df_to_use = df[(df.age <= 24)]
+		    list_of_predictors.remove('adulto')
+	else:
+	    df_to_use = df
+	    
+	#Pleasantness and safety data
+	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
+	agrad_df = convertColumnsToDummy(agrad_df)
+	answer_agrad = agrad_df['choice']#Preferred images
+	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
 
-#Filtering per user
-user_ids = df['userID'].unique()
-#print ("IDS " + str(user_ids))
+	seg_df = df_to_use[(df_to_use.question == "seguro?")]
+	seg_df = convertColumnsToDummy(seg_df)
+	answer_seg = seg_df['choice']#Preferred images
+	predictors_seg = seg_df[list_of_predictors].values #Predictors
 
-data_frames = [agrad_df, seg_df]#add seg_df
-for index_df in range(0, len(data_frames)):
-    current_df = data_frames[index_df]
-    current_df = current_df.sort_values(by='choice', ascending=True)
-    
-    relevance_map = {}
-    probabilities_map = {}
+	if load_3classes:
+	    classifiers = load_classifiers_3classes("modal")
+	else:
+	    classifiers = load_classifiers_wodraw("modal")
+	classifiers_agrad = classifiers[0]
+	classifiers_seg = classifiers[1]
 
-    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) )
-    
-    for user_id in user_ids:#Remove each user sequentially
-        print("User\t" + str(user_id))
-      
-        current_df_train = current_df[(current_df.userID != user_id)]
-        current_df_test = current_df[(current_df.userID == user_id)]
+	#Filtering per user
+	user_ids = df['userID'].unique()
+	#print ("IDS " + str(user_ids))
 
-        predictors_train = np.array(current_df_train[list_of_predictors].values)
-        predictors_test = np.array(current_df_test[list_of_predictors].values)
-        X_train_scaled = predictors_train #Only extra trees is currently being used!
-        X_test_scaled = predictors_test
-        answer_train = np.array(current_df_train['choice'])
-        answer_test = np.array(current_df_test['choice'])
+	data_frames = [agrad_df, seg_df]#add seg_df
+	for index_df in range(0, len(data_frames)):
+	    current_df = data_frames[index_df]
+	    current_df = current_df.sort_values(by='choice', ascending=True)
+	    
+	    relevance_map = {}
+	    probabilities_map = {}
 
-        clf = classifiers_agrad[0]
+	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) )
+	    
+	    for user_id in user_ids:#Remove each user sequentially
+		print("User\t" + str(user_id))
+	      
+		current_df_train = current_df[(current_df.userID != user_id)]
+		current_df_test = current_df[(current_df.userID == user_id)]
 
-        #Fitting
-        clf.fit(X_train_scaled, answer_train)
+		predictors_train = np.array(current_df_train[list_of_predictors].values)
+		predictors_test = np.array(current_df_test[list_of_predictors].values)
+		X_train_scaled = predictors_train #Only extra trees is currently being used!
+		X_test_scaled = predictors_test
+		answer_train = np.array(current_df_train['choice'])
+		answer_test = np.array(current_df_test['choice'])
 
-        #Testing!
-        #explainClassification(headers, target_names, predictors, answer, clf, index):
-        for index in range(0, len(answer_test)):
-            explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),
-                              predictors_test, answer_test, clf, index)
-            
-            #Checking if prediction was correct!
-            current_answer = answer_test[index]
-            predicted_answer = 0
-            predicted_answer_prob = 0
-            for index in range(0, len(explanation.class_names)):
-                    if explanation.predict_proba[index] > predicted_answer_prob:
-                        predicted_answer_prob = explanation.predict_proba[index]
-                        predicted_answer = explanation.class_names[index]
-            if current_answer == predicted_answer:
-                #print ( str(exp.as_map()) )
-                #print ( str(exp.class_names) )
-                #print ( str(exp.predict_proba) )
-                exp_map = explanation.as_map() 
-                values = exp_map[exp_map.keys()[0]]
-                if len(relevance_map) == 0:
-                    for value in values:
-                        relevance_map[value[0]] = [value[1]]
-                    for index in range(0, len(explanation.class_names)):
-                        probabilities_map[explanation.class_names[index]] = [explanation.predict_proba[index]]
-                else:
-                    for value in values:
-                        relevance_map[value[0]].append(value[1])
-                    for index in range(0, len(explanation.class_names)):
-                        probabilities_map[explanation.class_names[index]].append(explanation.predict_proba[index])
-    
-    #Printing statistics
-    for key, value in relevance_map.iteritems(): 
-        mean = np.mean(value)
-        std = np.std(value)
-        print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
+		clf = classifiers_agrad[0]
+
+		#Fitting
+		clf.fit(X_train_scaled, answer_train)
+
+		#Testing!
+		#explainClassification(headers, target_names, predictors, answer, clf, index):
+		for index in range(0, len(answer_test)):
+		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),
+		                      predictors_test, answer_test, clf, index)
+		    
+		    #Checking if prediction was correct!
+		    current_answer = answer_test[index]
+		    predicted_answer = 0
+		    predicted_answer_prob = 0
+		    for index in range(0, len(explanation.class_names)):
+		            if explanation.predict_proba[index] > predicted_answer_prob:
+		                predicted_answer_prob = explanation.predict_proba[index]
+		                predicted_answer = explanation.class_names[index]
+		    if current_answer == predicted_answer:
+		        #print ( str(exp.as_map()) )
+		        #print ( str(exp.class_names) )
+		        #print ( str(exp.predict_proba) )
+		        exp_map = explanation.as_map() 
+		        values = exp_map[exp_map.keys()[0]]
+		        if len(relevance_map) == 0:
+		            for value in values:
+		                relevance_map[value[0]] = [value[1]]
+		            for index in range(0, len(explanation.class_names)):
+		                probabilities_map[explanation.class_names[index]] = [explanation.predict_proba[index]]
+		        else:
+		            for value in values:
+		                relevance_map[value[0]].append(value[1])
+		            for index in range(0, len(explanation.class_names)):
+		                probabilities_map[explanation.class_names[index]].append(explanation.predict_proba[index])
+	    
+	    #Printing statistics
+	    for key, value in relevance_map.iteritems(): 
+		mean = np.mean(value)
+		std = np.std(value)
+		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
         
-# In[4]:
-
-
-
 
 # In[5]:
 

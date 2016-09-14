@@ -282,8 +282,10 @@ df = stripDataFrame(df)
 #("gender-masculino", "masculino"), ("gender-feminino", "feminino"),
 for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
+	print str(groups_data)
 	filter_group = groups_data[0]
 	group = groups_data[1]
+	print str(group) + " " + str(filter_group)
 
 	if len(filter_group) > 0:
 
@@ -303,6 +305,8 @@ for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-
 		    df_to_use = df[(df.age <= 24)]
 	else:
 	    df_to_use = df
+
+	print str(max(df_to_use.age))
 	    
 	#Pleasantness and safety data
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]

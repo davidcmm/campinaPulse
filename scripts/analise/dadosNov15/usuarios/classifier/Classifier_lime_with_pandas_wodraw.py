@@ -243,7 +243,7 @@ def explainClassification(headers, target_names, predictors, clf, index):
 
     #c = make_pipeline(vectorizer, clf)
     #headers = np.array(['age', 'gender', 'income', 'educ', 'marital', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1', 'bairro1', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2', 'bairro2'])
-    #targetNames = np.array(['1', '0', '-1'])
+    targetNames = np.array(map(str, target_names))
     #TODO ERROR HERE! PRINT ALL
     
     #print("HEADERS " + str(headers) + " " + str(len(headers)))
@@ -276,7 +276,8 @@ df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 #Remove unecessary chars!
 df = stripDataFrame(df)
 
-for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
+for groups_data in [("", "")]:
+#for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
 	filter_group = groups_data[0]
 	group = groups_data[1]
@@ -298,6 +299,7 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		    df_to_use = df[(df.age <= 24)]
 	else:
 	    df_to_use = df
+
 	    
 	#Pleasantness and safety data
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
@@ -378,7 +380,7 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		#Testing!
 		for index_answer in range(0, len(answer_test)):
 		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),                     predictors_test, clf, index_answer)
-		    
+	
 		    #Checking if prediction was correct!
 		    current_answer = answer_test[index_answer]
 		    predicted_answer = 0
@@ -393,12 +395,12 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		        values = exp_map[exp_map.keys()[0]]
 		        if len(relevance_map) == 0:
 		            for value in values:
-		                relevance_map[value[0]] = [value[1]]
+		                relevance_map[value[0]] = [abs(value[1])]
 		            for index_class in range(0, len(explanation.class_names)):
 		                probabilities_map[explanation.class_names[index_class]] = [explanation.predict_proba[index_class]]
 		        else:
 		            for value in values:
-		                relevance_map[value[0]].append(value[1])
+		                relevance_map[value[0]].append(abs(value[1]))
 		            for index_class in range(0, len(explanation.class_names)):
 		                probabilities_map[explanation.class_names[index_class]].append(explanation.predict_proba[index_class])
 	    
@@ -407,5 +409,9 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		mean = np.mean(value)
 		std = np.std(value)
 		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
-        
+
+	    for key, value in probabilities_map.iteritems(): 
+		mean = np.mean(value)
+		std = np.std(value)
+		print( str(key) + "\t" + str(mean) + "\t" + str(std))
 

@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 # In[2]:
@@ -239,13 +238,13 @@ def stripDataFrame(df):
 
 # In[5]:
 
-def explainClassification(headers, target_names, predictors, answer, clf, index):
+def explainClassification(headers, target_names, predictors, clf, index):
+    #explainClassification(list_of_predictors, current_df['choice'].unique(), predictors_test, clf, index)
+
     #c = make_pipeline(vectorizer, clf)
     #headers = np.array(['age', 'gender', 'income', 'educ', 'marital', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1', 'bairro1', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2', 'bairro2'])
     #targetNames = np.array(['1', '0', '-1'])
     #TODO ERROR HERE! PRINT ALL
-    #explainClassification(list_of_predictors, ['-1', '0', '1'], 
-                              #predictors_test, answer_test, clf, 0)
     
     #print("HEADERS " + str(headers) + " " + str(len(headers)))
     #print("TARGET " + str(target_names)+ " " + str(len(target_names)))
@@ -264,8 +263,7 @@ def explainClassification(headers, target_names, predictors, answer, clf, index)
     return exp
 
 
-# In[6]:
-
+#Main!
 input_file = 'classifier_input_wodraw.dat'
 
 #Using 3 classes or two classes as output
@@ -275,18 +273,15 @@ else:
     load_3classes = False
 
 df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
-
 #Remove unecessary chars!
 df = stripDataFrame(df)
 
-#("gender-masculino", "masculino"), ("gender-feminino", "feminino"),
-for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
+for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
 	filter_group = groups_data[0]
 	group = groups_data[1]
 
 	if len(filter_group) > 0:
-
 	    if 'gender' in filter_group:
 		df_to_use = df[(df.gender == group)]
 	    elif 'marital' in filter_group:
@@ -335,6 +330,7 @@ for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-
 	answer_seg = seg_df['choice']#Preferred images
 	predictors_seg = seg_df[list_of_predictors_seg].values #Predictors
 
+	#Loading classifiers
 	if load_3classes:
 	    classifiers = load_classifiers_3classes("modal")
 	else:
@@ -342,20 +338,19 @@ for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-
 	classifiers_agrad = classifiers[0]
 	classifiers_seg = classifiers[1]
 
-	#Filtering per user
-	user_ids = df['userID'].unique()
-
-	data_frames = [agrad_df, seg_df]#add seg_df
+	#Evaluate each data frame
+	data_frames = [agrad_df, seg_df]
 	for index_df in range(0, len(data_frames)):
 	    current_df = data_frames[index_df]
 	    current_df = current_df.sort_values(by='choice', ascending=True)
-	    if index_df == 0:
+            user_ids = current_df['userID'].unique()#Selecting users
+	    relevance_map = {}
+	    probabilities_map = {}
+
+	    if index_df == 0:#Selecting predictors
 		list_of_predictors = list_of_predictors_agrad
 	    else:
 		list_of_predictors = list_of_predictors_seg
-	    
-	    relevance_map = {}
-	    probabilities_map = {}
 
 	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) + "\t" + group )
 	    
@@ -371,69 +366,46 @@ for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-
 		X_test_scaled = predictors_test
 		answer_train = np.array(current_df_train['choice'])
 		answer_test = np.array(current_df_test['choice'])
-
-		clf = classifiers_agrad[0]
-
+	
+		if index_df == 0:#Selecting classifiers
+			clf = classifiers_agrad[0]
+	    	else:
+			clf = classifiers_seg[0]
+	
 		#Fitting
 		clf.fit(X_train_scaled, answer_train)
 
 		#Testing!
-		#explainClassification(headers, target_names, predictors, answer, clf, index):
-		for index in range(0, len(answer_test)):
-		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),
-		                      predictors_test, answer_test, clf, index)
+		for index_answer in range(0, len(answer_test)):
+		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),                     predictors_test, clf, index_answer)
 		    
 		    #Checking if prediction was correct!
-		    current_answer = answer_test[index]
+		    current_answer = answer_test[index_answer]
 		    predicted_answer = 0
 		    predicted_answer_prob = 0
-		    for index in range(0, len(explanation.class_names)):
-		            if explanation.predict_proba[index] > predicted_answer_prob:
-		                predicted_answer_prob = explanation.predict_proba[index]
-		                predicted_answer = explanation.class_names[index]
+		    for index_exp in range(0, len(explanation.class_names)):#Most probable answer
+		            if explanation.predict_proba[index_exp] > predicted_answer_prob:
+		                predicted_answer_prob = explanation.predict_proba[index_exp]
+		                predicted_answer = explanation.class_names[index_exp]
+		    #If answer was correct consider features relevances
 		    if current_answer == predicted_answer:
-		        #print ( str(exp.as_map()) )
-		        #print ( str(exp.class_names) )
-		        #print ( str(exp.predict_proba) )
 		        exp_map = explanation.as_map() 
 		        values = exp_map[exp_map.keys()[0]]
 		        if len(relevance_map) == 0:
 		            for value in values:
 		                relevance_map[value[0]] = [value[1]]
-		            for index in range(0, len(explanation.class_names)):
-		                probabilities_map[explanation.class_names[index]] = [explanation.predict_proba[index]]
+		            for index_class in range(0, len(explanation.class_names)):
+		                probabilities_map[explanation.class_names[index_class]] = [explanation.predict_proba[index_class]]
 		        else:
 		            for value in values:
 		                relevance_map[value[0]].append(value[1])
-		            for index in range(0, len(explanation.class_names)):
-		                probabilities_map[explanation.class_names[index]].append(explanation.predict_proba[index])
+		            for index_class in range(0, len(explanation.class_names)):
+		                probabilities_map[explanation.class_names[index_class]].append(explanation.predict_proba[index_class])
 	    
-	    #Printing statistics
+	    #Printing statistics for data frame being evaluated
 	    for key, value in relevance_map.iteritems(): 
 		mean = np.mean(value)
 		std = np.std(value)
 		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
         
-# In[4]:
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
-
-
-# In[ ]:
-
-
 

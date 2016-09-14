@@ -238,13 +238,13 @@ def stripDataFrame(df):
 
 # In[5]:
 
-def explainClassification(headers, target_names, predictors, answer, clf, index):
+def explainClassification(headers, target_names, predictors, clf, index):
+    #explainClassification(list_of_predictors, current_df['choice'].unique(), predictors_test, clf, index)
+
     #c = make_pipeline(vectorizer, clf)
     #headers = np.array(['age', 'gender', 'income', 'educ', 'marital', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1', 'bairro1', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2', 'bairro2'])
     #targetNames = np.array(['1', '0', '-1'])
     #TODO ERROR HERE! PRINT ALL
-    #explainClassification(list_of_predictors, ['-1', '0', '1'], 
-                              #predictors_test, answer_test, clf, 0)
     
     #print("HEADERS " + str(headers) + " " + str(len(headers)))
     #print("TARGET " + str(target_names)+ " " + str(len(target_names)))
@@ -261,6 +261,7 @@ def explainClassification(headers, target_names, predictors, answer, clf, index)
     
     #exp.show_in_notebook(show_table=True, show_all=False)
     return exp
+
 
 #Main!
 input_file = 'classifier_input_3classes.dat'

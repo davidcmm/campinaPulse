@@ -630,7 +630,7 @@ def plot_importances(clf, pair, group):
 	plt.show()
 	plt.close()
 
-def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group="", load_3classes=False):
+def test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, list_of_predictors_agrad, list_of_predictors_seg, group="", load_3classes=False):
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
 	if load_3classes:
@@ -641,7 +641,9 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 	classifiers_agrad = [classifiers[0][0]]
 	classifiers_seg = [classifiers[1][0]]
 
-	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg] ]:
+	for pair in [ ["Pleasantness", predictors_agrad, answer_agrad, classifiers_agrad, list_of_predictors_agrad], ["Safety", predictors_seg, answer_seg, classifiers_seg, list_of_predictors_seg] ]:
+		list_of_predictors = pair[4]
+
 		for classifier_index in range(0, len(pair[3])):
 			clf = pair[3][classifier_index]
 			clf_name = classifiers_names[classifier_index]
@@ -825,8 +827,6 @@ if __name__ == "__main__":
 		df = stripDataFrame(df)
 
 		#list_of_predictors = ['street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
-		#Features to consider and splitting into dataframes for each question
-		list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
 
 		#Socio group to filter data
 		if len(sys.argv) == 4:
@@ -837,48 +837,41 @@ if __name__ == "__main__":
 			group = ""
 
 		if len(filter_group) > 0:
-
 			if 'gender' in filter_group:
 				df_to_use = df[(df.gender == group)]
-				if group == 'masculino':
-					list_of_predictors.remove('feminino')
-				else:
-					list_of_predictors.remove('masculino')
 			elif 'marital' in filter_group:
 				df_to_use = df[(df.marital == group)]
-				if group == 'casado':
-					list_of_predictors.remove('solteiro')
-				else:
-					list_of_predictors.remove('casado')
 			elif 'income' in filter_group:
 				if group == 'media':		
 					df_to_use = df[(df.income == "media") | (df.income == "media alta")]
-					list_of_predictors.remove('baixa')
-					list_of_predictors.remove('media baixa')
 				elif group == 'baixa':
 					df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
-					list_of_predictors.remove('media')
-					list_of_predictors.remove('media alta')
 			elif 'age' in filter_group:
 				if group == 'adulto':
 					df_to_use = df[(df.age >= 25)]
-					#list_of_predictors.remove('jovem')
 				elif group == 'jovem':
 					df_to_use = df[(df.age <= 24)]
-					#list_of_predictors.remove('adulto')
 		else:
 			df_to_use = df
 
 		#Pleasantness and safety data
+		list_of_predictors_agrad = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
 		agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 		agrad_df = convertColumnsToDummy(agrad_df)
+		for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
+			if not column in agrad_df.columns:
+				list_of_predictors_agrad.remove(column)
 		answer_agrad = agrad_df['choice']#Preferred images
-		predictors_agrad = agrad_df[list_of_predictors].values #Predictors
+		predictors_agrad = agrad_df[list_of_predictors_agrad].values #Predictors
 	
+		list_of_predictors_seg = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
 		seg_df = df_to_use[(df_to_use.question == "seguro?")]
 		seg_df = convertColumnsToDummy(seg_df)
+		for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
+			if not column in seg_df.columns:
+				list_of_predictors_seg.remove(column)
 		answer_seg = seg_df['choice']#Preferred images
-		predictors_seg = seg_df[list_of_predictors].values #Predictors
+		predictors_seg = seg_df[list_of_predictors_seg].values #Predictors
 
 		#Classifiers parameters to be tested
 		parameters_dic = { "Extra Trees" : {
@@ -913,11 +906,11 @@ if __name__ == "__main__":
 			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
 			#train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
 			#train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
-			train_classifiers_leave_user_out2("Pleasantness", list_of_predictors, agrad_df, group, load_3classes)
-			train_classifiers_leave_user_out2("Safety", list_of_predictors, seg_df, group, load_3classes)
+			train_classifiers_leave_user_out2("Pleasantness", list_of_predictors_agrad, agrad_df, group, load_3classes)
+			train_classifiers_leave_user_out2("Safety", list_of_predictors_seg, seg_df, group, load_3classes)
 
 		elif phase == 'importances':
-			test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
+			test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, list_of_predictors_agrad, list_of_predictors_seg, group, load_3classes)
 		
 		elif phase == 'test':
 			#list_of_predictors = ['landscape1']

@@ -279,15 +279,8 @@ df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 #Remove unecessary chars!
 df = stripDataFrame(df)
 
-list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 
-                      'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 
-                      'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 
-                      'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 
-                      'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
-                      'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
-                      'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
-
-for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
+#("gender-masculino", "masculino"), ("gender-feminino", "feminino"),
+for groups_data in [ ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
 	filter_group = groups_data[0]
 	group = groups_data[1]
@@ -296,45 +289,51 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 
 	    if 'gender' in filter_group:
 		df_to_use = df[(df.gender == group)]
-		if group == 'masculino':
-		    list_of_predictors.remove('feminino')
-		else:
-		    list_of_predictors.remove('masculino')
 	    elif 'marital' in filter_group:
 		df_to_use = df[(df.marital == group)]
-		if group == 'casado':
-		    list_of_predictors.remove('solteiro')
-		else:
-		    list_of_predictors.remove('casado')
 	    elif 'income' in filter_group:
 		if group == 'media':		
 		    df_to_use = df[(df.income == "media") | (df.income == "media alta")]
-		    list_of_predictors.remove('baixa')
-		    list_of_predictors.remove('media baixa')
 		elif group == 'baixa':
 		    df_to_use = df[(df.income == "baixa") | (df.income == "media baixa")]
-		    list_of_predictors.remove('media')
-		    list_of_predictors.remove('media alta')
 	    elif 'age' in filter_group:
 		if group == 'adulto':
 		    df_to_use = df[(df.age >= 25)]
-		    #list_of_predictors.remove('jovem')
 		elif group == 'jovem':
 		    df_to_use = df[(df.age <= 24)]
-		    #list_of_predictors.remove('adulto')
 	else:
 	    df_to_use = df
 	    
 	#Pleasantness and safety data
 	agrad_df = df_to_use[(df_to_use.question != "seguro?")]
 	agrad_df = convertColumnsToDummy(agrad_df)
+	list_of_predictors_agrad = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 
+		              'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 
+		              'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 
+		              'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 
+		              'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
+		              'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
+		              'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+	for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
+		if not column in agrad_df.columns:
+			list_of_predictors_agrad.remove(column)
 	answer_agrad = agrad_df['choice']#Preferred images
-	predictors_agrad = agrad_df[list_of_predictors].values #Predictors
+	predictors_agrad = agrad_df[list_of_predictors_agrad].values #Predictors
 
 	seg_df = df_to_use[(df_to_use.question == "seguro?")]
 	seg_df = convertColumnsToDummy(seg_df)
+	list_of_predictors_seg = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 
+		              'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 
+		              'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 
+		              'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 
+		              'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
+		              'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
+		              'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
+	for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
+		if not column in seg_df.columns:
+			list_of_predictors_seg.remove(column)
 	answer_seg = seg_df['choice']#Preferred images
-	predictors_seg = seg_df[list_of_predictors].values #Predictors
+	predictors_seg = seg_df[list_of_predictors_seg].values #Predictors
 
 	if load_3classes:
 	    classifiers = load_classifiers_3classes("modal")
@@ -345,12 +344,15 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 
 	#Filtering per user
 	user_ids = df['userID'].unique()
-	#print ("IDS " + str(user_ids))
 
 	data_frames = [agrad_df, seg_df]#add seg_df
 	for index_df in range(0, len(data_frames)):
 	    current_df = data_frames[index_df]
 	    current_df = current_df.sort_values(by='choice', ascending=True)
+	    if index_df == 0:
+		list_of_predictors = list_of_predictors_agrad
+	    else:
+		list_of_predictors = list_of_predictors_seg
 	    
 	    relevance_map = {}
 	    probabilities_map = {}
@@ -412,9 +414,7 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 		std = np.std(value)
 		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
         
-
-# In[5]:
-
+# In[4]:
 
 
 

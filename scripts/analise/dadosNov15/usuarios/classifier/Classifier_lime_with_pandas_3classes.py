@@ -279,16 +279,16 @@ df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 #Remove unecessary chars!
 df = stripDataFrame(df)
 
-list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 
-                      'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 
-                      'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 
-                      'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 
-                      'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
-                      'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
-                      'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 
 for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
+	list_of_predictors = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 
+		              'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 
+		              'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 
+		              'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 
+		              'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 
+		              'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 
+		              'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']
 	filter_group = groups_data[0]
 	group = groups_data[1]
 
@@ -318,10 +318,10 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 	    elif 'age' in filter_group:
 		if group == 'adulto':
 		    df_to_use = df[(df.age >= 25)]
-		    list_of_predictors.remove('jovem')
+		    #list_of_predictors.remove('jovem')
 		elif group == 'jovem':
 		    df_to_use = df[(df.age <= 24)]
-		    list_of_predictors.remove('adulto')
+		    #list_of_predictors.remove('adulto')
 	else:
 	    df_to_use = df
 	    
@@ -355,7 +355,7 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 	    relevance_map = {}
 	    probabilities_map = {}
 
-	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) )
+	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) + "\t" + group )
 	    
 	    for user_id in user_ids:#Remove each user sequentially
 		print("User\t" + str(user_id))

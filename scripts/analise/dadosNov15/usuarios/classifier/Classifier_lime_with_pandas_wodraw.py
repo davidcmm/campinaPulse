@@ -318,10 +318,10 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 	    elif 'age' in filter_group:
 		if group == 'adulto':
 		    df_to_use = df[(df.age >= 25)]
-		    list_of_predictors.remove('jovem')
+		    #list_of_predictors.remove('jovem')
 		elif group == 'jovem':
 		    df_to_use = df[(df.age <= 24)]
-		    list_of_predictors.remove('adulto')
+		    #list_of_predictors.remove('adulto')
 	else:
 	    df_to_use = df
 	    
@@ -355,7 +355,7 @@ for groups_data in [("gender-masculino", "masculino"), ("gender-feminino", "femi
 	    relevance_map = {}
 	    probabilities_map = {}
 
-	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) )
+	    print( ">>> Question\t" + str(("Safety", "Pleasantness")[index_df == 0]) + "\t" + group )
 	    
 	    for user_id in user_ids:#Remove each user sequentially
 		print("User\t" + str(user_id))

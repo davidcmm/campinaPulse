@@ -335,7 +335,7 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 	history_features_importances = []
 	importances_dic = {}
 
-	for user_id in user_ids:#Remove each user sequentially!
+	for user_id in user_ids:#Remove each user sequentially
 	
 		current_df_train = df[(df.userID != user_id)]
 		current_df_test = df[(df.userID == user_id)]
@@ -343,7 +343,6 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 		predictors = np.array(current_df_train[list_of_predictors].values)
 		answer = np.array(current_df_train['choice'])
 		i = 0
-
 	
 		for classifier_index in range(0, len(classifiers)):
 
@@ -863,10 +862,10 @@ if __name__ == "__main__":
 			elif 'age' in filter_group:
 				if group == 'adulto':
 					df_to_use = df[(df.age >= 25)]
-					list_of_predictors.remove('jovem')
+					#list_of_predictors.remove('jovem')
 				elif group == 'jovem':
 					df_to_use = df[(df.age <= 24)]
-					list_of_predictors.remove('adulto')
+					#list_of_predictors.remove('adulto')
 		else:
 			df_to_use = df
 

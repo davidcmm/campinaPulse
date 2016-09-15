@@ -395,9 +395,9 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 			values = exp_map[exp_map.keys()[0]]
 			for value in values:
 			     if value[0] in relevance_map.keys():
-				 relevance_map[value[0]].append(value[1])
+				 relevance_map[value[0]].append(abs(value[1]))
 			     else:
-				 relevance_map[value[0]] = [value[1]]
+				 relevance_map[value[0]] = [abs(value[1])]
 			for index_class in range(0, len(explanation.class_names)):
 			     if explanation.class_names[index_class] in probabilities_map.keys():
 				 probabilities_map[explanation.class_names[index_class]].append(explanation.predict_proba[index_class])
@@ -409,10 +409,4 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		mean = np.mean(value)
 		std = np.std(value)
 		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
-
-	    for key, value in probabilities_map.iteritems(): 
-		mean = np.mean(value)
-		std = np.std(value)
-		print( str(key) + "\t" + str(mean) + "\t" + str(std)) 
-        
 

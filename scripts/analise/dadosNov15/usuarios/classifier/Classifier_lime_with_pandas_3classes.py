@@ -238,7 +238,7 @@ def stripDataFrame(df):
 
 # In[5]:
 
-def explainClassification(headers, target_names, predictors, clf, index):
+def explainClassification(headers, target_names, X_train_scaled, X_test_scaled, clf, index):
     #explainClassification(list_of_predictors, current_df['choice'].unique(), predictors_test, clf, index)
 
     #c = make_pipeline(vectorizer, clf)
@@ -254,14 +254,13 @@ def explainClassification(headers, target_names, predictors, clf, index):
     #print("INDEX " + str(answer[index]))
     #print("PROBA " + str(clf.predict_proba)+ " " + str(clf.predict_proba))
 
-    explainer = LimeTabularExplainer(predictors, feature_names=headers, class_names=target_names, 
+    explainer = LimeTabularExplainer(X_train_scaled, feature_names=headers, class_names=target_names, 
                                      discretize_continuous=True)
-    exp = explainer.explain_instance(predictors[index], clf.predict_proba, num_features=len(headers), 
+    exp = explainer.explain_instance(X_test_scaled[index], clf.predict_proba, num_features=len(headers), 
                                      top_labels=1)
     
     #exp.show_in_notebook(show_table=True, show_all=False)
     return exp
-
 
 #Main!
 input_file = 'classifier_input_3classes.dat'
@@ -377,7 +376,7 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 
 		#Testing!
 		for index_answer in range(0, len(answer_test)):
-		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(),                     predictors_test, clf, index_answer)
+		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(), X_train_scaled, X_test_scaled, clf, index_answer)
 		    
 		    #Checking if prediction was correct!
 		    current_answer = answer_test[index_answer]

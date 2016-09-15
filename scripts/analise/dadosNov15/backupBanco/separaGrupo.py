@@ -58,7 +58,7 @@ def parseUserData(lines):
 		tasksIDAgra = eval(data[2])
 		tasksIDSeg = eval(data[3])
 
-		if len(data[1]) > 0:
+		if len(data[1]) > 0:#TODO: Add gender based on name?
 			#Separating by age
 			if len(profile[0]) > 0:
 				age = int(profile[0].lower())

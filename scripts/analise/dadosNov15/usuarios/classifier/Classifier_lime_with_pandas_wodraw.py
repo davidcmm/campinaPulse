@@ -409,5 +409,5 @@ for groups_data in [ ("income-baixa", "baixa"), ("income-media", "media"), ("mar
 	    for key, value in relevance_map.iteritems(): 
 		mean = np.mean(value)
 		std = np.std(value)
-		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std))
+		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std) + "\t" + str(len(value)) )
 

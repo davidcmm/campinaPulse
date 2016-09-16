@@ -369,20 +369,20 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1
-					#print('Fold', i)
-					#print(clf.best_estimator_)
-					#print()
+					print('Fold', i)
+					print(clf.best_estimator_)
+					print()
 		
 					y_pred = clf.predict(X_test_scaled)
 
 					#Check f1
 					f1_micro = f1_score(answer_test, y_pred, average='micro')
 					f1_macro = f1_score(answer_test, y_pred, average='macro')
-					#print('F1 score no teste, nunca use isto para escolher parametros. ' + \
-					#  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
-					#  , f1_macro)
-					#print()
-					#print()
+					print('F1 score no teste, nunca use isto para escolher parametros. ' + \
+					  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
+					  , f1_macro)
+					print()
+					print()
 
 					#Storing the best configuration
 					if len(best_f1) == 0 or f1_micro > best_f1[0]:
@@ -904,10 +904,10 @@ if __name__ == "__main__":
 
 		elif phase == 'train-user-out':
 			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
-			#train_classifiers_leave_user_out("Pleasantness", list_of_predictors, agrad_df, parameters_dic, classifiers_names, classifiers, group)
-			#train_classifiers_leave_user_out("Safety", list_of_predictors, seg_df, parameters_dic, classifiers_names, classifiers, group)
-			train_classifiers_leave_user_out2("Pleasantness", list_of_predictors_agrad, agrad_df, group, load_3classes)
-			train_classifiers_leave_user_out2("Safety", list_of_predictors_seg, seg_df, group, load_3classes)
+			train_classifiers_leave_user_out("Pleasantness", list_of_predictors_agrad, agrad_df, parameters_dic, classifiers_names, classifiers, group)
+			#train_classifiers_leave_user_out("Safety", list_of_predictors_seg, seg_df, parameters_dic, classifiers_names, classifiers, group)
+			#train_classifiers_leave_user_out2("Pleasantness", list_of_predictors_agrad, agrad_df, group, load_3classes)
+			#train_classifiers_leave_user_out2("Safety", list_of_predictors_seg, seg_df, group, load_3classes)
 
 		elif phase == 'importances':
 			test_features_importances(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, list_of_predictors_agrad, list_of_predictors_seg, group, load_3classes)

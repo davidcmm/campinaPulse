@@ -369,20 +369,20 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1
-					print('Fold', i)
-					print(clf.best_estimator_)
-					print()
+					#print('Fold', i)
+					#print(clf.best_estimator_)
+					#print()
 		
 					y_pred = clf.predict(X_test_scaled)
 
 					#Check f1
 					f1_micro = f1_score(answer_test, y_pred, average='micro')
 					f1_macro = f1_score(answer_test, y_pred, average='macro')
-					print('F1 score no teste, nunca use isto para escolher parametros. ' + \
-					  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
-					  , f1_macro)
-					print()
-					print()
+					#print('F1 score no teste, nunca use isto para escolher parametros. ' + \
+					#  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
+					#  , f1_macro)
+					#print()
+					#print()
 
 					#Storing the best configuration
 					if len(best_f1) == 0 or f1_micro > best_f1[0]:
@@ -411,6 +411,8 @@ def train_classifiers_leave_user_out(question, list_of_predictors, df, parameter
 				history_acc.append(accuracy)
 
 				history_features_importances.append(best_clf.feature_importances_)
+
+				print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
 				
 				#print ">>> Pos"
 				#print str(history_acc)

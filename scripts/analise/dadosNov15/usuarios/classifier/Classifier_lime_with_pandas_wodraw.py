@@ -351,7 +351,8 @@ for groups_data in [ ("income-baixa", "baixa"), ("income-media", "media"), ("mar
 	    current_df = data_frames[index_df]
 	    current_df = current_df.sort_values(by='choice', ascending=True)
             user_ids = current_df['userID'].unique()#Selecting users
-	    relevance_map = {}
+	    relevance_map_pro = {}
+	    relevance_map_aga = {}
 	    probabilities_map = {}
 
 	    if index_df == 0:#Selecting predictors
@@ -400,6 +401,10 @@ for groups_data in [ ("income-baixa", "baixa"), ("income-media", "media"), ("mar
 			exp_map = explanation.as_map() 
 			values = exp_map[exp_map.keys()[0]]
 			for value in values:
+			     if int(current_answer) > 0:
+				     relevance_map = relevance_map_pro
+			     else:
+				     relevance_map = relevance_map_aga
 			     if value[0] in relevance_map.keys():
 				 relevance_map[value[0]].append(abs(value[1]))
 			     else:
@@ -411,7 +416,14 @@ for groups_data in [ ("income-baixa", "baixa"), ("income-media", "media"), ("mar
 				 probabilities_map[explanation.class_names[index_class]] = [explanation.predict_proba[index_class]]
 	    
 	    #Printing statistics for data frame being evaluated
-	    for key, value in relevance_map.iteritems(): 
+	    print ( "### PRO MAP" )
+	    for key, value in relevance_map_pro.iteritems(): 
+		mean = np.mean(value)
+		std = np.std(value)
+		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std) + "\t" + str(len(value)) )
+
+	    print ( "### AGA MAP" )
+	    for key, value in relevance_map_aga.iteritems(): 
 		mean = np.mean(value)
 		std = np.std(value)
 		print( str(key) + "\t" + list_of_predictors[key] + "\t" + str(mean) + "\t" + str(std) + "\t" + str(len(value)) )

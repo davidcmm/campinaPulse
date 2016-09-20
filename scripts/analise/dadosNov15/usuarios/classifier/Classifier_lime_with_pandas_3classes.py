@@ -382,7 +382,7 @@ for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-femin
 		#Fitting
 		clf.fit(X_train_scaled, answer_train)
 
-		#Testing!
+		#LIME explanation!
 		for index_answer in range(0, len(answer_test)):
 		    explanation = explainClassification(list_of_predictors, current_df['choice'].unique(), X_train_scaled, X_test_scaled, clf, index_answer)
 		    

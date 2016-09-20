@@ -273,8 +273,8 @@ for groups_data in [ ("", "")]:
 		#Fitting
 		clf.fit(X_train_scaled, answer_train)
 
-		accuracy = best_clf.score(X_test_scaled, answer_test)#Accuracy
-		y_pred = best_clf.predict(X_test_scaled)#Estimated values
+		accuracy = clf.score(X_test_scaled, answer_test)#Accuracy
+		y_pred = clf.predict(X_test_scaled)#Estimated values
 		metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
 		metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
 

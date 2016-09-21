@@ -275,8 +275,8 @@ for groups_data in [ ("", "")]:
 
 		accuracy = clf.score(X_test_scaled, answer_test)#Accuracy
 		y_pred = clf.predict(X_test_scaled)#Estimated values
-		metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
-		metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+		metrics_macro = precision_recall_fscore_support(answer_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+		metrics_micro = precision_recall_fscore_support(answer_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
 
 		history_micro.append(metrics_micro[0:3])
 		history_macro.append(metrics_macro[0:3])
@@ -299,15 +299,20 @@ for groups_data in [ ("", "")]:
 		    if int(current_answer) == int(predicted_answer):
 			exp_map = explanation.as_map() 
 			values = exp_map[exp_map.keys()[0]]
+			if int(current_answer) < 0:
+				mult_factor = -1
+			else:
+				mult_factor = 1
+
 			for value in values:
-			     if int(current_answer) > 0:
+			     if mult_factor * value[1] > 0:
 				     relevance_map = relevance_map_pro
 			     else:
 				     relevance_map = relevance_map_aga
 			     if value[0] in relevance_map.keys():
-				 relevance_map[value[0]].append(abs(value[1]))
+				 relevance_map[value[0]].append( mult_factor * value[1] )
 			     else:
-				 relevance_map[value[0]] = [abs(value[1])]
+				 relevance_map[value[0]] = [mult_factor * value[1]]
 			for index_class in range(0, len(explanation.class_names)):
 			     if explanation.class_names[index_class] in probabilities_map.keys():
 				 probabilities_map[explanation.class_names[index_class]].append(explanation.predict_proba[index_class])

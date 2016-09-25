@@ -641,9 +641,11 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 	""" Checks the importances of features considering the best configuration of classifiers previously tested """
 
 	if load_3classes:
-		classifiers = load_classifiers_3classes(group)
+		#classifiers = load_classifiers_3classes(group)
+		classifiers = load_classifiers_wodraw("modal-leave")
 	else:
-		classifiers = load_classifiers_wodraw(group)
+		#classifiers = load_classifiers_wodraw(group)
+		classifiers = load_classifiers_wodraw("modal-leave")
 
 	classifiers_agrad = [classifiers[0][0]]
 	classifiers_seg = [classifiers[1][0]]
@@ -661,8 +663,17 @@ def test_features_importances(classifiers_names, predictors_agrad, answer_agrad,
 			try:
 				importances_dic = {}
 				importances = clf.feature_importances_
+				std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
+				#Compute confidence interval values 
+				if len(clf.estimators_) >= 30:
+					ci = stats.norm.interval(0.95, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+				else:
+					ci = stats.t.interval(0.95, df=len(clf.estimators_)-1, loc=importances, scale= std / np.sqrt(len(clf.estimators_)) )
+				#Calculating distances from mean!
+				low_limit = ci[0]
+				top_limit = ci[1]
 				for index in range(0, len(list_of_predictors)):
-					importances_dic[list_of_predictors[index]] = importances[index]
+					importances_dic[list_of_predictors[index]] = [importances[index], std[index], low_limit[index], top_limit[index]]
 				
 				sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
 				print ">>>> G " + group + " Q " + pair[0] + " C " + clf_name

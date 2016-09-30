@@ -292,7 +292,7 @@ df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 df = stripDataFrame(df)
 
 #for groups_data in [("", "")]:
-for groups_data in [ ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
+for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
 	filter_group = groups_data[0]
 	group = groups_data[1]

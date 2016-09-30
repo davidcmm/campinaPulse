@@ -276,7 +276,7 @@ def explainClassification(headers, target_names, X_train_scaled, X_test_scaled, 
     return exp
 
 #Main!
-input_file = 'classifier_input_wodraw.dat'
+input_file = 'classifier_input_3classes.dat'
 
 #Using 3 classes or two classes as output
 if "3classes" in input_file.lower():
@@ -290,7 +290,7 @@ df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 df = stripDataFrame(df)
 
 #for groups_data in [("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto")	]:
-for groups_data in [ ("", "")]:
+for groups_data in [ ("", ""), ("gender-masculino", "masculino"), ("gender-feminino", "feminino"), ("age-jovem", "jovem"), ("age-adulto", "adulto"), ("income-baixa", "baixa"), ("income-media", "media"), ("marital-solteiro", "solteiro"), ("marital-casado", "casado")]:
 
 	filter_group = groups_data[0]
 	group = groups_data[1]

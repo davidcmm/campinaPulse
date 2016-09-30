@@ -378,8 +378,14 @@ for groups_data in [ ("", "")]:
 
 		predictors_train = np.array(current_df_train[list_of_predictors].values)
 		predictors_test = np.array(current_df_test[list_of_predictors].values)
-		X_train_scaled = predictors_train #Only extra trees is currently being used!
-		X_test_scaled = predictors_test
+
+		#Scaling
+		scaling = StandardScaler()
+		scaling.fit(predictors_train)
+		X_train_scaled = scaling.transform(predictors_train)
+		X_test_scaled = scaling.transform(predictors_test)
+		#X_train_scaled = predictors_train #Only extra trees is currently being used!
+		#X_test_scaled = predictors_test
 		answer_train = np.array(current_df_train['choice'])
 		answer_test = np.array(current_df_test['choice'])
 	

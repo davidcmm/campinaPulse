@@ -2,6 +2,7 @@
 # Combines RGB bins data and other data for images
 
 import sys
+import re
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:
@@ -43,7 +44,8 @@ if __name__ == "__main__":
 	outputFile = open("geralSetoresAJ_bins.dat","w")
 	#outputFile.write("foto\tqscore\tred\tgreen\tblue\tdiag\thor\tvert\n")
 	for line in qscoreDic:
-			data = line.split(" ")
+			data = re.split(' |\t',line)
+			#data = line.split(" \t")
 			photo = data[0]
 
 			rgb = rgbDic[photo.split("/")[1]].strip('[]')

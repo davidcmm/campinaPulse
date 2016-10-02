@@ -354,7 +354,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 	output = open(outputFileName, 'w')
 	for question, qDic in allQScores.iteritems():
 		for photo, qscoreList in qDic.iteritems():
-			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", " ")+'\n')
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
 	output.close()
 
 def evaluateVotesStreetSeen(lines, outputFileName):

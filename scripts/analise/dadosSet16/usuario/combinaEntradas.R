@@ -2,25 +2,25 @@
 # Combines the set of files with QScores and image characteristics into a single file
 
 #Reading social groups data
-solteiro <- read.table("allSolteiroOrdInter.dat")
-casado <- read.table("allCasadoOrdInter.dat")
-masculino <- read.table("allMasculinoOrdInter.dat")
-feminino <- read.table("allFemininoOrdInter.dat")
-jovem <- read.table("allJovemOrdInter.dat")
-adulto <- read.table("allAdultoOrdInter.dat")
+solteiro <- read.table("all100/allSolteiroOrdInter.dat")
+casado <- read.table("all100/allCasadoOrdInter.dat")
+masculino <- read.table("all100/allMasculinoOrdInter.dat")
+feminino <- read.table("all100/allFemininoOrdInter.dat")
+jovem <- read.table("all100/allJovemOrdInter.dat")
+adulto <- read.table("all100/allAdultoOrdInter.dat")
 #jovem <- read.table("allJovem24OrdInter.dat")
 #adulto <- read.table("allAdulto25OrdInter.dat")
 #menorMed <- read.table("allMenorMedianOrdInter.dat")
 #maiorMed <- read.table("allMaiorMedianOrdInter.dat")
-media <- read.table("allMediaOrdInter.dat")
-baixa <- read.table("allBaixaOrdInter.dat")
-medio <- read.table("allMedioOrdInter.dat")
-pos <- read.table("allPosOrdInter.dat")
-liberdade <- read.table("allLiberdadeOrdInter.dat")
-nliberdade <- read.table("allNotLiberdadeOrdInter.dat")
-centro <- read.table("allCentroOrdInter.dat")
-ncentro <- read.table("allNotCentroOrdInter.dat")
-catole <- read.table("allCatoleOrdInter.dat")
+media <- read.table("all100/allMediaOrdInter.dat")
+baixa <- read.table("all100/allBaixaOrdInter.dat")
+medio <- read.table("all100/allMedioOrdInter.dat")
+pos <- read.table("all100/allPosOrdInter.dat")
+liberdade <- read.table("all100/allLiberdadeOrdInter.dat")
+nliberdade <- read.table("all100/allNotLiberdadeOrdInter.dat")
+centro <- read.table("all100/allCentroOrdInter.dat")
+ncentro <- read.table("all100/allNotCentroOrdInter.dat")
+catole <- read.table("all100/allCatoleOrdInter.dat")
 ncatole <- read.table("allNotCatoleOrdInter.dat")
 
 solteiro$grupo <- "Solteiro"
@@ -43,7 +43,7 @@ ncentro$grupo <- "NCCentro"
 centro$grupo <- "CCentro"
 
 #Reading general data
-general <- read.table("all_ordenado.dat")
+general <- read.table("all100/all_ordenado.dat")
 general$grupo <- "Geral"
 
 #Reading images characteristics
@@ -52,7 +52,7 @@ segRGB <- read.table("inputCorrelacaoRegressao100/rgbQScoreSegAll.dat", header=T
 #Reading IBGE sectors
 ibge <- read.table("setores_censitarios.dat", header=TRUE)
 
-newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, baixa)
+newFrame <- rbind(solteiro, casado, masculino, feminino, jovem, adulto, media, baixa, general)
                   #, medio, pos, nliberdade,
                   #liberdade, ncatole, catole, ncentro, centro, general)
 #newFrame2 <- rbind(catole, centro, ncentro, ncatole, liberdade, nliberdade, general)

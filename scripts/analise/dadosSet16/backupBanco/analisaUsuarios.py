@@ -134,14 +134,12 @@ def plotCity():
 	sizes.append(campinaCounting)
 	sizes.append(joaoPessoaCounting)
 	colors = ['yellowgreen', 'green', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red', 'black']
-	plt.figure()
-	plt.clf()
-	print labels
-	print colors
-	plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
-	plt.axis('equal')
-	pp.savefig()
-	pp.close()
+	#plt.figure()
+	#plt.clf()
+	#plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
+	#plt.axis('equal')
+	#pp.savefig()
+	#pp.close()
 
 def plotTime():
 	#Time levels

@@ -9,7 +9,7 @@ library(dplyr)
 require(gmodels)
 require(vcd)
 require(lme4)
-#library(caret)
+library(caret)
 library(pscl)
 
 library(ggplot2)

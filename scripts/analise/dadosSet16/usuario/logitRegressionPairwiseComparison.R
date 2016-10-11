@@ -127,80 +127,120 @@ seg$d_graff = as.integer(seg$graffiti1) - as.integer(seg$graffiti2)
 #}
 
 #Regressions!
-baselineModel_wointerac <- glm(choice ~ age_cat + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + scale(d_catole) + scale(d_centro) + scale(d_liberdade), data= agrad, family = binomial())
-summary(baselineModel_wointerac)
-anova(baselineModel_wointerac, test="Chisq")
-pR2(baselineModel_wointerac)
+#baselineModel_wointerac <- glm(choice ~ age_cat + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + scale(d_catole) + scale(d_centro) + scale(d_liberdade), data= agrad, family = binomial())
+#summary(baselineModel_wointerac)
+#anova(baselineModel_wointerac, test="Chisq")
+#pR2(baselineModel_wointerac)
 
+#General pleasantness regression with all data
 #age_cat + gender + income + marital + marital * ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) )
-baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= agrad, family = binomial())
-summary(baselineModel_interac)
-anova(baselineModel_interac, test="Chisq")
-pR2(baselineModel_interac)
-exp(baselineModel_interac$coefficients)
-tidy(baselineModel_interac, conf.int = TRUE) %>% 
-  mutate_each(funs(exp), estimate, conf.low, conf.high) #https://github.com/nazareno/ciencia-de-dados-1/blob/master/5-regressao/regressao%20logistica.Rmd
-glance(baselineModel_interac)
+#baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= agrad, family = binomial())
+#summary(baselineModel_interac)
+#anova(baselineModel_interac, test="Chisq")
+#pR2(baselineModel_interac)
+#exp(baselineModel_interac$coefficients)
+#result <- tidy(baselineModel_interac, conf.int = TRUE) %>% 
+#  mutate_each(funs(exp), estimate, conf.low, conf.high) #https://github.com/nazareno/ciencia-de-dados-1/blob/master/5-regressao/regressao%20logistica.Rmd
+#glance(baselineModel_interac)
+
+#Leave user out
+leaveUserOut <- function(dataFrame){
+  allPValues <- matrix(0, nrow=51, ncol=1)
+  allCoef <- matrix(0, nrow=51, ncol=1)
+  inputFeatures <- c()
+  allAccuracies <- c()
+  
+  for (currentUser in unique(dataFrame$userID)[1:2]) { 
+       userData <- filter(dataFrame, userID == currentUser)
+       notUserData <- filter(dataFrame, userID != currentUser)
+      
+       baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= notUserData, family = binomial()) 
+       result <- tidy(baselineModel_interac, conf.int = TRUE) %>% mutate_each(funs(exp), estimate, conf.low, conf.high)
+       
+       if (mean(allPValues) == 0){
+           allPValues[,1] <- result$p.value
+           allCoef[,1] <- result$estimate
+           inputFeatures <- result$term
+       }else{
+           allPValues <- cbind(allPValues, result$p.value)
+           allCoef <- cbind(allCoef, result$estimate)
+       }
+       
+       #Testing with removed user!
+       predictions <- predict(baselineModel_interac, newdata = userData, type = "response") > .5
+       correct_1 <- table(predictions, userData$choice)[4]
+       correct_0 <- table(predictions, userData$choice)[1]
+       
+       allAccuracies <- append(allAccuracies, (correct_1 + correct_0) / length(predictions))
+  }
+  
+  write.table(allAccuracies, file="accuracies.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allPValues), file="pvalues.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allCoef), file="coefficients.dat", row.names=FALSE, quote=FALSE)
+}
+
+leaveUserOut(agrad)
+leaveUserOut(seg)
 
 #Safety
-baselineModel_wointerac_seg <- glm(choice ~ age + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + d_catole + d_liberdade + d_centro, data= seg, family = binomial())
-summary(baselineModel_wointerac_seg)
-anova(baselineModel_wointerac_seg, test="Chisq")
-pR2(baselineModel_wointerac_seg)
+#baselineModel_wointerac_seg <- glm(choice ~ age + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + d_catole + d_liberdade + d_centro, data= seg, family = binomial())
+#summary(baselineModel_wointerac_seg)
+#anova(baselineModel_wointerac_seg, test="Chisq")
+#pR2(baselineModel_wointerac_seg)
 
 #Only 3 occurrences of viuvo! Removing this class from interactions!
 #age_cat + gender + income + marital + marital * ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff))
-baselineModel_interac_seg <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= seg, family = binomial())#filter(seg, marital != "vi\\u00favo")
-summary(baselineModel_interac_seg)
-anova(baselineModel_interac_seg, test="Chisq")
-pR2(baselineModel_interac_seg)
-exp(baselineModel_interac_seg$coefficients)
-tidy(baselineModel_interac_seg, conf.int = TRUE) %>% 
-  mutate_each(funs(exp), estimate, conf.low, conf.high)
-glance(baselineModel_interac_seg)
+# baselineModel_interac_seg <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= seg, family = binomial())#filter(seg, marital != "vi\\u00favo")
+# summary(baselineModel_interac_seg)
+# anova(baselineModel_interac_seg, test="Chisq")
+# pR2(baselineModel_interac_seg)
+# exp(baselineModel_interac_seg$coefficients)
+# result <- tidy(baselineModel_interac_seg, conf.int = TRUE) %>% 
+#   mutate_each(funs(exp), estimate, conf.low, conf.high)
+# glance(baselineModel_interac_seg)
 
 #True positive x False Positive
-library(ROCR)
-p <- predict(model, newdata=subset(test,select=c(2,3,4,5,6,7,8)), type="response")
-pr <- prediction(p, test$Survived)
-prf <- performance(pr, measure = "tpr", x.measure = "fpr")
-plot(prf)
-
-auc <- performance(pr, measure = "auc")
-auc <- auc@y.values[[1]]
-#a model with good predictive ability should have an AUC closer to 1 (1 is ideal) than to 0.5.
-auc
-
-#Other codes by Nazareno
-lModel <- update(baselineModel, . ~  . + marriage + birth)
-
-lModel.2 <- update(baselineModel, . ~  . + start_age)
-
-lModel.3 <- update(baselineModel, . ~  . + start_age + marriage + birth)
-
-summary(baselineModel)
-summary(lModel)
-compare_glms(baselineModel, lModel)
-
-summary(lModel.2)
-compare_glms(baselineModel, lModel.2)
-summary(lModel.3)
-compare_glms(lModel.2, lModel.3)
-
-vif(lModel)
-
-baselineModel <- glm(mob_change ~ education + gender + start_age,
-                     data = regression_data_u30, 
-                     family = binomial())
-
-lModel <- update(baselineModel, . ~  . + marriage  + birth)
-
-summary(baselineModel)
-summary(lModel)
-
-vif(lModel)
-
-modelChi <- baselineModel$deviance - lModel$deviance
-chidf <- baselineModel$df.residual - lModel$df.residual
-chisq.prob <- 1 - pchisq(modelChi, chidf)
-modelChi; chidf; chisq.prob
+# library(ROCR)
+# p <- predict(model, newdata=subset(test,select=c(2,3,4,5,6,7,8)), type="response")
+# pr <- prediction(p, test$Survived)
+# prf <- performance(pr, measure = "tpr", x.measure = "fpr")
+# plot(prf)
+# 
+# auc <- performance(pr, measure = "auc")
+# auc <- auc@y.values[[1]]
+# #a model with good predictive ability should have an AUC closer to 1 (1 is ideal) than to 0.5.
+# auc
+# 
+# #Other codes by Nazareno
+# lModel <- update(baselineModel, . ~  . + marriage + birth)
+# 
+# lModel.2 <- update(baselineModel, . ~  . + start_age)
+# 
+# lModel.3 <- update(baselineModel, . ~  . + start_age + marriage + birth)
+# 
+# summary(baselineModel)
+# summary(lModel)
+# compare_glms(baselineModel, lModel)
+# 
+# summary(lModel.2)
+# compare_glms(baselineModel, lModel.2)
+# summary(lModel.3)
+# compare_glms(lModel.2, lModel.3)
+# 
+# vif(lModel)
+# 
+# baselineModel <- glm(mob_change ~ education + gender + start_age,
+#                      data = regression_data_u30, 
+#                      family = binomial())
+# 
+# lModel <- update(baselineModel, . ~  . + marriage  + birth)
+# 
+# summary(baselineModel)
+# summary(lModel)
+# 
+# vif(lModel)
+# 
+# modelChi <- baselineModel$deviance - lModel$deviance
+# chidf <- baselineModel$df.residual - lModel$df.residual
+# chisq.prob <- 1 - pchisq(modelChi, chidf)
+# modelChi; chidf; chisq.prob

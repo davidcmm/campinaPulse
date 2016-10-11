@@ -150,7 +150,7 @@ leaveUserOut <- function(dataFrame){
   inputFeatures <- c()
   allAccuracies <- c()
   
-  for (currentUser in unique(dataFrame$userID)[1:2]) { 
+  for (currentUser in unique(dataFrame$userID)) { 
        userData <- filter(dataFrame, userID == currentUser)
        notUserData <- filter(dataFrame, userID != currentUser)
       

@@ -174,13 +174,13 @@ leaveUserOut <- function(dataFrame){
        allAccuracies <- append(allAccuracies, (correct_1 + correct_0) / length(predictions))
   }
   
-  write.table(allAccuracies, file="accuraciesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allPValues), file="pvaluesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allCoef), file="coefficientsA.dat", row.names=FALSE, quote=FALSE)
+  write.table(allAccuracies, file="accuraciesS.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allPValues), file="pvaluesS.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allCoef), file="coefficientsS.dat", row.names=FALSE, quote=FALSE)
 }
 
-leaveUserOut(agrad)
-#leaveUserOut(seg)
+#leaveUserOut(agrad)
+leaveUserOut(seg)
 
 #Safety
 #baselineModel_wointerac_seg <- glm(choice ~ age + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + d_catole + d_liberdade + d_centro, data= seg, family = binomial())

@@ -138,8 +138,9 @@ summary(baselineModel_interac)
 anova(baselineModel_interac, test="Chisq")
 pR2(baselineModel_interac)
 exp(baselineModel_interac$coefficients)
-tidy(baselineModel_interac, conf.int = TRUE)#https://github.com/nazareno/ciencia-de-dados-1/blob/master/5-regressao/regressao%20logistica.Rmd
-glance(bm)
+tidy(baselineModel_interac, conf.int = TRUE) %>% 
+  mutate_each(funs(exp), estimate, conf.low, conf.high) #https://github.com/nazareno/ciencia-de-dados-1/blob/master/5-regressao/regressao%20logistica.Rmd
+glance(baselineModel_interac)
 
 #Safety
 baselineModel_wointerac_seg <- glm(choice ~ age + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + d_catole + d_liberdade + d_centro, data= seg, family = binomial())
@@ -154,7 +155,9 @@ summary(baselineModel_interac_seg)
 anova(baselineModel_interac_seg, test="Chisq")
 pR2(baselineModel_interac_seg)
 exp(baselineModel_interac_seg$coefficients)
-
+tidy(baselineModel_interac_seg, conf.int = TRUE) %>% 
+  mutate_each(funs(exp), estimate, conf.low, conf.high)
+glance(baselineModel_interac_seg)
 
 #True positive x False Positive
 library(ROCR)

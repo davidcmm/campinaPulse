@@ -26,6 +26,8 @@ def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefiniti
 		userID = data[4].strip(' \t\n\r"')
 		userAnswer = data[9].strip(' \t\n\r"')
 
+		#print imagesDefinitions.keys()
+
 		if usersDefinitions.has_key(userID):
 			userInfo = usersDefinitions[userID]#Retrieving user data
 
@@ -121,6 +123,7 @@ def readUsersDefinitions(linesUsers):
 
 	for line in linesUsers:
 		data = line.split("|")
+		#print data
 		userID = data[0].strip(' \t\n\r')
 		userInfoData = data[1].strip(' \t\n\r')
 
@@ -133,33 +136,37 @@ def readUsersDefinitions(linesUsers):
 				#usersDef[userID] = ['', '', '', '', '', '', '', '[]']
 				continue
 			else:
+				#print userInfo
 				gender = ""
-				if userInfo[1][0].lower() == 'm':
-					gender = "masculino"
-				else:
-					gender = "feminino"
+				if len(userInfo[1]) > 0:
+					if userInfo[1][0].lower() == 'm':
+						gender = "masculino"
+					else:
+						gender = "feminino"
 
 				income = ""
-				if userInfo[2] == possibleIncomesOld[0] or userInfo[2] == possibleIncomesNew[0]:
-					income = "baixa"
-				elif userInfo[2] == possibleIncomesOld[1] or userInfo[2] == possibleIncomesNew[1]:
-					income = "media baixa"
-				elif userInfo[2] == possibleIncomesOld[2] or userInfo[2] == possibleIncomesNew[2]:
-					income = "media"
-				elif userInfo[2] == possibleIncomesOld[3] or userInfo[2] == possibleIncomesNew[3]:
-					income = "media alta"
-				elif userInfo[2] == possibleIncomesOld[4] or userInfo[2] == possibleIncomesNew[4]:
-					income = "alta"
+				if len(userInfo[2]) > 0:
+					if userInfo[2] == possibleIncomesOld[0] or userInfo[2] == possibleIncomesNew[0]:
+						income = "baixa"
+					elif userInfo[2] == possibleIncomesOld[1] or userInfo[2] == possibleIncomesNew[1]:
+						income = "media baixa"
+					elif userInfo[2] == possibleIncomesOld[2] or userInfo[2] == possibleIncomesNew[2]:
+						income = "media"
+					elif userInfo[2] == possibleIncomesOld[3] or userInfo[2] == possibleIncomesNew[3]:
+						income = "media alta"
+					elif userInfo[2] == possibleIncomesOld[4] or userInfo[2] == possibleIncomesNew[4]:
+						income = "alta"
 
 				educ = ""
-				if userInfo[3][0].lower() == 'e':
-					educ = "ensino medio"
-				elif userInfo[3][0].lower() == 'g':
-					educ = "graduacao"
-				elif userInfo[3][0].lower() == 'm':
-					educ = "mestrado"
-				elif userInfo[3][0].lower() == 'd':
-					educ = "doutorado"
+				if len(userInfo[3]) > 0:
+					if userInfo[3][0].lower() == 'e':
+						educ = "ensino medio"
+					elif userInfo[3][0].lower() == 'g':
+						educ = "graduacao"
+					elif userInfo[3][0].lower() == 'm':
+						educ = "mestrado"
+					elif userInfo[3][0].lower() == 'd':
+						educ = "doutorado"
 
 				#User profile: age, gender, income, education, city, marital status
 #				usersDef[userID] = [userInfo[0].strip(' \t\n\r'), gender, income, educ, userInfo[4].lower(), userInfo[6].lower()]

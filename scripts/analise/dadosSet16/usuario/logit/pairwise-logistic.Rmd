@@ -1,0 +1,184 @@
+---
+title: "Pairwise comparison - logit"
+#date: `r date()`
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+require(gmodels)
+require(vcd)
+require(lme4)
+library(caret)
+library(pscl)
+library(DT)
+library(ggplot2)
+theme_set(theme_bw())
+library(GGally)
+library(dplyr, warn.conflicts = F)
+library(broom)
+
+library(car)
+library(readr)
+```
+
+```{r lib}
+compare_glms <- function(baseline, model){
+  modelChi <- baseline$deviance - model$deviance
+  chidf <- baseline$df.residual - model$df.residual
+  chisq.prob <- 1 - pchisq(modelChi, chidf)
+  print(paste(modelChi, chidf, chisq.prob))
+}
+
+compare_null <- function(baselineModel){
+  modelChi <- baselineModel$null.deviance - baselineModel$deviance
+  chidf <- baselineModel$df.null - baselineModel$df.residual
+  chisq.prob <- 1 - pchisq(modelChi, chidf)
+  print(paste(modelChi, chidf, chisq.prob))
+}
+```
+
+
+```{r read}
+# TIVE QUE ADICIONAR O NOME DA 1a COLUNA NO ARQUIVO
+raw_data = read_delim(
+  "classifier//classifier_input_wodraw.dat",
+  delim = "\t",
+  col_types = cols(
+    .default = col_double(),
+    row = col_integer(),
+    choice = col_character(),
+    question = col_character(),
+    photo1 = col_character(),
+    photo2 = col_character(),
+    choice = col_integer(),
+    userID = col_integer(),
+    gender = col_character(),
+    income = col_character(),
+    education = col_character(),
+    city = col_character(),
+    marital = col_character(),
+    graffiti1 = col_character(),
+    bairro1 = col_character(),
+    graffiti2 = col_character(),
+    bairro2 = col_character()
+    )
+  )
+
+```
+
+```{r transform}
+data = raw_data %>% 
+  mutate( # Recode
+    income = if_else(is.na(income), "media", income),
+    age_cat = if_else(age >= 25, "adulto", "jovem"),
+    inc_cat = if_else(income %in% c("baixa", "media baixa"),
+                         "baixa", 
+                         "media"), # substituirá os NA
+    choice = if_else(choice == "1", "0", 
+                     if_else(choice == "-1", "1", choice)), 
+    bair_cat = if_else(bairro1 == bairro2, "mesmo", 
+                       paste0(bairro1, "_", bairro2))    
+    ) %>% 
+  mutate_at( # to factor
+    vars(income, age_cat, inc_cat, choice, bair_cat, marital, gender),
+    as.factor) %>% 
+  mutate( # relevel
+    bair_cat = relevel(bair_cat,  "mesmo"),
+    marital = relevel(marital,  "solteiro"),
+    income = relevel(income,  "baixa"),
+    age_cat = relevel(age_cat,  "jovem"),
+    gender = relevel(gender,  "feminino"),
+    inc_cat = relevel(inc_cat,  "baixa")
+  ) 
+
+# Create diff features
+data = data %>%
+  mutate(
+    d_swidth = street_wid1 - street_wid2,
+    d_mvcars = mov_cars1 - mov_cars2,
+    d_pcars = park_cars1 - park_cars2,
+    d_trees = trees1 - trees2,
+    d_mvciclyst = mov_ciclyst1 - mov_ciclyst2,
+    d_lands = landscape1 - landscape2,
+    d_bid = build_ident1 - build_ident2,
+    d_bheig = log2(build_height1 + 1) - log2(build_height2 + 1),
+    d_dbuild = diff_build1 - diff_build2,
+    d_people = people1 - people2,
+    d_graff = (graffiti1 == "Yes") - (graffiti2 == "Yes")
+  )
+
+# SPLIT + SCALE
+agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
+  mutate_at(vars(40:50), scale)
+seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
+  mutate_at(vars(40:50), scale)
+```
+
+```{r visualize}
+ # featurePlot(x=data[, 40:45], y=data[,5], plot="box", scales=list(x=list(relation="free"), y=list(relation="free")), auto.key=list(columns=2))
+```
+
+```{r model.lib}
+create_model_w_interact = function(the_data){
+  return(glm(
+    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
+      age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
+      gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
+      inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff),
+    data = the_data,
+    family = binomial()))
+}
+```
+
+```{r model.agrad}
+mostpleasant_model <- create_model_w_interact(agrad)
+summary(mostpleasant_model)
+#anova(mostpleasant_model, test="Chisq")
+vif(mostpleasant_model)
+
+coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
+coefs_ag %>% 
+  mutate_at(vars(-1), prettyNum, digits = 3) %>% 
+  datatable()
+{ # fix for what seems like a bug in pR2
+  the_data = agrad
+  pR2(mostpleasant_model)
+}
+```
+
+```{r model.safe}
+safer_model <- create_model_w_interact(seg)
+summary(safer_model)
+#anova(safer_model, test="Chisq")
+vif(safer_model)
+
+coefs_seg = tidy(safer_model, conf.int = TRUE, exponentiate = TRUE) 
+coefs_seg %>% 
+  mutate_at(vars(-1), prettyNum, digits = 3) %>% 
+  datatable()
+
+{ # fix for what seems like a bug in pR2
+  the_data = seg
+  pR2(safer_model)
+}
+```
+
+```{r visualize_models}
+library(modelr) # devtools::install_github("hadley/modelr")
+
+m = agrad %>%
+  data_grid(agrad, 
+            .model = mostpleasant_model)
+
+mm = augment(mostpleasant_model,
+             newdata = m,
+             type.predict = "response")
+
+ggplot(mm, aes(x = d_lands)) + 
+  geom_hex(aes(y = .fitted)) +  
+  geom_count(aes(y = as.numeric(as.character(choice))), alpha = .1) + 
+  facet_grid(gender ~ inc_cat + age_cat) 
+
+```
+

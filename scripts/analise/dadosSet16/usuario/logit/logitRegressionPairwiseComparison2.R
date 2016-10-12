@@ -49,6 +49,7 @@ raw_data = read_delim(
     choice = col_integer(),
     userID = col_integer(),
     gender = col_character(),
+    age = col_character(),
     income = col_character(),
     education = col_character(),
     city = col_character(),
@@ -63,7 +64,7 @@ raw_data = read_delim(
 data = raw_data %>% 
   mutate( # Recode
     income = if_else(is.na(income), "media", income),
-    age_cat = if_else(age >= 25, "adulto", "jovem"),
+    age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
     inc_cat = if_else(income %in% c("baixa", "media baixa"),
                       "baixa", 
                       "media"), # substituirá os NA
@@ -112,6 +113,13 @@ create_model_w_interact = function(the_data){
       age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
       gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
       inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff),
+    data = the_data,
+    family = binomial()))
+}
+
+create_model_wo_profile = function(the_data){
+  return(glm(
+    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat,
     data = the_data,
     family = binomial()))
 }

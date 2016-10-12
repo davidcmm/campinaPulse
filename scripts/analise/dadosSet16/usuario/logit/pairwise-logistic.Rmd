@@ -54,6 +54,7 @@ raw_data = read_delim(
     choice = col_integer(),
     userID = col_integer(),
     gender = col_character(),
+    age = col_character(),
     income = col_character(),
     education = col_character(),
     city = col_character(),
@@ -71,7 +72,7 @@ raw_data = read_delim(
 data = raw_data %>% 
   mutate( # Recode
     income = if_else(is.na(income), "media", income),
-    age_cat = if_else(age >= 25, "adulto", "jovem"),
+    age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
     inc_cat = if_else(income %in% c("baixa", "media baixa"),
                          "baixa", 
                          "media"), # substituirá os NA
@@ -129,13 +130,24 @@ create_model_w_interact = function(the_data){
     data = the_data,
     family = binomial()))
 }
+
+create_model_wo_profile = function(the_data){
+  return(glm(
+    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat,
+    data = the_data,
+    family = binomial()))
+}
 ```
 
 ```{r model.agrad}
 mostpleasant_model <- create_model_w_interact(agrad)
 summary(mostpleasant_model)
-#anova(mostpleasant_model, test="Chisq")
 vif(mostpleasant_model)
+#anova(mostpleasant_model, test="Chisq")
+
+mostpleasant_model_wo_profile <- create_model_wo_profile(agrad)
+summary(mostpleasant_model_wo_profile)
+vif(mostpleasant_model_wo_profile)
 
 coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
 coefs_ag %>% 
@@ -152,6 +164,10 @@ safer_model <- create_model_w_interact(seg)
 summary(safer_model)
 #anova(safer_model, test="Chisq")
 vif(safer_model)
+
+safer_model_wo_profile <- create_model_wo_profile(seg)
+summary(safer_model_wo_profile)
+vif(safer_model_wo_profile)
 
 coefs_seg = tidy(safer_model, conf.int = TRUE, exponentiate = TRUE) 
 coefs_seg %>% 

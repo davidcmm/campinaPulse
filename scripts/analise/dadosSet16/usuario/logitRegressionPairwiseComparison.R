@@ -92,14 +92,6 @@ agrad$graffiti1[agrad$graffiti1 == "Yes"] <- 1
 agrad$graffiti2[agrad$graffiti2 == "No"] <- 0
 agrad$graffiti2[agrad$graffiti2 == "Yes"] <- 1
 agrad$d_graff = as.integer(agrad$graffiti1) - as.integer(agrad$graffiti2)
-#dummies <- predict(dummyVars(~ bairro1, data = agrad), newdata = agrad)
-#for(level in unique(agrad$bairro1)){
-#  agrad[paste("dummy1", level, sep = "_")] <- ifelse(agrad$bairro1 == level, TRUE, FALSE)
-#}
-#for(level in unique(agrad$bairro2)){
-#  agrad[paste("dummy2", level, sep = "_")] <- ifelse(agrad$bairro2 == level, TRUE, FALSE)
-#}
-
 
 seg$d_swidth = seg$street_wid1 - seg$street_wid2
 seg$d_mvcars = seg$mov_cars1 - seg$mov_cars2
@@ -118,13 +110,6 @@ seg$graffiti1[seg$graffiti1 == "Yes"] <- 1
 seg$graffiti2[seg$graffiti2 == "No"] <- 0
 seg$graffiti2[seg$graffiti2 == "Yes"] <- 1
 seg$d_graff = as.integer(seg$graffiti1) - as.integer(seg$graffiti2)
-#dummies <- predict(dummyVars(~ bairro1, data = agrad), newdata = agrad)
-#for(level in unique(seg$bairro1)){
-#  seg[paste("dummy1", level, sep = "_")] <- ifelse(seg$bairro1 == level, 1, 0)
-#}
-#for(level in unique(seg$bairro2)){
-#  seg[paste("dummy2", level, sep = "_")] <- ifelse(seg$bairro2 == level, 1, 0)
-#}
 
 #Regressions!
 #baselineModel_wointerac <- glm(choice ~ age_cat + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + scale(d_catole) + scale(d_centro) + scale(d_liberdade), data= agrad, family = binomial())
@@ -149,8 +134,10 @@ leaveUserOut <- function(dataFrame){
   allCoef <- matrix(0, nrow=51, ncol=1)
   inputFeatures <- c()
   allAccuracies <- c()
+  allPrecistion <- c()
+  allRecall <- c()
   
-  for (currentUser in unique(dataFrame$userID)) { 
+  for (currentUser in unique(dataFrame$userID)[1:2]) { 
        userData <- filter(dataFrame, userID == currentUser)
        notUserData <- filter(dataFrame, userID != currentUser)
       
@@ -163,23 +150,27 @@ leaveUserOut <- function(dataFrame){
            inputFeatures <- result$term
        }else{
            allPValues <- cbind(allPValues, result$p.value)
-           allCoef <- cbind(allCoef, result$estimate)
+           allCoef <- cbind(allCoef, result$estimate)#Values in exp()
        }
        
        #Testing with removed user!
        predictions <- predict(baselineModel_interac, newdata = userData, type = "response") > .5
+       fp <- table(predictions, userData$choice)[2]
+       fn <- table(predictions, userData$choice)[3]
        correct_1 <- table(predictions, userData$choice)[4]
        correct_0 <- table(predictions, userData$choice)[1]
        
        allAccuracies <- append(allAccuracies, (correct_1 + correct_0) / length(predictions))
+       allPrecision <- append(allPrecision, (correct_1) / (correct_1 + fp))
+       allRecall <- append(allRecall, (correct_1) / (correct_1 + fn))
   }
   
   write.table(allAccuracies, file="accuraciesA.dat", row.names=FALSE, quote=FALSE)
+  write.table(allPrecision, file="precisionA.dat", row.names=FALSE, quote=FALSE)
+  write.table(allRecall, file="recallA.dat", row.names=FALSE, quote=FALSE)
   write.table(cbind(inputFeatures, allPValues), file="pvaluesA.dat", row.names=FALSE, quote=FALSE)
   write.table(cbind(inputFeatures, allCoef), file="coefficientsA.dat", row.names=FALSE, quote=FALSE)
 }
-
-#apply(data[, c(2:144)], 1, mean) -> mean of pvaluesA, coefficientsA
 
 leaveUserOut(agrad)
 #leaveUserOut(seg)
@@ -200,6 +191,42 @@ leaveUserOut(agrad)
 # result <- tidy(baselineModel_interac_seg, conf.int = TRUE) %>% 
 #   mutate_each(funs(exp), estimate, conf.low, conf.high)
 # glance(baselineModel_interac_seg)
+
+
+#Analysing Leave user out results
+source("analisaICPorFoto.R")
+
+files <- c('accuraciesA.dat', 'accuraciesS.dat')
+for (file in files){
+  data <- read.table(file, header=TRUE)
+  distance <- ic(filter(data, x != "NA")$x)
+  meanValue <- mean(data$x, na.rm = TRUE)
+  print(paste(file, meanValue, (meanValue - distance), (meanValue + distance), sep = "\t"))
+}
+
+filesCoef <- c('coefficientsA.dat', 'coefficientsS.dat')
+filesPval <- c('pvaluesA.dat', 'pvaluesS.dat')
+for (index in 1:2){
+  coefData <- read.table(filesCoef[index], skip=1)
+  pvalData <- read.table(filesPval[index], skip=1)
+  
+  #Values in exp()
+  distancesCoef <- apply(coefData[, c(2:ncol(coefData))], 1, ic)
+  meanCoef <- apply(coefData[, c(2:ncol(coefData))], 1, mean)
+  coefData$mean <- meanCoef
+  coefData$low <- meanCoef - distancesCoef
+  coefData$high <- meanCoef + distancesCoef
+  
+  distancesPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, ic)
+  meanPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, mean)
+  pvalData$mean <- meanPval
+  pvalData$low <- meanPval - distancesPval
+  pvalData$high <- meanPval + distancesPval
+  
+  print(paste(filesCoef[index], coefData$V1, coefData$mean, coefData$low, coefData$high, pvalData$mean, pvalData$low, pvalData$high, sep = "\t"), quote=FALSE)
+}
+
+
 
 #True positive x False Positive
 # library(ROCR)

@@ -149,6 +149,8 @@ leaveUserOut <- function(dataFrame){
   allCoef <- matrix(0, nrow=51, ncol=1)
   inputFeatures <- c()
   allAccuracies <- c()
+  allRecall <- c()
+  allPrecistion <- c()
   
   for (currentUser in unique(dataFrame$userID)) { 
        userData <- filter(dataFrame, userID == currentUser)
@@ -168,13 +170,19 @@ leaveUserOut <- function(dataFrame){
        
        #Testing with removed user!
        predictions <- predict(baselineModel_interac, newdata = userData, type = "response") > .5
+       fp <- table(predictions, userData$choice)[2]
+       fn <- table(predictions, userData$choice)[3]
        correct_1 <- table(predictions, userData$choice)[4]
        correct_0 <- table(predictions, userData$choice)[1]
        
        allAccuracies <- append(allAccuracies, (correct_1 + correct_0) / length(predictions))
+       allPrecision <- append(allPrecision, (correct_1) / (correct_1 + fp))
+       allRecall <- append(allRecall, (correct_1) / (correct_1 + fn))
   }
   
   write.table(allAccuracies, file="accuraciesS.dat", row.names=FALSE, quote=FALSE)
+  write.table(allPrecision, file="precisionS.dat", row.names=FALSE, quote=FALSE)
+  write.table(allRecall, file="recallS.dat", row.names=FALSE, quote=FALSE)
   write.table(cbind(inputFeatures, allPValues), file="pvaluesS.dat", row.names=FALSE, quote=FALSE)
   write.table(cbind(inputFeatures, allCoef), file="coefficientsS.dat", row.names=FALSE, quote=FALSE)
 }

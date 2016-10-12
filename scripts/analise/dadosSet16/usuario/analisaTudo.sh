@@ -73,7 +73,7 @@ python analisaQScore.py runNotLiberdade.csv 100 tasksDef.csv
 mv all.dat allNotLiberdade.dat
 
 #Ordenando pelo valor médio
-sort -k 3 -r all.dat > all_ordenado.dat
+sort -k 3 -r allGeral.dat > all_ordenado.dat
 
 sort -k 3 -r allMedia.dat > allMediaOrd.dat
 sort -k 3 -r allBaixa.dat > allBaixaOrd.dat

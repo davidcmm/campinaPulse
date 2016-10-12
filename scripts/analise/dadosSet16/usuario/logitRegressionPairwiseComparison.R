@@ -9,7 +9,7 @@ library(dplyr)
 require(gmodels)
 require(vcd)
 require(lme4)
-#library(caret)
+library(caret)
 library(pscl)
 
 library(ggplot2)
@@ -178,6 +178,8 @@ leaveUserOut <- function(dataFrame){
   write.table(cbind(inputFeatures, allPValues), file="pvaluesA.dat", row.names=FALSE, quote=FALSE)
   write.table(cbind(inputFeatures, allCoef), file="coefficientsA.dat", row.names=FALSE, quote=FALSE)
 }
+
+#apply(data[, c(2:144)], 1, mean) -> mean of pvaluesA, coefficientsA
 
 leaveUserOut(agrad)
 #leaveUserOut(seg)

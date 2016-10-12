@@ -145,8 +145,8 @@ create_model_wo_profile = function(the_data){
 
 #Leave user out
 leaveUserOut <- function(dataFrame){
-  allPValues <- matrix(0, nrow=51, ncol=1)
-  allCoef <- matrix(0, nrow=51, ncol=1)
+  allPValues <- matrix(0, nrow=18, ncol=1)
+  allCoef <- matrix(0, nrow=18, ncol=1)
   inputFeatures <- c()
   allAccuracies <- c()
   allRecall <- c()

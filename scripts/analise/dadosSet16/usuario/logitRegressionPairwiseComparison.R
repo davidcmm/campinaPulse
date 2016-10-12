@@ -134,7 +134,7 @@ leaveUserOut <- function(dataFrame){
   allCoef <- matrix(0, nrow=51, ncol=1)
   inputFeatures <- c()
   allAccuracies <- c()
-  allPrecistion <- c()
+  allPrecision <- c()
   allRecall <- c()
   
   for (currentUser in unique(dataFrame$userID)[1:2]) { 

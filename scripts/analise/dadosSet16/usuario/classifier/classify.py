@@ -15,6 +15,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score, f1_score, confusion_matrix
 from sklearn.grid_search import GridSearchCV
 from sklearn.feature_selection import RFECV, SelectFromModel
+import statsmodels.api as sm
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
@@ -813,6 +814,171 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 			#plt.show()
 
 
+def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers, classifiers_names, cols_to_scale, cols_to_combine, bairro_cols):
+	""" Performs trainings with classifiers removing one user at a time and then calculates accuracy, micro and macro values """
+
+	#Question being evaluated
+	print ">>>>>> G all " + " Q " + question
+
+	history_micro = []
+	history_macro = []
+	history_acc = []
+	history_features_importances = []
+	importances_dic = {}
+
+	#Creating interaction variables
+	df_new = df.copy()
+	list_of_predictors = []
+	for u_col in cols_to_combine:
+		for o_col in cols_to_scale:
+		    new_name = u_col + ':' + o_col
+		    df_new[new_name] = df[u_col] * df_new[o_col]
+		    list_of_predictors.append(new_name)
+
+	list_of_predictors.extend(cols_to_scale)
+	list_of_predictors.extend(bairro_cols)
+	print ">>>>> " + str(list_of_predictors)
+
+	for user_id in user_ids:#Remove each user sequentially
+
+		current_df_train = df_new[(df_new.userID != user_id)]
+		current_df_test = df_new[(df_new.userID == user_id)]
+		scaler = StandardScaler().fit(current_df_train[cols_to_scale].copy())
+		current_df_train[cols_to_scale] = scaler.transform(current_df_train[cols_to_scale].copy())
+		current_df_test[cols_to_scale] = scaler.transform(current_df_test[cols_to_scale].copy())
+
+		predictors = np.array(current_df_train[list_of_predictors].values)
+		answer = np.array(current_df_train['choice'])
+		i = 0
+	
+		for classifier_index in range(0, len(classifiers)):
+
+			print "### User " + str(user_id)
+
+			if parameters_dic.has_key(classifiers_names[classifier_index]):
+				parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
+
+				best_clf = None
+				best_f1 = []
+
+				for train, test in StratifiedKFold(answer, n_folds=3): #5folds
+
+					predictors_train = predictors[train]
+					answer_train = answer[train]
+					predictors_test = predictors[test]
+					answer_test = answer[test]
+
+					X_train_scaled = predictors_train #Only extra trees is currently being used!
+					X_test_scaled = predictors_test
+
+					classifier = GridSearchCV(classifiers[classifier_index], 
+					      param_grid=parameters_to_optimize, cv=3)
+					clf = classifier.fit(X_train_scaled, answer_train)
+
+					i += 1
+					#print('Fold', i)
+					#print(clf.best_estimator_)
+					#print()
+		
+					y_pred = clf.predict(X_test_scaled)
+
+					#Check f1
+					f1_micro = f1_score(answer_test, y_pred, average='micro')
+					f1_macro = f1_score(answer_test, y_pred, average='macro')
+					#print('F1 score no teste, nunca use isto para escolher parametros. ' + \
+					#  'Aceite o valor, tuning de parametros so antes com o grid search', f1_micro
+					#  , f1_macro)
+					#print()
+					#print()
+
+					#Storing the best configuration
+					if len(best_f1) == 0 or f1_micro > best_f1[0]:
+						best_f1 = [f1_micro, f1_macro]
+						best_clf = clf.best_estimator_
+		
+				#Test best classifier removing current user!
+				X_train = np.array(current_df_train[list_of_predictors].values)
+				y_train = np.array(current_df_train['choice'])
+				X_test = np.array(current_df_test[list_of_predictors].values)
+				y_test = np.array(current_df_test['choice'])							
+
+				#Only extra trees is currently being used
+				X_train_scaled = X_train
+				X_test_scaled = X_test
+
+				best_clf.fit(X_train_scaled, y_train)#Fitting for test
+
+				accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
+				y_pred = best_clf.predict(X_test_scaled)#Estimated values
+
+				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+				history_micro.append(metrics_micro[0:3])
+				history_macro.append(metrics_macro[0:3])
+				history_acc.append(accuracy)
+
+				history_features_importances.append(best_clf.feature_importances_)
+
+				print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
+				
+				#print ">>> Pos"
+				#print str(history_acc)
+				#print str(history_micro)
+				#print str(history_macro)
+
+	#print ">>> Final"
+	#print str(history_acc)
+	#print str(history_micro)
+	#print str(history_macro)
+	std_acc = np.std(np.array(history_acc), axis=0)
+	mean_acc = np.mean(np.array(history_acc), axis=0)
+	std_micro = np.std(np.array(history_micro), axis=0)
+	mean_micro = np.mean(np.array(history_micro), axis=0)
+	std_macro = np.std(np.array(history_macro), axis=0)
+	mean_macro = np.mean(np.array(history_macro), axis=0)
+	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+
+	#Features importances!
+	std_importances = np.std(np.array(history_features_importances), axis=0)
+	mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	for index in range(0, len(list_of_predictors)):
+		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	
+	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	print ">>>> Importances "
+	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+
+
+def pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, consider_moderation):
+	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile '''
+
+	df = pd.read_table(input_file, sep=' ', encoding='utf8', header=0)
+	y = pd.read_csv(input_choice)
+	df['choice'] = y
+
+	df_user = pd.get_dummies(df, columns=['age_cat', 'gender', 'inc_cat'], prefix='user')
+	df_user_bairro = pd.get_dummies(df_user, columns=['bair_cat'], prefix='bairro')
+
+	user_ids = df_user_bairro['userID'].unique()
+
+	#del df_user_bairro['userID']
+	del df_user_bairro['bairro_mesmo']
+	del df_user_bairro['user_jovem']
+	del df_user_bairro['user_feminino']
+	del df_user_bairro['user_baixa']
+	df_user_bairro = sm.add_constant(df_user_bairro)
+
+	if consider_moderation == "y":
+		user_cols = [x for x in df_user_bairro.columns if x.startswith('user_')]
+	else:
+		user_cols = []
+	bairro_cols = [x for x in df_user_bairro.columns if x.startswith('bairro_')]
+	other_cols = [x for x in df_user_bairro.columns if x.startswith('d_')]
+
+	pairwise_leave_user_out(question, user_ids, df_user_bairro, parameters_dic, classifiers, classifiers_names, other_cols, user_cols, bairro_cols)
+
+
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
 		print "Uso: <file with photos preferences, photos data and user data> <phase - train-config, train-user-out, importances, importances-file, test or random> <filter, e.g., <gender, marital, age, income>-masculino>"
@@ -820,6 +986,32 @@ if __name__ == "__main__":
 
 	input_file = sys.argv[1]
 	phase = sys.argv[2].lower()
+
+	#Classifiers parameters to be tested
+	parameters_dic = { "Extra Trees" : {
+	    'n_estimators': [20, 40, 60],
+	    'criterion': ['entropy'],
+	    'min_samples_split': [2, 4, 8, 16, 32],
+	    'min_samples_leaf': [2, 4, 8, 16, 32]
+	}, 
+	"Nearest Neighbors" : {
+		'n_neighbors' : [2, 4, 8, 16, 32],
+		'p' : [2,3]	
+	},
+	"Linear SVM" : {
+		'C' : [0.001, 0.1, 1, 10, 100, 1000],
+		'class_weight' : ['balanced', None]
+	},
+	"RBF SVM" : {
+		'C' : [0.001, 0.1, 1],
+		#'gamma' : ['Auto', 'RS*'],
+		'gamma' : [0.25, 0.5, 1, 2, 4],
+		'class_weight' : ['balanced', None]
+	}
+	}
+	classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
+	classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
+
 
 	#Using 3 classes or two classes as output
 	if "3classes" in input_file.lower():
@@ -834,6 +1026,23 @@ if __name__ == "__main__":
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 		importances_file = sys.argv[3]
 		plot_importances_from_file(importances_file, df, load_3classes)
+
+	elif phase.lower() == "pairwise-user-out":
+		if len(sys.argv) != 5:
+			print "Uso pairwise-user-out: classifier_input_wodraw.dat pairwise-user-out <agrad or seg> <moderated: y or n>"
+			sys.exit(1)
+
+		question = ""
+		if sys.argv[3].lower() == "agrad":
+			input_file = 'flavio_class_moderated/agrad.dat'
+			input_choice = 'flavio_class_moderated/y_agrad.dat'
+			question = "Pleasantness"
+		else:
+			input_file = 'flavio_class_moderated/seg.dat'
+			input_choice = 'flavio_class_moderated/y_seg.dat'
+			question = "Safety"
+
+		pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
 
 	else:#Train, test classifiers!
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
@@ -888,37 +1097,13 @@ if __name__ == "__main__":
 		answer_seg = seg_df['choice']#Preferred images
 		predictors_seg = seg_df[list_of_predictors_seg].values #Predictors
 
-		#Classifiers parameters to be tested
-		parameters_dic = { "Extra Trees" : {
-		    'n_estimators': [20, 40, 60],
-		    'criterion': ['entropy'],
-		    'min_samples_split': [2, 4, 8, 16, 32],
-		    'min_samples_leaf': [2, 4, 8, 16, 32]
-		}, 
-		"Nearest Neighbors" : {
-			'n_neighbors' : [2, 4, 8, 16, 32],
-			'p' : [2,3]	
-		},
-		"Linear SVM" : {
-			'C' : [0.001, 0.1, 1, 10, 100, 1000],
-			'class_weight' : ['balanced', None]
-		},
-		"RBF SVM" : {
-			'C' : [0.001, 0.1, 1],
-			#'gamma' : ['Auto', 'RS*'],
-			'gamma' : [0.25, 0.5, 1, 2, 4],
-			'class_weight' : ['balanced', None]
-		}
-		}
-		classifiers_names = ["Extra Trees"]#, "Nearest Neighbors", "RBF SVM", "Naive Bayes", "Linear SVM"]
-	
+
 		if phase == 'train-config':
-			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
+			#, KNeighborsClassifier(3), SVC(kernel="linear", C=0.025), SVC(gamma=2, C=1), GaussianNB()]
 			train_classifiers("Pleasantness", predictors_agrad, answer_agrad, parameters_dic, classifiers_names, classifiers, group)
 			train_classifiers("Safety", predictors_seg, answer_seg, parameters_dic, classifiers_names, classifiers, group)
 
 		elif phase == 'train-user-out':
-			classifiers = [ExtraTreesClassifier(n_jobs=-1, criterion='entropy')]
 			train_classifiers_leave_user_out("Pleasantness", list_of_predictors_agrad, agrad_df, parameters_dic, classifiers_names, classifiers, group)
 			train_classifiers_leave_user_out("Safety", list_of_predictors_seg, seg_df, parameters_dic, classifiers_names, classifiers, group)
 			#train_classifiers_leave_user_out2("Pleasantness", list_of_predictors_agrad, agrad_df, group, load_3classes)

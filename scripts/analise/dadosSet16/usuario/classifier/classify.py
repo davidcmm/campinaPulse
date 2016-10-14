@@ -829,12 +829,13 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	#Creating interaction variables
 	df_new = df.copy()
 	list_of_predictors = []
-	for u_col in cols_to_combine:
-		for o_col in cols_to_scale:
-		    new_name = u_col + ':' + o_col
-		    df_new[new_name] = df[u_col] * df_new[o_col]
-		    list_of_predictors.append(new_name)
+	#for u_col in cols_to_combine:
+	#	for o_col in cols_to_scale:
+	#	    new_name = u_col + ':' + o_col
+	#	    df_new[new_name] = df[u_col] * df_new[o_col]
+	#	    list_of_predictors.append(new_name)
 
+	list_of_predictors.extend(cols_to_combine)
 	list_of_predictors.extend(cols_to_scale)
 	list_of_predictors.extend(bairro_cols)
 	print ">>>>> " + str(list_of_predictors)

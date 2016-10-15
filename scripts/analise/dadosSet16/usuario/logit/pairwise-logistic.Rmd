@@ -212,6 +212,13 @@ computeICForArrayOfValues <- function(files) {
 }
 
 files <- c('logit/accuraciesA.dat', 'logit/accuraciesS.dat', 'logit/accuraciesA_WOProfile.dat', 'logit/accuraciesS_WOProfile.dat')
+files <- c('logit/accuraciesA0.5.dat', 'logit/accuraciesA0.6.dat', 'logit/accuraciesA0.7.dat')
+computeICForArrayOfValues(files)
+
+files <- c('logit/precisionA0.5.dat', 'logit/precisionA0.6.dat', 'logit/precisionA0.7.dat')
+computeICForArrayOfValues(files)
+
+files <- c('logit/recallA0.5.dat', 'logit/recallA0.6.dat', 'logit/recallA0.7.dat')
 computeICForArrayOfValues(files)
 
 files <- c('logit/precisionA.dat', 'logit/precisionS.dat', 'logit/precisionA_WOProfile.dat', 'logit/precisionS_WOProfile.dat')
@@ -232,7 +239,7 @@ for (index in 1:2){
   coefData$mean <- meanCoef
   coefData$low <- meanCoef - distancesCoef
   coefData$high <- meanCoef + distancesCoef
-  
+
   distancesPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, ic)
   meanPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, mean)
   pvalData$mean <- meanPval

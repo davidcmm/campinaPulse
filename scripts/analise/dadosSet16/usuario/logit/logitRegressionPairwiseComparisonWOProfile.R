@@ -209,11 +209,11 @@ leaveUserOut(seg)
 # glance(baselineModel_interac_seg)
 
 #True positive x False Positive
-# library(ROCR)
-# p <- predict(model, newdata=subset(test,select=c(2,3,4,5,6,7,8)), type="response")
-# pr <- prediction(p, test$Survived)
-# prf <- performance(pr, measure = "tpr", x.measure = "fpr")
-# plot(prf)
+#  library(ROCR)
+#  p <- predict(model, newdata=subset(test,select=c(2,3,4,5,6,7,8)), type="response")
+#  pr <- prediction(p, test$Survived)
+#  prf <- performance(pr, measure = "tpr", x.measure = "fpr")
+#  plot(prf)
 # 
 # auc <- performance(pr, measure = "auc")
 # auc <- auc@y.values[[1]]

@@ -198,3 +198,47 @@ ggplot(mm, aes(x = d_lands)) +
 
 ```
 
+```{r visualize_models}
+#Analysing Leave user out results
+source("analisaICPorFoto.R")
+
+computeICForArrayOfValues <- function(files) {
+  for (file in files){
+    data <- read.table(file, header=TRUE)
+    distance <- ic(filter(data, x != "NA")$x)
+    meanValue <- mean(data$x, na.rm = TRUE)
+    print(paste(file, meanValue, (meanValue - distance), (meanValue + distance), sep = "\t"))
+  }
+}
+
+files <- c('logit/accuraciesA.dat', 'logit/accuraciesS.dat', 'logit/accuraciesA_WOProfile.dat', 'logit/accuraciesS_WOProfile.dat')
+computeICForArrayOfValues(files)
+
+files <- c('logit/precisionA.dat', 'logit/precisionS.dat', 'logit/precisionA_WOProfile.dat', 'logit/precisionS_WOProfile.dat')
+computeICForArrayOfValues(files)
+
+files <- c('logit/recallA.dat', 'logit/recallS.dat', 'logit/recallA_WOProfile.dat', 'logit/recallS_WOProfile.dat')
+computeICForArrayOfValues(files)
+
+filesCoef <- c('coefficientsA.dat', 'coefficientsS.dat')
+filesPval <- c('pvaluesA.dat', 'pvaluesS.dat')
+for (index in 1:2){
+  coefData <- read.table(filesCoef[index], skip=1)
+  pvalData <- read.table(filesPval[index], skip=1)
+  
+  #Values in exp()
+  distancesCoef <- apply(coefData[, c(2:ncol(coefData))], 1, ic)
+  meanCoef <- apply(coefData[, c(2:ncol(coefData))], 1, mean)
+  coefData$mean <- meanCoef
+  coefData$low <- meanCoef - distancesCoef
+  coefData$high <- meanCoef + distancesCoef
+  
+  distancesPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, ic)
+  meanPval <- apply(pvalData[, c(2:ncol(pvalData))], 1, mean)
+  pvalData$mean <- meanPval
+  pvalData$low <- meanPval - distancesPval
+  pvalData$high <- meanPval + distancesPval
+  
+  print(paste(filesCoef[index], coefData$V1, coefData$mean, coefData$low, coefData$high, pvalData$mean, pvalData$low, pvalData$high, sep = "\t"), quote=FALSE)
+}
+```

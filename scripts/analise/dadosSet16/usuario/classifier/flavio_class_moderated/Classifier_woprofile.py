@@ -57,7 +57,8 @@ y = pd.read_csv('y_' + fpath)
 
 # In[5]:
 
-user_cols = [x for x in df_user_bairro.columns if x.startswith('user_')]
+#user_cols = [x for x in df_user_bairro.columns if x.startswith('user_')]
+user_cols = []
 bairro_cols = [x for x in df_user_bairro.columns if x.startswith('bairro_')]
 other_cols = [x for x in df_user_bairro.columns if x.startswith('d_')]
 
@@ -83,7 +84,7 @@ def do_class(df, y, user_ids, cols_to_scale, cols_to_combine):
     y_true_all = []
     for df_train, df_test, y_train, y_test in train_test_scale(df, y, user_ids, cols_to_scale, cols_to_combine):
 	print "### One more user"
-        model = GridSearchCV( ExtraTreesClassifier(n_jobs=-1), param_grid = {'min_samples_split': [2, 4, 8, 16, 32, 64, 128], 'min_samples_leaf': [2, 4, 8, 16, 32, 64, 128], 'n_estimators': [1, 2, 4, 16, 32, 64, 128]}, cv=3)
+        model = GridSearchCV(ExtraTreesClassifier(n_jobs=-1), param_grid = {'min_samples_split': [2, 4, 8, 16, 32, 64, 128], 'min_samples_leaf': [2, 4, 8, 16, 32, 64, 128], 'n_estimators': [1, 2, 4, 16, 32, 64, 128]}, cv=3)
         model.fit(df_train.values, y_train.values[:, 0])
 	clf = model.best_estimator_ 
 	

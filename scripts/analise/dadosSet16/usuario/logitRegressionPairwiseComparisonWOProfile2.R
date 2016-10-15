@@ -61,7 +61,6 @@ raw_data = read_delim(
   )
 )
 
-
 data = raw_data %>% 
   mutate( # Recode
     income = if_else(is.na(income), "media", income),
@@ -108,16 +107,6 @@ agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>%
 seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
   mutate_at(vars(40:50), scale)
 
-create_model_w_interact = function(the_data){
-  return(glm(
-    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
-      age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
-      gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
-      inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff),
-    data = the_data,
-    family = binomial()))
-}
-
 create_model_wo_profile = function(the_data){
   return(glm(
     choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat,
@@ -156,8 +145,8 @@ create_model_wo_profile = function(the_data){
 
 #Leave user out
 leaveUserOut <- function(dataFrame){
-  allPValues <- matrix(0, nrow=51, ncol=1)
-  allCoef <- matrix(0, nrow=51, ncol=1)
+  allPValues <- matrix(0, nrow=18, ncol=1)
+  allCoef <- matrix(0, nrow=18, ncol=1)
   inputFeatures <- c()
   allAccuracies <- c()
   allRecall <- c()
@@ -168,7 +157,7 @@ leaveUserOut <- function(dataFrame){
     notUserData <- filter(dataFrame, userID != currentUser)
     
     #baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= notUserData, family = binomial()) 
-    baselineModel_interac <- create_model_w_interact(notUserData)
+    baselineModel_interac <- create_model_wo_profile(notUserData)
     result <- tidy(baselineModel_interac, conf.int = TRUE) %>% mutate_each(funs(exp), estimate, conf.low, conf.high)
     
     if (mean(allPValues) == 0){
@@ -192,11 +181,11 @@ leaveUserOut <- function(dataFrame){
     allRecall <- append(allRecall, (correct_1) / (correct_1 + fn))
   }
   
-  write.table(allAccuracies, file="accuraciesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(allPrecision, file="precisionA.dat", row.names=FALSE, quote=FALSE)
-  write.table(allRecall, file="recallA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allPValues), file="pvaluesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allCoef), file="coefficientsA.dat", row.names=FALSE, quote=FALSE)
+  write.table(allAccuracies, file="accuraciesA_WOProfile.dat", row.names=FALSE, quote=FALSE)
+  write.table(allPrecision, file="precisionA_WOProfile.dat", row.names=FALSE, quote=FALSE)
+  write.table(allRecall, file="recallA_WOProfile.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allPValues), file="pvaluesA_WOProfile.dat", row.names=FALSE, quote=FALSE)
+  write.table(cbind(inputFeatures, allCoef), file="coefficientsA_WOProfile.dat", row.names=FALSE, quote=FALSE)
 }
 
 leaveUserOut(agrad)

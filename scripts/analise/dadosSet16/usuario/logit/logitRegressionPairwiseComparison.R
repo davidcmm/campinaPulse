@@ -155,7 +155,7 @@ create_model_wo_profile = function(the_data){
 # }
 
 #Leave user out
-leaveUserOut <- function(dataFrame){
+leaveUserOut <- function(dataFrame, threshold){
   allPValues <- matrix(0, nrow=51, ncol=1)
   allCoef <- matrix(0, nrow=51, ncol=1)
   inputFeatures <- c()
@@ -163,7 +163,7 @@ leaveUserOut <- function(dataFrame){
   allRecall <- c()
   allPrecision <- c()
   
-  for (currentUser in unique(dataFrame$userID)) { 
+  for (currentUser in c(unique(dataFrame$userID)[1:20])) { 
     userData <- filter(dataFrame, userID == currentUser)
     notUserData <- filter(dataFrame, userID != currentUser)
     
@@ -181,25 +181,29 @@ leaveUserOut <- function(dataFrame){
     }
     
     #Testing with removed user!
-    predictions <- predict(baselineModel_interac, newdata = userData, type = "response") > .5
+    predictions <- predict(baselineModel_interac, newdata = userData, type = "response") > threshold
     fp <- table(predictions, userData$choice)[2]
     fn <- table(predictions, userData$choice)[3]
     correct_1 <- table(predictions, userData$choice)[4]
     correct_0 <- table(predictions, userData$choice)[1]
+    
+    print(paste(correct_0, correct_1, fp, fn))
     
     allAccuracies <- append(allAccuracies, (correct_1 + correct_0) / length(predictions))
     allPrecision <- append(allPrecision, (correct_1) / (correct_1 + fp))
     allRecall <- append(allRecall, (correct_1) / (correct_1 + fn))
   }
   
-  write.table(allAccuracies, file="accuraciesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(allPrecision, file="precisionA.dat", row.names=FALSE, quote=FALSE)
-  write.table(allRecall, file="recallA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allPValues), file="pvaluesA.dat", row.names=FALSE, quote=FALSE)
-  write.table(cbind(inputFeatures, allCoef), file="coefficientsA.dat", row.names=FALSE, quote=FALSE)
+   write.table(allAccuracies, file=paste("accuraciesA", threshold, ".dat"), row.names=FALSE, quote=FALSE)
+   write.table(allPrecision, file=paste("precisionA", threshold, ".dat"), row.names=FALSE, quote=FALSE)
+   write.table(allRecall, file=paste("recallA", threshold, ".dat"), row.names=FALSE, quote=FALSE)
+   write.table(cbind(inputFeatures, allPValues), file=paste("pvaluesA", threshold, ".dat"), row.names=FALSE, quote=FALSE)
+   write.table(cbind(inputFeatures, allCoef), file=paste("coefficientsA", threshold, ".dat"), row.names=FALSE, quote=FALSE)
 }
 
-leaveUserOut(agrad)
+leaveUserOut(agrad, 0.5)
+leaveUserOut(agrad, 0.6)
+leaveUserOut(agrad, 0.7)
 #leaveUserOut(seg)
 
 #Safety

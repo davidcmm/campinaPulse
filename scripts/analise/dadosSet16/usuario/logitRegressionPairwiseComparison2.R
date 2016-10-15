@@ -5,19 +5,21 @@
 #Intercept é o log odds (onde odds é p / (1-p)) para o caso base, por exemplo, jovem, feminino, baixa, solteiro e diferencas das features em 0 -> pode ser um caso hipotetico!
 #Moderation x Mediation: http://psych.wisc.edu/henriques/mediator.html ; http://www.uni-kiel.de/psychologie/rexrepos/posts/regressionModMed.html
 
-library(dplyr)
 require(gmodels)
 require(vcd)
 require(lme4)
 library(caret)
 library(pscl)
-
+library(DT)
 library(ggplot2)
 theme_set(theme_bw())
 library(GGally)
+library(dplyr, warn.conflicts = F)
 library(broom)
 
-require("car")
+library(car)
+library(readr)
+
 compare_glms <- function(baseline, model){
   modelChi <- baseline$deviance - model$deviance
   chidf <- baseline$df.residual - model$df.residual
@@ -34,114 +36,122 @@ compare_null <- function(baselineModel){
 
 #classifier//classifier_input_wodraw.dat
 #../../dadosNov15/usuarios/classifier//classifier_input_wodraw.dat
-data <- read.table("classifier//classifier_input_wodraw.dat", sep="\t", header=TRUE)
+raw_data = read_delim(
+  "classifier//classifier_input_wodraw.dat",
+  delim = "\t",
+  col_types = cols(
+    .default = col_double(),
+    row = col_integer(),
+    choice = col_character(),
+    question = col_character(),
+    photo1 = col_character(),
+    photo2 = col_character(),
+    choice = col_integer(),
+    userID = col_integer(),
+    gender = col_character(),
+    age = col_character(),
+    income = col_character(),
+    education = col_character(),
+    city = col_character(),
+    marital = col_character(),
+    graffiti1 = col_character(),
+    bairro1 = col_character(),
+    graffiti2 = col_character(),
+    bairro2 = col_character()
+  )
+)
 
-#Replacing empty incomes with most common income
-empty <- data$income[7131]#Empty income value!
-data$income[data$income == empty] <- "media"
+data = raw_data %>% 
+  mutate( # Recode
+    income = if_else(is.na(income), "media", income),
+    age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
+    inc_cat = if_else(income %in% c("baixa", "media baixa"),
+                      "baixa", 
+                      "media"), # substituirá os NA
+    choice = if_else(choice == "1", "0", 
+                     if_else(choice == "-1", "1", choice)), 
+    bair_cat = if_else(bairro1 == bairro2, "mesmo", 
+                       paste0(bairro1, "_", bairro2))    
+  ) %>% 
+  mutate_at( # to factor
+    vars(income, age_cat, inc_cat, choice, bair_cat, marital, gender),
+    as.factor) %>% 
+  mutate( # relevel
+    bair_cat = relevel(bair_cat,  "mesmo"),
+    marital = relevel(marital,  "solteiro"),
+    income = relevel(income,  "baixa"),
+    age_cat = relevel(age_cat,  "jovem"),
+    gender = relevel(gender,  "feminino"),
+    inc_cat = relevel(inc_cat,  "baixa")
+  ) 
 
-#Creating categories for age and income
-data$age_cat <- "adulto"#Most common value
-data$age_cat[data$age >= 25] <- "adulto"
-data$age_cat[data$age <= 24] <- "jovem"
-data$age_cat <- as.factor(data$age_cat)
-data$inc_cat <- ""
-data$inc_cat[data$income == "baixa" | data$income == "media baixa"] <- "baixa"
-data$inc_cat[data$income == "alta" | data$income == "media alta" | data$income == "media"] <- "media"
-data$inc_cat <- as.factor(data$inc_cat)
+# Create diff features
+data = data %>%
+  mutate(
+    d_swidth = street_wid1 - street_wid2,
+    d_mvcars = mov_cars1 - mov_cars2,
+    d_pcars = park_cars1 - park_cars2,
+    d_trees = trees1 - trees2,
+    d_mvciclyst = mov_ciclyst1 - mov_ciclyst2,
+    d_lands = landscape1 - landscape2,
+    d_bid = build_ident1 - build_ident2,
+    d_bheig = log2(build_height1 + 1) - log2(build_height2 + 1),
+    d_dbuild = diff_build1 - diff_build2,
+    d_people = people1 - people2,
+    d_graff = (graffiti1 == "Yes") - (graffiti2 == "Yes")
+  )
 
-data$choice[data$choice == 1] <- 0
-data$choice[data$choice == -1] <- 1
-#data$choice[data$choice == -1] <- 0
-data$choice <- factor(data$choice)
+# SPLIT + SCALE
+agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
+  mutate_at(vars(40:50), scale)
+seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
+  mutate_at(vars(40:50), scale)
 
-data$bair_cat <- "mesmo"
-data$bair_cat[data$bairro1 == "catole" & data$bairro2 == "liberdade"] <- "cat_lib"
-data$bair_cat[data$bairro1 == "catole" & data$bairro2 == "centro"] <- "cat_cen"
-data$bair_cat[data$bairro1 == "liberdade" & data$bairro2 == "catole"] <- "lib_cat"
-data$bair_cat[data$bairro1 == "liberdade" & data$bairro2 == "centro"] <- "lib_cen"
-data$bair_cat[data$bairro1 == "centro" & data$bairro2 == "liberdade"] <- "cen_lib"
-data$bair_cat[data$bairro1 == "centro" & data$bairro2 == "catole"] <- "cen_cat"
-data$bair_cat <- factor(data$bair_cat)
+create_model_w_interact = function(the_data){
+  return(glm(
+    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
+      age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
+      gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
+      inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff),
+    data = the_data,
+    family = binomial()))
+}
 
-data$bair_cat <- relevel(data$bair_cat,  "mesmo")
-data$marital <- relevel(data$marital,  "solteiro")
-data$income <- relevel(data$income,  "baixa")
-data$age_cat <- relevel(data$age_cat,  "jovem")
-data$gender <- relevel(data$gender,  "feminino")
-data$inc_cat <- relevel(data$inc_cat,  "baixa")
+create_model_wo_profile = function(the_data){
+  return(glm(
+    choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat,
+    data = the_data,
+    family = binomial()))
+}
 
-agrad <- filter(data, question != "seguro?")
-seg <- filter(data, question == "seguro?")
+# mostpleasant_model <- create_model_w_interact(agrad)
+# summary(mostpleasant_model)
+# #anova(mostpleasant_model, test="Chisq")
+# vif(mostpleasant_model)
 
-#Differences in features!
-agrad$d_swidth = agrad$street_wid1 - agrad$street_wid2
-agrad$d_mvcars = agrad$mov_cars1 - agrad$mov_cars2
-agrad$d_pcars = agrad$park_cars1 - agrad$park_cars2
-agrad$d_trees = agrad$trees1 - agrad$trees2
-agrad$d_mvciclyst = agrad$mov_ciclyst1 - agrad$mov_ciclyst2
-agrad$d_lands = agrad$landscape1 - agrad$landscape2
-agrad$d_bid = agrad$build_ident1 - agrad$build_ident2
-agrad$d_bheig = log2(agrad$build_height1+1) - log2(agrad$build_height2+1)
-agrad$d_dbuild = agrad$diff_build1 - agrad$diff_build2
-agrad$d_people = agrad$people1 - agrad$people2
-agrad$graffiti1 <- as.character(agrad$graffiti1)
-agrad$graffiti2 <- as.character(agrad$graffiti2)
-agrad$graffiti1[agrad$graffiti1 == "No"] <- 0
-agrad$graffiti1[agrad$graffiti1 == "Yes"] <- 1
-agrad$graffiti2[agrad$graffiti2 == "No"] <- 0
-agrad$graffiti2[agrad$graffiti2 == "Yes"] <- 1
-agrad$d_graff = as.integer(agrad$graffiti1) - as.integer(agrad$graffiti2)
-#dummies <- predict(dummyVars(~ bairro1, data = agrad), newdata = agrad)
-#for(level in unique(agrad$bairro1)){
-#  agrad[paste("dummy1", level, sep = "_")] <- ifelse(agrad$bairro1 == level, TRUE, FALSE)
-#}
-#for(level in unique(agrad$bairro2)){
-#  agrad[paste("dummy2", level, sep = "_")] <- ifelse(agrad$bairro2 == level, TRUE, FALSE)
-#}
+# coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
+# coefs_ag %>% 
+#   mutate_at(vars(-1), prettyNum, digits = 3) %>% 
+#   datatable()
+# { # fix for what seems like a bug in pR2
+#     the_data = agrad
+#     pR2(mostpleasant_model)
+# }
 
+# safer_model <- create_model_w_interact(seg)
+# summary(safer_model)
+# #anova(safer_model, test="Chisq")
+# vif(safer_model)
 
-seg$d_swidth = seg$street_wid1 - seg$street_wid2
-seg$d_mvcars = seg$mov_cars1 - seg$mov_cars2
-seg$d_pcars = seg$park_cars1 - seg$park_cars2
-seg$d_trees = seg$trees1 - seg$trees2
-seg$d_mvciclyst = seg$mov_ciclyst1 - seg$mov_ciclyst2
-seg$d_lands = seg$landscape1 - seg$landscape2
-seg$d_bid = seg$build_ident1 - seg$build_ident2
-seg$d_bheig = log2(seg$build_height1+1) - log2(seg$build_height2+1)
-seg$d_dbuild = seg$diff_build1 - seg$diff_build2
-seg$d_people = seg$people1 - seg$people2
-seg$graffiti1 <- as.character(seg$graffiti1)
-seg$graffiti2 <- as.character(seg$graffiti2)
-seg$graffiti1[seg$graffiti1 == "No"] <- 0
-seg$graffiti1[seg$graffiti1 == "Yes"] <- 1
-seg$graffiti2[seg$graffiti2 == "No"] <- 0
-seg$graffiti2[seg$graffiti2 == "Yes"] <- 1
-seg$d_graff = as.integer(seg$graffiti1) - as.integer(seg$graffiti2)
-#dummies <- predict(dummyVars(~ bairro1, data = agrad), newdata = agrad)
-#for(level in unique(seg$bairro1)){
-#  seg[paste("dummy1", level, sep = "_")] <- ifelse(seg$bairro1 == level, 1, 0)
-#}
-#for(level in unique(seg$bairro2)){
-#  seg[paste("dummy2", level, sep = "_")] <- ifelse(seg$bairro2 == level, 1, 0)
-#}
+# coefs_seg = tidy(safer_model, conf.int = TRUE, exponentiate = TRUE) 
+# coefs_seg %>% 
+#   mutate_at(vars(-1), prettyNum, digits = 3) %>% 
+#   datatable()
 
-#Regressions!
-#baselineModel_wointerac <- glm(choice ~ age_cat + gender + income + marital + scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + scale(d_catole) + scale(d_centro) + scale(d_liberdade), data= agrad, family = binomial())
-#summary(baselineModel_wointerac)
-#anova(baselineModel_wointerac, test="Chisq")
-#pR2(baselineModel_wointerac)
-
-#General pleasantness regression with all data
-#age_cat + gender + income + marital + marital * ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) )
-#baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= agrad, family = binomial())
-#summary(baselineModel_interac)
-#anova(baselineModel_interac, test="Chisq")
-#pR2(baselineModel_interac)
-#exp(baselineModel_interac$coefficients)
-#result <- tidy(baselineModel_interac, conf.int = TRUE) %>% 
-#  mutate_each(funs(exp), estimate, conf.low, conf.high) #https://github.com/nazareno/ciencia-de-dados-1/blob/master/5-regressao/regressao%20logistica.Rmd
-#glance(baselineModel_interac)
+# { # fix for what seems like a bug in pR2
+#     the_data = seg
+#     pR2(safer_model)
+# }
 
 #Leave user out
 leaveUserOut <- function(dataFrame){
@@ -156,7 +166,8 @@ leaveUserOut <- function(dataFrame){
        userData <- filter(dataFrame, userID == currentUser)
        notUserData <- filter(dataFrame, userID != currentUser)
       
-       baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= notUserData, family = binomial()) 
+       #baselineModel_interac <- glm(choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + age_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +    gender : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + inc_cat : ( scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)), data= notUserData, family = binomial()) 
+       baselineModel_interac <- create_model_w_interact(notUserData)
        result <- tidy(baselineModel_interac, conf.int = TRUE) %>% mutate_each(funs(exp), estimate, conf.low, conf.high)
        
        if (mean(allPValues) == 0){

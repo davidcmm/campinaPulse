@@ -519,7 +519,7 @@ rgbBinsData$ehdNon <- apply(rgbBinsData[c(index)], 1, sum)
 rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
-for (quest in c("agradavel?", "seguro?")){
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
      res <- calcCorrelForBins(allUsersData, "V3", edge, quest)
      print(paste(quest, "Geral", edge))
@@ -527,9 +527,9 @@ for (quest in c("agradavel?", "seguro?")){
   }
 }
 
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#Separate diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
 summary(regAgrad)
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#One value for diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#One value for diagonals
 summary(regAgrad)
 regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
@@ -538,7 +538,7 @@ summary(regSeg)
 
 #Correlation and regression of rgb bins with Qscores
 sink("rgbBins_correlation.dat")
-for (quest in c("agradavel?", "seguro?")){
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
   for (i in seq(104, 167)){
      res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest)
      print(paste(quest, "Geral", paste("V",i,sep="")))
@@ -547,10 +547,10 @@ for (quest in c("agradavel?", "seguro?")){
 }
 sink()
 
-regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad)
-regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
@@ -922,7 +922,7 @@ temp$area[temp$bairro == "centro"] <- "norte"
 temp$area[temp$bairro == "liberdade"] <- "oeste"
 temp$area[temp$bairro == "catole"] <- "oeste"
 
-agrad <- filter(temp, V1 == "agradavel?")#filter(temp, V1 == "agrad%C3%A1vel?")
+agrad <- filter(temp, V1 != "seguro?")#filter(temp, V1 == "agrad%C3%A1vel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
@@ -3212,6 +3212,8 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
+t.test(agrad.l$rank, agrad.l$index, paired = TRUE)
+wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
@@ -3356,6 +3358,8 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)
 
+t.test(agrad.l$rank, agrad.l$index, paired = TRUE)
+wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
@@ -3556,6 +3560,8 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
+t.test(agrad.l$rank, agrad.l$index, paired = TRUE)
+wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
@@ -3703,6 +3709,8 @@ head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l,iterations)
 
+t.test(agrad.l$rank, agrad.l$index, paired = TRUE)
+wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
@@ -3838,6 +3846,8 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Ma
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+t.test(seg.l$rank, seg.l$index, paired = TRUE)
+wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
 res <- melt(kendallWithWeights(seg.l, iterations))
@@ -3976,6 +3986,8 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Jo
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+t.test(seg.l$rank, seg.l$index, paired = TRUE)
+wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
 res <- melt(kendallWithWeights(seg.l, iterations))
@@ -4110,6 +4122,8 @@ head(select(arrange(seg.l, diff), rank, index, diff, image_url, V3.Casado, V3.So
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+t.test(seg.l$rank, seg.l$index, paired = TRUE)
+wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(seg.l, iterations))
@@ -4238,6 +4252,8 @@ head(select(arrange(seg.l, desc(abs(diff))), rank, index, diff, image_url, V3.Ba
 seg.l <- calcDanieleCoeff(seg.l)
 seg.l2 <- simulateCoefShuffle(seg.l,iterations)
 
+t.test(seg.l$rank, seg.l$index, paired = TRUE)
+wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
 res <- melt(kendallWithWeights(seg.l, iterations))
@@ -4994,7 +5010,7 @@ novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"
 w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "R2 = 0.28")
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "R2 = 0.41")
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

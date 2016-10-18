@@ -248,4 +248,15 @@ for (index in 1:2){
   
   print(paste(filesCoef[index], coefData$V1, coefData$mean, coefData$low, coefData$high, pvalData$mean, pvalData$low, pvalData$high, sep = "\t"), quote=FALSE)
 }
+
+#Extra Trees analysis
+agrad_notprof_mean <- 0.733163476897
+agrad_notprof_sd <- 0.156556066557
+agrad_prof_mean <- 0.76 #About this value to be greater!
+agrad_prof_sd <- 0.156556066557
+
+distance <- (agrad_notprof_sd/sqrt(282)*qnorm(1-(0.05/2)))
+print(paste("Agrad not profile", agrad_notprof_mean, agrad_notprof_mean - distance, agrad_notprof_mean + distance))
+
+
 ```

@@ -250,13 +250,23 @@ for (index in 1:2){
 }
 
 #Extra Trees analysis
-agrad_notprof_mean <- 0.733163476897
-agrad_notprof_sd <- 0.156556066557
-agrad_prof_mean <- 0.76 #About this value to be greater!
-agrad_prof_sd <- 0.156556066557
+calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd){
+    distance <- (notprof_sd/sqrt(282)*qnorm(1-(0.05/2)))
+    print(paste("not profile", notprof_mean, notprof_mean - distance, notprof_mean + distance))
+    distance <- (agrad_prof_sd/sqrt(282)*qnorm(1-(0.05/2)))
+    print(paste("profile", prof_mean, prof_mean - distance, prof_mean + distance))
+}
 
-distance <- (agrad_notprof_sd/sqrt(282)*qnorm(1-(0.05/2)))
-print(paste("Agrad not profile", agrad_notprof_mean, agrad_notprof_mean - distance, agrad_notprof_mean + distance))
+agrad_notprof_mean <- 0.62605337
+agrad_notprof_sd <- 0.21846091
+agrad_prof_mean <- 0.718902866764 
+agrad_prof_sd <- 0.15760134587
+calcICFromMeanAndSD(agrad_notprof_mean,agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
+seg_notprof_mean <- 0.63881266
+seg_notprof_sd <- 0.155730723699
+seg_prof_mean <- 0.70449259231 
+seg_prof_sd <- 0.153246472321
+calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
 
 ```

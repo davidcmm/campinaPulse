@@ -270,3 +270,54 @@ seg_prof_sd <- 0.153246472321
 calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
 
 ```
+
+
+```{r visualize_models}
+#Sankey network graph!
+library(networkD3)
+
+#Exemplo Internet!
+URL <- paste0(
+        "https://cdn.rawgit.com/christophergandrud/networkD3/",
+        "master/JSONdata/energy.json")
+Energy <- jsonlite::fromJSON(URL)
+# Plot
+sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
+             Target = "target", Value = "value", NodeID = "name",
+             units = "TWh", fontSize = 12, nodeWidth = 30)
+
+#Meu exemplo!
+urbanQualities = data.frame(name=c("Enclosure", "Imageability", "Human Scale", "Coherence", "Transparency", "Tidiness", "Complexity", "Legibility", "Linkage", "Pleasantness", "Safety", "Trees", "Landscape"))
+ mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 3, 4, 5, 11), target=c(9, 9, 9, 10, 10, 0), value=c(10, 5, 2, 7, 6, 1)) )
+
+ result <- sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
+             Target = "target", Value = "value", NodeID = "name",
+             units = "%", fontSize = 12, nodeWidth = 30)
+result
+#http://sankey.csaladen.es/
+
+
+#Flow examples
+plot.new()
+par(mar=c(0,0,0,0)+.1)
+plot.window(xlim=c(0,3), ylim=c(0,9))
+xspline( c(1,1.25,1.75,2), c(9,9,4,4), s=1, lwd=32.8/4.5, border="#0000ff88", lend=1)
+xspline( c(1,1.25,1.75,2), c(8,8,4,4), s=1, lwd=32.8/4.5, border="#0000ff88", lend=1)
+xspline( c(1,1.25,1.75,2), c(7,7,4,4), s=1, lwd=32.8/4.5, border="#0000ff88", lend=1)
+xspline( c(1,1.25,1.75,2), c(6,6,4,4), s=1, lwd=19.7/4.5, border="#0000ff88", lend=1 )
+xspline( c(1,1.25,1.75,2), c(5,5,4,4), s=1, lwd=16.5/4.5, border="#0000ff88", lend=1 )
+xspline( c(1,1.25,1.75,2), c(4,4,4,4), s=1, lwd=13.8/4.5, border="#0000ff88", lend=1 )
+xspline( c(1,1.25,1.75,2), c(3,3,4,4), s=1, lwd= 7.9/4.5, border="#0000ff88", lend=1 )
+xspline( c(1,1.25,1.75,2), c(2,2,4,4), s=1, lwd= 4.8/4.5, border="#0000ff88", lend=1 )
+xspline( c(1,1.25,1.75,2), c(1,1,4,4), s=1, lwd= 4.5/4.5, border="#0000ff88", lend=1 )
+
+#text( rep(0.75, 7), 7:1, LETTERS[1:7] )
+text( rep(0.6, 9), 9:1, c("IMAGEABILITY", "ENCLOSURE", "HUMAN SCALE", "TRANSPARENCY", "TIDINESS", "COMPLEXITY", "COHERENCE", "LEGIBILITY", "LINKAGE") )
+text( 0.6, 7.6, c("Trees"),  cex=0.9)#Enclosure
+text( c(0.3, 0.8), 6.6, c("Trees", "Moving cars"),  cex=0.9)#Human Scale
+text( 0.6, 4.6, c("Landscape"),  cex=0.9)#Tidiness
+text( c(0.3, 0.3, 0.8, 0.8), c(3.75, 3.3, 3.75, 3.3), c("Trees", "Moving cars", "Parked cars", "Buildings"),  cex=0.9)#Complexity
+text( 0.6, 0.6, c("Moving cars"),  cex=0.9)#Linkage
+text( 2.25, 4, 'Pleasantness')
+ 
+```

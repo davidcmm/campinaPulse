@@ -151,8 +151,10 @@ vif(mostpleasant_model_wo_profile)
 
 coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
 coefs_ag %>% 
-  mutate_at(vars(-1), prettyNum, digits = 3) %>% 
-  datatable()
+  mutate_at(vars(-1), prettyNum, digits = 3) %>%
+  datatable() %>%
+library(xtable)
+xtable(coefs_ag)
 { # fix for what seems like a bug in pR2
   the_data = agrad
   pR2(mostpleasant_model)
@@ -257,16 +259,16 @@ calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd){
     print(paste("profile", prof_mean, prof_mean - distance, prof_mean + distance))
 }
 
-agrad_notprof_mean <- 0.62605337
-agrad_notprof_sd <- 0.21846091
-agrad_prof_mean <- 0.718902866764 
-agrad_prof_sd <- 0.15760134587
+agrad_notprof_mean <- 0.68243055
+agrad_notprof_sd <- 0.20558187
+agrad_prof_mean <- 0.68243055 
+agrad_prof_sd <- 0.20558187
 calcICFromMeanAndSD(agrad_notprof_mean,agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
 seg_notprof_mean <- 0.63881266
 seg_notprof_sd <- 0.155730723699
-seg_prof_mean <- 0.70449259231 
-seg_prof_sd <- 0.153246472321
+seg_prof_mean <- 0.65061814 
+seg_prof_sd <- 0.22117244
 calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
 
 ```
@@ -297,7 +299,7 @@ result
 #http://sankey.csaladen.es/
 
 
-#Flow examples - All!
+#Flow examples - All Urban Qualities
 plot.new()
 par(mar=c(0,0,0,0)+.1)
 plot.window(xlim=c(0,3), ylim=c(0,9))

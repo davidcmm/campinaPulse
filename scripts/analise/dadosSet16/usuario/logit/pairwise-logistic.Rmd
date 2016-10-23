@@ -152,7 +152,7 @@ vif(mostpleasant_model_wo_profile)
 coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
 coefs_ag %>% 
   mutate_at(vars(-1), prettyNum, digits = 3) %>%
-  datatable() %>%
+  datatable()
 library(xtable)
 xtable(coefs_ag)
 { # fix for what seems like a bug in pR2
@@ -259,14 +259,14 @@ calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd){
     print(paste("profile", prof_mean, prof_mean - distance, prof_mean + distance))
 }
 
-agrad_notprof_mean <- 0.68243055
-agrad_notprof_sd <- 0.20558187
+agrad_notprof_mean <- 0.637906
+agrad_notprof_sd <- 0.20848411
 agrad_prof_mean <- 0.68243055 
 agrad_prof_sd <- 0.20558187
 calcICFromMeanAndSD(agrad_notprof_mean,agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
-seg_notprof_mean <- 0.63881266
-seg_notprof_sd <- 0.155730723699
+seg_notprof_mean <- 0.56428643
+seg_notprof_sd <- 0.21240605
 seg_prof_mean <- 0.65061814 
 seg_prof_sd <- 0.22117244
 calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
@@ -341,14 +341,14 @@ xspline( c(1,1.25,1.75,2), c(1,1,4,4), s=1, lwd= 4.5/4.5, border="#0000ff88", le
 
 #text( rep(0.75, 7), 7:1, LETTERS[1:7] )
 text( rep(0.7, 8), 8:1, c("HUMAN SCALE 21%", "COMPLEXITY 18%", "TIDINESS 15%", "ENCLOSURE 11%", "IMAGEABILITY 6%",  "LINKAGE 4.8%", "COHERENCE 4.2%",  "LEGIBILITY 2%") , cex=1.4)
-text( c(0.4, 0.4, 0.9, 0.9), c(7.75, 7.3, 7.75, 7.3), c("Street width", "Trees", "People", "Moving cars"),  cex=1.2)#Human Scale
-text( c(0.4, 0.4, 0.4, 0.9, 0.9), c(6.75, 6.5, 6.3, 6.75, 6.3), c("Trees", "People", "Parked cars", "Ciclysts", "Moving cars"),  cex=1.2)#Complexity
-text( 0.7, 5.6, c("Landscape"),  cex=1.2)#Tidiness
-text( c(0.4, 0.9), 4.6, c("Trees", "Street width"),  cex=1.2)#Enclosure
-text( c(0.4, 0.9), 3.6, c("Buildings ident", "People"),  cex=1.2)#Imageability
-text( c(0.4, 0.9), 2.6, c("Street width", "Moving cars"),  cex=1.2)#Linkage
-text( 0.7, 1.6, c("People"),  cex=1.2)#Coherence
-text( 0.7, 0.6, c("Buildings ident"),  cex=1.2)#Legibility
+text( c(0.4, 0.4, 0.9, 0.9), c(7.7, 7.3, 7.7, 7.3), c("Street width", "Trees", "People", "Moving cars"),  cex=1.4)#Human Scale
+text( c(0.4, 0.65, 0.4, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Trees", "People", "Parked cars", "Ciclysts", "Moving cars"),  cex=1.4)#Complexity
+text( 0.7, 5.6, c("Landscape"),  cex=1.4)#Tidiness
+text( c(0.4, 0.9), 4.6, c("Trees", "Street width"),  cex=1.4)#Enclosure
+text( c(0.4, 0.9), 3.6, c("Buildings ident", "People"),  cex=1.4)#Imageability
+text( c(0.4, 0.9), 2.6, c("Street width", "Moving cars"),  cex=1.4)#Linkage
+text( 0.7, 1.6, c("People"),  cex=1.4)#Coherence
+text( 0.7, 0.6, c("Buildings ident"),  cex=1.4)#Legibility
 
 text( 2.25, 4, 'Pleasantness', cex=1.4)
 
@@ -372,13 +372,13 @@ xspline( c(1,1.25,1.75,2), c(1,1,4,4), s=1, lwd= 4.5/4.5, border="#0000ff88", le
 
 #text( rep(0.75, 7), 7:1, LETTERS[1:7] )
 text( rep(0.7, 7), 7:1, c("COMPLEXITY 36.9%", "HUMAN SCALE 30%", "LINKAGE 17.9%", "TIDINESS 12.6%", "ENCLOSURE 8.5%", "IMAGEABILITY 7.4%",  "COHERENCE 7.4%" ) , cex=1.4)
-text( c(0.4, 0.4, 0.4, 0.9, 0.9), c(6.75, 6.5, 6.3, 6.75, 6.3), c("Moving cars", "Parked cars", "Trees", "People", "Buildings"),  cex=1.2)#Complexity
-text( c(0.4, 0.4, 0.9, 0.9), c(5.75, 5.3, 5.75, 5.3), c("Moving cars", "Trees", "People", "Street width"),  cex=1.2)#Human Scale
-text( c(0.4, 0.9), 4.6, c("Moving cars", "Street width"),  cex=1.2)#Linkage
-text( 0.7, 3.6, c("Landscape"),  cex=1.2)#Tidiness
-text( c(0.4, 0.9), 2.6, c("Trees", "Street width"),  cex=1.2)#Enclosure
-text( 0.7, 1.6, c("People"),  cex=1.2)#Imageability
-text( 0.7, 0.6, c("People"),  cex=1.2)#Coherence
+text( c(0.4, 0.7, 0.4, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Moving cars", "Trees", "Parked cars", "People", "Buildings"),  cex=1.4)#Complexity
+text( c(0.4, 0.4, 0.9, 0.9), c(5.75, 5.3, 5.75, 5.3), c("Moving cars", "Trees", "People", "Street width"),  cex=1.4)#Human Scale
+text( c(0.4, 0.9), 4.6, c("Moving cars", "Street width"),  cex=1.4)#Linkage
+text( 0.7, 3.6, c("Landscape"),  cex=1.4)#Tidiness
+text( c(0.4, 0.9), 2.6, c("Trees", "Street width"),  cex=1.4)#Enclosure
+text( 0.7, 1.6, c("People"),  cex=1.4)#Imageability
+text( 0.7, 0.6, c("People"),  cex=1.4)#Coherence
 
 text( 2.25, 4, 'Safety', cex=1.4)
 dev.off()

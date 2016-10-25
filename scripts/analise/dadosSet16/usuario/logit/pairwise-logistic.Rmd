@@ -276,6 +276,7 @@ calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd
 
 ```{r visualize_models}
 #Sankey network graph!
+#Online tool: http://sankey.csaladen.es/
 library(networkD3)
 
 #Exemplo Internet!
@@ -288,14 +289,21 @@ sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
              units = "TWh", fontSize = 12, nodeWidth = 30)
 
-#Meu exemplo!
-urbanQualities = data.frame(name=c("Enclosure", "Imageability", "Human Scale", "Coherence", "Transparency", "Tidiness", "Complexity", "Legibility", "Linkage", "Pleasantness", "Safety", "Trees", "Landscape"))
- mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 3, 4, 5, 11), target=c(9, 9, 9, 10, 10, 0), value=c(10, 5, 2, 7, 6, 1)) )
+#Pleasantness!
+urbanQualities = data.frame(name=c("Street width", "Trees", "People", "Moving cars", "Cyclist", "Human Scale - 52%", "Parked cars", "Trees", "Cyclists", "People", "Moving cars", "Complexity - 45.4%", "Maintenance", "Tidiness - 37.3%", "Street width", "Trees", "Enclosure - 27.8%", "Buildings Identifiers", "People", "Imageability - 15.6%", "Street width", "Linkage - 12%", "People", "Coherence - 10.5%", "Buildings with identifiers", "Legibility - 5.1%", "Pleasantness"))
+ mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 14, 15, 17, 18, 20, 22, 24, 5, 11, 13, 16, 19, 21, 23, 25), target=c(5, 5, 5, 5, 5, 11, 11, 11, 11, 11, 13, 16, 16, 19, 19, 21, 23, 25, 26, 26, 26, 26, 26, 26, 26, 26), value=c(6.13+5.91, 7+8.7, 10.5, 9.47, 4.61, 5.1, 7+8.77, 4.6, 10.5, 9.4, 27+5.5+4.7, 6.1+5.9, 7+8.77, 5.1, 10.5, 6.1+5.9, 10.5, 5.1, 52, 45.4, 37.3, 27.8, 15.6, 12, 10.5, 5.1)) )
 
- result <- sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
+sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
-             units = "%", fontSize = 12, nodeWidth = 30)
-result
+             units = "%", fontSize = 12, nodeWidth = 20)
+
+#Safety!
+urbanQualities = data.frame(name=c("Moving cars", "Parked cars", "Trees", "People", "Buildings", "Complexity - 69.3%", "Moving cars", "Trees", "People", "Street width", "Human Scale - 56.5%", "Moving cars", "Street width", "Linkage - 33.5%", "Maintenance", "Tidiness - 23.7%", "Trees", "Street width", "Enclosure - 16%", "People", "Imageability - 13.88%", "People", "Coherence - 13.88%", "Safety"))
+ mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 14, 16, 17, 19, 21, 5, 10, 13, 15, 18, 20, 22), target=c(5, 5, 5, 5, 5, 10, 10, 10, 10, 13, 13, 15, 18, 18, 20, 22, 23, 23, 23, 23, 23, 23, 23), value=c(15.5+4.7, 6.9, 5.4+3.6, 7.2+6.6, 7.33+5.3, 15.55+4.7+6.3, 5.4+3.6, 7.2+6.6, 6.9, 15.55+4.7+6.3, 6.9, 14.6+4.7+4.2, 5.4+3.6, 6.9, 7.2+6.6, 7.2+6.6, 69.3, 56.5, 33.5, 23.7, 16, 13.88, 13.88)) )
+
+sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
+             Target = "target", Value = "value", NodeID = "name",
+             units = "%", fontSize = 12, nodeWidth = 20)
 #http://sankey.csaladen.es/
 
 
@@ -341,14 +349,14 @@ xspline( c(1,1.25,1.75,2), c(1,1,4,4), s=1, lwd= 4.5/4.5, border="#0000ff88", le
 
 #text( rep(0.75, 7), 7:1, LETTERS[1:7] )
 text( rep(0.7, 8), 8:1, c("HUMAN SCALE 21%", "COMPLEXITY 18%", "TIDINESS 15%", "ENCLOSURE 11%", "IMAGEABILITY 6%",  "LINKAGE 4.8%", "COHERENCE 4.2%",  "LEGIBILITY 2%") , cex=1.4)
-text( c(0.4, 0.4, 0.9, 0.9), c(7.7, 7.3, 7.7, 7.3), c("Street width", "Trees", "People", "Moving cars"),  cex=1.4)#Human Scale
-text( c(0.4, 0.65, 0.4, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Trees", "People", "Parked cars", "Ciclysts", "Moving cars"),  cex=1.4)#Complexity
-text( 0.7, 5.6, c("Landscape"),  cex=1.4)#Tidiness
-text( c(0.4, 0.9), 4.6, c("Trees", "Street width"),  cex=1.4)#Enclosure
-text( c(0.4, 0.9), 3.6, c("Buildings ident", "People"),  cex=1.4)#Imageability
-text( c(0.4, 0.9), 2.6, c("Street width", "Moving cars"),  cex=1.4)#Linkage
-text( 0.7, 1.6, c("People"),  cex=1.4)#Coherence
-text( 0.7, 0.6, c("Buildings ident"),  cex=1.4)#Legibility
+text( c(0.4, 0.4, 0.9, 0.9), c(7.7, 7.3, 7.7, 7.3), c("Street width(-)", "Trees(+)", "People(+)", "Moving cars(+)"),  cex=1.4)#Human Scale
+text( c(0.2, 0.55, 0.2, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Trees(+)", "People(+)", "Parked cars(+)", "Ciclysts(+)", "Moving cars(+)"),  cex=1.4)#Complexity
+text( 0.7, 5.6, c("Landscape(+)"),  cex=1.4)#Tidiness
+text( c(0.4, 0.9), 4.6, c("Trees(+)", "Street width(-)"),  cex=1.4)#Enclosure
+text( c(0.4, 0.9), 3.6, c("Buildings ident(+)", "People(+)"),  cex=1.4)#Imageability
+text( c(0.4, 0.9), 2.6, c("Street width(?)", "Moving cars(?)"),  cex=1.4)#Linkage
+text( 0.7, 1.6, c("People(+)"),  cex=1.4)#Coherence
+text( 0.7, 0.6, c("Buildings ident(+)"),  cex=1.4)#Legibility
 
 text( 2.25, 4, 'Pleasantness', cex=1.4)
 
@@ -372,13 +380,13 @@ xspline( c(1,1.25,1.75,2), c(1,1,4,4), s=1, lwd= 4.5/4.5, border="#0000ff88", le
 
 #text( rep(0.75, 7), 7:1, LETTERS[1:7] )
 text( rep(0.7, 7), 7:1, c("COMPLEXITY 36.9%", "HUMAN SCALE 30%", "LINKAGE 17.9%", "TIDINESS 12.6%", "ENCLOSURE 8.5%", "IMAGEABILITY 7.4%",  "COHERENCE 7.4%" ) , cex=1.4)
-text( c(0.4, 0.7, 0.4, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Moving cars", "Trees", "Parked cars", "People", "Buildings"),  cex=1.4)#Complexity
-text( c(0.4, 0.4, 0.9, 0.9), c(5.75, 5.3, 5.75, 5.3), c("Moving cars", "Trees", "People", "Street width"),  cex=1.4)#Human Scale
-text( c(0.4, 0.9), 4.6, c("Moving cars", "Street width"),  cex=1.4)#Linkage
-text( 0.7, 3.6, c("Landscape"),  cex=1.4)#Tidiness
-text( c(0.4, 0.9), 2.6, c("Trees", "Street width"),  cex=1.4)#Enclosure
-text( 0.7, 1.6, c("People"),  cex=1.4)#Imageability
-text( 0.7, 0.6, c("People"),  cex=1.4)#Coherence
+text( c(0.2, 0.6, 0.4, 0.9, 0.9), c(6.7, 6.6, 6.3, 6.7, 6.3), c("Moving cars(+)", "Trees(+)", "Parked cars(+)", "People(+)", "Buildings(+)"),  cex=1.4)#Complexity
+text( c(0.4, 0.4, 0.9, 0.9), c(5.7, 5.3, 5.7, 5.3), c("Moving cars(+)", "Trees(+)", "People(+)", "Street width(-)"),  cex=1.4)#Human Scale
+text( c(0.4, 0.9), 4.6, c("Moving cars(?)", "Street width(?)"),  cex=1.4)#Linkage
+text( 0.7, 3.6, c("Landscape(+)"),  cex=1.4)#Tidiness
+text( c(0.4, 0.9), 2.6, c("Trees(+)", "Street width(-)"),  cex=1.4)#Enclosure
+text( 0.7, 1.6, c("People(+)"),  cex=1.4)#Imageability
+text( 0.7, 0.6, c("People(+)"),  cex=1.4)#Coherence
 
 text( 2.25, 4, 'Safety', cex=1.4)
 dev.off()

@@ -3,7 +3,7 @@
 #Assumptions: http://www.statisticssolutions.com/assumptions-of-logistic-regression/ -> no multicollinearity, he independent variables should be independent from each other; 
 #Interpret coefficients: http://www.ats.ucla.edu/stat/mult_pkg/faq/general/odds_ratio.htm
 #Intercept é o log odds (onde odds é p / (1-p)) para o caso base, por exemplo, jovem, feminino, baixa, solteiro e diferencas das features em 0 -> pode ser um caso hipotetico!
-#Moderation x Mediation: http://psych.wisc.edu/henriques/mediator.html ; http://www.uni-kiel.de/psychologie/rexrepos/posts/regressionModMed.html
+#Moderation x Mediation: http://psych.wisc.edu/henriques/mediator.html ; http://www.uni-kiel.de/psychologie/rexrepos/posts/regressionModMed.html; http://www.ats.ucla.edu/stat/spss/seminars/process_macro/process_training.htm; https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2908713/ (representação gráfica)
 
 require(gmodels)
 require(vcd)

@@ -291,6 +291,38 @@ Residual standard error: 0.4763 on 98 degrees of freedom
 Multiple R-squared:  0.3209,	Adjusted R-squared:  0.2516 
 F-statistic:  4.63 on 10 and 98 DF,  p-value: 2.156e-05
 
+>>>> Cada grupo de 1000 pixels!
+Call:
+lm(formula = V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + 
+    V150 + V162 + V167, data = filter(data, V1 == "agrad%C3%A1vel?"), 
+    na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.15931 -0.32265  0.03767  0.27251  0.93585 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  5.185197   0.200077  25.916   <2e-16 ***
+V108         0.037030   0.017839   2.076   0.0405 *  
+V120        -0.027855   0.015658  -1.779   0.0783 .  
+V128         3.300543   1.566800   2.107   0.0377 *  
+V140        -0.172683   0.136439  -1.266   0.2086    
+V141        -0.019790   0.007961  -2.486   0.0146 *  
+V144         0.623191   1.826482   0.341   0.7337    
+V149        -8.501696  83.365585  -0.102   0.9190    
+V150        -0.154353   0.076426  -2.020   0.0462 *  
+V162         0.096489   0.072177   1.337   0.1844    
+V167        -0.005338   0.003004  -1.777   0.0787 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4763 on 98 degrees of freedom
+Multiple R-squared:  0.3209,	Adjusted R-squared:  0.2516 
+F-statistic:  4.63 on 10 and 98 DF,  p-value: 2.156e-05
+
+
+#### Segurança
 Call:
 lm(formula = V3 ~ red + green + blue, data = filter(allUsersData, 
     V1 == "seguro?"), na.action = na.exclude)
@@ -340,6 +372,42 @@ V144         3.453e-03  1.709e-03   2.021  0.04620 *
 V157         6.427e-04  4.758e-04   1.351  0.18008    
 V161         7.816e-04  8.571e-04   0.912  0.36422    
 V162         6.128e-05  7.918e-05   0.774  0.44096    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4609 on 92 degrees of freedom
+Multiple R-squared:  0.255,	Adjusted R-squared:  0.1254 
+F-statistic: 1.968 on 16 and 92 DF,  p-value: 0.02356
+
+>>> Grupos de 1000 pixels!
+Call:
+lm(formula = V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V131 + 
+    V136 + V137 + V140 + V141 + V142 + V144 + V157 + V161 + V162, 
+    data = filter(data, V1 == "seguro?"), na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.21661 -0.25821  0.00749  0.30516  1.06249 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.805565   0.107829  44.566  < 2e-16 ***
+V105        -0.030384   0.077874  -0.390  0.69732    
+V109         0.072305   0.055138   1.311  0.19301    
+V110        -0.280916   0.256700  -1.094  0.27667    
+V114        -0.257601   2.387175  -0.108  0.91430    
+V115         1.268806   1.529147   0.830  0.40883    
+V121         0.327449   0.330180   0.992  0.32393    
+V131         0.182857   0.553836   0.330  0.74203    
+V136        -0.012345   0.059818  -0.206  0.83695    
+V137        -0.210629   0.180086  -1.170  0.24518    
+V140        -0.094921   0.177507  -0.535  0.59412    
+V141        -0.025486   0.007697  -3.311  0.00133 ** 
+V142        -0.027481   0.221665  -0.124  0.90160    
+V144         3.453176   1.708780   2.021  0.04620 *  
+V157         0.642716   0.475811   1.351  0.18008    
+V161         0.781607   0.857146   0.912  0.36422    
+V162         0.061280   0.079181   0.774  0.44096    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -443,7 +511,7 @@ Multiple R-squared:  0.3748,	Adjusted R-squared:  0.224
 F-statistic: 2.484 on 21 and 87 DF,  p-value: 0.001696
 
 
->>> Sem scale
+>>> Sem scale, sem intercept
 \begin{table}
 \begin{center}
 \begin{tabular}{l c c }
@@ -491,7 +559,7 @@ RMSE                    & 23.330            & 23.451            \\
 \end{center}
 \end{table}
 
->>> Com scale
+>>> Com scale, com intercept
 \begin{table}
 \begin{center}
 \begin{tabular}{l c c }
@@ -531,6 +599,54 @@ R$^2$                & 0.514            & 0.510            \\
 Adj. R$^2$           & 0.447            & 0.442            \\
 Num. obs.            & 108              & 108              \\
 RMSE                 & 23.301           & 23.390           \\
+\hline
+\multicolumn{3}{l}{\scriptsize{$^{***}p<0.001$, $^{**}p<0.01$, $^*p<0.05$, $^{\cdot}p<0.1$}}
+\end{tabular}
+\caption{Statistical models}
+\label{table:coefficients}
+\end{center}
+\end{table}
+
+>> Sem scale, com intercept
+begin{table}
+\begin{center}
+\begin{tabular}{l c c }
+\hline
+ & Model 1 & Model 2 \\
+\hline
+(Intercept)             & $-39.397^{\cdot}$ & $-56.479^{**}$    \\
+                        & $(19.985)$        & $(20.089)$        \\
+street\_wid             & $0.003$           & $0.068$           \\
+                        & $(0.379)$         & $(0.381)$         \\
+mov\_cars               & $-1.242$          & $2.677$           \\
+                        & $(1.739)$         & $(1.749)$         \\
+park\_cars              & $1.013$           & $1.976^{*}$       \\
+                        & $(0.763)$         & $(0.767)$         \\
+mov\_ciclyst            & $1.390$           & $-0.897$          \\
+                        & $(4.063)$         & $(4.084)$         \\
+landscape               & $23.384^{***}$    & $20.743^{***}$    \\
+                        & $(3.463)$         & $(3.481)$         \\
+build\_ident            & $-1.842^{\cdot}$  & $-1.349$          \\
+                        & $(0.989)$         & $(0.994)$         \\
+trees                   & $2.657^{*}$       & $1.527$           \\
+                        & $(1.173)$         & $(1.179)$         \\
+log2(build\_height + 1) & $0.622$           & $2.962$           \\
+                        & $(3.371)$         & $(3.389)$         \\
+people                  & $-0.000$          & $2.504^{*}$       \\
+                        & $(1.135)$         & $(1.141)$         \\
+centro                  & $0.720$           & $8.264$           \\
+                        & $(7.572)$         & $(7.612)$         \\
+catole                  & $11.405^{\cdot}$  & $7.769$           \\
+                        & $(6.178)$         & $(6.210)$         \\
+diff\_build             & $0.997$           & $2.005$           \\
+                        & $(1.514)$         & $(1.522)$         \\
+graffitiYes             & $-8.140$          & $-15.508^{\cdot}$ \\
+                        & $(8.387)$         & $(8.431)$         \\
+\hline
+R$^2$                   & 0.513             & 0.507             \\
+Adj. R$^2$              & 0.445             & 0.439             \\
+Num. obs.               & 108               & 108               \\
+RMSE                    & 23.330            & 23.451            \\
 \hline
 \multicolumn{3}{l}{\scriptsize{$^{***}p<0.001$, $^{**}p<0.01$, $^*p<0.05$, $^{\cdot}p<0.1$}}
 \end{tabular}

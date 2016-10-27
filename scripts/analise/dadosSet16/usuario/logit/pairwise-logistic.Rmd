@@ -109,6 +109,9 @@ data = data %>%
     d_graff = (graffiti1 == "Yes") - (graffiti2 == "Yes")
   )
 
+#Creating file to be used with classify.py pairwise prediction
+write.table(file = "input_to_classifier_predictions.dat", x = select(data, photo1, photo2, question, choice, d_swidth, d_mvcars, d_pcars, d_trees, d_mvciclyst, d_lands, d_bid, d_bheig, d_dbuild, d_people, d_graff, bair_cat, gender, age_cat, inc_cat),quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
+
 # SPLIT + SCALE
 agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
   mutate_at(vars(40:50), scale)
@@ -295,7 +298,7 @@ urbanQualities = data.frame(name=c("Street width", "Trees", "People", "Moving ca
 
 sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
-             units = "%", fontSize = 12, nodeWidth = 20)
+             units = "%", fontSize = 16, nodeWidth = 20)
 
 #Safety!
 urbanQualities = data.frame(name=c("Moving cars", "Parked cars", "Trees", "People", "Buildings", "Complexity - 69.3%", "Moving cars", "Trees", "People", "Street width", "Human Scale - 56.5%", "Moving cars", "Street width", "Linkage - 33.5%", "Maintenance", "Tidiness - 23.7%", "Trees", "Street width", "Enclosure - 16%", "People", "Imageability - 13.88%", "People", "Coherence - 13.88%", "Safety"))
@@ -303,7 +306,7 @@ urbanQualities = data.frame(name=c("Moving cars", "Parked cars", "Trees", "Peopl
 
 sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
-             units = "%", fontSize = 12, nodeWidth = 20)
+             units = "%", fontSize = 16, nodeWidth = 20)
 #http://sankey.csaladen.es/
 
 

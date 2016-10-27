@@ -924,8 +924,8 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 				#Printing artificial predictions!
 				y_pred = best_clf.predict(X_test_scaled)
-				X_test['choice'] = y_pred
-				print X_test
+				current_df_test['prediction'] = y_pred
+				print current_df_test
 				
 				#print ">>> Pos"
 				#print str(history_acc)
@@ -959,9 +959,11 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 def prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, consider_moderation):
 	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile '''
 
-	df = pd.read_table(input_file, sep=' ', encoding='utf8', header=0)
-	y = pd.read_csv(input_choice)
-	df['choice'] = y
+	all_df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
+	if question == "Pleasantness":
+		df = all_df[(all_df.question != "seguro?")]
+	else:
+		df = all_df[(all_df.question == "seguro?")]
 
 	df_user = pd.get_dummies(df, columns=['age_cat', 'gender', 'inc_cat'], prefix='user')
 	df_user_bairro = pd.get_dummies(df_user, columns=['bair_cat'], prefix='bairro')
@@ -1040,13 +1042,11 @@ if __name__ == "__main__":
 
 		question = ""
 		if sys.argv[3].lower() == "agrad":
-			input_file = 'flavio_class_moderated/agrad.dat'
-			input_choice = 'flavio_class_moderated/y_agrad.dat'
 			question = "Pleasantness"
+			input_file = "classifier_input_wodraw.dat"
 		else:
-			input_file = 'flavio_class_moderated/seg.dat'
-			input_choice = 'flavio_class_moderated/y_seg.dat'
 			question = "Safety"
+			input_file = "classifier_input_wodraw.dat"
 
 		prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
 

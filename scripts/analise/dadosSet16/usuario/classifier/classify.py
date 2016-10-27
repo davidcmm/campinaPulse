@@ -969,10 +969,10 @@ def prepare_pairwise_leave_out(question, input_file, input_choice, parameters_di
 	user_ids = df_user_bairro['userID'].unique()
 
 	#del df_user_bairro['userID']
-	del df_user_bairro['bairro_mesmo']
-	del df_user_bairro['user_jovem']
-	del df_user_bairro['user_feminino']
-	del df_user_bairro['user_baixa']
+	#del df_user_bairro['bairro_mesmo']
+	#del df_user_bairro['user_jovem']
+	#del df_user_bairro['user_feminino']
+	#del df_user_bairro['user_baixa']
 	df_user_bairro = sm.add_constant(df_user_bairro)
 
 	if consider_moderation == "y":

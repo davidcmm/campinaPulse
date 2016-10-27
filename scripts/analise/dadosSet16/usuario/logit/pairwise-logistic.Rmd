@@ -110,7 +110,7 @@ data = data %>%
   )
 
 #Creating file to be used with classify.py pairwise prediction
-write.table(file = "input_to_classifier_predictions.dat", x = select(data, photo1, photo2, question, choice, d_swidth, d_mvcars, d_pcars, d_trees, d_mvciclyst, d_lands, d_bid, d_bheig, d_dbuild, d_people, d_graff, bair_cat, gender, age_cat, inc_cat),quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
+write.table(file = "classifier/input_to_classifier_predictions.dat", x = select(data, userID, photo1, photo2, question, choice, d_swidth, d_mvcars, d_pcars, d_trees, d_mvciclyst, d_lands, d_bid, d_bheig, d_dbuild, d_people, d_graff, bair_cat, gender, age_cat, inc_cat),quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
 # SPLIT + SCALE
 agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 

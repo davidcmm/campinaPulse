@@ -1043,10 +1043,10 @@ if __name__ == "__main__":
 		question = ""
 		if sys.argv[3].lower() == "agrad":
 			question = "Pleasantness"
-			input_file = "classifier_input_wodraw.dat"
+			input_file = "input_to_classifier_predictions.dat"
 		else:
 			question = "Safety"
-			input_file = "classifier_input_wodraw.dat"
+			input_file = "input_to_classifier_predictions.dat"
 
 		prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
 

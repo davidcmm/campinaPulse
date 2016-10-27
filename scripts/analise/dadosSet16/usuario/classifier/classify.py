@@ -838,7 +838,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	list_of_predictors.extend(cols_to_combine)
 	list_of_predictors.extend(cols_to_scale)
 	list_of_predictors.extend(bairro_cols)
-	print ">>>>> " + str(list_of_predictors)
+	print "choice\t" + "\t".join(list_of_predictors)
 
 	for user_id in user_ids:#Remove each user sequentially
 
@@ -854,7 +854,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	
 		for classifier_index in range(0, len(classifiers)):
 
-			print "### User " + str(user_id)
+			#print "### User " + str(user_id)
 
 			if parameters_dic.has_key(classifiers_names[classifier_index]):
 				parameters_to_optimize = parameters_dic[classifiers_names[classifier_index]]
@@ -920,7 +920,12 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 				history_features_importances.append(best_clf.feature_importances_)
 
-				print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
+				#print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
+
+				#Printing artificial predictions!
+				y_pred = best_clf.predict(X_test_scaled)
+				X_test['choice'] = y_pred
+				print X_test
 				
 				#print ">>> Pos"
 				#print str(history_acc)
@@ -937,8 +942,8 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	mean_micro = np.mean(np.array(history_micro), axis=0)
 	std_macro = np.std(np.array(history_macro), axis=0)
 	mean_macro = np.mean(np.array(history_macro), axis=0)
-	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
-	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+	#print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	#print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
 
 	#Features importances!
 	std_importances = np.std(np.array(history_features_importances), axis=0)
@@ -947,11 +952,11 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
 	
 	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
-	print ">>>> Importances "
-	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+	#print ">>>> Importances "
+	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 
 
-def pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, consider_moderation):
+def prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, consider_moderation):
 	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile '''
 
 	df = pd.read_table(input_file, sep=' ', encoding='utf8', header=0)
@@ -1043,7 +1048,7 @@ if __name__ == "__main__":
 			input_choice = 'flavio_class_moderated/y_seg.dat'
 			question = "Safety"
 
-		pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
+		prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
 
 	else:#Train, test classifiers!
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)

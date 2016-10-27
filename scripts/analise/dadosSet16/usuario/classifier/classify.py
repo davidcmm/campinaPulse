@@ -956,7 +956,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 
 
-def prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, consider_moderation):
+def prepare_pairwise_leave_out(question, input_file, parameters_dic, classifiers_names, classifiers, consider_moderation):
 	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile '''
 
 	all_df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
@@ -1048,7 +1048,7 @@ if __name__ == "__main__":
 			question = "Safety"
 			input_file = "input_to_classifier_predictions.dat"
 
-		prepare_pairwise_leave_out(question, input_file, input_choice, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
+		prepare_pairwise_leave_out(question, input_file, parameters_dic, classifiers_names, classifiers, sys.argv[4].lower())
 
 	else:#Train, test classifiers!
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)

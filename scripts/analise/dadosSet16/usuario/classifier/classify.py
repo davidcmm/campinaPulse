@@ -845,7 +845,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	pd.set_option('display.max_colwidth', 500)
 	pd.set_option('display.width', 500)
 
-	for user_id in [user_ids[0]]:#Remove each user sequentially
+	for user_id in user_ids:#Remove each user sequentially
 
 		current_df_train = df_new[(df_new.userID != user_id)]
 		current_df_test = df_new[(df_new.userID == user_id)]
@@ -950,12 +950,12 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	#print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
 
 	#Features importances!
-	std_importances = np.std(np.array(history_features_importances), axis=0)
-	mean_importances = np.mean(np.array(history_features_importances), axis=0)
-	for index in range(0, len(list_of_predictors)):
-		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
-	
-	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	#std_importances = np.std(np.array(history_features_importances), axis=0)
+	#mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	#for index in range(0, len(list_of_predictors)):
+	#	importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	#
+	#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
 	#print ">>>> Importances "
 	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 

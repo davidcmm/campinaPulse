@@ -867,7 +867,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				best_clf = None
 				best_f1 = []
 
-				for train, test in StratifiedKFold(answer, n_folds=2): #5folds
+				for train, test in StratifiedKFold(answer, n_folds=3): #5folds
 
 					predictors_train = predictors[train]
 					answer_train = answer[train]
@@ -878,7 +878,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 					X_test_scaled = predictors_test
 
 					classifier = GridSearchCV(classifiers[classifier_index], 
-					      param_grid=parameters_to_optimize, cv=2)
+					      param_grid=parameters_to_optimize, cv=3)
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1

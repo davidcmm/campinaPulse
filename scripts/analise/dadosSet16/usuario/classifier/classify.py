@@ -838,9 +838,14 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	list_of_predictors.extend(cols_to_combine)
 	list_of_predictors.extend(cols_to_scale)
 	list_of_predictors.extend(bairro_cols)
-	print "choice\t" + "\t".join(list_of_predictors)
+	print "choice\tprediction\t" + "\t".join(list_of_predictors)
 
-	for user_id in user_ids:#Remove each user sequentially
+	pd.set_option('display.max_columns', 50)
+	pd.set_option('display.max_rows', 50)
+	pd.set_option('display.max_colwidth', 500)
+	pd.set_option('display.width', 500)
+
+	for user_id in [user_ids[0]]:#Remove each user sequentially
 
 		current_df_train = df_new[(df_new.userID != user_id)]
 		current_df_test = df_new[(df_new.userID == user_id)]
@@ -862,7 +867,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				best_clf = None
 				best_f1 = []
 
-				for train, test in StratifiedKFold(answer, n_folds=3): #5folds
+				for train, test in StratifiedKFold(answer, n_folds=2): #5folds
 
 					predictors_train = predictors[train]
 					answer_train = answer[train]
@@ -873,7 +878,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 					X_test_scaled = predictors_test
 
 					classifier = GridSearchCV(classifiers[classifier_index], 
-					      param_grid=parameters_to_optimize, cv=3)
+					      param_grid=parameters_to_optimize, cv=2)
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1
@@ -912,21 +917,20 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
 				y_pred = best_clf.predict(X_test_scaled)#Estimated values
 
-				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
-				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
-				history_micro.append(metrics_micro[0:3])
-				history_macro.append(metrics_macro[0:3])
-				history_acc.append(accuracy)
+				#metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+				#metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+				#history_micro.append(metrics_micro[0:3])
+				#history_macro.append(metrics_macro[0:3])
+				#history_acc.append(accuracy)
 
-				history_features_importances.append(best_clf.feature_importances_)
+				#history_features_importances.append(best_clf.feature_importances_)
 
 				#print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
 
 				#Printing artificial predictions!
 				y_pred = best_clf.predict(X_test_scaled)
 				current_df_test['prediction'] = y_pred
-				print current_df_test
-				
+				print(current_df_test.to_string())
 				#print ">>> Pos"
 				#print str(history_acc)
 				#print str(history_micro)

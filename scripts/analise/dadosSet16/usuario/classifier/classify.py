@@ -965,9 +965,9 @@ def prepare_pairwise_leave_out(question, input_file, parameters_dic, classifiers
 
 	all_df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 	if question == "Pleasantness":
-		df = all_df[("agrad" in all_df.question)]
+		df = all_df[(all_df.question == "agradavel") | (all_df.question == "agrad%C3%A1vel?")]
 	else:
-		df = all_df[("seguro" in all_df.question)]
+		df = all_df[(all_df.question == "seguro") | (all_df.question == "seguro?")]
 
 	df_user = pd.get_dummies(df, columns=['age_cat', 'gender', 'inc_cat'], prefix='user')
 	df_user_bairro = pd.get_dummies(df_user, columns=['bair_cat'], prefix='bairro')
@@ -1090,7 +1090,7 @@ if __name__ == "__main__":
 
 		#Pleasantness and safety data
 		list_of_predictors_agrad = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
-		agrad_df = df_to_use[("agrad" in df_to_use.question)]
+		agrad_df = df_to_use[(df_to_use.question == "agradavel") | (df_to_use.question == "agrad%C3%A1vel?")]
 		agrad_df = convertColumnsToDummy(agrad_df)
 		for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
 			if not column in agrad_df.columns:
@@ -1099,7 +1099,7 @@ if __name__ == "__main__":
 		predictors_agrad = agrad_df[list_of_predictors_agrad].values #Predictors
 	
 		list_of_predictors_seg = ['age', 'masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado', 'street_wid1', 'mov_cars1', 'park_cars1', 'mov_ciclyst1', 'landscape1', 'build_ident1', 'trees1', 'build_height1', 'diff_build1', 'people1', 'graffiti1_No', 'graffiti1_Yes', 'bairro1_catole', 'bairro1_centro', 'bairro1_liberdade', 'street_wid2', 'mov_cars2', 'park_cars2', 'mov_ciclyst2', 'landscape2', 'build_ident2', 'trees2', 'build_height2', 'diff_build2', 'people2', 'graffiti2_No', 'graffiti2_Yes', 'bairro2_catole', 'bairro2_centro', 'bairro2_liberdade']#, 'graduacao', 'mestrado', 'ensino medio'
-		seg_df = df_to_use[("seguro" in df_to_use.question)]
+		seg_df = df_to_use[(df_to_use.question == "seguro") | (df_to_use.question == "seguro?")]
 		seg_df = convertColumnsToDummy(seg_df)
 		for column in ['masculino', 'feminino', 'baixa', 'media baixa', 'media', 'media alta', 'solteiro', 'casado']:
 			if not column in seg_df.columns:

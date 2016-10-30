@@ -847,7 +847,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	print_columns = True
 	#output_file = open("cslassifier_input_"+question+"_artificial.dat", "wa")
 
-	for user_id in [user_ids[0]]:#Remove each user sequentially
+	for user_id in user_ids:#Remove each user sequentially
 
 		current_df_train = df_new[(df_new.userID != user_id)]
 		current_df_test = df_new[(df_new.userID == user_id)]

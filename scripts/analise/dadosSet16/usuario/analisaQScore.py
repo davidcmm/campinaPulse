@@ -7,6 +7,7 @@ import random
 import numpy
 import json
 import csv
+import pandas as pd
 #import pdb
 
 #photos considered in comparisons
@@ -357,6 +358,98 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
 	output.close()
 
+def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName):
+	""" Considering all predicted (classifiers) votes for each pair of photos and performing a simulation (bootstrap based)"""
+
+	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	
+	#Reading data without draws
+	for index, row in data_wodraw.iterrows():
+
+		raw_answer = row['prediction']
+		if raw_answer == 1:#-1 mapped to 1, 1 mapped to 0
+			answer = left
+		else:
+			answer = right
+
+		raw_question = row['question'].strip(' \t\n\r"')
+		photo1 = row['photo1'].strip(' \t\n\r"')
+		photo2 = row['photo2'].strip(' \t\n\r"')
+
+		if "agrad" in raw_question:
+			question = possibleQuestions[0]
+		else:
+			question = possibleQuestions[1]
+	
+		#Creating votes dictionary
+		if not votes[question].has_key(photo1):
+			votes[question][photo1] = {}
+		if not votes[question][photo1].has_key(photo2):
+			votes[question][photo1][photo2] = set([])
+
+		#Saving votes from task-run
+		votes[question][photo1][photo2].add(answer)
+
+		allPhotos.add(photo1)
+		allPhotos.add(photo2)
+
+	#Reading data with draws
+	for index, row in data_draws.iterrows():
+
+		answer = notKnown
+
+		quest = row['question'].strip(' \t\n\r"')
+		photo1 = row['photo1'].strip(' \t\n\r"')
+		photo2 = row['photo2'].strip(' \t\n\r"')
+
+		if "agrad" in quest:
+			question = possibleQuestions[0]
+		else:
+			question = possibleQuestions[1]
+	
+		#Creating votes dictionary
+		if not votes[question].has_key(photo1):
+			votes[question][photo1] = {}
+		if not votes[question][photo1].has_key(photo2):
+			votes[question][photo1][photo2] = set([])
+
+		#Saving votes from task-run
+		votes[question][photo1][photo2].add(answer)
+
+		allPhotos.add(photo1)
+		allPhotos.add(photo2)
+
+	#Evaluating votes in order to choose winning photos or ties
+	resetCounters()
+
+	for question, qDic in votes.iteritems():
+		for photo1, photosDic in qDic.iteritems():
+			for photo2, votesList in photosDic.iteritems():
+				answer = random.sample(votesList, 1)[0]#Generating answer to consider
+	
+				if answer == left:
+					saveWin(photo1, photo2, question)
+				elif answer == right:
+					saveWin(photo2, photo1, question)
+				elif answer == notKnown:
+					saveDraw(photo1, photo2, question)	
+
+	qscores = computeQScores(allPhotos)
+	for question, qDic in qscores.iteritems():
+		for photo, qscore in qDic.iteritems():
+			if not allQScores[question].has_key(photo):
+				allQScores[question][photo] = []
+			allQScores[question][photo].append(qscore)
+
+	#Output file
+	output = open(outputFileName, 'w')
+	for question, qDic in allQScores.iteritems():
+		for photo, qscoreList in qDic.iteritems():
+			output.write( question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList)+'\n' )
+	output.close()
+
+
 def evaluateVotesStreetSeen(lines, outputFileName):
 	""" Considering all votes for each pair of photos"""
 	votes = {possibleQuestions[1]:{}}
@@ -513,7 +606,7 @@ def readTasksDefinitions(linesTasks):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2> <project type: campina or streetseen>"
+		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2> <project type: campina, streetseen or pred-campina>"
 		sys.exit(1)
 	
 	if len(sys.argv) > 3:
@@ -535,7 +628,16 @@ if __name__ == "__main__":
 		#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
 
 		dataFile.close()
-	else:
+	elif projectType == "streetseen":
 		lines = csv.reader(open(sys.argv[1], 'r'))
 
 		evaluateVotesStreetSeen(lines, "all_street_seen.dat")
+
+	else:
+		data_wodraw = pd.read_table(sys.argv[1], sep=' \t\n\r', encoding='utf8', header=0)#wodraw
+		data_3classes = pd.read_table(sys.argv[3], sep=' \t\n\r', encoding='utf8', header=0)#3classes
+		draws = data_3classes[(data_3classes.choice == 0)]
+
+		evaluateAllVotesPredicted(data_wodraw, draws, "all_predicted.dat")
+
+		

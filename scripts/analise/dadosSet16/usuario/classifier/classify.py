@@ -815,7 +815,7 @@ def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predicto
 
 
 def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers, classifiers_names, cols_to_scale, cols_to_combine, bairro_cols):
-	""" Performs trainings with classifiers removing one user at a time and then calculates accuracy, micro and macro values """
+	""" Performs trainings with classifiers removing one user at a time and using features differences and then calculates accuracy, micro and macro values """
 
 	#Question being evaluated
 	print ">>>>>> G all " + " Q " + question

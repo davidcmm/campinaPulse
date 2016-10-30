@@ -844,8 +844,10 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	pd.set_option('display.max_rows', 50)
 	pd.set_option('display.max_colwidth', 500)
 	pd.set_option('display.width', 500)
+	print_columns = True
+	#output_file = open("cslassifier_input_"+question+"_artificial.dat", "wa")
 
-	for user_id in user_ids:#Remove each user sequentially
+	for user_id in [user_ids[0]]:#Remove each user sequentially
 
 		current_df_train = df_new[(df_new.userID != user_id)]
 		current_df_test = df_new[(df_new.userID == user_id)]
@@ -867,7 +869,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				best_clf = None
 				best_f1 = []
 
-				for train, test in StratifiedKFold(answer, n_folds=3): #5folds
+				for train, test in StratifiedKFold(answer, n_folds=2): #5folds
 
 					predictors_train = predictors[train]
 					answer_train = answer[train]
@@ -878,7 +880,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 					X_test_scaled = predictors_test
 
 					classifier = GridSearchCV(classifiers[classifier_index], 
-					      param_grid=parameters_to_optimize, cv=3)
+					      param_grid=parameters_to_optimize, cv=2)
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1
@@ -958,6 +960,8 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
 	#print ">>>> Importances "
 	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+
+	#output_file.close()
 
 
 def prepare_pairwise_leave_out(question, input_file, parameters_dic, classifiers_names, classifiers, consider_moderation):

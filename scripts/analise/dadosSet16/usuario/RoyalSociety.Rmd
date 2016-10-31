@@ -3,6 +3,40 @@ title: "RoyalSociety"
 output: pdf_document
 ---
 
+
+#Evaluting evolution with pairwise and 4-images
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+dados <- read.table("../../dadosNov15/usuarios/geralSetoresAJ.dat", header=TRUE)
+dados2 <- read.table("../../dadosJulho15/usuarios/geralRankAJ.dat", header=TRUE)
+
+temp <- dados
+qscoreSim <- temp [ c(4:103) ]
+icData <- apply(qscoreSim, 1, ic)
+temp$distance <- icData
+
+temp2 <- dados2
+qscoreSim2 <- temp2 [ c(4:103) ]
+icData2 <- apply(qscoreSim2, 1, ic)
+temp2$distance <- icData2
+
+dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+dadosSub2 <- temp2[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+
+novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+novosDados2 <- reshape(dadosSub2, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+
+dataMaio15 <- filter(novosDados, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
+mutate(rank = 1:n())
+
+dataJulho15 <- filter(novosDados2, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
+mutate(rank = 1:n())
+
+merge_agrad <- merge(select(dataMaio15, V1, V2, rank), select(dataJulho15, V1, V2, rank), by="V2")
+
+cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall")
+normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+```
+
 #Reading data
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 library(ggplot2)
@@ -24,7 +58,7 @@ facet_labeller <- function(variable,value){
 }
 
 #dados <- read.table("geral.dat", header=TRUE)
-dados <- read.table("geralSetoresAJ.dat", header=TRUE)
+dados <- read.table("geralSetoresAJ_bins.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -4915,16 +4949,18 @@ segGeral$catole[segGeral$bairro == "catole"] <- 1
 segGeral$liberdade[segGeral$bairro == "liberdade"] <- 1
 
 agradGeral$graffiti <- factor(agradGeral$graffiti, levels = c("Yes", "No"))
+agradGeral$graffiti <- relevel(agradGeral$graffiti,  "Yes")
 segGeral$graffiti <- factor(segGeral$graffiti, levels = c("Yes", "No"))
+segGeral$graffiti <- relevel(segGeral$graffiti,  "Yes")
 
 regsubsetsAgrad.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = agradGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 regsubsetsSeg.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = segGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 
-regGroup1 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + graffiti + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade +0 , na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
+regGroup1 <- lm(rank ~ scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti - 1, na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
 regGroup1 <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = agradGeral)#Not normalized values
-regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + graffiti + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
+regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti + 0, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
 regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = segGeral)#Not normalized values
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
@@ -5032,6 +5068,29 @@ dev.off()
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+
+#Comparing pleasantness and safety from users with predicted output of classifiers
+predicted <- read.table("all100/all_pred_ordenado.dat")
+novoV2 <- lapply(as.character(predicted$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
+local <- unlist(lapply(novoV2, '[[', 1))
+predicted$V2 <- local
+
+pred_agrad <- filter(predicted, V1 == "agrad%C3%A1vel?") %>% arrange(V3) %>% mutate(rank = 1:n())
+pred_seg <- filter(predicted, V1 == "seguro?") %>% arrange(V3) %>% mutate(rank = 1:n())
+
+mergeAndComputeDistance <- function(data1, data2) {
+  merge_data <- merge(select(data1, image_url, rank, V3.Geral), select(data2, V2, rank, V3), by.x = "image_url", by.y="V2")
+
+  print(cor.test(merge_data$rank.x, merge_data$rank.y, method="kendall"))
+  normalizedKendallTauDistance2(merge_data$rank.x, merge_data$rank.y)  
+  
+  model <- lm(V3.Geral ~ V3, data=merge_data)
+  summary(model)
+}
+
+mergeAndComputeDistance(agradGeral, pred_agrad)
+mergeAndComputeDistance(segGeral, pred_seg)
+
 ```
 
 # IC por pontos

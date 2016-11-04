@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 require(gmodels)
 require(vcd)
 require(lme4)
+library(nlme)
 library(caret)
 library(pscl)
 library(DT)
@@ -77,7 +78,7 @@ data = raw_data %>%
                          "baixa", 
                          "media"), # substituirá os NA
     choice = if_else(choice == "1", "0", 
-                     if_else(choice == "-1", "1", choice)), 
+                       if_else(choice == "-1", "1", choice)), 
     bair_cat = if_else(bairro1 == bairro2, "mesmo", 
                        paste0(bairro1, "_", bairro2))    
     ) %>% 
@@ -140,9 +141,46 @@ create_model_wo_profile = function(the_data){
     data = the_data,
     family = binomial()))
 }
+
+#Random effects links: https://onlinecourses.science.psu.edu/stat502/node/171 (concepts, use); http://ase.tufts.edu/gsc/gradresources/guidetomixedmodelsinr/mixed%20model%20guide.html (how to specify in r); http://web.pdx.edu/~newsomj/mlrclass/ho_randfixd.pdf (variables, effects); http://liberalarts.utexas.edu/prc/_files/cs/Spring2013_Sasson_Fixed%20and%20Random%20Effects.pdf (examples of models formulas)
+#- Extrapolar conclusoes alem dos dados que se tem; Dados desbalanceados em categorias; Foco na variancia e nao nas medias!
+
+create_random_model_w_interact = function(the_data){
+  return( glmer(choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
+          age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+          gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+          inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = agrad, family=binomial()) )
+}
+
 ```
 
 ```{r model.agrad}
+#Testing if multilevel makes sense: intercept and intercept with multilevel
+agrad_intercept <- gls(choice ~ 1, data = agrad, method = "ML")
+agrad_intercept_user <- lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+
+summary(agrad_intercept)
+summary(agrad_intercept_user)
+
+logLik(agrad_intercept)*-2 
+logLik(agrad_intercept_user)*-2
+
+agrad_random_user <- lme(as.integer(choice) ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) , data = agrad, random = ~d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat|userID, method="ML")#~1|userID
+summary(agrad_random_user)
+
+seg_intercept <- gls(choice ~ 1, data = seg, method = "ML")
+seg_intercept_user <- lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+
+summary(seg_intercept)
+summary(seg_intercept_user)
+
+logLik(seg_intercept)*-2 
+logLik(seg_intercept_user)*-2
+
+seg_random_user <- lme(as.integer(choice) ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) , data = seg, random = ~1|userID, method="ML")
+summary(seg_random_user)
+
+#Creating only one level models
 mostpleasant_model <- create_model_w_interact(agrad)
 summary(mostpleasant_model)
 vif(mostpleasant_model)

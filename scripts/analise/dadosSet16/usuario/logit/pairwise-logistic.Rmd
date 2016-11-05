@@ -125,6 +125,20 @@ seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>%
 ```
 
 ```{r model.lib}
+create_model_only_int = function(the_data){
+  return(glm(
+    choice ~ 1,
+    data = the_data,
+    family = binomial())) 
+  #gls(choice ~ 1, data = agrad, method = "ML")
+}
+
+create_model_only_int_random = function(the_data){
+  return( glmer(choice ~ 1 + (1|userID), data = the_data, family=binomial()) )
+  #lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+}
+
+#Logistic regressions assumptions: http://www.statisticssolutions.com/assumptions-of-logistic-regression/
 create_model_w_interact = function(the_data){
   return(glm(
     choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
@@ -149,15 +163,15 @@ create_random_model_w_interact = function(the_data){
   return( glmer(choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
           age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
           gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
-          inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = agrad, family=binomial()) )
+          inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = the_data, family=binomial()) )
 }
 
 ```
 
 ```{r model.agrad}
 #Testing if multilevel makes sense: intercept and intercept with multilevel
-agrad_intercept <- gls(choice ~ 1, data = agrad, method = "ML")
-agrad_intercept_user <- lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+agrad_intercept <- create_model_only_int(agrad)
+agrad_intercept_user <- create_model_only_int_random(agrad)
 
 summary(agrad_intercept)
 summary(agrad_intercept_user)
@@ -165,11 +179,13 @@ summary(agrad_intercept_user)
 logLik(agrad_intercept)*-2 
 logLik(agrad_intercept_user)*-2
 
-agrad_random_user <- lme(as.integer(choice) ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) , data = agrad, random = ~d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat|userID, method="ML")#~1|userID
+agrad_random_user <- create_random_model_w_interact(agrad)
 summary(agrad_random_user)
 
-seg_intercept <- gls(choice ~ 1, data = seg, method = "ML")
-seg_intercept_user <- lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+
+
+seg_intercept <- create_model_only_int(seg)
+seg_intercept_user <- create_model_only_int_random(seg)
 
 summary(seg_intercept)
 summary(seg_intercept_user)
@@ -177,7 +193,7 @@ summary(seg_intercept_user)
 logLik(seg_intercept)*-2 
 logLik(seg_intercept_user)*-2
 
-seg_random_user <- lme(as.integer(choice) ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) , data = seg, random = ~1|userID, method="ML")
+seg_random_user <- create_random_model_w_interact(seg)
 summary(seg_random_user)
 
 #Creating only one level models

@@ -190,8 +190,12 @@ logLik(agrad_intercept_user)*-2
 
 agrad_random_user <- create_random_model_w_interact(agrad, "")
 summary(agrad_random_user)
-intervals(agrad_random_user, level = 0.95)
-pR2(agrad_random_user)
+cc <- confint(agrad_random_user, parm="beta_", level = 0.95)
+ctab <- cbind(est=fixef(agrad_random_user), cc)
+rtab <- exp(ctab)
+print(rtab, digits=3)
+pR2(agrad_random_user)#Error!
+
 relagrad <- with(agrad_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence
 max(abs(relagrad))
 
@@ -218,7 +222,10 @@ logLik(seg_intercept_user)*-2
 
 seg_random_user <- create_random_model_w_interact(seg, "")
 summary(seg_random_user)
-intervals(seg_random_user, level = 0.95)
+cc <- confint(seg_random_user, parm="beta_", level = 0.95)
+ctab <- cbind(est=fixef(seg_random_user), cc)
+rtab <- exp(ctab)
+print(rtab, digits=3)
 relseg <- with(seg_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence: https://github.com/lme4/lme4/issues/120
 max(abs(relseg))
 

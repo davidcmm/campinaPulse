@@ -386,9 +386,6 @@ Random effects:
  userID (Intercept) 0.02105  0.1451  
 Number of obs: 15743, groups:  userID, 282
 
-> CI intercept with variance/std of userID and number of obs: [-0.1175946, -0.1130614]
-> CI intercept with variance/std of userID and number of obs: [-0.1322632, -0.09839278]
-
 Fixed effects:
                              Estimate Std. Error z value Pr(>|z|)    
 (Intercept)                 -0.115328   0.033132  -3.481 0.000500 ***
@@ -1342,6 +1339,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 > Adicionar random effects na pessoa praticamente manteve o AIC e gerou uma alteração significativa no logLik (significativo em p<0.1). Adicionar as demais variáveis com moderação e RE caiu em relação a só RE com intercept
 
 > summary(seg_random_user) GLMER
+> summary(seg_random_user)
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
 Formula: choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst +  
@@ -1365,9 +1363,6 @@ Random effects:
  Groups Name        Variance Std.Dev.
  userID (Intercept) 0.02392  0.1547  
 Number of obs: 15127, groups:  userID, 279
-
-> CI intercept with variance/std of userID: [-0.1221577, -0.1172271]
-> CI intercept with variance/std of userID: [-0.1378449, -0.1015399]
 
 Fixed effects:
                               Estimate Std. Error z value Pr(>|z|)    
@@ -1431,8 +1426,6 @@ Use print(x, correlation=TRUE)  or
 
 convergence code: 0
 Model failed to converge with max|grad| = 0.00168807 (tol = 0.001, component 1)
-
-
 
 > summary(seg_random_user) LME
 Linear mixed-effects model fit by maximum likelihood

@@ -176,6 +176,7 @@ create_random_model_w_interact = function(the_data, optimizer_to_use=""){
 
 ```
 
+# Logit analysis with random effects
 ```{r model.agrad}
 #Testing if multilevel makes sense: intercept and intercept with multilevel
 agrad_intercept <- create_model_only_int(agrad)
@@ -190,6 +191,10 @@ logLik(agrad_intercept_user)*-2
 agrad_random_user <- create_random_model_w_interact(agrad, "")
 summary(agrad_random_user)
 intervals(agrad_random_user, level = 0.95)
+pR2(agrad_random_user)
+relagrad <- with(agrad_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence
+max(abs(relagrad))
+
 agrad_random_user_bob <- create_random_model_w_interact(agrad, "bobyqa")#Testing difference optimizers
 summary(agrad_random_user)
 agrad_random_user_nelder <- create_random_model_w_interact(agrad, "Nelder_Mead")
@@ -214,6 +219,9 @@ logLik(seg_intercept_user)*-2
 seg_random_user <- create_random_model_w_interact(seg, "")
 summary(seg_random_user)
 intervals(seg_random_user, level = 0.95)
+relseg <- with(seg_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence: https://github.com/lme4/lme4/issues/120
+max(abs(relseg))
+
 seg_random_user_bob <- create_random_model_w_interact(seg, "bobyqa")
 summary(seg_random_user)
 seg_random_user_nelder <- create_random_model_w_interact(seg, "Nelder_Mead")
@@ -225,7 +233,10 @@ summary(seg_random_user)
 
 -0.1196924 + 0.1547/sqrt(279)*qnorm(1-(0.05/2))#Num of userID groups
 -0.1196924 - 0.1547/sqrt(279)*qnorm(1-(0.05/2))
+```
 
+# Logit analysis without random effects
+```{r model.safe}
 #Creating only one level models, without random effects
 mostpleasant_model <- create_model_w_interact(agrad)
 summary(mostpleasant_model)
@@ -244,11 +255,11 @@ library(xtable)
 xtable(coefs_ag)
 { # fix for what seems like a bug in pR2
   the_data = agrad
+  #About McFadden R2: http://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation/99615
   pR2(mostpleasant_model)
 }
-```
 
-```{r model.safe}
+
 safer_model <- create_model_w_interact(seg)
 summary(safer_model)
 #anova(safer_model, test="Chisq")
@@ -269,6 +280,7 @@ coefs_seg %>%
 }
 ```
 
+#Nazareno graph per group
 ```{r visualize_models}
 library(modelr) # devtools::install_github("hadley/modelr")
 
@@ -287,6 +299,7 @@ ggplot(mm, aes(x = d_lands)) +
 
 ```
 
+#Analysing different thresholds for leave user out predicting as 1 or 0 using logit models
 ```{r visualize_models}
 #Analysing leave user out results
 source("analisaICPorFoto.R")
@@ -315,7 +328,10 @@ computeICForArrayOfValues(files)
 
 files <- c('logit/recallA.dat', 'logit/recallS.dat', 'logit/recallA_WOProfile.dat', 'logit/recallS_WOProfile.dat')
 computeICForArrayOfValues(files)
+```
 
+#Analysing pvalues, coefficients for leave user out logit models. Analysing  classifiers with/without profile
+```{r visualize_models}
 filesCoef <- c('coefficientsA.dat', 'coefficientsS.dat')
 filesPval <- c('pvaluesA.dat', 'pvaluesS.dat')
 for (index in 1:2){
@@ -350,7 +366,7 @@ agrad_notprof_mean <- 0.637906
 agrad_notprof_sd <- 0.20848411
 agrad_prof_mean <- 0.68243055 
 agrad_prof_sd <- 0.20558187
-calcICFromMeanAndSD(agrad_notprof_mean,agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
+calcICFromMeanAndSD(agrad_notprof_mean, agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
 seg_notprof_mean <- 0.56428643
 seg_notprof_sd <- 0.21240605
@@ -360,7 +376,7 @@ calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd
 
 ```
 
-
+#Sankey diagrams for importances of urban qualities
 ```{r visualize_models}
 #Sankey network graph!
 #Online tool: http://sankey.csaladen.es/

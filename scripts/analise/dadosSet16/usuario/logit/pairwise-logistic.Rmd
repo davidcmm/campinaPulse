@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 require(gmodels)
 require(vcd)
 require(lme4)
+library(nlme)
 library(caret)
 library(pscl)
 library(DT)
@@ -77,7 +78,7 @@ data = raw_data %>%
                          "baixa", 
                          "media"), # substituirá os NA
     choice = if_else(choice == "1", "0", 
-                     if_else(choice == "-1", "1", choice)), 
+                       if_else(choice == "-1", "1", choice)), 
     bair_cat = if_else(bairro1 == bairro2, "mesmo", 
                        paste0(bairro1, "_", bairro2))    
     ) %>% 
@@ -124,8 +125,20 @@ seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>%
 ```
 
 ```{r model.lib}
-library(lme4)
+create_model_only_int = function(the_data){
+  return(glm(
+    choice ~ 1,
+    data = the_data,
+    family = binomial())) 
+  #gls(choice ~ 1, data = agrad, method = "ML")
+}
 
+create_model_only_int_random = function(the_data){
+  return( glmer(choice ~ 1 + (1|userID), data = the_data, family=binomial()) )
+  #lme(as.integer(choice) ~ 1, data = agrad, random = ~1|userID, method="ML")
+}
+
+#Logistic regressions assumptions: http://www.statisticssolutions.com/assumptions-of-logistic-regression/
 create_model_w_interact = function(the_data){
   return(glm(
     choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
@@ -143,15 +156,88 @@ create_model_wo_profile = function(the_data){
     family = binomial()))
 }
 
-create_random_model_w_interact = function(the_data){
-  return( glmer(choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat + 
-          age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
-          gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + 
-          inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID) + (1|photo1) + (1|photo2), data = agrad, family=binomial()) )
+#Random effects links: https://onlinecourses.science.psu.edu/stat502/node/171 (concepts, use); http://ase.tufts.edu/gsc/gradresources/guidetomixedmodelsinr/mixed%20model%20guide.html (how to specify in r); http://web.pdx.edu/~newsomj/mlrclass/ho_randfixd.pdf (variables, effects); http://liberalarts.utexas.edu/prc/_files/cs/Spring2013_Sasson_Fixed%20and%20Random%20Effects.pdf (examples of models formulas)
+#- Extrapolar conclusoes alem dos dados que se tem; Dados desbalanceados em categorias; Foco na variancia e nao nas medias!
+
+create_random_model_w_interact = function(the_data, optimizer_to_use=""){
+  if ( nchar(optimizer_to_use) == 0 ){
+    return( glmer( choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
+            age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = the_data, family=binomial() ) )
+    
+  }else{
+    return( glmer( choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
+            age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = the_data, family=binomial(), control = glmerControl(optimizer=c(optimizer_to_use) ) ) )#optimizers="bobyqa", "Nelder_Mead"
+  }
 }
+
 ```
 
+# Logit analysis with random effects
 ```{r model.agrad}
+#Testing if multilevel makes sense: intercept and intercept with multilevel
+agrad_intercept <- create_model_only_int(agrad)
+agrad_intercept_user <- create_model_only_int_random(agrad)
+
+summary(agrad_intercept)
+summary(agrad_intercept_user)
+
+logLik(agrad_intercept)*-2 
+logLik(agrad_intercept_user)*-2
+
+agrad_random_user <- create_random_model_w_interact(agrad, "")
+summary(agrad_random_user)
+intervals(agrad_random_user, level = 0.95)
+pR2(agrad_random_user)
+relagrad <- with(agrad_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence
+max(abs(relagrad))
+
+agrad_random_user_bob <- create_random_model_w_interact(agrad, "bobyqa")#Testing difference optimizers
+summary(agrad_random_user)
+agrad_random_user_nelder <- create_random_model_w_interact(agrad, "Nelder_Mead")
+summary(agrad_random_user)
+
+#95 CI intercept with variance/std of userID
+-0.115328 + 0.1451/sqrt(15743)*qnorm(1-(0.05/2))#Num of observations
+-0.115328 - 0.1451/sqrt(15743)*qnorm(1-(0.05/2))
+
+-0.115328 + 0.1451/sqrt(282)*qnorm(1-(0.05/2))#Num of userID groups
+-0.115328 - 0.1451/sqrt(282)*qnorm(1-(0.05/2))
+
+seg_intercept <- create_model_only_int(seg)
+seg_intercept_user <- create_model_only_int_random(seg)
+
+summary(seg_intercept)
+summary(seg_intercept_user)
+
+logLik(seg_intercept)*-2 
+logLik(seg_intercept_user)*-2
+
+seg_random_user <- create_random_model_w_interact(seg, "")
+summary(seg_random_user)
+intervals(seg_random_user, level = 0.95)
+relseg <- with(seg_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence: https://github.com/lme4/lme4/issues/120
+max(abs(relseg))
+
+seg_random_user_bob <- create_random_model_w_interact(seg, "bobyqa")
+summary(seg_random_user)
+seg_random_user_nelder <- create_random_model_w_interact(seg, "Nelder_Mead")
+summary(seg_random_user)
+
+#95 CI intercept with variance/std of userID
+-0.1196924 + 0.1547/sqrt(15127)*qnorm(1-(0.05/2))#Num of observations
+-0.1196924 - 0.1547/sqrt(15127)*qnorm(1-(0.05/2))
+
+-0.1196924 + 0.1547/sqrt(279)*qnorm(1-(0.05/2))#Num of userID groups
+-0.1196924 - 0.1547/sqrt(279)*qnorm(1-(0.05/2))
+```
+
+# Logit analysis without random effects
+```{r model.safe}
+#Creating only one level models, without random effects
 mostpleasant_model <- create_model_w_interact(agrad)
 summary(mostpleasant_model)
 vif(mostpleasant_model)
@@ -169,11 +255,11 @@ library(xtable)
 xtable(coefs_ag)
 { # fix for what seems like a bug in pR2
   the_data = agrad
+  #About McFadden R2: http://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation/99615
   pR2(mostpleasant_model)
 }
-```
 
-```{r model.safe}
+
 safer_model <- create_model_w_interact(seg)
 summary(safer_model)
 #anova(safer_model, test="Chisq")
@@ -194,6 +280,7 @@ coefs_seg %>%
 }
 ```
 
+#Nazareno graph per group
 ```{r visualize_models}
 library(modelr) # devtools::install_github("hadley/modelr")
 
@@ -212,8 +299,9 @@ ggplot(mm, aes(x = d_lands)) +
 
 ```
 
+#Analysing different thresholds for leave user out predicting as 1 or 0 using logit models
 ```{r visualize_models}
-#Analysing Leave user out results
+#Analysing leave user out results
 source("analisaICPorFoto.R")
 
 computeICForArrayOfValues <- function(files) {
@@ -240,7 +328,10 @@ computeICForArrayOfValues(files)
 
 files <- c('logit/recallA.dat', 'logit/recallS.dat', 'logit/recallA_WOProfile.dat', 'logit/recallS_WOProfile.dat')
 computeICForArrayOfValues(files)
+```
 
+#Analysing pvalues, coefficients for leave user out logit models. Analysing  classifiers with/without profile
+```{r visualize_models}
 filesCoef <- c('coefficientsA.dat', 'coefficientsS.dat')
 filesPval <- c('pvaluesA.dat', 'pvaluesS.dat')
 for (index in 1:2){
@@ -275,7 +366,7 @@ agrad_notprof_mean <- 0.637906
 agrad_notprof_sd <- 0.20848411
 agrad_prof_mean <- 0.68243055 
 agrad_prof_sd <- 0.20558187
-calcICFromMeanAndSD(agrad_notprof_mean,agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
+calcICFromMeanAndSD(agrad_notprof_mean, agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
 seg_notprof_mean <- 0.56428643
 seg_notprof_sd <- 0.21240605
@@ -285,7 +376,7 @@ calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd
 
 ```
 
-
+#Sankey diagrams for importances of urban qualities
 ```{r visualize_models}
 #Sankey network graph!
 #Online tool: http://sankey.csaladen.es/

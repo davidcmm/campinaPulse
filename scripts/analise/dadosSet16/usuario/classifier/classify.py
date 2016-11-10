@@ -859,6 +859,9 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 		current_df_train = df_new[(df_new.userID != user_id) & ~(df_new.photo1.isin(photos_to_remove)) & ~(df_new.photo2.isin(photos_to_remove)) ]
 
+		if len(current_df_train) <= 0:
+			continue
+
 		#Scaling parameters
 		scaler = StandardScaler().fit(current_df_train[cols_to_scale].copy())
 		current_df_train[cols_to_scale] = scaler.transform(current_df_train[cols_to_scale].copy())

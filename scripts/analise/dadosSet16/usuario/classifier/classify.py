@@ -849,8 +849,17 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 	for user_id in user_ids:#Remove each user sequentially
 
-		current_df_train = df_new[(df_new.userID != user_id)]
+		photos_to_remove = Set()
+
 		current_df_test = df_new[(df_new.userID == user_id)]
+
+		#Gathering photos to remove from testing set
+		photos_to_remove.update(current_df_test.photo1)
+		photos_to_remove.update(current_df_test.photo2)
+
+		current_df_train = df_new[(df_new.userID != user_id) & ~(df_new.photo1.isin(photos_to_remove)) & ~(df_new.photo2.isin(photos_to_remove)) ]
+
+		#Scaling parameters
 		scaler = StandardScaler().fit(current_df_train[cols_to_scale].copy())
 		current_df_train[cols_to_scale] = scaler.transform(current_df_train[cols_to_scale].copy())
 		current_df_test[cols_to_scale] = scaler.transform(current_df_test[cols_to_scale].copy())
@@ -869,7 +878,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				best_clf = None
 				best_f1 = []
 
-				for train, test in StratifiedKFold(answer, n_folds=2): #5folds
+				for train, test in StratifiedKFold(answer, n_folds=3): #5folds
 
 					predictors_train = predictors[train]
 					answer_train = answer[train]
@@ -880,7 +889,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 					X_test_scaled = predictors_test
 
 					classifier = GridSearchCV(classifiers[classifier_index], 
-					      param_grid=parameters_to_optimize, cv=2)
+					      param_grid=parameters_to_optimize, cv=3)
 					clf = classifier.fit(X_train_scaled, answer_train)
 
 					i += 1
@@ -919,20 +928,20 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 				accuracy = best_clf.score(X_test_scaled, y_test)#Accuracy
 				y_pred = best_clf.predict(X_test_scaled)#Estimated values
 
-				#metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
-				#metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
-				#history_micro.append(metrics_micro[0:3])
-				#history_macro.append(metrics_macro[0:3])
-				#history_acc.append(accuracy)
+				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
+				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
+				history_micro.append(metrics_micro[0:3])
+				history_macro.append(metrics_macro[0:3])
+				history_acc.append(accuracy)
 
-				#history_features_importances.append(best_clf.feature_importances_)
+				history_features_importances.append(best_clf.feature_importances_)
 
-				#print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
+				print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
 
 				#Printing artificial predictions!
-				y_pred = best_clf.predict(X_test_scaled)
-				current_df_test['prediction'] = y_pred
-				print(current_df_test.to_string())
+				#y_pred = best_clf.predict(X_test_scaled)
+				#current_df_test['prediction'] = y_pred
+				#print(current_df_test.to_string())
 				#print ">>> Pos"
 				#print str(history_acc)
 				#print str(history_micro)
@@ -948,18 +957,18 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	mean_micro = np.mean(np.array(history_micro), axis=0)
 	std_macro = np.std(np.array(history_macro), axis=0)
 	mean_macro = np.mean(np.array(history_macro), axis=0)
-	#print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
-	#print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
 
 	#Features importances!
-	#std_importances = np.std(np.array(history_features_importances), axis=0)
-	#mean_importances = np.mean(np.array(history_features_importances), axis=0)
-	#for index in range(0, len(list_of_predictors)):
-	#	importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
-	#
-	#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
-	#print ">>>> Importances "
-	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+	std_importances = np.std(np.array(history_features_importances), axis=0)
+	mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	for index in range(0, len(list_of_predictors)):
+		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	
+	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	print ">>>> Importances "
+	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 
 	#output_file.close()
 

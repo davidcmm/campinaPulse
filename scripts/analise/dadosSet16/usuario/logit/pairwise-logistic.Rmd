@@ -114,10 +114,12 @@ data = data %>%
 write.table(file = "classifier/input_to_classifier_predictions.dat", x = select(data, userID, photo1, photo2, question, choice, d_swidth, d_mvcars, d_pcars, d_trees, d_mvciclyst, d_lands, d_bid, d_bheig, d_dbuild, d_people, d_graff, bair_cat, gender, age_cat, inc_cat),quote = FALSE, sep = "\t", row.names = FALSE, col.names = TRUE)
 
 # SPLIT + SCALE
-agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
+agrad_scaled <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
   mutate_at(vars(40:50), scale)
-seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
+agrad_nscaled <- filter(data, !(question %in% c("seguro?", "seguro")))
+seg_scaled <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
   mutate_at(vars(40:50), scale)
+seg_nscaled <- filter(data, (question %in% c("seguro?", "seguro")))
 ```
 
 ```{r visualize}
@@ -149,16 +151,6 @@ create_model_w_interact = function(the_data){
     family = binomial()))
 }
 
-create_model_w_interact_scaled = function(the_data){
-  return(glm(
-    choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat + 
-      age_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + 
-      gender:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + 
-      inc_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)),
-    data = the_data,
-    family = binomial()))
-}
-
 create_model_wo_profile = function(the_data){
   return(glm(
     choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat,
@@ -184,28 +176,26 @@ create_random_model_w_interact = function(the_data, optimizer_to_use=""){
   }
 }
 
-create_random_model_w_interact_scaled = function(the_data, optimizer_to_use=""){
-  if ( nchar(optimizer_to_use) == 0 ){
-    return( glmer( choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat +
-            age_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +
-            gender:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +
-            inc_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + (1|userID), data = the_data, family=binomial() ) )
-    
-  }else{
-    return( glmer( choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + bair_cat +
-            age_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +
-            gender:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) +
-            inc_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + (1|userID), data = the_data, family=binomial(), control = glmerControl(optimizer=c(optimizer_to_use) ) ) )#optimizers="bobyqa", "Nelder_Mead"
-  }
-}
-
 ```
 
 # Logit analysis with random effects
 ```{r model.agrad}
+computePseudoR2 <- function(baselineModel, completeModel){
+  print("Hosmer and Lemeshow")
+  print(  completeModel@devcomp$cmp['dev'] /  baselineModel@devcomp$cmp['dev'] )
+  print("Hosmer and Lemeshow")
+  print(  (baselineModel@devcomp$cmp['dev'] - completeModel@devcomp$cmp['dev']) /  baselineModel@devcomp$cmp['dev'] )
+  print("Cox and Snells")
+  cs <- 1 - exp( (completeModel@devcomp$cmp['dev'] - baselineModel@devcomp$cmp['dev']) / nrow(completeModel@frame)  )
+  print(  cs  )
+  print("Nagelkerke")
+  print(  cs / ( 1 - exp(- baselineModel@devcomp$cmp['dev'] / nrow(completeModel@frame) )  )  )
+
+}
+
 #Testing if multilevel makes sense: intercept and intercept with multilevel
-agrad_intercept <- create_model_only_int(agrad)
-agrad_intercept_user <- create_model_only_int_random(agrad)
+agrad_intercept <- create_model_only_int(agrad_scaled)
+agrad_intercept_user <- create_model_only_int_random(agrad_scaled)
 
 summary(agrad_intercept)
 summary(agrad_intercept_user)
@@ -213,21 +203,20 @@ summary(agrad_intercept_user)
 logLik(agrad_intercept)*-2 
 logLik(agrad_intercept_user)*-2
 
-agrad_random_user <- create_random_model_w_interact(agrad, "")
+agrad_random_user <- create_random_model_w_interact(agrad_scaled, "")
 summary(agrad_random_user)
-cc <- confint(agrad_random_user, parm="beta_", level = 0.95)
+cc <- confint(agrad_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
 ctab <- cbind(est=fixef(agrad_random_user), cc)
 rtab <- exp(ctab)
 print(rtab, digits=3)
-pR2(agrad_random_user)#Error!
-#R2? (int - model) / inte
+computePseudoR2(baselineModel = agrad_intercept_user, completeModel = agrad_random_user)
 
 relagrad <- with(agrad_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence
 max(abs(relagrad))
 
-agrad_random_user_bob <- create_random_model_w_interact(agrad, "bobyqa")#Testing difference optimizers
+agrad_random_user_bob <- create_random_model_w_interact(agrad_scaled, "bobyqa")#Testing difference optimizers
 summary(agrad_random_user)
-agrad_random_user_nelder <- create_random_model_w_interact(agrad, "Nelder_Mead")
+agrad_random_user_nelder <- create_random_model_w_interact(agrad_scaled, "Nelder_Mead")
 summary(agrad_random_user)
 
 #95 CI intercept with variance/std of userID
@@ -237,8 +226,8 @@ summary(agrad_random_user)
 -0.115328 + 0.1451/sqrt(282)*qnorm(1-(0.05/2))#Num of userID groups
 -0.115328 - 0.1451/sqrt(282)*qnorm(1-(0.05/2))
 
-seg_intercept <- create_model_only_int(seg)
-seg_intercept_user <- create_model_only_int_random(seg)
+seg_intercept <- create_model_only_int(seg_scaled)
+seg_intercept_user <- create_model_only_int_random(seg_scaled)
 
 summary(seg_intercept)
 summary(seg_intercept_user)
@@ -246,18 +235,19 @@ summary(seg_intercept_user)
 logLik(seg_intercept)*-2 
 logLik(seg_intercept_user)*-2
 
-seg_random_user <- create_random_model_w_interact(seg, "")
+seg_random_user <- create_random_model_w_interact(seg_scaled, "")
 summary(seg_random_user)
-cc <- confint(seg_random_user, parm="beta_", level = 0.95)
+cc <- confint(seg_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
 ctab <- cbind(est=fixef(seg_random_user), cc)
 rtab <- exp(ctab)
 print(rtab, digits=3)
 relseg <- with(seg_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence: https://github.com/lme4/lme4/issues/120
 max(abs(relseg))
+computePseudoR2(baselineModel = seg_intercept_user, completeModel = seg_random_user)
 
-seg_random_user_bob <- create_random_model_w_interact(seg, "bobyqa")
+seg_random_user_bob <- create_random_model_w_interact(seg_scaled, "bobyqa")
 summary(seg_random_user)
-seg_random_user_nelder <- create_random_model_w_interact(seg, "Nelder_Mead")
+seg_random_user_nelder <- create_random_model_w_interact(seg_scaled, "Nelder_Mead")
 summary(seg_random_user)
 
 #95 CI intercept with variance/std of userID
@@ -271,31 +261,29 @@ summary(seg_random_user)
 # Logit analysis without random effects
 ```{r model.safe}
 #Creating only one level models, without random effects
-mostpleasant_model <- create_model_w_interact(agrad)
+mostpleasant_model <- create_model_w_interact(agrad_nscaled)
 summary(mostpleasant_model)
 vif(mostpleasant_model)
+#About McFadden R2: http://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation/99615
+pR2(mostpleasant_model)
 #anova(mostpleasant_model, test="Chisq")
 
-mostpleasant_model_scaled <- create_model_w_interact_scaled(agrad)
+mostpleasant_model_scaled <- create_model_w_interact(agrad_scaled)
 summary(mostpleasant_model_scaled)
 vif(mostpleasant_model_scaled)
+pR2(mostpleasant_model_scaled)
 
-mostpleasant_model_wo_profile <- create_model_wo_profile(agrad)
+mostpleasant_model_wo_profile <- create_model_wo_profile(agrad_scaled)
 summary(mostpleasant_model_wo_profile)
 vif(mostpleasant_model_wo_profile)
 
+#About using divide by 4 rule to interpret betas: http://www.stefan-evert.de/SIGIL/sigil_R/materials/regression3.slides.pdf ; http://www.gettinggeneticsdone.com/2010/12/using-divide-by-4-rule-to-interpret.html
 coefs_ag = tidy(mostpleasant_model, conf.int = TRUE, exponentiate = TRUE) 
 coefs_ag %>% 
   mutate_at(vars(-1), prettyNum, digits = 3) %>%
   datatable()
 library(xtable)
 xtable(coefs_ag)
-{ # fix for what seems like a bug in pR2
-  the_data = agrad
-  #About McFadden R2: http://stats.stackexchange.com/questions/82105/mcfaddens-pseudo-r2-interpretation/99615
-  pR2(mostpleasant_model)
-  pR2(mostpleasant_model_scaled)
-}
 
 coefs_ag_scaled = tidy(mostpleasant_model_scaled, conf.int = TRUE, exponentiate = TRUE) 
 coefs_ag_scaled %>% 
@@ -303,16 +291,18 @@ coefs_ag_scaled %>%
   datatable()
 
 #Safety
-safer_model <- create_model_w_interact(seg)
+safer_model <- create_model_w_interact(seg_nscaled)
 summary(safer_model)
 #anova(safer_model, test="Chisq")
 vif(safer_model)
+pR2(safer_model)
 
-safer_model_scaled <- create_model_w_interact_scaled(seg)
+safer_model_scaled <- create_model_w_interact(seg_scaled)
 summary(safer_model_scaled)
 vif(safer_model_scaled)
+pR2(safer_model_scaled)
 
-safer_model_wo_profile <- create_model_wo_profile(seg)
+safer_model_wo_profile <- create_model_wo_profile(seg_scaled)
 summary(safer_model_wo_profile)
 vif(safer_model_wo_profile)
 
@@ -320,12 +310,6 @@ coefs_seg = tidy(safer_model, conf.int = TRUE, exponentiate = TRUE)
 coefs_seg %>% 
   mutate_at(vars(-1), prettyNum, digits = 3) %>% 
   datatable()
-
-{ # fix for what seems like a bug in pR2
-  the_data = seg
-  pR2(safer_model)
-  pR2(safer_model_scaled)
-}
 
 coefs_seg_scaled = tidy(safer_model_scaled, conf.int = TRUE, exponentiate = TRUE) 
 coefs_seg_scaled %>% 

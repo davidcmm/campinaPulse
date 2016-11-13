@@ -116,7 +116,7 @@ create_random_model_w_interact_scaled = function(the_data, optimizer_to_use=""){
 
 seg_random_user <- create_random_model_w_interact(seg, "")
 summary(seg_random_user)
-cc <- confint(seg_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
+cc <- confint(seg_random_user, parm="beta_", level = 0.95, method="boot", nsim=10, parallel="multicore", ncpus=2)#1000
 ctab <- cbind(est=fixef(seg_random_user), cc)
 rtab <- exp(ctab)
 print(">> Safety beta")

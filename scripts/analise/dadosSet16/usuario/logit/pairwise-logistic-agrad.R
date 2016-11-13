@@ -116,7 +116,7 @@ create_random_model_w_interact_scaled = function(the_data, optimizer_to_use=""){
 
 agrad_random_user <- create_random_model_w_interact(agrad, "")
 summary(agrad_random_user)
-cc <- confint(agrad_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
+cc <- confint(agrad_random_user, parm="beta_", level = 0.95, method="boot", nsim=10, parallel="multicore", ncpus=2)#1000
 ctab <- cbind(est=fixef(agrad_random_user), cc)
 rtab <- exp(ctab)
 print(">> Pleasantness beta")

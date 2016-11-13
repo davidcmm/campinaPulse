@@ -939,12 +939,12 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 				history_features_importances.append(best_clf.feature_importances_)
 
-				print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
+				#print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
 
 				#Printing artificial predictions!
-				#y_pred = best_clf.predict(X_test_scaled)
-				#current_df_test['prediction'] = y_pred
-				#print(current_df_test.to_string())
+				y_pred = best_clf.predict(X_test_scaled)
+				current_df_test['prediction'] = y_pred
+				print(current_df_test.to_string())
 				#print ">>> Pos"
 				#print str(history_acc)
 				#print str(history_micro)
@@ -954,24 +954,24 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	#print str(history_acc)
 	#print str(history_micro)
 	#print str(history_macro)
-	std_acc = np.std(np.array(history_acc), axis=0)
-	mean_acc = np.mean(np.array(history_acc), axis=0)
-	std_micro = np.std(np.array(history_micro), axis=0)
-	mean_micro = np.mean(np.array(history_micro), axis=0)
-	std_macro = np.std(np.array(history_macro), axis=0)
-	mean_macro = np.mean(np.array(history_macro), axis=0)
-	print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
-	print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
+	#std_acc = np.std(np.array(history_acc), axis=0)
+	#mean_acc = np.mean(np.array(history_acc), axis=0)
+	#std_micro = np.std(np.array(history_micro), axis=0)
+	#mean_micro = np.mean(np.array(history_micro), axis=0)
+	#std_macro = np.std(np.array(history_macro), axis=0)
+	#mean_macro = np.mean(np.array(history_macro), axis=0)
+	#print ">>>>\tmean_acc\tstd_acc\tmeans_micro\tstds_micro\tmeans_macro\tstd_macro"
+	#print ">>>>\t" + str(mean_acc) + "\t" + str(std_acc) + "\t" + str(mean_micro) + "\t" + str(std_micro) + "\t" + str(mean_macro) + "\t" + str(std_macro)  
 
 	#Features importances!
-	std_importances = np.std(np.array(history_features_importances), axis=0)
-	mean_importances = np.mean(np.array(history_features_importances), axis=0)
-	for index in range(0, len(list_of_predictors)):
-		importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
+	#std_importances = np.std(np.array(history_features_importances), axis=0)
+	#mean_importances = np.mean(np.array(history_features_importances), axis=0)
+	#for index in range(0, len(list_of_predictors)):
+	#	importances_dic[list_of_predictors[index]] = [mean_importances[index], std_importances[index]]
 	
-	sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
-	print ">>>> Importances "
-	print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
+	#sorted_dic = sorted(importances_dic.items(), key=operator.itemgetter(1), reverse=True)
+	#print ">>>> Importances "
+	#print '\n'.join([str(tuple[0]) +  " " + str(tuple[1]) for tuple in sorted_dic])
 
 	#output_file.close()
 

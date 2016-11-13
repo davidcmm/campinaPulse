@@ -79,10 +79,8 @@ data = data %>%
     d_graff = (graffiti1 == "Yes") - (graffiti2 == "Yes")
   )
 
-agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) %>% 
-  mutate_at(vars(40:50), scale)
-seg <- filter(data, (question %in% c("seguro?", "seguro")))  %>% 
-  mutate_at(vars(40:50), scale)
+agrad <- filter(data, !(question %in% c("seguro?", "seguro"))) #%>% mutate_at(vars(40:50), scale)
+seg <- filter(data, (question %in% c("seguro?", "seguro")))  #%>% mutate_at(vars(40:50), scale)
 
 create_random_model_w_interact = function(the_data, optimizer_to_use=""){
   if ( nchar(optimizer_to_use) == 0 ){

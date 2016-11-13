@@ -62,7 +62,193 @@ d_graff     1.380162  1        1.174803
 bair_cat    2.920625  6        1.093427
 
 
->> Model with profile + features
+>> Model with profile + features: sem scale
+Call:
+glm(formula = choice ~ d_swidth + d_mvcars + d_pcars + d_trees + 
+    d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + 
+    d_graff + bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + 
+    d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + 
+    d_people + d_graff) + gender:(d_swidth + d_mvcars + d_pcars + 
+    d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + 
+    d_people + d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + 
+    d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + 
+    d_people + d_graff), family = binomial(), data = the_data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3798  -1.0114   0.4346   1.0085   2.4014  
+
+Coefficients:
+                              Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                 -0.2031802  0.0298984  -6.796 1.08e-11 ***
+d_swidth                     0.0109236  0.0048240   2.264 0.023547 *  
+d_mvcars                     0.0307184  0.0224559   1.368 0.171330    
+d_pcars                      0.0197342  0.0093205   2.117 0.034235 *  
+d_trees                      0.0417769  0.0166278   2.512 0.011989 *  
+d_mvciclyst                  0.0859030  0.0545644   1.574 0.115409    
+d_lands                      0.5152304  0.0504281  10.217  < 2e-16 ***
+d_bid                       -0.0065979  0.0134652  -0.490 0.624139    
+d_bheig                     -0.0207847  0.0442970  -0.469 0.638917    
+d_dbuild                     0.0256347  0.0203786   1.258 0.208420    
+d_people                    -0.0119938  0.0148101  -0.810 0.418032    
+d_graff                      0.0602484  0.1064691   0.566 0.571477    
+bair_catcatole_centro        0.7355022  0.0673831  10.915  < 2e-16 ***
+bair_catcatole_liberdade     0.5016523  0.0654180   7.668 1.74e-14 ***
+bair_catcentro_catole        0.1294264  0.0782603   1.654 0.098169 .  
+bair_catcentro_liberdade    -0.1113169  0.0681007  -1.635 0.102134    
+bair_catliberdade_catole    -0.0404434  0.0637173  -0.635 0.525603    
+bair_catliberdade_centro     0.2061485  0.0620398   3.323 0.000891 ***
+d_swidth:age_catadulto      -0.0106740  0.0043349  -2.462 0.013803 *  
+d_mvcars:age_catadulto      -0.0235646  0.0198490  -1.187 0.235151    
+d_pcars:age_catadulto        0.0082227  0.0079746   1.031 0.302489    
+d_trees:age_catadulto        0.0495029  0.0149001   3.322 0.000893 ***
+d_mvciclyst:age_catadulto   -0.1059088  0.0498642  -2.124 0.033675 *  
+d_lands:age_catadulto       -0.0105657  0.0458068  -0.231 0.817580    
+d_bid:age_catadulto         -0.0266348  0.0126099  -2.112 0.034669 *  
+d_bheig:age_catadulto       -0.0018540  0.0386367  -0.048 0.961728    
+d_dbuild:age_catadulto      -0.0062967  0.0182627  -0.345 0.730258    
+d_people:age_catadulto       0.0585964  0.0130686   4.484 7.33e-06 ***
+d_graff:age_catadulto       -0.0188351  0.0940395  -0.200 0.841254    
+d_swidth:gendermasculino     0.0015319  0.0041010   0.374 0.708747    
+d_mvcars:gendermasculino     0.0007708  0.0192352   0.040 0.968033    
+d_pcars:gendermasculino     -0.0118681  0.0078822  -1.506 0.132149    
+d_trees:gendermasculino     -0.0249259  0.0142538  -1.749 0.080339 .  
+d_mvciclyst:gendermasculino -0.0085057  0.0482597  -0.176 0.860099    
+d_lands:gendermasculino      0.1068439  0.0429149   2.490 0.012786 *  
+d_bid:gendermasculino       -0.0162750  0.0112527  -1.446 0.148087    
+d_bheig:gendermasculino      0.0039975  0.0384733   0.104 0.917247    
+d_dbuild:gendermasculino    -0.0279864  0.0174841  -1.601 0.109448    
+d_people:gendermasculino    -0.0050091  0.0127614  -0.393 0.694673    
+d_graff:gendermasculino     -0.0826320  0.0927614  -0.891 0.373035    
+d_swidth:inc_catmedia        0.0068634  0.0041383   1.658 0.097217 .  
+d_mvcars:inc_catmedia       -0.0845013  0.0188260  -4.489 7.17e-06 ***
+d_pcars:inc_catmedia        -0.0099363  0.0076192  -1.304 0.192192    
+d_trees:inc_catmedia         0.0110298  0.0143091   0.771 0.440810    
+d_mvciclyst:inc_catmedia    -0.0371525  0.0477875  -0.777 0.436892    
+d_lands:inc_catmedia         0.0893752  0.0431133   2.073 0.038169 *  
+d_bid:inc_catmedia           0.0040875  0.0117717   0.347 0.728417    
+d_bheig:inc_catmedia        -0.0098179  0.0373787  -0.263 0.792812    
+d_dbuild:inc_catmedia       -0.0042724  0.0172493  -0.248 0.804376    
+d_people:inc_catmedia       -0.0164663  0.0125086  -1.316 0.188039    
+d_graff:inc_catmedia        -0.0433067  0.0901605  -0.480 0.630994    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 21819  on 15742  degrees of freedom
+Residual deviance: 19023  on 15692  degrees of freedom
+AIC: 19125
+
+Number of Fisher Scoring iterations: 4
+
+pR2(mostpleasant_model)
+          llh       llhNull            G2      McFadden          r2ML          r2CU 
+-9.511612e+03 -1.090956e+04  2.795902e+03  1.281400e-01  1.627198e-01  2.169842e-01
+
+> vif(mostpleasant_model)
+                        GVIF Df GVIF^(1/(2*Df))
+d_swidth            9.540714  1        3.088805
+d_mvcars            8.803421  1        2.967056
+d_pcars             8.431517  1        2.903708
+d_trees             9.847240  1        3.138031
+d_mvciclyst         7.515071  1        2.741363
+d_lands             7.800311  1        2.792904
+d_bid               8.125546  1        2.850534
+d_bheig             7.612630  1        2.759099
+d_dbuild            9.883558  1        3.143813
+d_people            9.137298  1        3.022796
+d_graff             7.682278  1        2.771692
+bair_cat            2.991378  6        1.095610
+d_swidth:age_cat    5.278863  1        2.297578
+d_mvcars:age_cat    4.779669  1        2.186246
+d_pcars:age_cat     4.047392  1        2.011813
+d_trees:age_cat     5.304864  1        2.303229
+d_mvciclyst:age_cat 4.171661  1        2.042465
+d_lands:age_cat     4.416843  1        2.101629
+d_bid:age_cat       5.188243  1        2.277771
+d_bheig:age_cat     3.800924  1        1.949596
+d_dbuild:age_cat    5.375821  1        2.318582
+d_people:age_cat    4.798040  1        2.190443
+d_graff:age_cat     3.856760  1        1.963863
+d_swidth:gender     4.588217  1        2.142012
+d_mvcars:gender     4.386385  1        2.094370
+d_pcars:gender      4.194100  1        2.047950
+d_trees:gender      4.799910  1        2.190870
+d_mvciclyst:gender  3.945091  1        1.986225
+d_lands:gender      3.661606  1        1.913532
+d_bid:gender        3.773304  1        1.942500
+d_bheig:gender      3.944142  1        1.985986
+d_dbuild:gender     4.772867  1        2.184689
+d_people:gender     4.454352  1        2.110534
+d_graff:gender      4.075040  1        2.018673
+d_swidth:inc_cat    4.338332  1        2.082866
+d_mvcars:inc_cat    3.761098  1        1.939355
+d_pcars:inc_cat     3.360647  1        1.833207
+d_trees:inc_cat     4.428149  1        2.104317
+d_mvciclyst:inc_cat 3.442432  1        1.855379
+d_lands:inc_cat     3.420174  1        1.849371
+d_bid:inc_cat       4.026670  1        2.006657
+d_bheig:inc_cat     3.266204  1        1.807264
+d_dbuild:inc_cat    4.244767  1        2.060283
+d_people:inc_cat    3.870808  1        1.967437
+d_graff:inc_cat     3.238548  1        1.799597
+
+> print(coefs_ag, rows.names=FALSE)
+                          term  estimate   std.error   statistic      p.value  conf.low conf.high
+1                  (Intercept) 0.8161312 0.029898438 -6.79567821 1.078042e-11 0.7696388 0.8653452
+2                     d_swidth 1.0109835 0.004823955  2.26444789 2.354658e-02 1.0014952 1.0206166
+3                     d_mvcars 1.0311951 0.022455912  1.36794251 1.713301e-01 0.9867827 1.0776103
+4                      d_pcars 1.0199302 0.009320498  2.11728994 3.423525e-02 1.0014719 1.0387446
+5                      d_trees 1.0426618 0.016627754  2.51247842 1.198864e-02 1.0092740 1.0772586
+6                  d_mvciclyst 1.0897006 0.054564397  1.57434149 1.154085e-01 0.9792392 1.2128467
+7                      d_lands 1.6740241 0.050428068 10.21713489 1.661801e-24 1.5172116 1.8488683
+8                        d_bid 0.9934238 0.013465240 -0.48999342 6.241386e-01 0.9675931 1.0201079
+9                      d_bheig 0.9794298 0.044297045 -0.46921295 6.389174e-01 0.8976945 1.0679852
+10                    d_dbuild 1.0259661 0.020378569  1.25792282 2.084197e-01 0.9857957 1.0677859
+11                    d_people 0.9880779 0.014810062 -0.80984016 4.180320e-01 0.9597233 1.0171012
+12                     d_graff 1.0621004 0.106469080  0.56587721 5.714773e-01 0.8619104 1.3084300
+13       bair_catcatole_centro 2.0865296 0.067383076 10.91523627 9.747551e-28 1.8289190 2.3818692
+14    bair_catcatole_liberdade 1.6514477 0.065418028  7.66841023 1.741412e-14 1.4532147 1.8780730
+15       bair_catcentro_catole 1.1381754 0.078260271  1.65379483 9.816921e-02 0.9762274 1.3267802
+16    bair_catcentro_liberdade 0.8946552 0.068100661 -1.63459388 1.021342e-01 0.7827578 1.0222876
+17    bair_catliberdade_catole 0.9603635 0.063717310 -0.63473201 5.256032e-01 0.8474405 1.0879141
+18    bair_catliberdade_centro 1.2289357 0.062039829  3.32284197 8.910538e-04 1.0882825 1.3879254
+19      d_swidth:age_catadulto 0.9893827 0.004334900 -2.46234585 1.380315e-02 0.9809912 0.9978057
+20      d_mvcars:age_catadulto 0.9767109 0.019849013 -1.18719350 2.351513e-01 0.9394547 1.0154870
+21       d_pcars:age_catadulto 1.0082566 0.007974606  1.03111060 3.024890e-01 0.9926226 1.0241462
+22       d_trees:age_catadulto 1.0507486 0.014900126  3.32231472 8.927394e-04 1.0204871 1.0818737
+23   d_mvciclyst:age_catadulto 0.8995067 0.049864208 -2.12394332 3.367488e-02 0.8157006 0.9918272
+24       d_lands:age_catadulto 0.9894899 0.045806801 -0.23065820 8.175804e-01 0.9042777 1.0821633
+25         d_bid:age_catadulto 0.9737168 0.012609937 -2.11220664 3.466873e-02 0.9498626 0.9980508
+26       d_bheig:age_catadulto 0.9981477 0.038636726 -0.04798532 9.617279e-01 0.9254262 1.0767947
+27      d_dbuild:age_catadulto 0.9937231 0.018262697 -0.34478210 7.302582e-01 0.9587801 1.0299424
+28      d_people:age_catadulto 1.0603472 0.013068618  4.48374883 7.334299e-06 1.0335971 1.0879357
+29       d_graff:age_catadulto 0.9813411 0.094039508 -0.20028958 8.412541e-01 0.8161969 1.1800816
+30    d_swidth:gendermasculino 1.0015331 0.004101034  0.37353939 7.087470e-01 0.9935001 1.0096026
+31    d_mvcars:gendermasculino 1.0007711 0.019235198  0.04007480 9.680335e-01 0.9637670 1.0392613
+32     d_pcars:gendermasculino 0.9882021 0.007882206 -1.50568084 1.321491e-01 0.9730450 1.0035832
+33     d_trees:gendermasculino 0.9753822 0.014253790 -1.74872144 8.033918e-02 0.9484791 1.0029881
+34 d_mvciclyst:gendermasculino 0.9915304 0.048259713 -0.17624813 8.600990e-01 0.9020503 1.0899395
+35     d_lands:gendermasculino 1.1127606 0.042914863  2.48967204 1.278610e-02 1.0227853 1.2101829
+36       d_bid:gendermasculino 0.9838567 0.011252701 -1.44632233 1.480868e-01 0.9623982 1.0058336
+37     d_bheig:gendermasculino 1.0040055 0.038473291  0.10390266 9.172466e-01 0.9311674 1.0827809
+38    d_dbuild:gendermasculino 0.9724016 0.017484099 -1.60067820 1.094482e-01 0.9396369 1.0063009
+39    d_people:gendermasculino 0.9950034 0.012761376 -0.39252169 6.946728e-01 0.9704502 1.0202381
+40     d_graff:gendermasculino 0.9206899 0.092761380 -0.89080188 3.730355e-01 0.7677146 1.1044391
+41       d_swidth:inc_catmedia 1.0068870 0.004138315  1.65849600 9.721739e-02 0.9987491 1.0150850
+42       d_mvcars:inc_catmedia 0.9189704 0.018826022 -4.48853943 7.171315e-06 0.8856534 0.9534977
+43        d_pcars:inc_catmedia 0.9901129 0.007619184 -1.30412067 1.921924e-01 0.9754293 1.0050048
+44        d_trees:inc_catmedia 1.0110908 0.014309051  0.77082557 4.408103e-01 0.9831106 1.0398347
+45    d_mvciclyst:inc_catmedia 0.9635292 0.047787498 -0.77745186 4.368922e-01 0.8773846 1.0581739
+46        d_lands:inc_catmedia 1.0934909 0.043113261  2.07303292 3.816922e-02 1.0047610 1.1897790
+47          d_bid:inc_catmedia 1.0040959 0.011771725  0.34723147 7.284174e-01 0.9812387 1.0276218
+48        d_bheig:inc_catmedia 0.9902301 0.037378715 -0.26266020 7.928125e-01 0.9202966 1.0655494
+49       d_dbuild:inc_catmedia 0.9957367 0.017249294 -0.24768793 8.043759e-01 0.9626362 1.0299828
+50       d_people:inc_catmedia 0.9836685 0.012508569 -1.31640098 1.880395e-01 0.9598396 1.0080829
+51        d_graff:inc_catmedia 0.9576177 0.090160495 -0.48032857 6.309938e-01 0.8025050 1.1427654
+
+>> Model with profile + features: com scale
 
 Call:
 glm(formula = choice ~ d_swidth + d_mvcars + d_pcars + d_trees + 
@@ -143,69 +329,7 @@ AIC: 19122
 
 Number of Fisher Scoring iterations: 4
 
-> logLik(mostpleasant_model)
-'log Lik.' -9510.158 (df=51)
-
->> Sorted by beta
-> arrange(teste, -abs(Estimate))
-                          term  Estimate Std.Error zvalue Pr...z..
-1        bair_catcatole_centro  0.733345  0.067370 10.885   <2e-16
-2                      d_lands  0.553916  0.054326 10.196   <2e-16
-3     bair_catcatole_liberdade  0.500968  0.065418  7.658 1.89e-14
-4       d_people:age_catadulto  0.215662  0.048323  4.463 8.08e-06
-5     bair_catliberdade_centro  0.205633  0.062028  3.315 0.000916
-6        d_mvcars:inc_catmedia -0.194234  0.043359 -4.480 7.48e-06
-7        d_trees:age_catadulto  0.179961  0.052451  3.431 0.000601
-8                      d_trees  0.143721  0.058547  2.455 0.014096
-9                  (Intercept) -0.134853  0.029946 -4.503 6.69e-06
-10       bair_catcentro_catole  0.129488  0.078294  1.654 0.098157
-11                    d_swidth  0.125793  0.057074  2.204 0.027523
-12      d_swidth:age_catadulto -0.121261  0.051263 -2.365 0.018008
-13     d_lands:gendermasculino  0.114697  0.046266  2.479 0.013171
-14    bair_catcentro_liberdade -0.111511  0.068127 -1.637 0.101669
-15         d_bid:age_catadulto -0.105287  0.045956 -2.291 0.021961
-16                     d_pcars  0.104577  0.049800  2.100 0.035735
-17        d_lands:inc_catmedia  0.096580  0.046477  2.078 0.037710
-18   d_mvciclyst:age_catadulto -0.094571  0.043718 -2.163 0.030526
-19     d_trees:gendermasculino -0.088256  0.050269 -1.756 0.079144
-20       d_swidth:inc_catmedia  0.081860  0.048970  1.672 0.094596
-21    d_dbuild:gendermasculino -0.077961  0.048488 -1.608 0.107867
-22                 d_mvciclyst  0.077192  0.047855  1.613 0.106737
-23                    d_mvcars  0.072947  0.051677  1.412 0.158071
-24                    d_dbuild  0.069848  0.056474  1.237 0.216149
-25     d_pcars:gendermasculino -0.062527  0.042142 -1.484 0.137881
-26       d_people:inc_catmedia -0.060862  0.046271 -1.315 0.188396
-27      d_mvcars:age_catadulto -0.059850  0.045684 -1.310 0.190165
-28       d_bid:gendermasculino -0.059696  0.041077 -1.453 0.146146
-29        d_pcars:inc_catmedia -0.052858  0.040734 -1.298 0.194407
-30                    d_people -0.043814  0.054769 -0.800 0.423729
-31       d_pcars:age_catadulto  0.043375  0.042607  1.018 0.308667
-32    bair_catliberdade_catole -0.040066  0.063732 -0.629 0.529565
-33        d_trees:inc_catmedia  0.039398  0.050433  0.781 0.434688
-34     d_graff:gendermasculino -0.037170  0.041950 -0.886 0.375587
-35                     d_graff  0.033293  0.048188  0.691 0.489634
-36    d_mvciclyst:inc_catmedia -0.032871  0.041906 -0.784 0.432806
-37        d_graff:inc_catmedia -0.020806  0.040826 -0.510 0.610313
-38    d_people:gendermasculino -0.018322  0.047215 -0.388 0.697970
-39    d_swidth:gendermasculino  0.017832  0.048554  0.367 0.713421
-40                       d_bid -0.016746  0.049151 -0.341 0.733322
-41                     d_bheig -0.016193  0.048271 -0.335 0.737282
-42       d_graff:age_catadulto -0.016121  0.042596 -0.378 0.705086
-43      d_dbuild:age_catadulto -0.015721  0.050592 -0.311 0.755993
-44          d_bid:inc_catmedia  0.014203  0.042940  0.331 0.740824
-45       d_dbuild:inc_catmedia -0.012205  0.047819 -0.255 0.798541
-46       d_bheig:age_catadulto -0.011753  0.042117 -0.279 0.780196
-47        d_bheig:inc_catmedia -0.011475  0.040719 -0.282 0.778083
-48       d_lands:age_catadulto -0.009206  0.049345 -0.187 0.852002
-49 d_mvciclyst:gendermasculino -0.008831  0.042338 -0.209 0.834768
-50     d_bheig:gendermasculino  0.004871  0.041965  0.116 0.907601
-51    d_mvcars:gendermasculino  0.002983  0.044334  0.067 0.946361
-
-> pR2(mostpleasant_model)
-          llh       llhNull            G2      McFadden          r2ML          r2CU 
--9.510158e+03 -1.048248e+04  1.944638e+03  9.275660e-02  1.161995e-01  1.578858e-01
-
-> vif(mostpleasant_model)
+> vif(mostpleasant_model_scaled)
                         GVIF Df GVIF^(1/(2*Df))
 d_swidth            9.526073  1        3.086434
 d_mvcars            8.786067  1        2.964130
@@ -253,59 +377,64 @@ d_dbuild:inc_cat    4.231135  1        2.056972
 d_people:inc_cat    3.860738  1        1.964876
 d_graff:inc_cat     3.249906  1        1.802750
 
-> coefs_ag
-                          term  estimate  std.error   statistic      p.value  conf.low conf.high
-1                  (Intercept) 0.8738439 0.02994589 -4.50323922 6.692548e-06 0.8240012 0.9266400
-2                     d_swidth 1.1340474 0.05707443  2.20401702 2.752315e-02 1.0143263 1.2686984
-3                     d_mvcars 1.0756735 0.05167723  1.41158812 1.580713e-01 0.9720412 1.1903818
-4                      d_pcars 1.1102407 0.04980011  2.09993202 3.573482e-02 1.0070203 1.2241451
-5                      d_trees 1.1545623 0.05854659  2.45481944 1.409554e-02 1.0295538 1.2951862
-6                  d_mvciclyst 1.0802496 0.04785518  1.61303656 1.067366e-01 0.9835864 1.1866007
-7                      d_lands 1.7400530 0.05432604 10.19613362 2.063233e-24 1.5651099 1.9366071
-8                        d_bid 0.9833932 0.04915096 -0.34070986 7.333220e-01 0.8932460 1.0833128
-9                      d_bheig 0.9839377 0.04827096 -0.33545487 7.372820e-01 0.8948061 1.0812674
-10                    d_dbuild 1.0723456 0.05647356  1.23683400 2.161487e-01 0.9599891 1.1978992
-11                    d_people 0.9571321 0.05476949 -0.79996843 4.237291e-01 0.8594262 1.0652916
-12                     d_graff 1.0338533 0.04818835  0.69089160 4.896337e-01 0.9406039 1.1362098
-13       bair_catcatole_centro 2.0820333 0.06737037 10.88527439 1.354900e-27 1.8250222 2.3766759
-14    bair_catcatole_liberdade 1.6503184 0.06541821  7.65793267 1.889499e-14 1.4522216 1.8767910
-15       bair_catcentro_catole 1.1382450 0.07829435  1.65385584 9.815681e-02 0.9762221 1.3269503
-16    bair_catcentro_liberdade 0.8944814 0.06812700 -1.63681390 1.016694e-01 0.7825652 1.0221416
-17    bair_catliberdade_catole 0.9607259 0.06373153 -0.62867070 5.295647e-01 0.8477377 1.0883562
-18    bair_catliberdade_centro 1.2283028 0.06202846  3.31514600 9.159527e-04 1.0877470 1.3871807
-19      d_swidth:age_catadulto 0.8858025 0.05126322 -2.36546323 1.800753e-02 0.8009262 0.9792107
-20      d_mvcars:age_catadulto 0.9419055 0.04568407 -1.31009185 1.901648e-01 0.8612540 1.0301992
-21       d_pcars:age_catadulto 1.0443294 0.04260705  1.01802410 3.086665e-01 0.9606739 1.1353247
-22       d_trees:age_catadulto 1.1971704 0.05245093  3.43103029 6.012935e-04 1.0801424 1.3267353
-23   d_mvciclyst:age_catadulto 0.9097628 0.04371821 -2.16320255 3.052560e-02 0.8350065 0.9911289
-24       d_lands:age_catadulto 0.9908362 0.04934518 -0.18656435 8.520022e-01 0.8992313 1.0911562
-25         d_bid:age_catadulto 0.9000665 0.04595561 -2.29105013 2.196051e-02 0.8222521 0.9847578
-26       d_bheig:age_catadulto 0.9883154 0.04211737 -0.27906391 7.801958e-01 0.9100813 1.0734902
-27      d_dbuild:age_catadulto 0.9844016 0.05059225 -0.31074634 7.559935e-01 0.8914654 1.0870321
-28      d_people:age_catadulto 1.2406829 0.04832282  4.46294227 8.084184e-06 1.1288309 1.3642944
-29       d_graff:age_catadulto 0.9840080 0.04259646 -0.37846435 7.050857e-01 0.9052096 1.0697353
-30    d_swidth:gendermasculino 1.0179921 0.04855372  0.36726601 7.134206e-01 0.9254161 1.1194543
-31    d_mvcars:gendermasculino 1.0029871 0.04433356  0.06727676 9.463614e-01 0.9195648 1.0941361
-32     d_pcars:gendermasculino 0.9393876 0.04214186 -1.48373013 1.378805e-01 0.8648782 1.0202507
-33     d_trees:gendermasculino 0.9155269 0.05026879 -1.75567219 7.914440e-02 0.8295298 1.0102245
-34 d_mvciclyst:gendermasculino 0.9912075 0.04233847 -0.20858984 8.347684e-01 0.9122821 1.0770075
-35     d_lands:gendermasculino 1.1215337 0.04626551  2.47910590 1.317122e-02 1.0240850 1.2277427
-36       d_bid:gendermasculino 0.9420508 0.04107677 -1.45328180 1.461455e-01 0.8691890 1.0211679
-37     d_bheig:gendermasculino 1.0048825 0.04196450  0.11606444 9.076015e-01 0.9256345 1.0911820
-38    d_dbuild:gendermasculino 0.9250002 0.04848786 -1.60785330 1.078673e-01 0.8411237 1.0172168
-39    d_people:gendermasculino 0.9818444 0.04721526 -0.38806154 6.979705e-01 0.8951467 1.0771739
-40     d_graff:gendermasculino 0.9635119 0.04195044 -0.88605578 3.755875e-01 0.8875025 1.0461580
-41       d_swidth:inc_catmedia 1.0853040 0.04897002  1.67163869 9.459559e-02 0.9859327 1.1946060
-42       d_mvcars:inc_catmedia 0.8234651 0.04335899 -4.47967337 7.475735e-06 0.7563247 0.8964733
-43        d_pcars:inc_catmedia 0.9485143 0.04073390 -1.29765053 1.944075e-01 0.8756949 1.0273203
-44        d_trees:inc_catmedia 1.0401841 0.05043261  0.78119497 4.346878e-01 0.9422248 1.1482030
-45    d_mvciclyst:inc_catmedia 0.9676632 0.04190623 -0.78439883 4.328061e-01 0.8913646 1.0505300
-46        d_lands:inc_catmedia 1.1013972 0.04647724  2.07799657 3.770967e-02 1.0053658 1.2062993
-47          d_bid:inc_catmedia 1.0143043 0.04294027  0.33076179 7.408244e-01 0.9325970 1.1037285
-48        d_bheig:inc_catmedia 0.9885904 0.04071859 -0.28181745 7.780835e-01 0.9127806 1.0707768
-49       d_dbuild:inc_catmedia 0.9878691 0.04781884 -0.25523526 7.985414e-01 0.8994911 1.0849526
-50       d_people:inc_catmedia 0.9409533 0.04627081 -1.31533786 1.883964e-01 0.8593535 1.0302781
-51        d_graff:inc_catmedia 0.9794090 0.04082593 -0.50962670 6.103130e-01 0.9040955 1.0610246
+> pR2(mostpleasant_model_scaled)
+          llh       llhNull            G2      McFadden          r2ML          r2CU 
+-9.510158e+03 -1.090956e+04  2.798811e+03  1.282733e-01  1.628745e-01  2.171904e-01 
+
+> print(coefs_ag_scaled, row.names=FALSE)
+                               term  estimate  std.error   statistic      p.value  conf.low conf.high
+                        (Intercept) 0.8738439 0.02994589 -4.50323922 6.692548e-06 0.8240012 0.9266400
+                    scale(d_swidth) 1.1340474 0.05707443  2.20401702 2.752315e-02 1.0143263 1.2686984
+                    scale(d_mvcars) 1.0756735 0.05167723  1.41158812 1.580713e-01 0.9720412 1.1903818
+                     scale(d_pcars) 1.1102407 0.04980011  2.09993202 3.573482e-02 1.0070203 1.2241451
+                     scale(d_trees) 1.1545623 0.05854659  2.45481944 1.409554e-02 1.0295538 1.2951862
+                 scale(d_mvciclyst) 1.0802496 0.04785518  1.61303656 1.067366e-01 0.9835864 1.1866007
+                     scale(d_lands) 1.7400530 0.05432604 10.19613362 2.063233e-24 1.5651099 1.9366071
+                       scale(d_bid) 0.9833932 0.04915096 -0.34070986 7.333220e-01 0.8932460 1.0833128
+                     scale(d_bheig) 0.9839377 0.04827096 -0.33545487 7.372820e-01 0.8948061 1.0812674
+                    scale(d_dbuild) 1.0723456 0.05647356  1.23683400 2.161487e-01 0.9599891 1.1978992
+                    scale(d_people) 0.9571321 0.05476949 -0.79996843 4.237291e-01 0.8594262 1.0652916
+                     scale(d_graff) 1.0338533 0.04818835  0.69089160 4.896337e-01 0.9406039 1.1362098
+              bair_catcatole_centro 2.0820333 0.06737037 10.88527439 1.354900e-27 1.8250222 2.3766759
+           bair_catcatole_liberdade 1.6503184 0.06541821  7.65793267 1.889499e-14 1.4522216 1.8767910
+              bair_catcentro_catole 1.1382450 0.07829435  1.65385584 9.815681e-02 0.9762221 1.3269503
+           bair_catcentro_liberdade 0.8944814 0.06812700 -1.63681390 1.016694e-01 0.7825652 1.0221416
+           bair_catliberdade_catole 0.9607259 0.06373153 -0.62867070 5.295647e-01 0.8477377 1.0883562
+           bair_catliberdade_centro 1.2283028 0.06202846  3.31514600 9.159527e-04 1.0877470 1.3871807
+      scale(d_swidth):age_catadulto 0.8858025 0.05126322 -2.36546323 1.800753e-02 0.8009262 0.9792107
+      scale(d_mvcars):age_catadulto 0.9419055 0.04568407 -1.31009185 1.901648e-01 0.8612540 1.0301992
+       scale(d_pcars):age_catadulto 1.0443294 0.04260705  1.01802410 3.086665e-01 0.9606739 1.1353247
+       scale(d_trees):age_catadulto 1.1971704 0.05245093  3.43103029 6.012935e-04 1.0801424 1.3267353
+   scale(d_mvciclyst):age_catadulto 0.9097628 0.04371821 -2.16320255 3.052560e-02 0.8350065 0.9911289
+       scale(d_lands):age_catadulto 0.9908362 0.04934518 -0.18656435 8.520022e-01 0.8992313 1.0911562
+         scale(d_bid):age_catadulto 0.9000665 0.04595561 -2.29105013 2.196051e-02 0.8222521 0.9847578
+       scale(d_bheig):age_catadulto 0.9883154 0.04211737 -0.27906391 7.801958e-01 0.9100813 1.0734902
+      scale(d_dbuild):age_catadulto 0.9844016 0.05059225 -0.31074634 7.559935e-01 0.8914654 1.0870321
+      scale(d_people):age_catadulto 1.2406829 0.04832282  4.46294227 8.084184e-06 1.1288309 1.3642944
+       scale(d_graff):age_catadulto 0.9840080 0.04259646 -0.37846435 7.050857e-01 0.9052096 1.0697353
+    scale(d_swidth):gendermasculino 1.0179921 0.04855372  0.36726601 7.134206e-01 0.9254161 1.1194543
+    scale(d_mvcars):gendermasculino 1.0029871 0.04433356  0.06727676 9.463614e-01 0.9195648 1.0941361
+     scale(d_pcars):gendermasculino 0.9393876 0.04214186 -1.48373013 1.378805e-01 0.8648782 1.0202507
+     scale(d_trees):gendermasculino 0.9155269 0.05026879 -1.75567219 7.914440e-02 0.8295298 1.0102245
+ scale(d_mvciclyst):gendermasculino 0.9912075 0.04233847 -0.20858984 8.347684e-01 0.9122821 1.0770075
+     scale(d_lands):gendermasculino 1.1215337 0.04626551  2.47910590 1.317122e-02 1.0240850 1.2277427
+       scale(d_bid):gendermasculino 0.9420508 0.04107677 -1.45328180 1.461455e-01 0.8691890 1.0211679
+     scale(d_bheig):gendermasculino 1.0048825 0.04196450  0.11606444 9.076015e-01 0.9256345 1.0911820
+    scale(d_dbuild):gendermasculino 0.9250002 0.04848786 -1.60785330 1.078673e-01 0.8411237 1.0172168
+    scale(d_people):gendermasculino 0.9818444 0.04721526 -0.38806154 6.979705e-01 0.8951467 1.0771739
+     scale(d_graff):gendermasculino 0.9635119 0.04195044 -0.88605578 3.755875e-01 0.8875025 1.0461580
+       scale(d_swidth):inc_catmedia 1.0853040 0.04897002  1.67163869 9.459559e-02 0.9859327 1.1946060
+       scale(d_mvcars):inc_catmedia 0.8234651 0.04335899 -4.47967337 7.475735e-06 0.7563247 0.8964733
+        scale(d_pcars):inc_catmedia 0.9485143 0.04073390 -1.29765053 1.944075e-01 0.8756949 1.0273203
+        scale(d_trees):inc_catmedia 1.0401841 0.05043261  0.78119497 4.346878e-01 0.9422248 1.1482030
+    scale(d_mvciclyst):inc_catmedia 0.9676632 0.04190623 -0.78439883 4.328061e-01 0.8913646 1.0505300
+        scale(d_lands):inc_catmedia 1.1013972 0.04647724  2.07799657 3.770967e-02 1.0053658 1.2062993
+          scale(d_bid):inc_catmedia 1.0143043 0.04294027  0.33076179 7.408244e-01 0.9325970 1.1037285
+        scale(d_bheig):inc_catmedia 0.9885904 0.04071859 -0.28181745 7.780835e-01 0.9127806 1.0707768
+       scale(d_dbuild):inc_catmedia 0.9878691 0.04781884 -0.25523526 7.985414e-01 0.8994911 1.0849526
+       scale(d_people):inc_catmedia 0.9409533 0.04627081 -1.31533786 1.883964e-01 0.8593535 1.0302781
+        scale(d_graff):inc_catmedia 0.9794090 0.04082593 -0.50962670 6.103130e-01 0.9040955 1.0610246
+
 
 >> Vale a pena random effects?
 
@@ -1042,8 +1171,7 @@ d_graff     1.385912  1        1.177248
 bair_cat    2.892798  6        1.092555
 
 
->> Model with profile + features
-
+>> Model with profile + features: sem scale
 Call:
 glm(formula = choice ~ d_swidth + d_mvcars + d_pcars + d_trees + 
     d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + 
@@ -1056,62 +1184,62 @@ glm(formula = choice ~ d_swidth + d_mvcars + d_pcars + d_trees +
     d_people + d_graff), family = binomial(), data = the_data)
 
 Deviance Residuals: 
-   Min      1Q  Median      3Q     Max  
--2.356  -1.030  -0.488   1.043   2.372  
+    Min       1Q   Median       3Q      Max  
+-2.3544  -1.0282  -0.4876   1.0425   2.3733  
 
 Coefficients:
                               Estimate Std. Error z value Pr(>|z|)    
-(Intercept)                 -0.1203155  0.0299798  -4.013 5.99e-05 ***
-d_swidth                    -0.1061109  0.0563000  -1.885  0.05947 .  
-d_mvcars                     0.4528956  0.0541943   8.357  < 2e-16 ***
-d_pcars                      0.2042169  0.0499522   4.088 4.35e-05 ***
-d_trees                      0.1584862  0.0572872   2.767  0.00567 ** 
-d_mvciclyst                 -0.0186807  0.0484887  -0.385  0.70005    
-d_lands                      0.4293485  0.0530192   8.098 5.59e-16 ***
-d_bid                        0.0041786  0.0478733   0.087  0.93045    
-d_bheig                      0.0855219  0.0483971   1.767  0.07721 .  
-d_dbuild                     0.0467821  0.0560742   0.834  0.40412    
-d_people                     0.2124869  0.0536954   3.957 7.58e-05 ***
-d_graff                     -0.0782711  0.0486451  -1.609  0.10761    
-bair_catcatole_centro        0.3797850  0.0690522   5.500 3.80e-08 ***
-bair_catcatole_liberdade     0.0386888  0.0685197   0.565  0.57232    
-bair_catcentro_catole        0.3342463  0.0748477   4.466 7.98e-06 ***
-bair_catcentro_liberdade     0.1522402  0.0663664   2.294  0.02179 *  
-bair_catliberdade_catole    -0.1488558  0.0619892  -2.401  0.01634 *  
-bair_catliberdade_centro    -0.0857437  0.0645066  -1.329  0.18377    
-d_swidth:age_catadulto       0.2018232  0.0505176   3.995 6.47e-05 ***
-d_mvcars:age_catadulto      -0.1401757  0.0486989  -2.878  0.00400 ** 
-d_pcars:age_catadulto       -0.0427034  0.0447637  -0.954  0.34010    
-d_trees:age_catadulto       -0.0953095  0.0525699  -1.813  0.06983 .  
-d_mvciclyst:age_catadulto   -0.0253775  0.0438833  -0.578  0.56307    
-d_lands:age_catadulto        0.0496140  0.0494394   1.004  0.31560    
-d_bid:age_catadulto         -0.0020027  0.0415126  -0.048  0.96152    
-d_bheig:age_catadulto       -0.0499647  0.0444554  -1.124  0.26104    
-d_dbuild:age_catadulto       0.2142158  0.0500226   4.282 1.85e-05 ***
-d_people:age_catadulto       0.0173636  0.0480546   0.361  0.71785    
-d_graff:age_catadulto       -0.0198036  0.0446288  -0.444  0.65723    
-d_swidth:gendermasculino     0.0764151  0.0493930   1.547  0.12184    
-d_mvcars:gendermasculino    -0.1861899  0.0462472  -4.026 5.67e-05 ***
-d_pcars:gendermasculino      0.0001324  0.0430420   0.003  0.99755    
-d_trees:gendermasculino     -0.0689107  0.0509467  -1.353  0.17618    
-d_mvciclyst:gendermasculino  0.0756724  0.0425275   1.779  0.07518 .  
-d_lands:gendermasculino      0.1391346  0.0474114   2.935  0.00334 ** 
-d_bid:gendermasculino       -0.0244321  0.0448421  -0.545  0.58586    
-d_bheig:gendermasculino     -0.0603414  0.0419995  -1.437  0.15080    
-d_dbuild:gendermasculino     0.0305284  0.0488442   0.625  0.53196    
-d_people:gendermasculino    -0.0620109  0.0477155  -1.300  0.19374    
-d_graff:gendermasculino      0.0149037  0.0414633   0.359  0.71926    
-d_swidth:inc_catmedia       -0.0331243  0.0486933  -0.680  0.49634    
-d_mvcars:inc_catmedia       -0.0497403  0.0453385  -1.097  0.27260    
-d_pcars:inc_catmedia         0.0492702  0.0429260   1.148  0.25105    
-d_trees:inc_catmedia         0.1075030  0.0504152   2.132  0.03298 *  
-d_mvciclyst:inc_catmedia    -0.0300216  0.0415376  -0.723  0.46983    
-d_lands:inc_catmedia         0.1255525  0.0472840   2.655  0.00792 ** 
-d_bid:inc_catmedia          -0.0415016  0.0432752  -0.959  0.33755    
-d_bheig:inc_catmedia         0.0257598  0.0423157   0.609  0.54269    
-d_dbuild:inc_catmedia       -0.1558758  0.0477892  -3.262  0.00111 ** 
-d_people:inc_catmedia        0.1930568  0.0462998   4.170 3.05e-05 ***
-d_graff:inc_catmedia        -0.0118668  0.0420590  -0.282  0.77783    
+(Intercept)                 -0.1578826  0.0300864  -5.248 1.54e-07 ***
+d_swidth                    -0.0091512  0.0047886  -1.911  0.05600 .  
+d_mvcars                     0.1991894  0.0238166   8.363  < 2e-16 ***
+d_pcars                      0.0378139  0.0091662   4.125 3.70e-05 ***
+d_trees                      0.0461423  0.0163564   2.821  0.00479 ** 
+d_mvciclyst                 -0.0207493  0.0550318  -0.377  0.70614    
+d_lands                      0.3980960  0.0488263   8.153 3.54e-16 ***
+d_bid                        0.0001903  0.0135176   0.014  0.98877    
+d_bheig                      0.0734223  0.0436568   1.682  0.09261 .  
+d_dbuild                     0.0178108  0.0202750   0.878  0.37970    
+d_people                     0.0575166  0.0143815   3.999 6.35e-05 ***
+d_graff                     -0.1798487  0.1068342  -1.683  0.09229 .  
+bair_catcatole_centro        0.3797641  0.0690437   5.500 3.79e-08 ***
+bair_catcatole_liberdade     0.0382208  0.0685239   0.558  0.57700    
+bair_catcentro_catole        0.3343581  0.0748434   4.467 7.92e-06 ***
+bair_catcentro_liberdade     0.1519149  0.0663624   2.289  0.02207 *  
+bair_catliberdade_catole    -0.1487112  0.0619892  -2.399  0.01644 *  
+bair_catliberdade_centro    -0.0857234  0.0645045  -1.329  0.18386    
+d_swidth:age_catadulto       0.0173353  0.0042960   4.035 5.45e-05 ***
+d_mvcars:age_catadulto      -0.0616224  0.0213999  -2.880  0.00398 ** 
+d_pcars:age_catadulto       -0.0081882  0.0082131  -0.997  0.31878    
+d_trees:age_catadulto       -0.0281818  0.0150171  -1.877  0.06057 .  
+d_mvciclyst:age_catadulto   -0.0290022  0.0497984  -0.582  0.56030    
+d_lands:age_catadulto        0.0427047  0.0455150   0.938  0.34811    
+d_bid:age_catadulto          0.0004921  0.0117135   0.042  0.96649    
+d_bheig:age_catadulto       -0.0405566  0.0400919  -1.012  0.31173    
+d_dbuild:age_catadulto       0.0764958  0.0180851   4.230 2.34e-05 ***
+d_people:age_catadulto       0.0039208  0.0128722   0.305  0.76067    
+d_graff:age_catadulto       -0.0339814  0.0979046  -0.347  0.72853    
+d_swidth:gendermasculino     0.0065705  0.0042001   1.564  0.11773    
+d_mvcars:gendermasculino    -0.0819739  0.0203200  -4.034 5.48e-05 ***
+d_pcars:gendermasculino     -0.0002793  0.0078920  -0.035  0.97177    
+d_trees:gendermasculino     -0.0202711  0.0145409  -1.394  0.16330    
+d_mvciclyst:gendermasculino  0.0856399  0.0482546   1.775  0.07594 .  
+d_lands:gendermasculino      0.1266422  0.0436719   2.900  0.00373 ** 
+d_bid:gendermasculino       -0.0060187  0.0126745  -0.475  0.63488    
+d_bheig:gendermasculino     -0.0518780  0.0378430  -1.371  0.17041    
+d_dbuild:gendermasculino     0.0104990  0.0176518   0.595  0.55199    
+d_people:gendermasculino    -0.0171425  0.0127723  -1.342  0.17954    
+d_graff:gendermasculino      0.0377873  0.0909823   0.415  0.67790    
+d_swidth:inc_catmedia       -0.0028825  0.0041399  -0.696  0.48625    
+d_mvcars:inc_catmedia       -0.0218496  0.0199156  -1.097  0.27259    
+d_pcars:inc_catmedia         0.0091714  0.0078690   1.166  0.24381    
+d_trees:inc_catmedia         0.0310365  0.0143942   2.156  0.03107 *  
+d_mvciclyst:inc_catmedia    -0.0341517  0.0471273  -0.725  0.46866    
+d_lands:inc_catmedia         0.1164056  0.0435392   2.674  0.00750 ** 
+d_bid:inc_catmedia          -0.0121508  0.0122238  -0.994  0.32021    
+d_bheig:inc_catmedia         0.0215926  0.0381360   0.566  0.57126    
+d_dbuild:inc_catmedia       -0.0561376  0.0172651  -3.252  0.00115 ** 
+d_people:inc_catmedia        0.0519838  0.0123938   4.194 2.74e-05 ***
+d_graff:inc_catmedia        -0.0295611  0.0922432  -0.320  0.74861    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
@@ -1123,170 +1251,254 @@ AIC: 18730
 
 Number of Fisher Scoring iterations: 4
 
-> logLik(safer_model)
-'log Lik.' -9313.869 (df=51)
-
->> Sorted by beta
-> arrange(teste, -abs(Estimate))
-                          term   Estimate Std.Error zvalue Pr...z..
-1                     d_mvcars  0.4528956 0.0541943  8.357   <2e-16
-2                      d_lands  0.4293485 0.0530192  8.098 5.59e-16
-3        bair_catcatole_centro  0.3797850 0.0690522  5.500 3.80e-08
-4        bair_catcentro_catole  0.3342463 0.0748477  4.466 7.98e-06
-5       d_dbuild:age_catadulto  0.2142158 0.0500226  4.282 1.85e-05
-6                     d_people  0.2124869 0.0536954  3.957 7.58e-05
-7                      d_pcars  0.2042169 0.0499522  4.088 4.35e-05
-8       d_swidth:age_catadulto  0.2018232 0.0505176  3.995 6.47e-05
-9        d_people:inc_catmedia  0.1930568 0.0462998  4.170 3.05e-05
-10    d_mvcars:gendermasculino -0.1861899 0.0462472 -4.026 5.67e-05
-11                     d_trees  0.1584862 0.0572872  2.767  0.00567
-12       d_dbuild:inc_catmedia -0.1558758 0.0477892 -3.262  0.00111
-13    bair_catcentro_liberdade  0.1522402 0.0663664  2.294  0.02179
-14    bair_catliberdade_catole -0.1488558 0.0619892 -2.401  0.01634
-15      d_mvcars:age_catadulto -0.1401757 0.0486989 -2.878  0.00400
-16     d_lands:gendermasculino  0.1391346 0.0474114  2.935  0.00334
-17        d_lands:inc_catmedia  0.1255525 0.0472840  2.655  0.00792
-18                 (Intercept) -0.1203155 0.0299798 -4.013 5.99e-05
-19        d_trees:inc_catmedia  0.1075030 0.0504152  2.132  0.03298
-20                    d_swidth -0.1061109 0.0563000 -1.885  0.05947
-21       d_trees:age_catadulto -0.0953095 0.0525699 -1.813  0.06983
-22    bair_catliberdade_centro -0.0857437 0.0645066 -1.329  0.18377
-23                     d_bheig  0.0855219 0.0483971  1.767  0.07721
-24                     d_graff -0.0782711 0.0486451 -1.609  0.10761
-25    d_swidth:gendermasculino  0.0764151 0.0493930  1.547  0.12184
-26 d_mvciclyst:gendermasculino  0.0756724 0.0425275  1.779  0.07518
-27     d_trees:gendermasculino -0.0689107 0.0509467 -1.353  0.17618
-28    d_people:gendermasculino -0.0620109 0.0477155 -1.300  0.19374
-29     d_bheig:gendermasculino -0.0603414 0.0419995 -1.437  0.15080
-30       d_bheig:age_catadulto -0.0499647 0.0444554 -1.124  0.26104
-31       d_mvcars:inc_catmedia -0.0497403 0.0453385 -1.097  0.27260
-32       d_lands:age_catadulto  0.0496140 0.0494394  1.004  0.31560
-33        d_pcars:inc_catmedia  0.0492702 0.0429260  1.148  0.25105
-34                    d_dbuild  0.0467821 0.0560742  0.834  0.40412
-35       d_pcars:age_catadulto -0.0427034 0.0447637 -0.954  0.34010
-36          d_bid:inc_catmedia -0.0415016 0.0432752 -0.959  0.33755
-37    bair_catcatole_liberdade  0.0386888 0.0685197  0.565  0.57232
-38       d_swidth:inc_catmedia -0.0331243 0.0486933 -0.680  0.49634
-39    d_dbuild:gendermasculino  0.0305284 0.0488442  0.625  0.53196
-40    d_mvciclyst:inc_catmedia -0.0300216 0.0415376 -0.723  0.46983
-41        d_bheig:inc_catmedia  0.0257598 0.0423157  0.609  0.54269
-42   d_mvciclyst:age_catadulto -0.0253775 0.0438833 -0.578  0.56307
-43       d_bid:gendermasculino -0.0244321 0.0448421 -0.545  0.58586
-44       d_graff:age_catadulto -0.0198036 0.0446288 -0.444  0.65723
-45                 d_mvciclyst -0.0186807 0.0484887 -0.385  0.70005
-46      d_people:age_catadulto  0.0173636 0.0480546  0.361  0.71785
-47     d_graff:gendermasculino  0.0149037 0.0414633  0.359  0.71926
-48        d_graff:inc_catmedia -0.0118668 0.0420590 -0.282  0.77783
-49                       d_bid  0.0041786 0.0478733  0.087  0.93045
-50         d_bid:age_catadulto -0.0020027 0.0415126 -0.048  0.96152
-51     d_pcars:gendermasculino  0.0001324 0.0430420  0.003  0.99755
+> vif(safer_model)
+                         GVIF Df GVIF^(1/(2*Df))
+d_swidth             9.478894  1        3.078781
+d_mvcars             8.712143  1        2.951634
+d_pcars              8.009241  1        2.830060
+d_trees             10.095564  1        3.177352
+d_mvciclyst          7.667692  1        2.769060
+d_lands              7.778789  1        2.789048
+d_bid                7.390218  1        2.718496
+d_bheig              7.487018  1        2.736242
+d_dbuild            10.089050  1        3.176327
+d_people             9.348292  1        3.057498
+d_graff              7.634960  1        2.763143
+bair_cat             2.963541  6        1.094757
+d_swidth:age_cat     5.105955  1        2.259636
+d_mvcars:age_cat     5.058252  1        2.249056
+d_pcars:age_cat      4.339647  1        2.083182
+d_trees:age_cat      5.777212  1        2.403583
+d_mvciclyst:age_cat  4.319091  1        2.078242
+d_lands:age_cat      4.549979  1        2.133068
+d_bid:age_cat        3.378422  1        1.838048
+d_bheig:age_cat      4.400785  1        2.097805
+d_dbuild:age_cat     5.425691  1        2.329311
+d_people:age_cat     4.851045  1        2.202509
+d_graff:age_cat      4.521935  1        2.126484
+d_swidth:gender      4.774648  1        2.185097
+d_mvcars:gender      4.323738  1        2.079360
+d_pcars:gender       3.866631  1        1.966375
+d_trees:gender       5.285849  1        2.299098
+d_mvciclyst:gender   3.910191  1        1.977420
+d_lands:gender       3.996491  1        1.999123
+d_bid:gender         4.504035  1        2.122271
+d_bheig:gender       3.662387  1        1.913736
+d_dbuild:gender      5.014133  1        2.239226
+d_people:gender      4.979002  1        2.231368
+d_graff:gender       3.447021  1        1.856615
+d_swidth:inc_cat     4.292003  1        2.071715
+d_mvcars:inc_cat     3.752670  1        1.937181
+d_pcars:inc_cat      3.585434  1        1.893524
+d_trees:inc_cat      4.678915  1        2.163080
+d_mvciclyst:inc_cat  3.303565  1        1.817571
+d_lands:inc_cat      3.612535  1        1.900667
+d_bid:inc_cat        3.904473  1        1.975974
+d_bheig:inc_cat      3.545947  1        1.883068
+d_dbuild:inc_cat     4.367268  1        2.089801
+d_people:inc_cat     4.026720  1        2.006669
+d_graff:inc_cat      3.468114  1        1.862287
 
 > pR2(safer_model)
           llh       llhNull            G2      McFadden          r2ML          r2CU 
+-9.314130e+03 -1.090956e+04  3.190867e+03  1.462417e-01  1.901761e-01  2.490392e-01
+
+> print(coefs_seg, row.names=FALSE)
+                        term  estimate   std.error   statistic      p.value  conf.low conf.high
+                 (Intercept) 0.8539500 0.030086402 -5.24764110 1.540590e-07 0.8050142 0.9057868
+                    d_swidth 0.9908905 0.004788597 -1.91104559 5.599872e-02 0.9816342 1.0002382
+                    d_mvcars 1.2204131 0.023816613  8.36346559 6.090229e-17 1.1651133 1.2791490
+                     d_pcars 1.0385379 0.009166155  4.12537887 3.701250e-05 1.0200849 1.0574103
+                     d_trees 1.0472235 0.016356418  2.82105361 4.786620e-03 1.0142397 1.0814102
+                 d_mvciclyst 0.9794645 0.055031801 -0.37704258 7.061420e-01 0.8792240 1.0909595
+                     d_lands 1.4889869 0.048826324  8.15330587 3.541085e-16 1.3537444 1.6393525
+                       d_bid 1.0001903 0.013517589  0.01407527 9.887699e-01 0.9741987 1.0272802
+                     d_bheig 1.0761849 0.043656796  1.68180615 9.260644e-02 0.9878228 1.1722682
+                    d_dbuild 1.0179703 0.020275039  0.87845763 3.796954e-01 0.9783257 1.0592663
+                    d_people 1.0592029 0.014381453  3.99936145 6.351362e-05 1.0297969 1.0895318
+                     d_graff 0.8353966 0.106834192 -1.68343743 9.229044e-02 0.6773491 1.0297314
+       bair_catcatole_centro 1.4619397 0.069043674  5.50034584 3.790470e-08 1.2769844 1.6739246
+    bair_catcatole_liberdade 1.0389606 0.068523943  0.55777287 5.769995e-01 0.9083629 1.1883133
+       bair_catcentro_catole 1.3970433 0.074843351  4.46743830 7.916183e-06 1.2067642 1.6182697
+    bair_catcentro_liberdade 1.1640612 0.066362381  2.28917239 2.206934e-02 1.0221470 1.3258645
+    bair_catliberdade_catole 0.8618180 0.061989208 -2.39898527 1.644058e-02 0.7630888 0.9730093
+    bair_catliberdade_centro 0.9178481 0.064504469 -1.32895242 1.838637e-01 0.8087730 1.0414740
+      d_swidth:age_catadulto 1.0174864 0.004295984  4.03523317 5.454810e-05 1.0089594 1.0260968
+      d_mvcars:age_catadulto 0.9402378 0.021399853 -2.87957157 3.982159e-03 0.9014312 0.9803290
+       d_pcars:age_catadulto 0.9918452 0.008213144 -0.99696397 3.187820e-01 0.9759790 1.0079166
+       d_trees:age_catadulto 0.9722116 0.015017077 -1.87665007 6.056607e-02 0.9439736 1.0012164
+   d_mvciclyst:age_catadulto 0.9714143 0.049798368 -0.58239314 5.603019e-01 0.8810959 1.0710683
+       d_lands:age_catadulto 1.0436297 0.045514979  0.93825681 3.481125e-01 0.9543032 1.1407255
+         d_bid:age_catadulto 1.0004922 0.011713541  0.04201125 9.664897e-01 0.9777716 1.0237519
+       d_bheig:age_catadulto 0.9602549 0.040091886 -1.01159010 3.117341e-01 0.8876963 1.0388054
+      d_dbuild:age_catadulto 1.0794977 0.018085062  4.22977975 2.339202e-05 1.0419213 1.1184759
+      d_people:age_catadulto 1.0039285 0.012872191  0.30459542 7.606743e-01 0.9788855 1.0295536
+       d_graff:age_catadulto 0.9665895 0.097904586 -0.34708661 7.285262e-01 0.7979498 1.1713283
+    d_swidth:gendermasculino 1.0065922 0.004200107  1.56437579 1.177293e-01 0.9983386 1.0149137
+    d_mvcars:gendermasculino 0.9212960 0.020319960 -4.03415530 5.479907e-05 0.8851868 0.9585918
+     d_pcars:gendermasculino 0.9997207 0.007892014 -0.03538994 9.717688e-01 0.9843548 1.0152867
+     d_trees:gendermasculino 0.9799330 0.014540916 -1.39407299 1.632956e-01 0.9523701 1.0082374
+ d_mvciclyst:gendermasculino 1.0894140 0.048254606  1.77475160 7.593891e-02 0.9911488 1.1975717
+     d_lands:gendermasculino 1.1350109 0.043671891  2.89985699 3.733330e-03 1.0416778 1.2362022
+       d_bid:gendermasculino 0.9939994 0.012674535 -0.47486281 6.348848e-01 0.9695224 1.0189680
+     d_bheig:gendermasculino 0.9494447 0.037843041 -1.37087211 1.704148e-01 0.8815479 1.0225457
+    d_dbuild:gendermasculino 1.0105543 0.017651794  0.59478192 5.519893e-01 0.9761851 1.0461300
+    d_people:gendermasculino 0.9830036 0.012772257 -1.34216702 1.795418e-01 0.9586615 1.0078873
+     d_graff:gendermasculino 1.0385103 0.090982269  0.41532575 6.779035e-01 0.8690027 1.2414508
+       d_swidth:inc_catmedia 0.9971216 0.004139864 -0.69628068 4.862531e-01 0.9890544 1.0052377
+       d_mvcars:inc_catmedia 0.9783873 0.019915567 -1.09711319 2.725919e-01 0.9408965 1.0173093
+        d_pcars:inc_catmedia 1.0092136 0.007869017  1.16550599 2.438142e-01 0.9937601 1.0248950
+        d_trees:inc_catmedia 1.0315231 0.014394151  2.15618648 3.106911e-02 1.0028322 1.0610488
+    d_mvciclyst:inc_catmedia 0.9664249 0.047127304 -0.72466913 4.686550e-01 0.8811078 1.0599146
+        d_lands:inc_catmedia 1.1234514 0.043539237  2.67357874 7.504666e-03 1.0314700 1.2234475
+          d_bid:inc_catmedia 0.9879227 0.012223798 -0.99402599 3.202102e-01 0.9644120 1.0117893
+        d_bheig:inc_catmedia 1.0218274 0.038135990  0.56620089 5.712572e-01 0.9482525 1.1011851
+       d_dbuild:inc_catmedia 0.9454091 0.017265059 -3.25151282 1.147926e-03 0.9139218 0.9779211
+       d_people:inc_catmedia 1.0533587 0.012393805  4.19433943 2.736679e-05 1.0280850 1.0792723
+        d_graff:inc_catmedia 0.9708716 0.092243211 -0.32046874 7.486130e-01 0.8103257 1.1633624
+
+>> Model with profiles + features: com scale
+
+Call:
+glm(formula = choice ~ scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + 
+    scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + 
+    scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff) + 
+    bair_cat + age_cat:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + 
+    scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + scale(d_bid) + 
+    scale(d_bheig) + scale(d_dbuild) + scale(d_people) + scale(d_graff)) + 
+    gender:(scale(d_swidth) + scale(d_mvcars) + scale(d_pcars) + 
+        scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + 
+        scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + 
+        scale(d_graff)) + inc_cat:(scale(d_swidth) + scale(d_mvcars) + 
+    scale(d_pcars) + scale(d_trees) + scale(d_mvciclyst) + scale(d_lands) + 
+    scale(d_bid) + scale(d_bheig) + scale(d_dbuild) + scale(d_people) + 
+    scale(d_graff)), family = binomial(), data = the_data)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-2.356  -1.030  -0.488   1.043   2.372  
+
+Coefficients:
+                                     Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                        -0.1203155  0.0299798  -4.013 5.99e-05 ***
+scale(d_swidth)                    -0.1061109  0.0563000  -1.885  0.05947 .  
+scale(d_mvcars)                     0.4528956  0.0541943   8.357  < 2e-16 ***
+scale(d_pcars)                      0.2042169  0.0499522   4.088 4.35e-05 ***
+scale(d_trees)                      0.1584862  0.0572872   2.767  0.00567 ** 
+scale(d_mvciclyst)                 -0.0186807  0.0484887  -0.385  0.70005    
+scale(d_lands)                      0.4293485  0.0530192   8.098 5.59e-16 ***
+scale(d_bid)                        0.0041786  0.0478733   0.087  0.93045    
+scale(d_bheig)                      0.0855219  0.0483971   1.767  0.07721 .  
+scale(d_dbuild)                     0.0467821  0.0560742   0.834  0.40412    
+scale(d_people)                     0.2124869  0.0536954   3.957 7.58e-05 ***
+scale(d_graff)                     -0.0782711  0.0486451  -1.609  0.10761    
+bair_catcatole_centro               0.3797850  0.0690522   5.500 3.80e-08 ***
+bair_catcatole_liberdade            0.0386888  0.0685197   0.565  0.57232    
+bair_catcentro_catole               0.3342463  0.0748477   4.466 7.98e-06 ***
+bair_catcentro_liberdade            0.1522402  0.0663664   2.294  0.02179 *  
+bair_catliberdade_catole           -0.1488558  0.0619892  -2.401  0.01634 *  
+bair_catliberdade_centro           -0.0857437  0.0645066  -1.329  0.18377    
+scale(d_swidth):age_catadulto       0.2018232  0.0505176   3.995 6.47e-05 ***
+scale(d_mvcars):age_catadulto      -0.1401757  0.0486989  -2.878  0.00400 ** 
+scale(d_pcars):age_catadulto       -0.0427034  0.0447637  -0.954  0.34010    
+scale(d_trees):age_catadulto       -0.0953095  0.0525699  -1.813  0.06983 .  
+scale(d_mvciclyst):age_catadulto   -0.0253775  0.0438833  -0.578  0.56307    
+scale(d_lands):age_catadulto        0.0496140  0.0494394   1.004  0.31560    
+scale(d_bid):age_catadulto         -0.0020027  0.0415126  -0.048  0.96152    
+scale(d_bheig):age_catadulto       -0.0499647  0.0444554  -1.124  0.26104    
+scale(d_dbuild):age_catadulto       0.2142158  0.0500226   4.282 1.85e-05 ***
+scale(d_people):age_catadulto       0.0173636  0.0480546   0.361  0.71785    
+scale(d_graff):age_catadulto       -0.0198036  0.0446288  -0.444  0.65723    
+scale(d_swidth):gendermasculino     0.0764151  0.0493930   1.547  0.12184    
+scale(d_mvcars):gendermasculino    -0.1861899  0.0462472  -4.026 5.67e-05 ***
+scale(d_pcars):gendermasculino      0.0001324  0.0430420   0.003  0.99755    
+scale(d_trees):gendermasculino     -0.0689107  0.0509467  -1.353  0.17618    
+scale(d_mvciclyst):gendermasculino  0.0756724  0.0425275   1.779  0.07518 .  
+scale(d_lands):gendermasculino      0.1391346  0.0474114   2.935  0.00334 ** 
+scale(d_bid):gendermasculino       -0.0244321  0.0448421  -0.545  0.58586    
+scale(d_bheig):gendermasculino     -0.0603414  0.0419995  -1.437  0.15080    
+scale(d_dbuild):gendermasculino     0.0305284  0.0488442   0.625  0.53196    
+scale(d_people):gendermasculino    -0.0620109  0.0477155  -1.300  0.19374    
+scale(d_graff):gendermasculino      0.0149037  0.0414633   0.359  0.71926    
+scale(d_swidth):inc_catmedia       -0.0331243  0.0486933  -0.680  0.49634    
+scale(d_mvcars):inc_catmedia       -0.0497403  0.0453385  -1.097  0.27260    
+scale(d_pcars):inc_catmedia         0.0492702  0.0429260   1.148  0.25105    
+scale(d_trees):inc_catmedia         0.1075030  0.0504152   2.132  0.03298 *  
+scale(d_mvciclyst):inc_catmedia    -0.0300216  0.0415376  -0.723  0.46983    
+scale(d_lands):inc_catmedia         0.1255525  0.0472840   2.655  0.00792 ** 
+scale(d_bid):inc_catmedia          -0.0415016  0.0432752  -0.959  0.33755    
+scale(d_bheig):inc_catmedia         0.0257598  0.0423157   0.609  0.54269    
+scale(d_dbuild):inc_catmedia       -0.1558758  0.0477892  -3.262  0.00111 ** 
+scale(d_people):inc_catmedia        0.1930568  0.0462998   4.170 3.05e-05 ***
+scale(d_graff):inc_catmedia        -0.0118668  0.0420590  -0.282  0.77783    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 20965  on 15126  degrees of freedom
+Residual deviance: 18628  on 15076  degrees of freedom
+AIC: 18730
+
+Number of Fisher Scoring iterations: 4
+
+> print(coefs_seg_scaled, row.names=FALSE)
+                               term  estimate  std.error    statistic      p.value  conf.low conf.high
+                        (Intercept) 0.8866406 0.02997978 -4.013221284 5.989572e-05 0.8360141 0.9402743
+                    scale(d_swidth) 0.8993249 0.05630005 -1.884738637 5.946513e-02 0.8053669 1.0042885
+                    scale(d_mvcars) 1.5728599 0.05419432  8.356882617 6.439732e-17 1.4153538 1.7504213
+                     scale(d_pcars) 1.2265641 0.04995224  4.088242244 4.346541e-05 1.1123949 1.3530472
+                     scale(d_trees) 1.1717357 0.05728718  2.766520841 5.665796e-03 1.0474920 1.3112723
+                 scale(d_mvciclyst) 0.9814927 0.04848866 -0.385258277 7.000461e-01 0.8924279 1.0792961
+                     scale(d_lands) 1.5362564 0.05301916  8.097988273 5.587545e-16 1.3853451 1.7054256
+                       scale(d_bid) 1.0041873 0.04787328  0.087284519 9.304454e-01 0.9147895 1.1038822
+                     scale(d_bheig) 1.0892854 0.04839715  1.767084989 7.721400e-02 0.9905937 1.1976126
+                    scale(d_dbuild) 1.0478936 0.05607422  0.834288196 4.041186e-01 0.9388687 1.1697170
+                    scale(d_people) 1.2367499 0.05369540  3.957265297 7.581272e-05 1.1133405 1.3742289
+                     scale(d_graff) 0.9247137 0.04864509 -1.609023492 1.076112e-01 0.8404966 1.0171058
+              bair_catcatole_centro 1.4619702 0.06905220  5.499969433 3.798571e-08 1.2769902 1.6739880
+           bair_catcatole_liberdade 1.0394469 0.06851968  0.564637176 5.723206e-01 0.9087959 1.1888598
+              bair_catcentro_catole 1.3968872 0.07484767  4.465687983 7.981186e-06 1.2066196 1.6181033
+           bair_catcentro_liberdade 1.1644398 0.06636642  2.293933690 2.179431e-02 1.0224718 1.3263067
+           bair_catliberdade_catole 0.8616934 0.06198923 -2.401316938 1.633618e-02 0.7629785 0.9728688
+           bair_catliberdade_centro 0.9178295 0.06450663 -1.329222399 1.837746e-01 0.8087534 1.0414577
+      scale(d_swidth):age_catadulto 1.2236317 0.05051756  3.995110050 6.466421e-05 1.1083373 1.3510977
+      scale(d_mvcars):age_catadulto 0.8692055 0.04869894 -2.878414120 3.996801e-03 0.7897072 0.9558499
+       scale(d_pcars):age_catadulto 0.9581956 0.04476370 -0.953973729 3.400969e-01 0.8775749 1.0459264
+       scale(d_trees):age_catadulto 0.9090915 0.05256987 -1.813006428 6.983083e-02 0.8199652 1.0076299
+   scale(d_mvciclyst):age_catadulto 0.9749418 0.04388331 -0.578293932 5.630657e-01 0.8946056 1.0625607
+       scale(d_lands):age_catadulto 1.0508654 0.04943940  1.003531707 3.156044e-01 0.9535345 1.1574787
+         scale(d_bid):age_catadulto 0.9979993 0.04151259 -0.048244323 9.615215e-01 0.9199608 1.0826722
+       scale(d_bheig):age_catadulto 0.9512630 0.04445540 -1.123928562 2.610433e-01 0.8718933 1.0379187
+      scale(d_dbuild):age_catadulto 1.2388900 0.05002264  4.282377778 1.849067e-05 1.1232421 1.3666024
+      scale(d_people):age_catadulto 1.0175152 0.04805457  0.361331314 7.178518e-01 0.9259435 1.1179066
+       scale(d_graff):age_catadulto 0.9803912 0.04462878 -0.443739685 6.572308e-01 0.8983429 1.0701187
+    scale(d_swidth):gendermasculino 1.0794105 0.04939297  1.547084612 1.218428e-01 0.9797996 1.1891465
+    scale(d_mvcars):gendermasculino 0.8301160 0.04624722 -4.025968268 5.674134e-05 0.7579117 0.9085810
+     scale(d_pcars):gendermasculino 1.0001324 0.04304203  0.003076488 9.975453e-01 0.9191132 1.0880600
+     scale(d_trees):gendermasculino 0.9334101 0.05094666 -1.352603976 1.761822e-01 0.8446161 1.0313358
+ scale(d_mvciclyst):gendermasculino 1.0786092 0.04252748  1.779376521 7.517805e-02 0.9923904 1.1724483
+     scale(d_lands):gendermasculino 1.1492788 0.04741137  2.934624990 3.339510e-03 1.0470511 1.2609295
+       scale(d_bid):gendermasculino 0.9758640 0.04484208 -0.544846605 5.858590e-01 0.8934557 1.0653729
+     scale(d_bheig):gendermasculino 0.9414431 0.04199946 -1.436717344 1.507983e-01 0.8670210 1.0222183
+    scale(d_dbuild):gendermasculino 1.0309991 0.04884422  0.625014706 5.319614e-01 0.9368617 1.1345834
+    scale(d_people):gendermasculino 0.9398726 0.04771550 -1.299596420 1.937393e-01 0.8558271 1.0318792
+     scale(d_graff):gendermasculino 1.0150153 0.04146333  0.359443283 7.192635e-01 0.9358445 1.1010323
+       scale(d_swidth):inc_catmedia 0.9674183 0.04869330 -0.680264280 4.963371e-01 0.8792621 1.0642018
+       scale(d_mvcars):inc_catmedia 0.9514765 0.04533845 -1.097089268 2.726024e-01 0.8704975 1.0398420
+        scale(d_pcars):inc_catmedia 1.0505042 0.04292600  1.147794561 2.510534e-01 0.9656957 1.1426839
+        scale(d_trees):inc_catmedia 1.1134942 0.05041524  2.132351213 3.297798e-02 1.0087410 1.2291794
+    scale(d_mvciclyst):inc_catmedia 0.9704246 0.04153757 -0.722756786 4.698293e-01 0.8945068 1.0527083
+        scale(d_lands):inc_catmedia 1.1337747 0.04728397  2.655286441 7.924109e-03 1.0333282 1.2437775
+          scale(d_bid):inc_catmedia 0.9593478 0.04327518 -0.959015574 3.375509e-01 0.8809493 1.0439609
+        scale(d_bheig):inc_catmedia 1.0260945 0.04231566  0.608753287 5.426880e-01 0.9444489 1.1148892
+       scale(d_dbuild):inc_catmedia 0.8556655 0.04778919 -3.261736444 1.107320e-03 0.7790848 0.9396122
+       scale(d_people):inc_catmedia 1.2129517 0.04629979  4.169711931 3.049849e-05 1.1077494 1.3282280
+        scale(d_graff):inc_catmedia 0.9882034 0.04205900 -0.282145395 7.778320e-01 0.9100255 1.0731593
+
+> pR2(safer_model_scaled)
+          llh       llhNull            G2      McFadden          r2ML          r2CU 
 -9.313869e+03 -1.048248e+04  2.337215e+03  1.114820e-01  1.431618e-01  1.909056e-01 
-
-> vif(safer_model)
-                         GVIF Df GVIF^(1/(2*Df))
-d_swidth             9.473358  1        3.077882
-d_mvcars             8.705225  1        2.950462
-d_pcars              7.997836  1        2.828045
-d_trees             10.106231  1        3.179030
-d_mvciclyst          7.661775  1        2.767991
-d_lands              7.785653  1        2.790278
-d_bid                7.399545  1        2.720210
-d_bheig              7.498456  1        2.738331
-d_dbuild            10.090988  1        3.176631
-d_people             9.344562  1        3.056888
-d_graff              7.639659  1        2.763993
-bair_cat             2.964094  6        1.094774
-d_swidth:age_cat     5.100969  1        2.258533
-d_mvcars:age_cat     5.053343  1        2.247964
-d_pcars:age_cat      4.333296  1        2.081657
-d_trees:age_cat      5.772341  1        2.402570
-d_mvciclyst:age_cat  4.314920  1        2.077239
-d_lands:age_cat      4.553129  1        2.133806
-d_bid:age_cat        3.387513  1        1.840520
-d_bheig:age_cat      4.403436  1        2.098437
-d_dbuild:age_cat     5.425485  1        2.329267
-d_people:age_cat     4.843626  1        2.200824
-d_graff:age_cat      4.528223  1        2.127962
-d_swidth:gender      4.773298  1        2.184788
-d_mvcars:gender      4.321232  1        2.078757
-d_pcars:gender       3.866115  1        1.966244
-d_trees:gender       5.290888  1        2.300193
-d_mvciclyst:gender   3.908974  1        1.977112
-d_lands:gender       3.992521  1        1.998129
-d_bid:gender         4.496879  1        2.120585
-d_bheig:gender       3.670811  1        1.915936
-d_dbuild:gender      5.019460  1        2.240415
-d_people:gender      4.982503  1        2.232152
-d_graff:gender       3.451092  1        1.857711
-d_swidth:inc_cat     4.292393  1        2.071809
-d_mvcars:inc_cat     3.753278  1        1.937338
-d_pcars:inc_cat      3.587411  1        1.894046
-d_trees:inc_cat      4.680892  1        2.163537
-d_mvciclyst:inc_cat  3.302797  1        1.817360
-d_lands:inc_cat      3.613741  1        1.900984
-d_bid:inc_cat        3.901248  1        1.975158
-d_bheig:inc_cat      3.551731  1        1.884604
-d_dbuild:inc_cat     4.375486  1        2.091766
-d_people:inc_cat     4.029323  1        2.007317
-d_graff:inc_cat      3.476368  1        1.864502
-
-> coefs_seg
-                          term  estimate  std.error    statistic      p.value  conf.low conf.high
-1                  (Intercept) 0.8866406 0.02997978 -4.013221284 5.989572e-05 0.8360141 0.9402743
-2                     d_swidth 0.8993249 0.05630005 -1.884738637 5.946513e-02 0.8053669 1.0042885
-3                     d_mvcars 1.5728599 0.05419432  8.356882617 6.439732e-17 1.4153538 1.7504213
-4                      d_pcars 1.2265641 0.04995224  4.088242244 4.346541e-05 1.1123949 1.3530472
-5                      d_trees 1.1717357 0.05728718  2.766520841 5.665796e-03 1.0474920 1.3112723
-6                  d_mvciclyst 0.9814927 0.04848866 -0.385258277 7.000461e-01 0.8924279 1.0792961
-7                      d_lands 1.5362564 0.05301916  8.097988273 5.587545e-16 1.3853451 1.7054256
-8                        d_bid 1.0041873 0.04787328  0.087284519 9.304454e-01 0.9147895 1.1038822
-9                      d_bheig 1.0892854 0.04839715  1.767084989 7.721400e-02 0.9905937 1.1976126
-10                    d_dbuild 1.0478936 0.05607422  0.834288196 4.041186e-01 0.9388687 1.1697170
-11                    d_people 1.2367499 0.05369540  3.957265297 7.581272e-05 1.1133405 1.3742289
-12                     d_graff 0.9247137 0.04864509 -1.609023492 1.076112e-01 0.8404966 1.0171058
-13       bair_catcatole_centro 1.4619702 0.06905220  5.499969433 3.798571e-08 1.2769902 1.6739880
-14    bair_catcatole_liberdade 1.0394469 0.06851968  0.564637176 5.723206e-01 0.9087959 1.1888598
-15       bair_catcentro_catole 1.3968872 0.07484767  4.465687983 7.981186e-06 1.2066196 1.6181033
-16    bair_catcentro_liberdade 1.1644398 0.06636642  2.293933690 2.179431e-02 1.0224718 1.3263067
-17    bair_catliberdade_catole 0.8616934 0.06198923 -2.401316938 1.633618e-02 0.7629785 0.9728688
-18    bair_catliberdade_centro 0.9178295 0.06450663 -1.329222399 1.837746e-01 0.8087534 1.0414577
-19      d_swidth:age_catadulto 1.2236317 0.05051756  3.995110050 6.466421e-05 1.1083373 1.3510977
-20      d_mvcars:age_catadulto 0.8692055 0.04869894 -2.878414120 3.996801e-03 0.7897072 0.9558499
-21       d_pcars:age_catadulto 0.9581956 0.04476370 -0.953973729 3.400969e-01 0.8775749 1.0459264
-22       d_trees:age_catadulto 0.9090915 0.05256987 -1.813006428 6.983083e-02 0.8199652 1.0076299
-23   d_mvciclyst:age_catadulto 0.9749418 0.04388331 -0.578293932 5.630657e-01 0.8946056 1.0625607
-24       d_lands:age_catadulto 1.0508654 0.04943940  1.003531707 3.156044e-01 0.9535345 1.1574787
-25         d_bid:age_catadulto 0.9979993 0.04151259 -0.048244323 9.615215e-01 0.9199608 1.0826722
-26       d_bheig:age_catadulto 0.9512630 0.04445540 -1.123928562 2.610433e-01 0.8718933 1.0379187
-27      d_dbuild:age_catadulto 1.2388900 0.05002264  4.282377778 1.849067e-05 1.1232421 1.3666024
-28      d_people:age_catadulto 1.0175152 0.04805457  0.361331314 7.178518e-01 0.9259435 1.1179066
-29       d_graff:age_catadulto 0.9803912 0.04462878 -0.443739685 6.572308e-01 0.8983429 1.0701187
-30    d_swidth:gendermasculino 1.0794105 0.04939297  1.547084612 1.218428e-01 0.9797996 1.1891465
-31    d_mvcars:gendermasculino 0.8301160 0.04624722 -4.025968268 5.674134e-05 0.7579117 0.9085810
-32     d_pcars:gendermasculino 1.0001324 0.04304203  0.003076488 9.975453e-01 0.9191132 1.0880600
-33     d_trees:gendermasculino 0.9334101 0.05094666 -1.352603976 1.761822e-01 0.8446161 1.0313358
-34 d_mvciclyst:gendermasculino 1.0786092 0.04252748  1.779376521 7.517805e-02 0.9923904 1.1724483
-35     d_lands:gendermasculino 1.1492788 0.04741137  2.934624990 3.339510e-03 1.0470511 1.2609295
-36       d_bid:gendermasculino 0.9758640 0.04484208 -0.544846605 5.858590e-01 0.8934557 1.0653729
-37     d_bheig:gendermasculino 0.9414431 0.04199946 -1.436717344 1.507983e-01 0.8670210 1.0222183
-38    d_dbuild:gendermasculino 1.0309991 0.04884422  0.625014706 5.319614e-01 0.9368617 1.1345834
-39    d_people:gendermasculino 0.9398726 0.04771550 -1.299596420 1.937393e-01 0.8558271 1.0318792
-40     d_graff:gendermasculino 1.0150153 0.04146333  0.359443283 7.192635e-01 0.9358445 1.1010323
-41       d_swidth:inc_catmedia 0.9674183 0.04869330 -0.680264280 4.963371e-01 0.8792621 1.0642018
-42       d_mvcars:inc_catmedia 0.9514765 0.04533845 -1.097089268 2.726024e-01 0.8704975 1.0398420
-43        d_pcars:inc_catmedia 1.0505042 0.04292600  1.147794561 2.510534e-01 0.9656957 1.1426839
-44        d_trees:inc_catmedia 1.1134942 0.05041524  2.132351213 3.297798e-02 1.0087410 1.2291794
-45    d_mvciclyst:inc_catmedia 0.9704246 0.04153757 -0.722756786 4.698293e-01 0.8945068 1.0527083
-46        d_lands:inc_catmedia 1.1337747 0.04728397  2.655286441 7.924109e-03 1.0333282 1.2437775
-47          d_bid:inc_catmedia 0.9593478 0.04327518 -0.959015574 3.375509e-01 0.8809493 1.0439609
-48        d_bheig:inc_catmedia 1.0260945 0.04231566  0.608753287 5.426880e-01 0.9444489 1.1148892
-49       d_dbuild:inc_catmedia 0.8556655 0.04778919 -3.261736444 1.107320e-03 0.7790848 0.9396122
-50       d_people:inc_catmedia 1.2129517 0.04629979  4.169711931 3.049849e-05 1.1077494 1.3282280
-51        d_graff:inc_catmedia 0.9882034 0.04205900 -0.282145395 7.778320e-01 0.9100255 1.0731593
-
 
 >> Vale a pena random effects?
 > summary(seg_intercept)

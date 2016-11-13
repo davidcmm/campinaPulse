@@ -429,21 +429,41 @@ sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
              units = "TWh", fontSize = 12, nodeWidth = 30)
 
-#Pleasantness!
-urbanQualities = data.frame(name=c("Street width", "Trees", "People", "Moving cars", "Cyclist", "Human Scale - 52%", "Parked cars", "Trees", "Cyclists", "People", "Moving cars", "Complexity - 45.4%", "Maintenance", "Tidiness - 37.3%", "Street width", "Trees", "Enclosure - 27.8%", "Buildings Identifiers", "People", "Imageability - 15.6%", "Street width", "Linkage - 12%", "People", "Coherence - 10.5%", "Buildings with identifiers", "Legibility - 5.1%", "Pleasantness"))
- mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 14, 15, 17, 18, 20, 22, 24, 5, 11, 13, 16, 19, 21, 23, 25), target=c(5, 5, 5, 5, 5, 11, 11, 11, 11, 11, 13, 16, 16, 19, 19, 21, 23, 25, 26, 26, 26, 26, 26, 26, 26, 26), value=c(6.13+5.91, 7+8.7, 10.5, 9.47, 4.61, 5.1, 7+8.77, 4.6, 10.5, 9.4, 27+5.5+4.7, 6.1+5.9, 7+8.77, 5.1, 10.5, 6.1+5.9, 10.5, 5.1, 52, 45.4, 37.3, 27.8, 15.6, 12, 10.5, 5.1)) )
+#Pleasantness! 
+featuresRelativeImportances = list()
+featuresRelativeImportances['maintenance'] = 13.8+2.7+2.1
+featuresRelativeImportances['street_width'] = 0.27+0.27
+featuresRelativeImportances['trees'] = 1.085+1.085
+featuresRelativeImportances['people'] = 1.35
+featuresRelativeImportances['parked_cars'] = 0.27
+featuresRelativeImportances['cyclist'] = 2.71
+featuresRelativeImportances['b_id'] = 0.54
+featuresRelativeImportances['moving_cars'] = 2.17
+
+urbanQualities = data.frame(name=c("Maintenance", "Tidiness - 18.7%", "Street width", "Trees", "People", "Moving cars", "Cyclist", "Human Scale - 8.9%", "Parked cars", "Trees", "Cyclists", "People", "Moving cars", "Complexity - 8.6%", "Street width", "Trees", "Enclosure - 2.7%", "Buildings Identifiers", "People", "Imageability - 1.8%", "People", "Coherence - 1.3%", "Street width", "Linkage - 0.54%", "Buildings with identifiers", "Legibility - 0.54%", "Pleasantness"))
+ mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 17, 18, 20, 22, 24, 1, 7, 13, 16, 19, 21, 23, 25), target=c(1, 7, 7, 7, 7, 7, 13, 13, 13, 13, 13, 16, 16, 19, 19, 21, 23, 25, 26, 26, 26, 26, 26, 26, 26, 26), value=c(featuresRelativeImportances$maintenance, featuresRelativeImportances$street_width, featuresRelativeImportances$trees, featuresRelativeImportances$people, featuresRelativeImportances$moving_cars, featuresRelativeImportances$cyclist, featuresRelativeImportances$parked_cars, featuresRelativeImportances$trees, featuresRelativeImportances$cyclist , featuresRelativeImportances$people, featuresRelativeImportances$moving_cars, featuresRelativeImportances$street_width, featuresRelativeImportances$trees, featuresRelativeImportances$b_id, featuresRelativeImportances$people, featuresRelativeImportances$people, featuresRelativeImportances$street_width, featuresRelativeImportances$b_id, 18.7, 8.9, 8.6, 2.7, 1.8, 1.3, 0.54, 0.54  )) )
 
 sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
-             units = "%", fontSize = 16, nodeWidth = 20)
+             units = "%", fontSize = 16, nodeWidth = 10, width=533, height=390)#Save with 600, 390
 
 #Safety!
-urbanQualities = data.frame(name=c("Moving cars", "Parked cars", "Trees", "People", "Buildings", "Complexity - 69.3%", "Moving cars", "Trees", "People", "Street width", "Human Scale - 56.5%", "Moving cars", "Street width", "Linkage - 33.5%", "Maintenance", "Tidiness - 23.7%", "Trees", "Street width", "Enclosure - 16%", "People", "Imageability - 13.88%", "People", "Coherence - 13.88%", "Safety"))
- mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 14, 16, 17, 19, 21, 5, 10, 13, 15, 18, 20, 22), target=c(5, 5, 5, 5, 5, 10, 10, 10, 10, 13, 13, 15, 18, 18, 20, 22, 23, 23, 23, 23, 23, 23, 23), value=c(15.5+4.7, 6.9, 5.4+3.6, 7.2+6.6, 7.33+5.3, 15.55+4.7+6.3, 5.4+3.6, 7.2+6.6, 6.9, 15.55+4.7+6.3, 6.9, 14.6+4.7+4.2, 5.4+3.6, 6.9, 7.2+6.6, 7.2+6.6, 69.3, 56.5, 33.5, 23.7, 16, 13.88, 13.88)) )
+featuresRelativeImportances = list()
+featuresRelativeImportances['moving_cars'] = 5.41+1.7+2.27
+featuresRelativeImportances['parked_cars'] = 0.85
+featuresRelativeImportances['trees'] = 1.13+0.85
+featuresRelativeImportances['maintenance'] = 1.13+3.41+3.13
+featuresRelativeImportances['people'] = 1.42+1.42
+featuresRelativeImportances['street_width'] = 0.28
+featuresRelativeImportances['build'] = 1.99+1.42
+
+urbanQualities = data.frame(name=c("Moving cars", "Parked cars", "Trees", "People", "Buildings", "Complexity - 18.5%", "Moving cars", "Trees", "People", "Street width", "Human Scale - 14.5%", "Moving cars", "Street width", "Linkage - 9.6%", "Maintenance", "Tidiness - 7.6%", "People", "Imageability - 2.84%", "People", "Coherence - 2.84%", "Trees", "Street width", "Enclosure - 2.27%", "Safety"))
+ mylist<-list(dimension=urbanQualities, links=data.frame(source=c(0, 1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 14, 16, 18, 20, 21, 5, 10, 13, 15, 17, 19, 22), target=c(5, 5, 5, 5, 5, 10, 10, 10, 10, 13, 13, 15, 17, 19, 22, 22, 23, 23, 23, 23, 23, 23, 23), value=c(featuresRelativeImportances$moving_cars, featuresRelativeImportances$parked_cars, featuresRelativeImportances$trees, featuresRelativeImportances$people, featuresRelativeImportances$build, featuresRelativeImportances$moving_cars, featuresRelativeImportances$trees, featuresRelativeImportances$people, featuresRelativeImportances$street_width, featuresRelativeImportances$moving_cars, featuresRelativeImportances$street_width, featuresRelativeImportances$maintenance, featuresRelativeImportances$people, featuresRelativeImportances$people, featuresRelativeImportances$trees, featuresRelativeImportances$street_width, 18.5, 14.5, 9.6, 7.6, 2.84, 2.84, 2.27  )) )
+
 
 sankeyNetwork(Links = mylist$links, Nodes = mylist$dimension, Source = "source",
              Target = "target", Value = "value", NodeID = "name",
-             units = "%", fontSize = 16, nodeWidth = 20)
+             units = "%", fontSize = 16, nodeWidth = 10, width=533, height=390)#Save with 600, 390
 #http://sankey.csaladen.es/
 
 

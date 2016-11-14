@@ -933,11 +933,11 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 				metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')#Calculates for each label and compute the mean!
 				metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')#Total false positives, negatives and true positives -> more similar to accuracy
-				history_micro.append(metrics_micro[0:3])
-				history_macro.append(metrics_macro[0:3])
-				history_acc.append(accuracy)
+				#history_micro.append(metrics_micro[0:3])
+				#history_macro.append(metrics_macro[0:3])
+				#history_acc.append(accuracy)
 
-				history_features_importances.append(best_clf.feature_importances_)
+				#history_features_importances.append(best_clf.feature_importances_)
 
 				#print "CONF " + str(best_clf.n_estimators) + "\t" + str(best_clf.max_features) + "\t" + str(best_clf.max_depth)+ "\t" + str(best_clf.min_samples_split)+ "\t" + str(best_clf.min_samples_leaf)
 

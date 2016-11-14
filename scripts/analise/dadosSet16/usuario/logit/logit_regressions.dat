@@ -489,7 +489,7 @@ Fixed effects:
 'log Lik.' 21790.78 (df=2)
 > Alteracoes para 1 df na tabela são de 3.84 (p<0.05) e 6.63 (p<0.01)
 
->> Random effects: pessoa
+>> Random effects: pessoa, com scale
 
 > Adicionar random effects ao intercept melhorou AIC, e diferença entre logLik foi significativa, e adicionar todas as differences mais random effects na pessoa reduziu ainda mais o AIC!
 
@@ -1014,6 +1014,144 @@ Standardized Within-Group Residuals:
 Number of Observations: 15743
 Number of Groups: 282 
 
+>> Random effects: pessoa, sem scale
+> summary(agrad_intercept_ns)
+
+Call:
+glm(formula = choice ~ 1, family = binomial(), data = the_data)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.193  -1.193   1.162   1.162   1.162  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept)  0.03672    0.01594   2.303   0.0213 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 21819  on 15742  degrees of freedom
+Residual deviance: 21819  on 15742  degrees of freedom
+AIC: 21821
+
+Number of Fisher Scoring iterations: 3
+
+> summary(agrad_intercept_user_ns)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ 1 + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 21794.8  21810.1 -10895.4  21790.8    15741 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.3531 -1.0087  0.7390  0.9903  1.0839 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0.02268  0.1506  
+Number of obs: 15743, groups:  userID, 282
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.03138    0.02127   1.475     0.14
+
+> logLik(agrad_intercept_ns)*-2
+'log Lik.' 21819.13 (df=1)
+> logLik(agrad_intercept_user_ns)*-2
+'log Lik.' 21790.78 (df=2)
+
+> summary(agrad_random_user_nscaled)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst +      d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff +  
+    bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 19108.0  19506.5  -9502.0  19004.0    15691 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.8155 -0.8145  0.3101  0.8089  3.9012 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0.02157  0.1469  
+Number of obs: 15743, groups:  userID, 282
+
+Fixed effects:
+                              Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                 -0.1825426  0.0331075  -5.514 3.52e-08 ***
+d_swidth                     0.0106357  0.0048447   2.195  0.02814 *  
+d_mvcars                     0.0324127  0.0225720   1.436  0.15101    
+d_pcars                      0.0204838  0.0093801   2.184  0.02898 *  
+d_trees                      0.0432613  0.0166973   2.591  0.00957 ** 
+d_mvciclyst                  0.0917057  0.0548933   1.671  0.09480 .  
+d_lands                      0.5149936  0.0505965  10.178  < 2e-16 ***
+d_bid                       -0.0070332  0.0135759  -0.518  0.60441    
+d_bheig                     -0.0197789  0.0445726  -0.444  0.65723    
+d_dbuild                     0.0238268  0.0204882   1.163  0.24485    
+d_people                    -0.0097020  0.0149015  -0.651  0.51500    
+d_graff                      0.0765502  0.1071870   0.714  0.47512    
+bair_catcatole_centro        0.7144780  0.0679625  10.513  < 2e-16 ***
+bair_catcatole_liberdade     0.5211038  0.0658897   7.909 2.60e-15 ***
+bair_catcentro_catole        0.1432242  0.0787441   1.819  0.06893 .  
+bair_catcentro_liberdade    -0.0969856  0.0685765  -1.414  0.15728    
+bair_catliberdade_catole    -0.0503580  0.0642354  -0.784  0.43306    
+bair_catliberdade_centro     0.1792002  0.0628166   2.853  0.00433 ** 
+d_swidth:age_catadulto      -0.0101713  0.0043589  -2.333  0.01963 *  
+d_mvcars:age_catadulto      -0.0254148  0.0199742  -1.272  0.20324    
+d_pcars:age_catadulto        0.0065606  0.0080810   0.812  0.41688    
+d_trees:age_catadulto        0.0486334  0.0149673   3.249  0.00116 ** 
+d_mvciclyst:age_catadulto   -0.1133379  0.0501962  -2.258  0.02395 *  
+d_lands:age_catadulto       -0.0054792  0.0459985  -0.119  0.90518    
+d_bid:age_catadulto         -0.0264895  0.0127168  -2.083  0.03725 *  
+d_bheig:age_catadulto       -0.0087339  0.0389338  -0.224  0.82250    
+d_dbuild:age_catadulto      -0.0017153  0.0184108  -0.093  0.92577    
+d_people:age_catadulto       0.0542802  0.0131893   4.115 3.86e-05 ***
+d_graff:age_catadulto       -0.0566401  0.0952112  -0.595  0.55192    
+d_swidth:gendermasculino     0.0017115  0.0041196   0.415  0.67781    
+d_mvcars:gendermasculino     0.0008065  0.0193496   0.042  0.96675    
+d_pcars:gendermasculino     -0.0106733  0.0079425  -1.344  0.17901    
+d_trees:gendermasculino     -0.0242369  0.0143136  -1.693  0.09040 .  
+d_mvciclyst:gendermasculino -0.0108861  0.0485194  -0.224  0.82247    
+d_lands:gendermasculino      0.1092327  0.0430745   2.536  0.01122 *  
+d_bid:gendermasculino       -0.0165212  0.0113185  -1.460  0.14438    
+d_bheig:gendermasculino      0.0009961  0.0387537   0.026  0.97949    
+d_dbuild:gendermasculino    -0.0292341  0.0175661  -1.664  0.09606 .  
+d_people:gendermasculino    -0.0041832  0.0128192  -0.326  0.74418    
+d_graff:gendermasculino     -0.0832972  0.0932790  -0.893  0.37186    
+d_swidth:inc_catmedia        0.0066728  0.0041606   1.604  0.10876    
+d_mvcars:inc_catmedia       -0.0861232  0.0189476  -4.545 5.48e-06 ***
+d_pcars:inc_catmedia        -0.0098338  0.0077049  -1.276  0.20185    
+d_trees:inc_catmedia         0.0114864  0.0143769   0.799  0.42432    
+d_mvciclyst:inc_catmedia    -0.0339518  0.0480663  -0.706  0.47997    
+d_lands:inc_catmedia         0.0872906  0.0433057   2.016  0.04383 *  
+d_bid:inc_catmedia           0.0039845  0.0118499   0.336  0.73668    
+d_bheig:inc_catmedia        -0.0079365  0.0376375  -0.211  0.83299    
+d_dbuild:inc_catmedia       -0.0067590  0.0173490  -0.390  0.69684    
+d_people:inc_catmedia       -0.0154773  0.0125899  -1.229  0.21894    
+d_graff:inc_catmedia        -0.0259767  0.0909489  -0.286  0.77517    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 51 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it
+
+convergence code: 0
+Model failed to converge with max|grad| = 0.00229827 (tol = 0.001, component 1)
+Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+
 >> Random effects: pessoa + fotos
 Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
  Family: binomial  ( logit )
@@ -1500,7 +1638,7 @@ Number of Fisher Scoring iterations: 4
           llh       llhNull            G2      McFadden          r2ML          r2CU 
 -9.313869e+03 -1.048248e+04  2.337215e+03  1.114820e-01  1.431618e-01  1.909056e-01 
 
->> Vale a pena random effects?
+>> Vale a pena random effects? com scale
 > summary(seg_intercept)
 
 Call:
@@ -2081,6 +2219,146 @@ Standardized Within-Group Residuals:
 
 Number of Observations: 15127
 Number of Groups: 279 
+
+>> Random effects: pessoa, sem scale
+> summary(seg_intercept_ns)
+
+Call:
+glm(formula = choice ~ 1, family = binomial(), data = the_data)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.161  -1.161  -1.161   1.194   1.194  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept) -0.03821    0.01626   -2.35   0.0188 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 20965  on 15126  degrees of freedom
+Residual deviance: 20965  on 15126  degrees of freedom
+AIC: 20967
+
+Number of Fisher Scoring iterations: 3
+
+> summary(seg_intercept_user_ns)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ 1 + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 20965.7  20980.9 -10480.8  20961.7    15125 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-1.0763 -0.9802 -0.9334  1.0198  1.1191 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0.009343 0.09666 
+Number of obs: 15127, groups:  userID, 279
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept) -0.04907    0.01988  -2.468   0.0136 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> logLik(seg_intercept_ns)*-2
+'log Lik.' 20964.95 (df=1)
+> logLik(seg_intercept_user_ns)*-2
+'log Lik.' 20961.65 (df=2)
+
+> summary(seg_random_user_notscaled)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst +      d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff +  
+    bair_cat + age_cat:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + gender:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees +      d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people +  
+    d_graff) + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 18715.4  19111.9  -9305.7  18611.4    15075 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.2307 -0.8275 -0.3503  0.8449  4.0336 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0.02395  0.1547  
+Number of obs: 15127, groups:  userID, 279
+
+Fixed effects:
+                              Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                 -0.1572494  0.0336792  -4.669 3.03e-06 ***
+d_swidth                    -0.0092894  0.0048157  -1.929 0.053733 .  
+d_mvcars                     0.2015758  0.0240001   8.399  < 2e-16 ***
+d_pcars                      0.0405950  0.0093034   4.363 1.28e-05 ***
+d_trees                      0.0493249  0.0164973   2.990 0.002791 ** 
+d_mvciclyst                 -0.0217875  0.0553051  -0.394 0.693618    
+d_lands                      0.3925345  0.0491588   7.985 1.40e-15 ***
+d_bid                        0.0020382  0.0135977   0.150 0.880851    
+d_bheig                      0.0740308  0.0438595   1.688 0.091429 .  
+d_dbuild                     0.0154641  0.0204060   0.758 0.448557    
+d_people                     0.0598908  0.0144999   4.130 3.62e-05 ***
+d_graff                     -0.1832938  0.1075627  -1.704 0.088369 .  
+bair_catcatole_centro        0.3651874  0.0696517   5.243 1.58e-07 ***
+bair_catcatole_liberdade     0.0424789  0.0689904   0.616 0.538078    
+bair_catcentro_catole        0.3471996  0.0753456   4.608 4.06e-06 ***
+bair_catcentro_liberdade     0.1651866  0.0668027   2.473 0.013408 *  
+bair_catliberdade_catole    -0.1675573  0.0629127  -2.663 0.007737 ** 
+bair_catliberdade_centro    -0.1076977  0.0652533  -1.650 0.098850 .  
+d_swidth:age_catadulto       0.0178824  0.0043193   4.140 3.47e-05 ***
+d_mvcars:age_catadulto      -0.0637126  0.0215584  -2.955 0.003123 ** 
+d_pcars:age_catadulto       -0.0118674  0.0083494  -1.421 0.155216    
+d_trees:age_catadulto       -0.0326687  0.0151411  -2.158 0.030957 *  
+d_mvciclyst:age_catadulto   -0.0295797  0.0500485  -0.591 0.554507    
+d_lands:age_catadulto        0.0473111  0.0457764   1.034 0.301358    
+d_bid:age_catadulto         -0.0032077  0.0118150  -0.271 0.786009    
+d_bheig:age_catadulto       -0.0452089  0.0402033  -1.125 0.260798    
+d_dbuild:age_catadulto       0.0802314  0.0182199   4.404 1.07e-05 ***
+d_people:age_catadulto      -0.0003478  0.0130119  -0.027 0.978677    
+d_graff:age_catadulto       -0.0400931  0.0987398  -0.406 0.684708    
+d_swidth:gendermasculino     0.0065510  0.0042276   1.550 0.121240    
+d_mvcars:gendermasculino    -0.0831291  0.0204658  -4.062 4.87e-05 ***
+d_pcars:gendermasculino     -0.0015006  0.0079843  -0.188 0.850919    
+d_trees:gendermasculino     -0.0202252  0.0146386  -1.382 0.167084    
+d_mvciclyst:gendermasculino  0.0878504  0.0485080   1.811 0.070133 .  
+d_lands:gendermasculino      0.1315068  0.0439144   2.995 0.002748 ** 
+d_bid:gendermasculino       -0.0061535  0.0127510  -0.483 0.629387    
+d_bheig:gendermasculino     -0.0541465  0.0380769  -1.422 0.155018    
+d_dbuild:gendermasculino     0.0131824  0.0177783   0.741 0.458396    
+d_people:gendermasculino    -0.0182714  0.0128716  -1.420 0.155751    
+d_graff:gendermasculino      0.0304328  0.0916379   0.332 0.739815    
+d_swidth:inc_catmedia       -0.0032316  0.0041647  -0.776 0.437778    
+d_mvcars:inc_catmedia       -0.0212199  0.0200433  -1.059 0.289736    
+d_pcars:inc_catmedia         0.0107689  0.0079566   1.353 0.175911    
+d_trees:inc_catmedia         0.0333798  0.0144888   2.304 0.021232 *  
+d_mvciclyst:inc_catmedia    -0.0347147  0.0473841  -0.733 0.463789    
+d_lands:inc_catmedia         0.1152070  0.0437588   2.633 0.008469 ** 
+d_bid:inc_catmedia          -0.0100636  0.0123112  -0.817 0.413681    
+d_bheig:inc_catmedia         0.0222311  0.0383059   0.580 0.561674    
+d_dbuild:inc_catmedia       -0.0580483  0.0173790  -3.340 0.000837 ***
+d_people:inc_catmedia        0.0558421  0.0125097   4.464 8.05e-06 ***
+d_graff:inc_catmedia        -0.0209304  0.0930144  -0.225 0.821961    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 51 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it
+
+convergence code: 0
+Model failed to converge with max|grad| = 0.0017611 (tol = 0.001, component 1)
+Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
 
 >> Random effects: pessoa + foto
 > summary(seg_random)

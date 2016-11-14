@@ -194,6 +194,17 @@ computePseudoR2 <- function(baselineModel, completeModel){
 }
 
 #Testing if multilevel makes sense: intercept and intercept with multilevel
+agrad_intercept_ns <- create_model_only_int(agrad_nscaled)
+agrad_intercept_user_ns <- create_model_only_int_random(agrad_nscaled)
+summary(agrad_intercept_ns)
+summary(agrad_intercept_user_ns)
+logLik(agrad_intercept_ns)*-2 
+logLik(agrad_intercept_user_ns)*-2
+
+agrad_random_user_nscaled <- create_random_model_w_interact(agrad_nscaled, "")
+summary(agrad_random_user_nscaled)
+
+#Scaled
 agrad_intercept <- create_model_only_int(agrad_scaled)
 agrad_intercept_user <- create_model_only_int_random(agrad_scaled)
 
@@ -205,7 +216,9 @@ logLik(agrad_intercept_user)*-2
 
 agrad_random_user <- create_random_model_w_interact(agrad_scaled, "")
 summary(agrad_random_user)
-cc <- confint(agrad_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
+fit_text <- unclass(agrad_random_user)#Removing attributes to show
+attributes(fit_text)
+cc <- confint(agrad_random_user, parm="beta_", level = 0.95, method="boot", nsim=1, parallel="multicore", ncpus=2)
 ctab <- cbind(est=fixef(agrad_random_user), cc)
 rtab <- exp(ctab)
 print(rtab, digits=3)
@@ -226,18 +239,27 @@ summary(agrad_random_user)
 -0.115328 + 0.1451/sqrt(282)*qnorm(1-(0.05/2))#Num of userID groups
 -0.115328 - 0.1451/sqrt(282)*qnorm(1-(0.05/2))
 
-seg_intercept <- create_model_only_int(seg_scaled)
-seg_intercept_user <- create_model_only_int_random(seg_scaled)
+#Safety
+seg_intercept_ns <- create_model_only_int(seg_nscaled)#Not scaled
+seg_intercept_user_ns <- create_model_only_int_random(seg_nscaled)
+summary(seg_intercept_ns)
+summary(seg_intercept_user_ns)
+logLik(seg_intercept_ns)*-2 
+logLik(seg_intercept_user_ns)*-2
 
+seg_random_user_notscaled <- create_random_model_w_interact(seg_nscaled, "")
+summary(seg_random_user_notscaled)
+
+seg_intercept <- create_model_only_int(seg_scaled)#Scaled
+seg_intercept_user <- create_model_only_int_random(seg_scaled)
 summary(seg_intercept)
 summary(seg_intercept_user)
-
 logLik(seg_intercept)*-2 
 logLik(seg_intercept_user)*-2
 
 seg_random_user <- create_random_model_w_interact(seg_scaled, "")
 summary(seg_random_user)
-cc <- confint(seg_random_user, parm="beta_", level = 0.95, method="boot", nsim=1000, parallel="multicore", ncpus=2)
+cc <- confint(seg_random_user, parm="beta_", level = 0.95, method="boot", nsim=1, parallel="multicore", ncpus=2)
 ctab <- cbind(est=fixef(seg_random_user), cc)
 rtab <- exp(ctab)
 print(rtab, digits=3)
@@ -399,16 +421,16 @@ calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd){
     print(paste("profile", prof_mean, prof_mean - distance, prof_mean + distance))
 }
 
-agrad_notprof_mean <- 0.637906
-agrad_notprof_sd <- 0.20848411
-agrad_prof_mean <- 0.68243055 
-agrad_prof_sd <- 0.20558187
+agrad_notprof_mean <- 0.54611294
+agrad_notprof_sd <- 0.20911696
+agrad_prof_mean <- 0.59370316
+agrad_prof_sd <- 0.22663894
 calcICFromMeanAndSD(agrad_notprof_mean, agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
 
-seg_notprof_mean <- 0.56428643
-seg_notprof_sd <- 0.21240605
-seg_prof_mean <- 0.65061814 
-seg_prof_sd <- 0.22117244
+seg_notprof_mean <- 0.52667729
+seg_notprof_sd <- 0.21595407
+seg_prof_mean <- 0.57516886
+seg_prof_sd <- 0.20420293
 calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
 
 ```

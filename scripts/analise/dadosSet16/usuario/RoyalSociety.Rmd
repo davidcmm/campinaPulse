@@ -231,7 +231,7 @@ groupedData1 <- summarise(by_image,
   #count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
-  q2 = mediaValores(image_url, question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
   q2_left = geraValores(question2__left_side, "2l", desvios, 100),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 100),
@@ -5070,13 +5070,16 @@ cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 
 #Comparing pleasantness and safety from users with predicted output of classifiers
-predicted <- read.table("all100/all_pred_ordenado.dat")
+predicted <- read.table("all100/all_predicted_remove_photo_ordenado.dat")#all_pred_ordenado.dat
 novoV2 <- lapply(as.character(predicted$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
 local <- unlist(lapply(novoV2, '[[', 1))
 predicted$V2 <- local
 
 pred_agrad <- filter(predicted, V1 == "agrad%C3%A1vel?") %>% arrange(V3) %>% mutate(rank = 1:n())
 pred_seg <- filter(predicted, V1 == "seguro?") %>% arrange(V3) %>% mutate(rank = 1:n())
+
+agradGeral <- agrad %>% arrange(V3.Geral) %>% mutate(rank = 1:n())
+segGeral <- seg %>% arrange(V3.Geral) %>% mutate(rank = 1:n())
 
 mergeAndComputeDistance <- function(data1, data2) {
   merge_data <- merge(select(data1, image_url, rank, V3.Geral), select(data2, V2, rank, V3), by.x = "image_url", by.y="V2")

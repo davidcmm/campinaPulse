@@ -358,7 +358,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
 	output.close()
 
-def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName):
+def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName, amountOfSamples):
 	""" Considering all predicted (classifiers) votes for each pair of photos and performing a simulation (bootstrap based)"""
 
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
@@ -421,32 +421,34 @@ def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName):
 		allPhotos.add(photo2)
 
 	#Evaluating votes in order to choose winning photos or ties
-	resetCounters()
+	for i in range(0, amountOfSamples):
+		resetCounters()
 
-	for question, qDic in votes.iteritems():
-		for photo1, photosDic in qDic.iteritems():
-			for photo2, votesList in photosDic.iteritems():
-				answer = random.sample(votesList, 1)[0]#Generating answer to consider
+		for question, qDic in votes.iteritems():
+			for photo1, photosDic in qDic.iteritems():
+				for photo2, votesList in photosDic.iteritems():
+					answer = random.sample(votesList, 1)[0]#Generating answer to consider
 	
-				if answer == left:
-					saveWin(photo1, photo2, question)
-				elif answer == right:
-					saveWin(photo2, photo1, question)
-				elif answer == notKnown:
-					saveDraw(photo1, photo2, question)	
+					if answer == left:
+						saveWin(photo1, photo2, question)
+					elif answer == right:
+						saveWin(photo2, photo1, question)
+					elif answer == notKnown:
+						saveDraw(photo1, photo2, question)	
 
-	qscores = computeQScores(allPhotos)
-	for question, qDic in qscores.iteritems():
-		for photo, qscore in qDic.iteritems():
-			if not allQScores[question].has_key(photo):
-				allQScores[question][photo] = []
-			allQScores[question][photo].append(qscore)
+		qscores = computeQScores(allPhotos)
+		for question, qDic in qscores.iteritems():
+			for photo, qscore in qDic.iteritems():
+				if not allQScores[question].has_key(photo):
+					allQScores[question][photo] = []
+				allQScores[question][photo].append(qscore)
+
 
 	#Output file
 	output = open(outputFileName, 'w')
 	for question, qDic in allQScores.iteritems():
 		for photo, qscoreList in qDic.iteritems():
-			output.write( question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList)+'\n' )
+			output.write( question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n' ) 
 	output.close()
 
 
@@ -634,10 +636,10 @@ if __name__ == "__main__":
 		evaluateVotesStreetSeen(lines, "all_street_seen.dat")
 
 	else:
-		data_wodraw = pd.read_table(sys.argv[1], sep=' \t\n\r', encoding='utf8', header=0)#wodraw
-		data_3classes = pd.read_table(sys.argv[3], sep=' \t\n\r', encoding='utf8', header=0)#3classes
+		data_wodraw = pd.read_table(sys.argv[1], sep='\s+', encoding='utf8', header=0)#wodraw
+		data_3classes = pd.read_table(sys.argv[3], sep='\t', encoding='utf8', header=0)#3classes
 		draws = data_3classes[(data_3classes.choice == 0)]
 
-		evaluateAllVotesPredicted(data_wodraw, draws, "all_predicted.dat")
+		evaluateAllVotesPredicted(data_wodraw, draws, "all_predicted.dat", amountOfSamples)
 
 		

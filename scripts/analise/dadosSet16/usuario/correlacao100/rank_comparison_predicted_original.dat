@@ -1,3 +1,5 @@
+##### Removendo um usuario por vez e mantendo suas fotos
+
 > mergeAndComputeDistance(agradGeral, pred_agrad)
 
 	Kendall's rank correlation tau
@@ -85,3 +87,119 @@ RMSE        & 0.245         & 0.238         \\
 \label{table:coefficients}
 \end{center}
 \end{table}
+
+##### Removendo um usuario por vez e removendo suas fotos
+> mergeAndComputeDistance(agradGeral, pred_agrad)
+
+	Kendall's rank correlation tau
+
+data:  merge_data$rank.x and merge_data$rank.y
+z = 6.6795, p-value = 2.397e-11
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.4354448 
+
+[1] 2549
+[1] 0.4411561
+
+Call:
+lm(formula = V3.Geral ~ V3, data = merge_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.93969 -0.40405  0.03262  0.43471  2.92361 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.41542    0.43855   3.227  0.00166 ** 
+V3           0.67885    0.08803   7.711 7.14e-12 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6557 on 106 degrees of freedom
+Multiple R-squared:  0.3594,	Adjusted R-squared:  0.3533 
+F-statistic: 59.46 on 1 and 106 DF,  p-value: 7.142e-12
+
+> cor.test(merge_data_a$rank.x, merge_data_a$rank.y, method="pearson")
+
+	Pearson's product-moment correlation
+
+data:  merge_data_a$rank.x and merge_data_a$rank.y
+t = 8.1502, df = 106, p-value = 7.769e-13
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.4890712 0.7246578
+sample estimates:
+      cor 
+0.6206808 
+
+> cor.test(merge_data_a$rank.x, merge_data_a$rank.y, method="spearman")
+
+	Spearman's rank correlation rho
+
+data:  merge_data_a$rank.x and merge_data_a$rank.y
+S = 79632, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.6206808 
+
+
+
+> mergeAndComputeDistance(segGeral, pred_seg)
+
+	Kendall's rank correlation tau
+
+data:  merge_data$rank.x and merge_data$rank.y
+z = 7.8317, p-value = 4.885e-15
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.5105573 
+
+[1] 2868
+[1] 0.4963655
+
+Call:
+lm(formula = V3.Geral ~ V3, data = merge_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.50672 -0.29038 -0.01466  0.34857  1.45800 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  1.95765    0.29199   6.705 1.01e-09 ***
+V3           0.56166    0.05869   9.569 5.23e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5022 on 106 degrees of freedom
+Multiple R-squared:  0.4635,	Adjusted R-squared:  0.4584 
+F-statistic: 91.57 on 1 and 106 DF,  p-value: 5.233e-16
+
+> cor.test(merge_data_s$V3.Geral, merge_data_s$V3, method="spearman")
+
+	Spearman's rank correlation rho
+
+data:  merge_data_s$V3.Geral and merge_data_s$V3
+S = 61990, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.7047167 
+
+> cor.test(merge_data_s$V3.Geral, merge_data_s$V3, method="pearson")
+
+	Pearson's product-moment correlation
+
+data:  merge_data_s$V3.Geral and merge_data_s$V3
+t = 9.5692, df = 106, p-value = 4.441e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.5644359 0.7706251
+sample estimates:
+      cor 
+0.6807939
+

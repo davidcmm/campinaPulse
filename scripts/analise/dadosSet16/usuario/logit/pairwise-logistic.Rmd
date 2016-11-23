@@ -24,6 +24,43 @@ library(readr)
 ```
 
 ```{r lib}
+#tasks finished by each user
+teste <- read.table("classifier//classifier_input_wodraw.dat", sep="\t", header=TRUE)
+
+teste_seg <- filter(teste, question == "seguro" | question == "seguro?")
+teste_agrad <- filter(teste, !(question == "seguro" | question == "seguro?"))
+
+processTasks <- function (teste, usersFile, top10File){
+  ids <- unique(teste$userID)
+  tasks <- c()
+  for (id in ids){
+    tasks <- append(tasks, nrow(filter(teste, userID == id)))
+  }
+  userTasks <- data.frame(userID=ids, tasks=tasks)
+  for(id in arrange(userTasks, -tasks)$userID[1:10]){
+    t1 <- as.data.frame(table(unlist(filter(teste, userID == id)$photo1)))
+    t2 <- as.data.frame(table(unlist(filter(teste, userID == id)$photo2)))
+    
+    merged <- merge(t1, t2, by="Var1")
+    merged$total <- merged$Freq.x + merged$Freq.y
+    
+    sink(top10File, append=TRUE)
+    print(paste(">>> ID ", id))
+    sink()
+    write.table(merged, file=top10File, quote = FALSE, row.names = FALSE, append = TRUE)
+  }
+  write.table(arrange(userTasks, -tasks), file=usersFile, quote = FALSE, row.names = FALSE)
+}
+
+#Pleasantness tasks
+processTasks(teste_agrad, "users_tasks_agrad.dat", "top10_users_agrad.dat")
+
+#Safety tasks
+processTasks(teste_seg, "users_tasks_seg.dat", "top10_users_seg.dat")
+```
+
+
+```{r lib}
 compare_glms <- function(baseline, model){
   modelChi <- baseline$deviance - model$deviance
   chidf <- baseline$df.residual - model$df.residual

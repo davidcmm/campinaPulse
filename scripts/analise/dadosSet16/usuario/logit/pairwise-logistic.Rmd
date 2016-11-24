@@ -57,6 +57,53 @@ processTasks(teste_agrad, "users_tasks_agrad.dat", "top10_users_agrad.dat")
 
 #Safety tasks
 processTasks(teste_seg, "users_tasks_seg.dat", "top10_users_seg.dat")
+
+#Lendo qscores para top usuarios
+for (file in list.files("predictions/", pattern="all_predicted_.*") ){
+  print(file)
+  top <- read.table(paste("predictions/", file, sep=""))
+  #top <- read.table("predictions/all_predicted_seg_adu.dat")
+  novoV2 <- lapply(as.character(top$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][6], "/", strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
+  local <- unlist(lapply(novoV2, '[[', 1))
+  top$V2 <- local
+  
+  if(grepl("agra", file)){
+    top_quest <- filter(filter(top, V1 == "agrad%C3%A1vel?"), V3 > 0)#Fotos nao avaliadas tem QScore -1
+    general = agrad.l
+  }else{
+    top_quest <- filter(filter(top, V1 == "seguro?"), V3 > 0)#Fotos nao avaliadas tem QScore -1
+    general = seg.l
+  }
+  
+  merged <- NULL
+  if(grepl("masc", file)){
+      merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Masculino), by.x ="V2", by.y="image_url")
+      merged <- arrange(merged, V3.Masculino) %>% mutate(rank = 1:n())
+  } else if (grepl("fem", file)){
+      merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Feminino), by.x ="V2", by.y="image_url")
+      merged <- arrange(merged, V3.Feminino) %>% mutate(rank = 1:n())
+  } else if (grepl("adu", file)){
+      merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Adulto), by.x ="V2", by.y="image_url")
+      merged <- arrange(merged, V3.Adulto) %>% mutate(rank = 1:n())
+  } else if (grepl("jov", file)){
+      merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Jovem), by.x ="V2", by.y="image_url")
+      merged <- arrange(merged, V3.Jovem) %>% mutate(rank = 1:n())
+  } else if (grepl("bai", file)){
+      merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Baixa), by.x ="V2", by.y="image_url")
+      merged <- arrange(merged, V3.Baixa) %>% mutate(rank = 1:n())
+  } else if (grepl("med", file)) {
+    merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Media), by.x ="V2", by.y="image_url")
+    merged <- arrange(merged, V3.Media) %>% mutate(rank = 1:n())
+  } else{
+    merged <- merge(select(top_quest, V1, V2, V3), select(general, V1, image_url, V3.Geral), by.x ="V2", by.y="image_url")
+    merged <- arrange(merged, V3.Geral) %>% mutate(rank = 1:n())
+  }
+  
+  merged <- arrange(merged, V3) %>% mutate(index = 1:n())
+  result <- cor.test(merged$rank, merged$index, method="kendall")
+  print(result)
+  normalizedKendallTauDistance2(merged$rank, merged$index)
+}
 ```
 
 

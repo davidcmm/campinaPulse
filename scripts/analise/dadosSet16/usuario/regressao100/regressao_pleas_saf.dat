@@ -657,31 +657,57 @@ RMSE                    & 23.330            & 23.451            \\
 
 
 >>> Pleas x Saf
-Kendall's rank correlation tau
+Call:
+lm(formula = V3.agradavel ~ V3.seguro, data = novosgrupo1grupo2)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.04668 -0.22860  0.00528  0.28974  0.77569 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.81871    0.34431   2.378   0.0192 *  
+V3.seguro    0.83162    0.07241  11.485   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3682 on 106 degrees of freedom
+Multiple R-squared:  0.5545,	Adjusted R-squared:  0.5503 
+F-statistic: 131.9 on 1 and 106 DF,  p-value: < 2.2e-16
+
+
+>> Correlacoes
+> cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+
+	Kendall's rank correlation tau
 
 data:  novosDados$Safe and novosDados$Pleasant
-z = 6.9026, p-value = 5.108e-12
+z = 8.1769, p-value = 2.22e-16
 alternative hypothesis: true tau is not equal to 0
 sample estimates:
       tau 
-0.4499827
+0.5330564 
 
-Pearson's product-moment correlation
+> cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
+
+	Pearson's product-moment correlation
 
 data:  novosDados$Safe and novosDados$Pleasant
-t = 8.7312, df = 106, p-value = 3.975e-14
+t = 11.485, df = 106, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
- 0.5215587 0.7447334
+ 0.6466321 0.8184270
 sample estimates:
       cor 
-0.6467849 
+0.7446164 
 
-Kendall's rank correlation tau
+> cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+
+	Kendall's rank correlation tau
 
 data:  novosDados$Safe and novosDados$Pleasant
-z = 6.9026, p-value = 5.108e-12
+z = 8.1769, p-value = 2.22e-16
 alternative hypothesis: true tau is not equal to 0
 sample estimates:
       tau 
-0.4499827 
+0.5330564 

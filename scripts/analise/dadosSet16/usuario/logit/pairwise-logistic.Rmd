@@ -498,46 +498,60 @@ for (index in 1:2){
 }
 
 #Extra Trees analysis
-calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd){
-    distance <- (notprof_sd/sqrt(282)*qnorm(1-(0.05/2)))
+calcDistance <- function(sd, amount_users){
+  distance <- (sd/sqrt(amount_users)*qnorm(1-(0.05/2)))
+  return (distance)
+}
+calcICFromMeanAndSD <- function(notprof_mean, notprof_sd, prof_mean, prof_sd, amount_users){
+    distance <- calcDistance(notprof_sd, amount_users)
     print(paste("not profile", notprof_mean, notprof_mean - distance, notprof_mean + distance))
-    distance <- (agrad_prof_sd/sqrt(282)*qnorm(1-(0.05/2)))
+    distance <- calcDistance(prof_sd, amount_users)
     print(paste("profile", prof_mean, prof_mean - distance, prof_mean + distance))
 }
 
-agrad_notprof_mean <- 0.54611294
-agrad_notprof_sd <- 0.20911696
-agrad_prof_mean <- 0.59370316
-agrad_prof_sd <- 0.22663894
-calcICFromMeanAndSD(agrad_notprof_mean, agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd)
+agrad_notprof_mean <- 0.599777633275
+agrad_notprof_sd <- 0.151149686752
+agrad_prof_mean <- 0.643176405173
+agrad_prof_sd <- 0.1603741276
+calcICFromMeanAndSD(agrad_notprof_mean, agrad_notprof_sd, agrad_prof_mean, agrad_prof_sd, 280)
 
 seg_notprof_mean <- 0.52667729
 seg_notprof_sd <- 0.21595407
 seg_prof_mean <- 0.57516886
 seg_prof_sd <- 0.20420293
-calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
+calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd, 276)
 
 #Error bars for classifiers
-pleas_acc_fbeta <- data.frame(lower=c(0.62, 0.56, 0.58, 0.52, 0.49), upper=c(0.66, 0.62, 0.61, 0.57, 0.51), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
-pleas_acc_fbeta$meanVal <- (pleas_acc_fbeta$upper - pleas_acc_fbeta$lower)/2 + pleas_acc_fbeta$lower
+randomClassForGroups <- c(0.49892627058, 0.496143958869, 0.509413067553, 0.508493771234, 0.523121387283, 0.485608170845, 0.526147959184, 0.509433962264)
+pleas_acc_fbeta_prec_rec <- data.frame(meanVal=c(0.643176405173, 0.59370316, 0.62413614, 0.59715162, 0.599777633275, 0.54611294, 0.56589076, 0.54943904, mean(randomClassForGroups)), std=c(0.1603741276, 0.22663894, 0.24423502, 0.25464732, 0.151149686752, 0.20911696, 0.22833214, 0.23580581, sd(randomClassForGroups)), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5,6,7,8,9), group=c("Accuracy", "F-beta", "Precision", "Recall", "Accuracy", "F-beta",  "Precision", "Recall", "Accuracy"))
+pleas_acc_fbeta_prec_rec$lower <- pleas_acc_fbeta_prec_rec$meanVal - calcDistance(pleas_acc_fbeta_prec_rec$std, 280)
+pleas_acc_fbeta_prec_rec$upper <- pleas_acc_fbeta_prec_rec$meanVal + calcDistance(pleas_acc_fbeta_prec_rec$std, 280)
+
+pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$lower = pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$meanVal - calcDistance(pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$std, length(randomClassForGroups))
+pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$upper = pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$meanVal + calcDistance(pleas_acc_fbeta_prec_rec[pleas_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$std, length(randomClassForGroups))
 
 h = 13.3
 w = 19
 pdf("images/pleas_acc.pdf", width = w, height = h)
-ggplot(pleas_acc_fbeta, aes(x=fill, y=meanVal, fill=class)) + 
+ggplot(pleas_acc_fbeta_prec_rec, aes(x=fill, y=meanVal, fill=class)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(.~group) 
+    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + coord_cartesian(ylim = c(0.4,0.7))  + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(group~.) 
 dev.off()
 
-saf_acc_fbeta <- data.frame(lower=c(0.61, 0.54, 0.57, 0.50, 0.50), upper=c(0.65, 0.60, 0.60, 0.55, 0.54), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
-saf_acc_fbeta$meanVal <- (saf_acc_fbeta$upper - saf_acc_fbeta$lower)/2 + saf_acc_fbeta$lower
+randomClassForGroups <- c(0.536016949153, 0.536312849162, 0.528428093645, 0.502840909091, 0.517605633803, 0.497126436782, 0.509090909091, 0.59375)
+saf_acc_fbeta_prec_rec <- data.frame(meanVal=c(0.636129694775, 0.57516886, 0.60970313, 0.5831289, 0.587575034135, 0.52667729, 0.55938359, 0.52476916, mean(randomClassForGroups)), std=c(0.136521723746, 0.20420293, 0.2302154, 0.24168801, 0.150539473477, 0.21595407, 0.2369566, 0.24307797, sd(randomClassForGroups)), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5,6,7,8,9), group=c("Accuracy", "F-beta", "Precision", "Recall", "Accuracy", "F-beta",  "Precision", "Recall", "Accuracy"))
+saf_acc_fbeta_prec_rec$lower <- saf_acc_fbeta_prec_rec$meanVal - calcDistance(saf_acc_fbeta_prec_rec$std, 276)
+saf_acc_fbeta_prec_rec$upper <- saf_acc_fbeta_prec_rec$meanVal + calcDistance(saf_acc_fbeta_prec_rec$std, 276)
+
+saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$lower = saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$meanVal - calcDistance(saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$std, length(randomClassForGroups))
+saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$upper = saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$meanVal + calcDistance(saf_acc_fbeta_prec_rec[saf_acc_fbeta_prec_rec$class == "Random Classifier Acc.",]$std, length(randomClassForGroups))
 
 h = 13.3
 w = 19
 pdf("images/saf_acc.pdf", width = w, height = h)
-ggplot(saf_acc_fbeta, aes(x=fill, y=meanVal, fill=class)) + 
+ggplot(saf_acc_fbeta_prec_rec, aes(x=fill, y=meanVal, fill=class)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(.~group) 
+    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + coord_cartesian(ylim = c(0.4,0.7)) + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(group~.) 
 dev.off()
 
 

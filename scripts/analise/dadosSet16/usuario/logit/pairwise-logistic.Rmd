@@ -434,7 +434,7 @@ seg_prof_sd <- 0.20420293
 calcICFromMeanAndSD(seg_notprof_mean, seg_notprof_sd, seg_prof_mean, seg_prof_sd)
 
 #Error bars for classifiers
-pleas_acc_fbeta <- data.frame(lower=c(0.62, 0.56, 0.58, 0.52, 0.49), upper=c(0.66, 0.62, 0.61, 0.57, 0.51), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
+pleas_acc_fbeta <- data.frame(lower=c(0.62, 0.56, 0.58, 0.52, 0.49), upper=c(0.66, 0.62, 0.61, 0.57, 0.51), class=c("Extra Trees with\n respondent profile\t", "Extra Trees with\n respondent profile\t", "Extra Trees without\t\n  respondent profile\t", "Extra Trees without\t\n  respondent profile\t", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
 pleas_acc_fbeta$meanVal <- (pleas_acc_fbeta$upper - pleas_acc_fbeta$lower)/2 + pleas_acc_fbeta$lower
 
 h = 13.3
@@ -442,10 +442,15 @@ w = 19
 pdf("images/pleas_acc.pdf", width = w, height = h)
 ggplot(pleas_acc_fbeta, aes(x=fill, y=meanVal, fill=class)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(.~group) 
+    geom_errorbar(aes(ymin=lower, ymax=upper), width=.3, position=position_dodge(.9)) + xlab("") + ylab("") + guides(fill=guide_legend(title="Classifier")) + theme_bw() + theme(legend.position = "bottom", axis.ticks.x=element_blank(), axis.text.x = element_blank(), axis.text = element_text(size=30), strip.text.x = element_text(size=30), legend.text = element_text(size=30), legend.title = element_text(size=30)) + facet_grid(.~group) 
 dev.off()
 
-saf_acc_fbeta <- data.frame(lower=c(0.61, 0.54, 0.57, 0.50, 0.50), upper=c(0.65, 0.60, 0.60, 0.55, 0.54), class=c("Extra Trees with respondent profile", "Extra Trees with respondent profile", "Extra Trees without respondent profile", "Extra Trees without respondent profile", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
+ggplot(pleas_acc_fbeta, aes(x=fill, y=meanVal, fill=class)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=lower, ymax=upper), width=.3, position=position_dodge(.9)) + xlab("") + ylab("") + guides(fill=guide_legend(title="Classifier")) + theme_bw() + theme(axis.ticks.x=element_blank(), axis.text.x = element_blank(), axis.text = element_text(size=30), strip.text.x = element_text(size=30), legend.text = element_text(size=30), legend.title = element_text(size=30)) + facet_grid(.~group) + opts(legend.direction = "horizontal", legend.position = "bottom", legend.box = "vertical")
+
+
+saf_acc_fbeta <- data.frame(lower=c(0.61, 0.54, 0.57, 0.50, 0.50), upper=c(0.65, 0.60, 0.60, 0.55, 0.54), class=c("Extra Trees with\n respondent profile\t", "Extra Trees with\n respondent profile\t", "Extra Trees without\t\n  respondent profile\t", "Extra Trees without\t\n  respondent profile\t", "Random Classifier Acc."), fill=c(1,2,3,4,5), group=c("Accuracy", "F-beta", "Accuracy", "F-beta", "Accuracy"))
 saf_acc_fbeta$meanVal <- (saf_acc_fbeta$upper - saf_acc_fbeta$lower)/2 + saf_acc_fbeta$lower
 
 h = 13.3
@@ -453,7 +458,7 @@ w = 19
 pdf("images/saf_acc.pdf", width = w, height = h)
 ggplot(saf_acc_fbeta, aes(x=fill, y=meanVal, fill=class)) + 
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=lower, ymax=upper), width=.2, position=position_dodge(.9)) + xlab("") + ylab("") + theme( axis.ticks.x=element_blank(), strip.text.y = element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40)) + guides(fill=guide_legend(title="Classifier")) + theme_bw() + facet_grid(.~group) 
+    geom_errorbar(aes(ymin=lower, ymax=upper), width=.3, position=position_dodge(.9)) + xlab("") + ylab("") + guides(fill=guide_legend(title="Classifier")) + theme_bw() + theme(legend.position = "bottom", axis.ticks.x=element_blank(), axis.text.x = element_blank(), axis.text = element_text(size=30), strip.text.x = element_text(size=30), legend.text = element_text(size=30), legend.title = element_text(size=30)) + facet_grid(.~group) 
 dev.off()
 
 

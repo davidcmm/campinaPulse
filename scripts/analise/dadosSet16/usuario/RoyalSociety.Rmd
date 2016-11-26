@@ -3251,6 +3251,7 @@ wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 t.test(agrad.l$V3.Masculino, agrad.l$V3.Feminino, paired = TRUE)
 wilcox.test(agrad.l$V3.Masculino, agrad.l$V3.Feminino, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
+cor.test(agrad.l$rank, agrad.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3399,6 +3400,7 @@ wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 t.test(agrad.l$V3.Jovem, agrad.l$V3.Adulto, paired = TRUE)
 wilcox.test(agrad.l$V3.Jovem, agrad.l$V3.Adulto, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
+cor.test(agrad.l$rank, agrad.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Jovem, agrad.l$V3.Adulto)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3603,6 +3605,7 @@ wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 t.test(agrad.l$V3.Solteiro, agrad.l$V3.Casado, paired = TRUE)
 wilcox.test(agrad.l$V3.Solteiro, agrad.l$V3.Casado, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
+cor.test(agrad.l$rank, agrad.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Casado, agrad.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3754,6 +3757,7 @@ wilcox.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 t.test(agrad.l$V3.Baixa, agrad.l$V3.Media, paired = TRUE)
 wilcox.test(agrad.l$V3.Baixa, agrad.l$V3.Media, paired = TRUE)
 cor.test(agrad.l$rank, agrad.l$index, method="spearman")
+cor.test(agrad.l$rank, agrad.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Baixa, agrad.l$V3.Media)))
 res <- melt(kendallWithWeights(agrad.l, iterations))
 print(res, row.names=FALSE)
@@ -3893,6 +3897,7 @@ wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 t.test(seg.l$V3.Masculino, seg.l$V3.Feminino, paired = TRUE)
 wilcox.test(seg.l$V3.Masculino, seg.l$V3.Feminino, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
+cor.test(seg.l$rank, seg.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Masculino, seg.l$V3.Feminino)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4035,6 +4040,7 @@ wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 t.test(seg.l$V3.Jovem, seg.l$V3.Adulto, paired = TRUE)
 wilcox.test(seg.l$V3.Jovem, seg.l$V3.Adulto, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
+cor.test(seg.l$rank, seg.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Jovem, seg.l$V3.Adulto)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4173,6 +4179,7 @@ wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 t.test(seg.l$V3.Solteiro, seg.l$V3.Casado, paired = TRUE)
 wilcox.test(seg.l$V3.Solteiro, seg.l$V3.Casado, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
+cor.test(seg.l$rank, seg.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Casado, seg.l$V3.Solteiro)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4305,6 +4312,7 @@ wilcox.test(seg.l$rank, seg.l$index, paired = TRUE)
 t.test(seg.l$V3.Baixa, seg.l$V3.Media, paired = TRUE)
 wilcox.test(seg.l$V3.Baixa, seg.l$V3.Media, paired = TRUE)
 cor.test(seg.l$rank, seg.l$index, method="spearman")
+cor.test(seg.l$rank, seg.l$index, method="kendall")
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(seg.l$V3.Baixa, seg.l$V3.Media)))
 res <- melt(kendallWithWeights(seg.l, iterations))
 print(res, row.names=FALSE)
@@ -4949,9 +4957,9 @@ segGeral$catole[segGeral$bairro == "catole"] <- 1
 segGeral$liberdade[segGeral$bairro == "liberdade"] <- 1
 
 agradGeral$graffiti <- factor(agradGeral$graffiti, levels = c("Yes", "No"))
-agradGeral$graffiti <- relevel(agradGeral$graffiti,  "Yes")
+agradGeral$graffiti <- relevel(agradGeral$graffiti,  "No")
 segGeral$graffiti <- factor(segGeral$graffiti, levels = c("Yes", "No"))
-segGeral$graffiti <- relevel(segGeral$graffiti,  "Yes")
+segGeral$graffiti <- relevel(segGeral$graffiti,  "No")
 
 regsubsetsAgrad.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = agradGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
@@ -4959,9 +4967,9 @@ regsubsetsSeg.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 
 regGroup1 <- lm(rank ~ scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti - 1, na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
-regGroup1 <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = agradGeral)#Not normalized values
+regGroup1 <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = agradGeral)#Not normalized values
 regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti + 0, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
-regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = segGeral)#Not normalized values
+regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = segGeral)#Not normalized values
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
@@ -4969,12 +4977,12 @@ texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 select(arrange(agrad, desc(V3.Geral)), image_url, V3.Geral, V1)#General ranking
 select(arrange(seg, desc(V3.Geral)), image_url, V3.Geral, V1)
 
-grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
+grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
 temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
@@ -5053,7 +5061,7 @@ geral <- select(filter(dadosCopy, grupo == "Geral"), grupo, V1, V2, V3, bairro)
 geral$bairro <- as.character(geral$bairro)
 geral$bairro[geral$bairro == "catole"] <- "Catolé"
 geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
-geral$bairro[geral$bairro == "centro"] <- "City Center"
+geral$bairro[geral$bairro == "centro"] <- "Downtown"
 
 novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), direction="wide")
 library(plyr)
@@ -5062,7 +5070,8 @@ novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"
 w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "R2 = 0.41")
+lb1 <- paste("R^2 == ", 0.55)
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

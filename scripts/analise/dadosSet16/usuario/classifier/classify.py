@@ -735,33 +735,6 @@ def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues):
     plt.xlabel('Predicted label')
 
 
-def test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group):
-	""" Tests performance of a random classifier! """
-
-	unique_answer_agrad = Set(answer_agrad)
-	unique_answer_seg = Set(answer_seg)
-
-	X_train, X_test, y_train, y_test = train_test_split(predictors_agrad, answer_agrad, test_size=.2)#Splitting into train and test sets!
-	correct_predictions = 0
-	wrong_predictions = 0
-	for value in y_test:
-		if value == random.sample(unique_answer_agrad, 1):
-			correct_predictions = correct_predictions + 1
-		else:
-			wrong_predictions = wrong_predictions + 1
-	print ">>> Acc_pleasantness\t" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
-
-	X_train, X_test, y_train, y_test = train_test_split(predictors_seg, answer_seg, test_size=.2)#Splitting into train and test sets!
-	correct_predictions = 0
-	wrong_predictions = 0
-	for value in y_test:
-		if value == random.sample(unique_answer_seg, 1):
-			correct_predictions = correct_predictions + 1
-		else:
-			wrong_predictions = wrong_predictions + 1
-	print ">>> Acc_safety" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
-	
-
 def test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group="", load_3classes=False):
 	""" Trains and tests classifiers considering the best configuration of classifiers previously tested """
 
@@ -847,7 +820,7 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 	print_columns = True
 	#output_file = open("cslassifier_input_"+question+"_artificial.dat", "wa")
 
-	for user_id in user_ids:#Remove each user sequentially
+	for user_id in user_ids:#Remove each user sequentially 
 
 		photos_to_remove = Set()
 
@@ -975,9 +948,106 @@ def pairwise_leave_user_out(question, user_ids, df, parameters_dic, classifiers,
 
 	#output_file.close()
 
+def test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group):
+	""" Tests performance of a random classifier with splitted data per group and 20% of data for test! """
+
+	unique_answer_agrad = Set(answer_agrad)
+	unique_answer_seg = Set(answer_seg)
+
+	X_train, X_test, y_train, y_test = train_test_split(predictors_agrad, answer_agrad, test_size=.2)#Splitting into train and test sets!
+	correct_predictions = 0
+	wrong_predictions = 0
+	for value in y_test:
+		estimated = random.sample(unique_answer_agrad, 1)
+		if value == estimated:
+			correct_predictions = correct_predictions + 1
+		else:
+			wrong_predictions = wrong_predictions + 1
+	print ">>> Acc_pleasantness\t" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
+
+	X_train, X_test, y_train, y_test = train_test_split(predictors_seg, answer_seg, test_size=.2)#Splitting into train and test sets!
+	correct_predictions = 0
+	wrong_predictions = 0
+	for value in y_test:
+		if value == random.sample(unique_answer_seg, 1):
+			correct_predictions = correct_predictions + 1
+		else:
+			wrong_predictions = wrong_predictions + 1
+	print ">>> Acc_safety" + group + "\t" + str( 1.0*correct_predictions / (correct_predictions + wrong_predictions) ) + "\t" + str(correct_predictions) + "\t" + str(wrong_predictions)
+
+
+def test_random_pairwise(user_ids, question, df):
+	''' For each user simulate random answer for comparisons '''
+
+	expected_answers = df.choice.unique()
+	accuracy_list = []
+	precision_list = []
+	recall_list = []
+
+	for user_id in user_ids:
+		current_df_test = df[(df.userID == user_id)]
+		correct = 0.0
+		wrong = 0.0
+		tp = 0.0
+		fp = 0.0
+		fn = 0.0
+
+		for value in current_df_test.choice:
+			estimated = random.sample(expected_answers, 1)[0]
+			print str(value) + " " + str(estimated)
+			if value == estimated:
+				#print ">> Equal"
+				correct = correct + 1
+				if estimated == 1:
+					#print ">> TP"
+					tp = tp + 1			
+			else:
+				print ">> Diff"
+				wrong = wrong + 1
+				if estimated == 1:
+					#print ">> FP"
+					fp = fp + 1
+				else:
+					#print ">> FN"
+					fn = fn + 1
+		#print ">>> " + str(tp) + " " + str(fp) + " " + str(fn) + " " + str(correct) + " " + str(wrong)
+
+		accuracy_list.append(correct/(correct+wrong))
+		if tp + fp == 0:
+			precision_list.append(1)#http://stats.stackexchange.com/questions/1773/what-are-correct-values-for-precision-and-recall-in-edge-cases
+		else:
+			precision_list.append(tp / (tp + fp))
+
+		if tp + fn == 0:
+			recall_list.append(1)
+		else:
+			recall_list.append(tp / (tp + fn))
+	
+	print str(accuracy_list)
+	print str(precision_list)
+	print str(recall_list)
+
+	print ">>> " + question
+	print "### Accuracy : " + str(np.mean(accuracy_list)) + " " + str(np.std(accuracy_list))
+	print "### Precision : " + str(np.mean(precision_list)) + " " + str(np.std(precision_list))	
+	print "### Recall : " + str(np.mean(recall_list)) + " " + str(np.std(recall_list))	
+
+
+def prepare_random(question, input_file):
+	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile: classifier_input_wodraw.dat '''
+
+	all_df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
+	if question == "Pleasantness":
+		df = all_df[(all_df.question == "agradavel") | (all_df.question == "agrad%C3%A1vel?")]
+	else:
+		df = all_df[(all_df.question == "seguro") | (all_df.question == "seguro?")]
+
+	user_ids = df['userID'].unique()
+
+	test_random_pairwise(user_ids, question, df)
 
 def prepare_pairwise_leave_out(question, input_file, parameters_dic, classifiers_names, classifiers, consider_moderation):
-	'''Method to read input data for each image pairwise comparison in two different files (y*.dat and *.dat) and build model with urban features and urban features mediated by profile '''
+	'''Method to read input data for each image pairwise comparison and build model with urban features and urban features moderated by profile:  input_to_classifier_predictions.dat'''
 
 	all_df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 	if question == "Pleasantness":
@@ -1054,6 +1124,13 @@ if __name__ == "__main__":
 		df = pd.read_table(input_file, sep='\t', encoding='utf8', header=0)
 		importances_file = sys.argv[3]
 		plot_importances_from_file(importances_file, df, load_3classes)
+
+	elif phase == 'random':
+		if sys.argv[3].lower() == "agrad":
+			question = "Pleasantness"
+		else:
+			question = "Safety"
+		prepare_random(question, input_file)
 
 	elif phase.lower() == "pairwise-user-out":
 		if len(sys.argv) != 5:
@@ -1142,9 +1219,6 @@ if __name__ == "__main__":
 			#list_of_predictors = ['landscape1']
 			classifiers_names = ["Extra Trees", "Nearest Neighbors", "RBF SVM", "Naive Bayes"]#, "Linear SVM"]
 			test_classifiers(classifiers_names, predictors_agrad, answer_agrad, predictors_seg, answer_seg, group, load_3classes)
-
-		elif phase == 'random':
-			test_random(predictors_agrad, answer_agrad, predictors_seg, answer_seg, group)
 
 		else:
 			print "Phase not selected correctly: train-config, train-user-out, importances, importances-file, test or random!"

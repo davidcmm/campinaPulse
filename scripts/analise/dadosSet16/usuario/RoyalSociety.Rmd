@@ -3,6 +3,51 @@ title: "RoyalSociety"
 output: pdf_document
 ---
 
+#Comparing Q-Scores of Campina with Street Seen values
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+
+#Pleasantness
+south_cali <- read.table("../../dadosNov15/usuarios/streetSeen/sourthern_california_ordenado.dat")
+ottawa <- read.table("../../dadosNov15/usuarios/streetSeen/neighborhoods_ottawa_ordenado.dat")
+archit <- read.table("../../dadosNov15/usuarios/streetSeen/architectural_preferences_ordenado.dat")
+pleasData <- data.frame(app=c("Campina"), values=agrad$V3.Geral)
+pleasData <- rbind(pleasData, data.frame(app=c("Southern California"), values=south_cali$V4))
+pleasData <- rbind(pleasData, data.frame(app=c("Ottawa"), values=ottawa$V4))
+pleasData <- rbind(pleasData, data.frame(app=c("Columbus"), values=archit$V4))
+
+h = 11.3
+w = 16
+pdf("../../dadosNov15/usuarios/streetSeen/pleas_street.pdf", width = w, height = h)
+ggplot(pleasData, aes(y=values, x = app)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("Q-Score")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+dev.off()
+
+#Safety
+tyle <- read.table("../../dadosNov15/usuarios/streetSeen/safety_around_ordenado.dat")
+columbus <- read.table("../../dadosNov15/usuarios/streetSeen/safety_study_ordenado.dat")
+praga <- read.table("../../dadosNov15/usuarios/streetSeen/street_safety_ordenado.dat")
+safData <- data.frame(app=c("Campina"), values=seg$V3.Geral)
+safData <- rbind(safData, data.frame(app=c("Tyle"), values=tyle$V4))
+safData <- rbind(safData, data.frame(app=c("Columbus"), values=columbus$V4))
+safData <- rbind(safData, data.frame(app=c("Praga"), values=praga$V4))
+
+h = 11.3
+w = 16
+pdf("../../dadosNov15/usuarios/streetSeen/saf_street.pdf", width = w, height = h)
+ggplot(safData, aes(y=values, x = app)) + 
+  geom_boxplot() + 
+  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
+  theme_bw()+ xlab("") + 
+  ylab("Q-Score")+ylim(2, 8)+
+  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+dev.off()
+
+
+```
 
 #Evaluting evolution with pairwise and 4-images
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
@@ -5071,7 +5116,7 @@ w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("Q-Score Safety")+ylab("Q-Score Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

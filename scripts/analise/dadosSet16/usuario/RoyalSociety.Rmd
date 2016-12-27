@@ -23,7 +23,7 @@ ggplot(pleasData, aes(y=values, x = app)) +
   geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("Q-Score")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+  theme( axis.text.x = element_text(size=35), axis.text.y = element_text(size=35), axis.title.y = element_text(size=35), legend.title = element_text(size=40), legend.position="bottom")  
 dev.off()
 
 #Safety
@@ -43,7 +43,7 @@ ggplot(safData, aes(y=values, x = app)) +
   geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
   theme_bw()+ xlab("") + 
   ylab("Q-Score")+ylim(2, 8)+
-  theme(axis.text=element_text(size=14), axis.title=element_text(size=14))
+  theme( axis.text.x = element_text(size=35), axis.text.y = element_text(size=35), axis.title.y = element_text(size=35), legend.title = element_text(size=40), legend.position="bottom")
 dev.off()
 
 
@@ -644,9 +644,14 @@ texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
-dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
-ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + theme_bw() + ylab("Absolute Frequency") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + labs(fill="") 
+h = 13.3
+w = 19
+pdf("images/rgbColorHist.pdf", width = w, height = h)
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agrad%C3%A1vel?"), red, green, blue))#All city
+ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("Valores RGB (0 a 255)") + theme_bw() + ylab("Frequência Absoluta") + theme(axis.text=element_text(size=36), axis.title=element_text(size=36), legend.text = element_text(size=36), legend.title = element_text(size=36)) + labs(fill="") + scale_fill_discrete(name="Cores", breaks=c("red", "green", "blue"), labels=c("Vermelho", "Verde", "Azul"))
+dev.off()
 
+#Colors for each neighborhood
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "centro"), red, green, blue))#Centro
 ggplot(dataToPlot, aes(x=value, fill=variable)) +
      geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
@@ -5106,17 +5111,17 @@ geral <- select(filter(dadosCopy, grupo == "Geral"), grupo, V1, V2, V3, bairro)
 geral$bairro <- as.character(geral$bairro)
 geral$bairro[geral$bairro == "catole"] <- "Catolé"
 geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
-geral$bairro[geral$bairro == "centro"] <- "Downtown"
+geral$bairro[geral$bairro == "centro"] <- "Centro"
 
 novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), direction="wide")
 library(plyr)
-novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "neighborhood"))
+novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "Bairro"))
 
 w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("Q-Score Safety")+ylab("Q-Score Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=Bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("Q-Score Segurança")+ylab("Q-Score Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

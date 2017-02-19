@@ -3212,6 +3212,50 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
 }
 ```
 
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Capturing latitude and longitude to compute moran
+source("krippMoran.R")
+lat_lon <- read.table("../../streetsLatLon.csv", header=TRUE, sep=",")
+lat_lon <- rename(lat_lon, long = lon)
+lat_lon$street <- gsub(" ", "_", lat_lon$street)
+
+dfList <- list(agrad,seg)
+
+for (index in 1:length(dfList)){
+  
+  frame <- dfList[[index]]
+  
+  newFrame <- select(frame, image_url, V3.Geral, V3.Masculino, V3.Feminino, V3.Jovem, V3.Adulto, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media)
+  newFrame$image_url <- gsub("__", "_", newFrame$image_url)
+  
+  idx2 <- sapply(lat_lon$street, grep, newFrame$image_url)
+  idx1 <- sapply(seq_along(idx2), function(i) rep(i, length(idx2[[i]])))
+  
+  mergedFrames <- cbind(lat_lon[unlist(idx1),,drop=F], newFrame[unlist(idx2),,drop=F])
+
+  print(frame$V1[1])
+  print(">>> Geral")
+  moranI2(mergedFrames, "V3.Geral")
+  print(">>> Masculino")
+  moranI2(mergedFrames, "V3.Masculino")
+  print(">>> Feminino")
+  moranI2(mergedFrames, "V3.Feminino")
+  print(">>> Jovem")
+  moranI2(mergedFrames, "V3.Jovem")
+  print(">>> Adulto")
+  moranI2(mergedFrames, "V3.Adulto")
+  print(">>> Casado")
+  moranI2(mergedFrames, "V3.Casado")
+  print(">>> Solteiro")
+  moranI2(mergedFrames, "V3.Solteiro")
+  print(">>> Baixa")
+  moranI2(mergedFrames, "V3.Baixa")
+  print(">>> Media")
+  moranI2(mergedFrames, "V3.Media")
+}
+```
+
+
 
 ## Men x Women - Pleasantness
 
@@ -5121,7 +5165,7 @@ w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=Bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("Q-Score Segurança")+ylab("Q-Score Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood)) + geom_point(alpha = 0.7, size=2.5) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                                  
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

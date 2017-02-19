@@ -25,6 +25,7 @@ facet_labeller <- function(variable,value){
 
 #dados <- read.table("geral.dat", header=TRUE)
 dados <- read.table("geralSetoresAJ.dat", header=TRUE)
+#dados <- read.table("geralRankAJ.dat", header=TRUE)
 
 #Intervalo de confiança por ponto
 temp <- dados
@@ -38,7 +39,7 @@ dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "b
 novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro", "setor"), direction="wide")
 
 #Copia com todos os dados
-#dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
+dadosCopy <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro")]
 ```
 
 
@@ -197,7 +198,7 @@ groupedData1 <- summarise(by_image,
   #count = n(),
   q1 = geraValores(question1, "1", desvios, 100),
   #sdq1 = sd(question1, na.rm = TRUE),
-  q2 = mediaValores(image_url, question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
   q2_left = geraValores(question2__left_side, "2l", desvios, 100),
   #sdq2_left = sd(question2__left_side, na.rm = TRUE),
   q2_right = geraValores(question2__right_side, "2r", desvios, 100),
@@ -519,7 +520,7 @@ rgbBinsData$ehdNon <- apply(rgbBinsData[c(index)], 1, sum)
 rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
-for (quest in c("agradavel?", "seguro?")){
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
      res <- calcCorrelForBins(allUsersData, "V3", edge, quest)
      print(paste(quest, "Geral", edge))
@@ -527,9 +528,9 @@ for (quest in c("agradavel?", "seguro?")){
   }
 }
 
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#Separate diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
 summary(regAgrad)
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)#One value for diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#One value for diagonals
 summary(regAgrad)
 regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
@@ -538,7 +539,7 @@ summary(regSeg)
 
 #Correlation and regression of rgb bins with Qscores
 sink("rgbBins_correlation.dat")
-for (quest in c("agradavel?", "seguro?")){
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
   for (i in seq(104, 167)){
      res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest)
      print(paste(quest, "Geral", paste("V",i,sep="")))
@@ -547,22 +548,24 @@ for (quest in c("agradavel?", "seguro?")){
 }
 sink()
 
-regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad)
-regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+#regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 
 regSeg <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 texreg(list(regAgrad, regSeg), stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+#regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V131 + V136 + V137 + V140 + V141 + V142 + V144 + V157 + V161 + V162, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V131 + V136 + V137 + V140 + V141 + V142 + V144 + V157 + V161 + V162 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
@@ -922,7 +925,7 @@ temp$area[temp$bairro == "centro"] <- "norte"
 temp$area[temp$bairro == "liberdade"] <- "oeste"
 temp$area[temp$bairro == "catole"] <- "oeste"
 
-agrad <- filter(temp, V1 == "agradavel?")#filter(temp, V1 == "agrad%C3%A1vel?")
+agrad <- filter(temp, V1 == "agrad%C3%A1vel?")#filter(temp, V1 == "agrad%C3%A1vel?")
 seg <- filter(temp, V1 == "seguro?")
 
 #Kendall adaptation to consider weights as the difference in amount of features between images
@@ -4885,12 +4888,16 @@ segGeral$liberdade[segGeral$bairro == "liberdade"] <- 1
 agradGeral$graffiti <- factor(agradGeral$graffiti, levels = c("Yes", "No"))
 segGeral$graffiti <- factor(segGeral$graffiti, levels = c("Yes", "No"))
 
+#Making ausence of graffiti the variable to not be ploted!
+agradGeral <- within(agradGeral, graffiti <- relevel(graffiti, ref = 'Yes'))
+segGeral <- within(segGeral, graffiti <- relevel(graffiti, ref = 'Yes'))
+
 regsubsetsAgrad.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = agradGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 plot(regsubsetsAgrad.out, scale = "adjr2", main = "Adjusted R^2")
 regsubsetsSeg.out <<- regsubsets(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + people + bairro + know, na.action = na.exclude, data = segGeral, nbest = 3, nvmax = NULL, force.in = NULL, force.out = NULL, method = "exhaustive")
 plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 
-regGroup1 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + graffiti + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade +0 , na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
+regGroup1 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + graffiti + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade, na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
 regGroup1 <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = agradGeral)#Not normalized values
 regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + graffiti + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
 regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti - 1, na.action = na.exclude, data = segGeral)#Not normalized values
@@ -4901,12 +4908,12 @@ texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 select(arrange(agrad, desc(V3.Geral)), image_url, V3.Geral, V1)#General ranking
 select(arrange(seg, desc(V3.Geral)), image_url, V3.Geral, V1)
 
-grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agradavel?' ),] 
+grupo1 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='agrad%C3%A1vel?' ),] 
 grupo2 <- dadosSub[(dadosSub$grupo == 'Geral' & dadosSub$V1=='seguro?'),] 
 temp <- rbind(grupo1, grupo2)
 
 novosgrupo1grupo2 <- reshape(temp, timevar="V1", idvar=c("V2", "grupo", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agradavel?"] <- "V3.agradavel"
+colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
@@ -4931,7 +4938,7 @@ summary(moran)
 moran
 
 #Pleasantness and colors 
-reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = agradGeral)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -4954,7 +4961,7 @@ summary(moran)
 moran
 
 #Safety and colors 
-reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
+reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = segGeral)
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -4994,7 +5001,7 @@ novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"
 w = 5
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "R2 = 0.28")
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood))+geom_point(alpha = 0.7, size=1.7)+xlab("QScore Safety")+ylab("QScore Pleasantness")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = "R2 = 0.41")
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

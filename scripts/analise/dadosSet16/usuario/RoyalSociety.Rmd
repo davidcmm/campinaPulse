@@ -577,8 +577,8 @@ colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
 #Correlation functions for RGB bins and QScore
-calcCorrelForBins <- function(dados, colunaQScore, colunaCor, questao){
-    dadosAtuais <- dados[(dados$V1 == questao),] 
+calcCorrelForBins <- function(dados, colunaQScore, colunaCor, questao, colunaQuest){
+    dadosAtuais <- dados[(dados[[colunaQuest]] == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais[[colunaCor]], na.action = na.exclude, method = "kendall")
     return (res)
 }
@@ -597,10 +597,12 @@ index <- seq(181, 256, 5)
 rgbBinsData$ehdNon <- apply(rgbBinsData[c(index)], 1, sum)
 rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
+#Correlating Q-Score with lines
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
+allUsersData <- merge(allUsersData, agrad, by.x = "V2", by.y = "image_url")
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
-     res <- calcCorrelForBins(allUsersData, "V3", edge, quest)
+     res <- calcCorrelForBins(allUsersData, "V3", edge, quest, "V1")
      print(paste(quest, "Geral", edge))
      print(res)
   }
@@ -619,12 +621,26 @@ summary(regSeg)
 sink("rgbBins_correlation.dat")
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
   for (i in seq(104, 167)){
-     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest)
+     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest, "V1")
      print(paste(quest, "Geral", paste("V",i,sep="")))
      print(res)
   }
 }
 sink()
+
+#Correlating landscape with colors
+sink("rgbBins_correlation_landscape.dat")
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
+  for (i in seq(104, 167)){
+     res <- calcCorrelForBins(allUsersData, "landscape", paste("V",i,sep=""), quest, "V1.x")
+     print(paste(quest, "Geral", paste("V",i,sep="")))
+     print(res)
+  }
+}
+regAgrad <- lm(landscape ~ V108 + V128 + V140 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
+summary(regAgrad)
+sink()
+
 
 regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)

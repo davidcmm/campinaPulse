@@ -599,7 +599,7 @@ rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
 #Correlating Q-Score with lines
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
-allUsersData <- merge(allUsersData, agrad, by.x = "V2", by.y = "image_url")
+allUsersData <- merge(allUsersData, agrad, by.x = "V2", by.y = "image_url")#Merging rgb with urban features
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
      res <- calcCorrelForBins(allUsersData, "V3", edge, quest, "V1")
@@ -637,8 +637,20 @@ for (quest in c("agrad%C3%A1vel?", "seguro?")){
      print(res)
   }
 }
-regAgrad <- lm(landscape ~ V108 + V128 + V140 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
-summary(regAgrad)
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
+  for (feature in c("street_wid", "mov_cars", "park_cars", "mov_ciclyst", "build_ident", "trees", "build_height", "diff_build", "people") ){
+     res <- calcCorrelForBins(allUsersData, "landscape", feature, quest, "V1.x")
+     print(paste(quest, "Geral", feature))
+     print(res)
+  }
+}
+regLandscape <- lm(landscape ~ red.x + green.x  + blue.x, data=allUsersData, na.action = na.exclude)#Separate diagonals
+summary(regLandscape)
+regLandscape <- lm(landscape ~ V108 + V128 + V140 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Separate diagonals
+summary(regLandscape)
+regLandscape <- lm(landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + V167 + street_wid + mov_cars + park_cars + mov_ciclyst + build_ident + graffiti + trees + log2(build_height+1) + diff_build + people, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Landscape x colors and features
+regLandscape <- lm(landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + V167 + street_wid + mov_cars + trees + people, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Landscape x colors and features
+summary(regLandscape)
 sink()
 
 

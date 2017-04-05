@@ -3,51 +3,6 @@ title: "RoyalSociety"
 output: pdf_document
 ---
 
-#Comparing Q-Scores of Campina with Street Seen values
-```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-
-#Pleasantness
-south_cali <- read.table("../../dadosNov15/usuarios/streetSeen/sourthern_california_ordenado.dat")
-ottawa <- read.table("../../dadosNov15/usuarios/streetSeen/neighborhoods_ottawa_ordenado.dat")
-archit <- read.table("../../dadosNov15/usuarios/streetSeen/architectural_preferences_ordenado.dat")
-pleasData <- data.frame(app=c("Campina"), values=agrad$V3.Geral)
-pleasData <- rbind(pleasData, data.frame(app=c("Southern California"), values=south_cali$V4))
-pleasData <- rbind(pleasData, data.frame(app=c("Ottawa"), values=ottawa$V4))
-pleasData <- rbind(pleasData, data.frame(app=c("Columbus"), values=archit$V4))
-
-h = 11.3
-w = 16
-pdf("../../dadosNov15/usuarios/streetSeen/pleas_street.pdf", width = w, height = h)
-ggplot(pleasData, aes(y=values, x = app)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
-  theme_bw()+ xlab("") + 
-  ylab("Q-Score")+ylim(2, 8)+
-  theme( axis.text.x = element_text(size=35), axis.text.y = element_text(size=35), axis.title.y = element_text(size=35), legend.title = element_text(size=40), legend.position="bottom")  
-dev.off()
-
-#Safety
-tyle <- read.table("../../dadosNov15/usuarios/streetSeen/safety_around_ordenado.dat")
-columbus <- read.table("../../dadosNov15/usuarios/streetSeen/safety_study_ordenado.dat")
-praga <- read.table("../../dadosNov15/usuarios/streetSeen/street_safety_ordenado.dat")
-safData <- data.frame(app=c("Campina"), values=seg$V3.Geral)
-safData <- rbind(safData, data.frame(app=c("Tyle"), values=tyle$V4))
-safData <- rbind(safData, data.frame(app=c("Columbus"), values=columbus$V4))
-safData <- rbind(safData, data.frame(app=c("Praga"), values=praga$V4))
-
-h = 11.3
-w = 16
-pdf("../../dadosNov15/usuarios/streetSeen/saf_street.pdf", width = w, height = h)
-ggplot(safData, aes(y=values, x = app)) + 
-  geom_boxplot() + 
-  geom_point(position = position_jitter(width = 0.15), size = 2, alpha = 0.6) + 
-  theme_bw()+ xlab("") + 
-  ylab("Q-Score")+ylim(2, 8)+
-  theme( axis.text.x = element_text(size=35), axis.text.y = element_text(size=35), axis.title.y = element_text(size=35), legend.title = element_text(size=40), legend.position="bottom")
-dev.off()
-
-
-```
 
 #Evaluting evolution with pairwise and 4-images
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
@@ -644,14 +599,9 @@ texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
-h = 13.3
-w = 19
-pdf("images/rgbColorHist.pdf", width = w, height = h)
-dataToPlot <- melt(select(filter(allUsersData, V1 == "agrad%C3%A1vel?"), red, green, blue))#All city
-ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("Valores RGB (0 a 255)") + theme_bw() + ylab("Frequência Absoluta") + theme(axis.text=element_text(size=36), axis.title=element_text(size=36), legend.text = element_text(size=36), legend.title = element_text(size=36)) + labs(fill="") + scale_fill_discrete(name="Cores", breaks=c("red", "green", "blue"), labels=c("Vermelho", "Verde", "Azul"))
-dev.off()
+dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
+ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + theme_bw() + ylab("Absolute Frequency") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + labs(fill="") 
 
-#Colors for each neighborhood
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "centro"), red, green, blue))#Centro
 ggplot(dataToPlot, aes(x=value, fill=variable)) +
      geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
@@ -3213,6 +3163,25 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
 ```
 
 
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#TO DO! Capturing latitude and longitude to compute moran
+lat_lon <- read.table("../../segStreetQScoresLatLong.csv", header=TRUE, sep=",")
+
+novoV2 <- lapply(as.character(agrad$image_url), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][2])
+local <- unlist(lapply(novoV2, '[[', 1))
+local <- gsub("_", " ", gsub("__", "_", local))
+strsplit(local, split = " ")[[1]][1:length(strsplit(local[1], split = " ")[[1]])-1]
+agrad$novo_image_url <- local
+
+merge(groupedData1, novosDados, by.x="image_url", by.y="image_url")
+
+source("krippMoran.R")
+moranI2(res, "V3.Geral")
+moranI2(res, "V3.Masculino")
+moranI2(res, "V3.Feminino")
+```
+
+
 ## Men x Women - Pleasantness
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
@@ -3400,6 +3369,7 @@ maxDist <- max(unlist(nbdists(k2, unique(crd))))
 neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
 
+#Moran computations
 source("krippMoran.R")
 moranI2(res, "V3.Geral")
 moranI2(res, "V3.Masculino")
@@ -5111,17 +5081,17 @@ geral <- select(filter(dadosCopy, grupo == "Geral"), grupo, V1, V2, V3, bairro)
 geral$bairro <- as.character(geral$bairro)
 geral$bairro[geral$bairro == "catole"] <- "Catolé"
 geral$bairro[geral$bairro == "liberdade"] <- "Liberdade"
-geral$bairro[geral$bairro == "centro"] <- "Centro"
+geral$bairro[geral$bairro == "centro"] <- "Downtown"
 
 novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), direction="wide")
 library(plyr)
-novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "Bairro"))
+novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "neighborhood"))
 
-w = 5
+w = 6
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=Bairro))+geom_point(alpha = 0.7, size=1.7)+xlab("Q-Score Segurança")+ylab("Q-Score Agradável")+geom_abline(intercept=0, colour="red")+theme(axis.text=element_text(size=40), axis.title=element_text(size=40), legend.text = element_text(size=40), legend.title = element_text(size=40))+theme_bw()+annotate("text", x = 4, y = 7, label = lb1, parse=TRUE)                                                                                                                                                                                                                                                                                                                                                                                  
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                        
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

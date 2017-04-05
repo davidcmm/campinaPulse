@@ -532,8 +532,8 @@ colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
 #Correlation functions for RGB bins and QScore
-calcCorrelForBins <- function(dados, colunaQScore, colunaCor, questao){
-    dadosAtuais <- dados[(dados$V1 == questao),] 
+calcCorrelForBins <- function(dados, colunaQScore, colunaCor, questao, colunaQuest){
+    dadosAtuais <- dados[(dados[[colunaQuest]] == questao),] 
     res <- cor.test(dadosAtuais[[colunaQScore]], dadosAtuais[[colunaCor]], na.action = na.exclude, method = "kendall")
     return (res)
 }
@@ -552,10 +552,12 @@ index <- seq(181, 256, 5)
 rgbBinsData$ehdNon <- apply(rgbBinsData[c(index)], 1, sum)
 rgbBinsData$ehdDiag <- rgbBinsData$ehd45 + rgbBinsData$ehd135
 
+#Correlating Q-Score with lines
 allUsersData <- filter(rgbBinsData, grupo == "Geral")
+allUsersData <- merge(allUsersData, agrad, by.x = "V2", by.y = "image_url")#Merging rgb with urban features
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
-     res <- calcCorrelForBins(allUsersData, "V3", edge, quest)
+     res <- calcCorrelForBins(allUsersData, "V3", edge, quest, "V1")
      print(paste(quest, "Geral", edge))
      print(res)
   }
@@ -574,12 +576,38 @@ summary(regSeg)
 sink("rgbBins_correlation.dat")
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
   for (i in seq(104, 167)){
-     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest)
+     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest, "V1")
      print(paste(quest, "Geral", paste("V",i,sep="")))
      print(res)
   }
 }
 sink()
+
+#Correlating landscape with colors
+sink("rgbBins_correlation_landscape.dat")
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
+  for (i in seq(104, 167)){
+     res <- calcCorrelForBins(allUsersData, "landscape", paste("V",i,sep=""), quest, "V1.x")
+     print(paste(quest, "Geral", paste("V",i,sep="")))
+     print(res)
+  }
+}
+for (quest in c("agrad%C3%A1vel?", "seguro?")){
+  for (feature in c("street_wid", "mov_cars", "park_cars", "mov_ciclyst", "build_ident", "trees", "build_height", "diff_build", "people") ){
+     res <- calcCorrelForBins(allUsersData, "landscape", feature, quest, "V1.x")
+     print(paste(quest, "Geral", feature))
+     print(res)
+  }
+}
+regLandscape <- lm(landscape ~ red.x + green.x  + blue.x, data=allUsersData, na.action = na.exclude)#Separate diagonals
+summary(regLandscape)
+regLandscape <- lm(landscape ~ V108 + V128 + V140 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Separate diagonals
+summary(regLandscape)
+regLandscape <- lm(landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + V167 + street_wid + mov_cars + park_cars + mov_ciclyst + build_ident + graffiti + trees + log2(build_height+1) + diff_build + people, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Landscape x colors and features
+regLandscape <- lm(landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + V167 + street_wid + mov_cars + trees + people, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)#Landscape x colors and features
+summary(regLandscape)
+sink()
+
 
 regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
@@ -3161,6 +3189,50 @@ test.kendallWithDiffRankingsNonZeroDiffFeatureAndMoreThanOneIteration <- functio
    checkTrue(result$propActiveUseN== mean(c(2,2,0)) / mean(c(2,0,2,2,2,0,0,2,2,0)))
 }
 ```
+
+```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
+#Capturing latitude and longitude to compute moran
+source("krippMoran.R")
+lat_lon <- read.table("../../streetsLatLon.csv", header=TRUE, sep=",")
+lat_lon <- rename(lat_lon, long = lon)
+lat_lon$street <- gsub(" ", "_", lat_lon$street)
+
+dfList <- list(agrad,seg)
+
+for (index in 1:length(dfList)){
+  
+  frame <- dfList[[index]]
+  
+  newFrame <- select(frame, image_url, V3.Geral, V3.Masculino, V3.Feminino, V3.Jovem, V3.Adulto, V3.Casado, V3.Solteiro, V3.Baixa, V3.Media)
+  newFrame$image_url <- gsub("__", "_", newFrame$image_url)
+  
+  idx2 <- sapply(lat_lon$street, grep, newFrame$image_url)
+  idx1 <- sapply(seq_along(idx2), function(i) rep(i, length(idx2[[i]])))
+  
+  mergedFrames <- cbind(lat_lon[unlist(idx1),,drop=F], newFrame[unlist(idx2),,drop=F])
+
+  print(frame$V1[1])
+  print(">>> Geral")
+  moranI2(mergedFrames, "V3.Geral")
+  print(">>> Masculino")
+  moranI2(mergedFrames, "V3.Masculino")
+  print(">>> Feminino")
+  moranI2(mergedFrames, "V3.Feminino")
+  print(">>> Jovem")
+  moranI2(mergedFrames, "V3.Jovem")
+  print(">>> Adulto")
+  moranI2(mergedFrames, "V3.Adulto")
+  print(">>> Casado")
+  moranI2(mergedFrames, "V3.Casado")
+  print(">>> Solteiro")
+  moranI2(mergedFrames, "V3.Solteiro")
+  print(">>> Baixa")
+  moranI2(mergedFrames, "V3.Baixa")
+  print(">>> Media")
+  moranI2(mergedFrames, "V3.Media")
+}
+```
+
 
 
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}

@@ -711,3 +711,138 @@ alternative hypothesis: true tau is not equal to 0
 sample estimates:
       tau 
 0.5330564 
+
+
+>>>>>> Regressoes cores com landscape
+> summary(regAgrad)
+
+Call:
+lm(formula = landscape ~ red.x + green.x + blue.x, data = allUsersData, 
+    na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.38950 -0.43962  0.00796  0.66248  1.57157 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  5.301230   0.799492   6.631 2.68e-10 ***
+red.x       -0.099267   0.022953  -4.325 2.34e-05 ***
+green.x      0.088295   0.036800   2.399   0.0173 *  
+blue.x      -0.005929   0.021033  -0.282   0.7783    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.724 on 214 degrees of freedom
+Multiple R-squared:  0.1041,	Adjusted R-squared:  0.09153 
+F-statistic: 8.288 on 3 and 214 DF,  p-value: 3.061e-05
+> summary(regAgrad)
+Call:
+lm(formula = landscape ~ V108 + V128 + V140 + V144 + V149 + V150 + 
+    V162 + V167, data = filter(allUsersData, V1.x == "agrad%C3%A1vel?"), 
+    na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.91376 -0.35919  0.02821  0.48636  1.63558 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  3.675e+00  2.569e-01  14.303   <2e-16 ***
+V108         3.577e-05  2.665e-05   1.342   0.1826    
+V128         3.522e-03  2.341e-03   1.505   0.1356    
+V140        -3.340e-04  2.021e-04  -1.653   0.1015    
+V144        -2.602e-04  2.716e-03  -0.096   0.9239    
+V149         3.591e-02  1.247e-01   0.288   0.7739    
+V150        -2.341e-04  1.130e-04  -2.072   0.0409 *  -> Verde claro
+V162         8.805e-05  1.077e-04   0.818   0.4154    
+V167        -9.850e-06  4.495e-06  -2.191   0.0307 *  -> Cinza claro
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.7143 on 100 degrees of freedom
+Multiple R-squared:  0.185,	Adjusted R-squared:  0.1198 
+F-statistic: 2.837 on 8 and 100 DF,  p-value: 0.007006
+> summary(regLandscape)
+
+Call:
+lm(formula = landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + 
+    V167 + red.x + blue.x + green.x + street_wid + mov_cars + 
+    park_cars + mov_ciclyst + build_ident + graffiti + trees + 
+    log2(build_height + 1) + diff_build + people, data = filter(allUsersData, 
+    V1.x == "seguro?"), na.action = na.exclude)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.9660 -0.4467  0.1140  0.4105  1.4822 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(>|t|)   
+(Intercept)             4.530e+00  1.387e+00   3.266  0.00156 **
+V108                    2.064e-05  5.190e-05   0.398  0.69186   
+V128                    1.957e-03  2.431e-03   0.805  0.42285   
+V144                   -1.732e-03  2.793e-03  -0.620  0.53686   
+V149                    3.621e-02  1.481e-01   0.244  0.80747   
+V150                   -1.448e-04  1.178e-04  -1.230  0.22216   
+V162                    2.474e-05  1.118e-04   0.221  0.82538   
+V167                   -5.993e-06  5.003e-06  -1.198  0.23414   
+red.x                   8.181e-03  5.199e-02   0.157  0.87532   
+blue.x                  2.394e-02  5.308e-02   0.451  0.65313   
+green.x                -4.175e-02  9.261e-02  -0.451  0.65325   
+street_wid              1.732e-02  1.161e-02   1.492  0.13926   
+mov_cars                8.704e-02  5.251e-02   1.658  0.10097   
+park_cars              -1.537e-02  2.226e-02  -0.691  0.49156   
+mov_ciclyst            -8.230e-02  1.247e-01  -0.660  0.51099   
+build_ident             1.069e-02  3.097e-02   0.345  0.73073   
+graffitiYes            -1.383e-01  2.460e-01  -0.562  0.57547   
+trees                   2.676e-02  3.910e-02   0.684  0.49557   
+log2(build_height + 1) -3.592e-02  1.164e-01  -0.309  0.75843   
+diff_build             -2.222e-02  4.835e-02  -0.460  0.64687   
+people                 -3.668e-02  3.424e-02  -1.071  0.28696   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.701 on 88 degrees of freedom
+Multiple R-squared:  0.3094,	Adjusted R-squared:  0.1524 
+F-statistic: 1.971 on 20 and 88 DF,  p-value: 0.0165
+
+> summary(regLandscape)
+
+Call:
+lm(formula = landscape ~ V108 + V128 + V144 + V149 + V150 + V162 + 
+    V167 + street_wid + mov_cars + park_cars + mov_ciclyst + 
+    build_ident + graffiti + trees + log2(build_height + 1) + 
+    diff_build + people, data = filter(allUsersData, V1.x == 
+    "seguro?"), na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.93855 -0.40384  0.08862  0.43344  1.46372 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             3.283e+00  6.410e-01   5.121 1.69e-06 ***
+V108                    1.743e-05  3.056e-05   0.570   0.5698    
+V128                    2.258e-03  2.349e-03   0.961   0.3390    
+V144                   -1.675e-03  2.750e-03  -0.609   0.5439    
+V149                    1.292e-02  1.442e-01   0.090   0.9288    
+V150                   -1.503e-04  1.162e-04  -1.293   0.1992    
+V162                    1.910e-05  1.103e-04   0.173   0.8630    
+V167                   -7.086e-06  4.545e-06  -1.559   0.1225    
+street_wid              1.322e-02  1.069e-02   1.237   0.2192    
+mov_cars                9.781e-02  5.036e-02   1.942   0.0552 .  
+park_cars              -6.195e-03  1.942e-02  -0.319   0.7505    
+mov_ciclyst            -8.315e-02  1.219e-01  -0.682   0.4968    
+build_ident             1.067e-02  2.925e-02   0.365   0.7162    
+graffitiYes            -1.375e-01  2.407e-01  -0.571   0.5691    
+trees                   3.552e-02  3.720e-02   0.955   0.3422    
+log2(build_height + 1) -4.309e-02  1.144e-01  -0.377   0.7073    
+diff_build             -1.924e-02  4.770e-02  -0.403   0.6877    
+people                 -3.959e-02  3.242e-02  -1.221   0.2251    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.6939 on 91 degrees of freedom
+Multiple R-squared:  0.3002,	Adjusted R-squared:  0.1695 
+F-statistic: 2.297 on 17 and 91 DF,  p-value: 0.006145
+

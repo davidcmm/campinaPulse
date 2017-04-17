@@ -5094,11 +5094,11 @@ novosDados <- reshape(geral, timevar="V1", idvar=c("V2", "grupo", "bairro"), dir
 library(plyr)
 novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"="Safe", "bairro" = "neighborhood"))
 
-w = 5
+w = 6
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood)) + geom_point(alpha = 0.7, size=2.5) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                                  
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                        
 dev.off()
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")

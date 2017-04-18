@@ -433,9 +433,13 @@ for (current_file in masc_files){
    merged_seg <- merge(seg_orig, seg_data, by.x="V2", by.y="V2")
    
    print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   print(cor.test(merged$V3.y, merged$V3.x, method="kendall"))
+   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Men Random", res$estimate))
    print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   print(cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall"))
+   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Seg: General Old x Removing Men Random", res$estimate))
    
    #Storing all means
    if(length(all_means_ag) == 0){
@@ -453,6 +457,7 @@ all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
 
 #Combining all street features
 combineFeaturesAndTestRegression <- function(dataset){
+  
     colnames(dataset)[colnames(dataset) == "V2"] <- "image_url"
     temp <- merge(groupedData1, dataset, by.x="image_url", by.y="image_url")
     temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
@@ -488,6 +493,25 @@ combineFeaturesAndTestRegression <- function(dataset){
 
 combineFeaturesAndTestRegression(all_means_ag)
 combineFeaturesAndTestRegression(all_means_seg)
+
+#Evaluating sample sizes
+library(stringr)
+source("../analisaICPorFoto.R")
+sample_size <- function(x) { 
+  	return ( ( ( sd(x) * qnorm(1-(0.05/2)) )  / ( 0.05 * mean(x) ) ) ** 2)  #95% confidence interval, significance level of 0.05 (alpha) - sample 100
+  }
+for (file in c("taug_men_agrad.dat", "taug_men_seg.dat")){
+  ag_cor <- read.table(file, sep="")
+  ag_cor$V2 <- as.factor(ag_cor$V2)
+  values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+  new_values <- unlist(lapply(values, '[[', 1))
+  ag_cor$value <- new_values
+  
+  print(paste(">>>> ", file))
+  delta <- ic(ag_cor$value)
+  print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+  print(sample_size(ag_cor$value))
+}
 ```
 
 ## Comparing original groups x randomized groups!
@@ -498,6 +522,9 @@ masc_files <- list.files(path = ".", pattern = "allMasculinoOrdInter*")
 masc_original <- read.table("../all100/allMasculinoOrdInter.dat")
 ag_orig <- filter(masc_original, V1 != "seguro?")
 seg_orig <- filter(masc_original, V1 == "seguro?")
+
+all_means_ag <- data.frame()
+all_means_seg <- data.frame()
 
 sink("rank_comparisons.dat")
 for (current_file in masc_files){
@@ -512,9 +539,13 @@ for (current_file in masc_files){
    merged_seg <- merge(seg_orig, seg_data, by.x="V2", by.y="V2")
    
    print(paste(">>>>>>> Kendall distance Agrad: Men Old x Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   print(cor.test(merged$V3.y, merged$V3.x, method="kendall"))
+   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Agrad: Men Old x Men Random", res$estimate))
    print(paste(">>>>>>> Kendall distance Seg: Men Old x Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   print(cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall"))
+   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Seg: Men Old x Men Random", res$estimate))
    
    #Looking for corresponding data from women
    current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
@@ -525,20 +556,43 @@ for (current_file in masc_files){
    merged_seg <- merge(other_seg_data, seg_data, by.x="V2", by.y="V2")
    
    print(paste(">>>>>>> Kendall distance Agrad: Women Fixed x Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   print(cor.test(merged$V3.y, merged$V3.x, method="kendall"))
+   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Agrad: Women Fixed x Men Random", res$estimate))
    print(paste(">>>>>>> Kendall distance Seg: Women Fixed x Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   print(cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall"))
+   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+   print(res)
+   print(paste(">>>>>>>> Correlation Seg: Women Fixed x Men Random", res$estimate))
+   
+   #Storing all means
+   if(length(all_means_ag) == 0){
+     all_means_ag <- select(ag_data, V1, V2, V3)
+     all_means_seg <- select(seg_data, V1, V2, V3)
+   }else{
+      all_means_ag <- merge(all_means_ag, select(ag_data, V2, V3), by.x="V2", by.y="V2")
+      all_means_seg <- merge(all_means_seg, select(seg_data, V2, V3), by.x="V2", by.y="V2")
+   }
 }
 sink()
 
+#Testing regressions for men
+all_means_ag$mean <- apply(all_means_ag[,3:ncol(all_means_ag)], 1, mean)
+all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
+
+combineFeaturesAndTestRegression(all_means_ag)
+combineFeaturesAndTestRegression(all_means_seg)
+
+#Evaluating confidence intervals for computed kendall correlations
+for (file in c("tau_men_agrad.dat", "tau_men_seg.dat")){
+  ag_cor <- read.table(file, sep="")
+  ag_cor$V2 <- as.factor(ag_cor$V2)
+  values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+  new_values <- unlist(lapply(values, '[[', 1))
+  ag_cor$value <- new_values
+  
+  print(paste(">>>> ", file))
+  delta <- ic(ag_cor$value)
+  print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+  print(sample_size(ag_cor$value))
+}
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

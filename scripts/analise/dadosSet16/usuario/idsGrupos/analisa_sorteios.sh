@@ -30,7 +30,7 @@
 #done
 
 #Iterating through each generated men and women files
-for i in {1..100}; do 
+for i in {0..99}; do 
 
 	#currentFile=`echo $file | cut -d \_ -f 2 | cut -d . -f 1`
 	python ../selectRunPerUsers.py ../run100/run.csv masculino_${i}.dat run > runMasculino_${i}.csv
@@ -50,7 +50,7 @@ for i in {1..100}; do
 	python ../preparaHTML.py allMasculino_${i}.dat intersectionAllFemMas_${i}.dat > allMasculinoOrdInter_${i}.dat 
 	rm question.html
 
-	#Building all evaluations with only selected men, this means removing men that were not sorted in current group
+	#Building all evaluations with only selected users, this means removing users that were not sorted in current group
 	python sorteia_grupos_geral.py masculino masculino_${i}.dat
 	python sorteia_grupos_geral.py feminino feminino_${i}.dat
 

@@ -40,20 +40,37 @@ def selectTasksFromClassifierPredictions(predFile, criteria):
 		
 
 if __name__ == "__main__":
+
+	#print sys.argv
+
 	if len(sys.argv) < 3:
 		print "Uso: <arquivo com execuções das tarefas> <arquivos com usuarios a filtrar> <type: run, classifier or remove>"
 		sys.exit(1)
 
+	if len(sys.argv) >= 4:
+		typeOfExecution = sys.argv[len(sys.argv)-1]
+	else:
+		typeOfExecution = ""
+
+	#print typeOfExecution
+
 	dataFile = open(sys.argv[1], 'r')
 	lines = dataFile.readlines()
 
-	usersFile = open(sys.argv[2], 'r')
-	criteria = usersFile.readlines()[1:]#skipping first line containing tasks id of intersection
+	if typeOfExecution.lower() == "remove":
+		usersFile = open(sys.argv[2], 'r')
+		criteria = usersFile.readlines()[1:]#skipping first line containing tasks id of intersection
+		#print criteria
 
-	if len(sys.argv) == 4:
-		typeOfExecution = sys.argv[3]
+		if sys.argv[3] != "remove":
+			usersFile = open(sys.argv[3], 'r')
+			criteria.extend(usersFile.readlines()[1:])
 	else:
-		typeOfExecution = ""
+		usersFile = open(sys.argv[2], 'r')
+		criteria = usersFile.readlines()[1:]#skipping first line containing tasks id of intersection
+
+	#print criteria
+	#sys.exit(1)
 
 	if len(typeOfExecution) == 0 or typeOfExecution == "run":
 		selectTasks(lines, criteria)#FIXME: add tasksID

@@ -409,51 +409,174 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 ```
 
-## Comparing all participants together in original data and removing some men!
+## Comparing original groups x randomized groups!
 ```{r cars}
-all_diff <- list.files(path = ".", pattern = "allDiffMasculino*")
+  masc_files <- list.files(path = ".", pattern = "allMasculinoOrdInter*")
+  fem_files <- list.files(path = ".", pattern = "allFemininoOrdInter*")
+  
+  masc_original <- read.table("../all100/allMasculinoOrdInter.dat")
+  fem_original <- read.table("../all100/allFemininoOrdInter.dat")
+  ag_orig_m <- filter(masc_original, V1 != "seguro?")
+  seg_orig_m <- filter(masc_original, V1 == "seguro?")
+  ag_orig_f <- filter(fem_original, V1 != "seguro?")
+  seg_orig_f <- filter(fem_original, V1 == "seguro?")
+  
+  all_means_ag_m <- data.frame()
+  all_means_seg_m <- data.frame()
+  all_means_ag_f <- data.frame()
+  all_means_seg_f <- data.frame()
+  
+  sink("rank_comparisons.dat")
+  #for (current_file in masc_files){
+  for (i in seq(1, 100)){
+  
+     #id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
+     print(paste("########### Iteration ", i))
+     men_file <- masc_files[i]
+     women_file <- fem_files[i]
+    
+    #Comparing men random x men original
+     #data <- read.table(current_file)
+     data_m <- read.table(men_file)
+     seg_m <- filter(data_m, V1 == "seguro?")
+     ag_m <- filter(data_m, V1 != "seguro?")
+     
+     merged_m <- merge(ag_orig_m, ag_m, by.x="V2", by.y="V2")
+     merged_seg_m <- merge(seg_orig_m, seg_m, by.x="V2", by.y="V2")
+     
+     print(paste(">>>>>>> Kendall distance Agrad: Men Old x Men Random", normalizedKendallTauDistance2(merged_m$V3.y, merged_m$V3.x)))
+     res <- cor.test(merged_m$V3.y, merged_m$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Agrad: Men Old x Men Random", res$estimate))
+     print(paste(">>>>>>> Kendall distance Seg: Men Old x Men Random", normalizedKendallTauDistance2(merged_seg_m$V3.y, merged_seg_m$V3.x)))
+     res <- cor.test(merged_seg_m$V3.y, merged_seg_m$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Seg: Men Old x Men Random", res$estimate))
+     
+     #Looking for corresponding data from women
+     #current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
+     #other_seg_data <- filter(current_other, V1 == "seguro?")
+     #other_ag_data <- filter(current_other, V1 != "seguro?")
+     
+     #Comparing women random x women original
+     #merged <- merge(other_ag_data, ag_data, by.x="V2", by.y="V2")
+     #merged_seg <- merge(other_seg_data, seg_data, by.x="V2", by.y="V2")
+     data_f <- read.table(women_file)
+     seg_f <- filter(data_f, V1 == "seguro?")
+     ag_f <- filter(data_f, V1 != "seguro?")
+     
+     merged_f <- merge(ag_orig_f, ag_f, by.x="V2", by.y="V2")
+     merged_seg_f <- merge(seg_orig_f, seg_f, by.x="V2", by.y="V2")
+    
+     print(paste(">>>>>>> Kendall distance Agrad: Women Fixed x Women Random", normalizedKendallTauDistance2(merged_f$V3.y, merged_f$V3.x)))
+     res <- cor.test(merged_f$V3.y, merged_f$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Agrad: Women Fixed x Women Random", res$estimate))
+     print(paste(">>>>>>> Kendall distance Seg: Women Fixed x Women Random", normalizedKendallTauDistance2(merged_seg_f$V3.y, merged_seg_f$V3.x)))
+     res <- cor.test(merged_seg_f$V3.y, merged_seg_f$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Seg: Women Fixed x Women Random", res$estimate))
+     
+     #Comparing women random x men random
+     merged <- merge(ag_m, ag_f, by.x="V2", by.y="V2")
+     merged_seg <- merge(seg_m, seg_f, by.x="V2", by.y="V2")
+     
+     print(paste(">>>>>>> Kendall distance Agrad: Women Random x Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+     res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Agrad: Women Random x Men Random", res$estimate))
+     print(paste(">>>>>>> Kendall distance Seg: Women Random x Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+     res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+     print(res)
+     print(paste(">>>>>>>> Correlation Seg: Women Random x Men Random", res$estimate))
+     
+     #Storing all means
+     if(length(all_means_ag_m) == 0){
+       all_means_ag_m <- select(ag_m, V1, V2, V3)
+       all_means_seg_m <- select(seg_m, V1, V2, V3)
+       all_means_ag_f <- select(ag_f, V1, V2, V3)
+       all_means_seg_f <- select(seg_f, V1, V2, V3)
+     }else{
+        all_means_ag_m <- merge(all_means_ag_m, select(ag_m, V2, V3), by.x="V2", by.y="V2")
+        all_means_seg_m <- merge(all_means_seg_m, select(seg_m, V2, V3), by.x="V2", by.y="V2")
+        all_means_ag_f <- merge(all_means_ag_f, select(ag_f, V2, V3), by.x="V2", by.y="V2")
+        all_means_seg_f <- merge(all_means_seg_f, select(seg_f, V2, V3), by.x="V2", by.y="V2")
+     }
+  }
+  sink()
+
+#Testing regressions for men
+all_means_ag$mean <- apply(all_means_ag[,3:ncol(all_means_ag)], 1, mean)
+all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
+
+combineFeaturesAndTestRegression(all_means_ag)
+combineFeaturesAndTestRegression(all_means_seg)
+
+#Evaluating confidence intervals for computed kendall correlations
+for (file in c("tau_mw_agrad.dat", "tau_mw_seg.dat")){
+  ag_cor <- read.table(file, sep="")
+  ag_cor$V2 <- as.factor(ag_cor$V2)
+  #values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+  values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = " ")[[1]][9]))
+  new_values <- unlist(lapply(values, '[[', 1))
+  ag_cor$value <- new_values
+  
+  print(paste(">>>> ", file))
+  delta <- ic(ag_cor$value)
+  print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+  print(sample_size(ag_cor$value))
+}
+```
+
+
+## Comparing all participants together in original data and removing some users!
+```{r cars}
+all_diff_m <- list.files(path = "hom40_mul60/", pattern = "allDiffMasFem_*")
 
 all_original <- read.table("../all100/all_ordenado.dat")
-ag_orig <- filter(masc_original, V1 != "seguro?")
-seg_orig <- filter(masc_original, V1 == "seguro?")
+ag_orig <- filter(all_original, V1 != "seguro?")
+seg_orig <- filter(all_original, V1 == "seguro?")
 
-all_means_ag <- data.frame()
-all_means_seg <- data.frame()
+all_means_ag_m <- data.frame()
+all_means_seg_m <- data.frame()
 
-sink("rank_comparisons_general.dat")
-for (current_file in masc_files){
-   id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
-   print(paste("########### Iteration ", id))
+sink("hom40_mul60/rank_comparisons_general.dat")
+for (i in seq(1,100)){
+#for (current_file in all_diff_m){
+   #id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
+   print(paste("########### Iteration ", i))
    
+    #General ranking removing men
+   current_file <- paste("hom40_mul60/", all_diff_m[i], sep="")
    data <- read.table(current_file)
-   seg_data <- filter(data, V1 == "seguro?")
-   ag_data <- filter(data, V1 != "seguro?")
+   seg_m <- filter(data, V1 == "seguro?")
+   ag_m <- filter(data, V1 != "seguro?")
    
-   merged <- merge(ag_orig, ag_data, by.x="V2", by.y="V2")
-   merged_seg <- merge(seg_orig, seg_data, by.x="V2", by.y="V2")
+   merged_m <- merge(ag_orig, ag_m, by.x="V2", by.y="V2")
+   merged_seg_m <- merge(seg_orig, seg_m, by.x="V2", by.y="V2")
    
-   print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+   print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Men and Women Random", normalizedKendallTauDistance2(merged_m$V3.y, merged_m$V3.x)))
+   res <- cor.test(merged_m$V3.y, merged_m$V3.x, method="kendall")
    print(res)
-   print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Men Random", res$estimate))
-   print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+   print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Men and Women Random", res$estimate))
+   print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Men and Women Random", normalizedKendallTauDistance2(merged_seg_m$V3.y, merged_seg_m$V3.x)))
+   res <- cor.test(merged_seg_m$V3.y, merged_seg_m$V3.x, method="kendall")
    print(res)
-   print(paste(">>>>>>>> Correlation Seg: General Old x Removing Men Random", res$estimate))
+   print(paste(">>>>>>>> Correlation Seg: General Old x Removing Men and Women Random", res$estimate))
    
    #Storing all means
-   if(length(all_means_ag) == 0){
-     all_means_ag <- select(ag_data, V1, V2, V3)
-     all_means_seg <- select(seg_data, V1, V2, V3)
+   if(length(all_means_ag_m) == 0){
+     all_means_ag_m <- select(ag_m, V1, V2, V3)
+     all_means_seg_m <- select(seg_m, V1, V2, V3)
    }else{
-      all_means_ag <- merge(all_means_ag, select(ag_data, V2, V3), by.x="V2", by.y="V2")
-      all_means_seg <- merge(all_means_seg, select(seg_data, V2, V3), by.x="V2", by.y="V2")
+      all_means_ag_m <- merge(all_means_ag_m, select(ag_m, V2, V3), by.x="V2", by.y="V2")
+      all_means_seg_m <- merge(all_means_seg_m, select(seg_m, V2, V3), by.x="V2", by.y="V2")
    }
 }
 sink()
 
-all_means_ag$mean <- apply(all_means_ag[,3:ncol(all_means_ag)], 1, mean)
-all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
+all_means_ag_m$mean <- apply(all_means_ag_m[,3:ncol(all_means_ag_m)], 1, mean)
+all_means_seg_m$mean <- apply(all_means_seg_m[,3:ncol(all_means_seg_m)], 1, mean)
 
 #Combining all street features
 combineFeaturesAndTestRegression <- function(dataset){
@@ -491,8 +614,8 @@ combineFeaturesAndTestRegression <- function(dataset){
     summary(regGeneral)
 }
 
-combineFeaturesAndTestRegression(all_means_ag)
-combineFeaturesAndTestRegression(all_means_seg)
+combineFeaturesAndTestRegression(all_means_ag_m)
+combineFeaturesAndTestRegression(all_means_seg_m)
 
 #Evaluating sample sizes
 library(stringr)
@@ -501,89 +624,6 @@ sample_size <- function(x) {
   	return ( ( ( sd(x) * qnorm(1-(0.05/2)) )  / ( 0.05 * mean(x) ) ) ** 2)  #95% confidence interval, significance level of 0.05 (alpha) - sample 100
   }
 for (file in c("taug_men_agrad.dat", "taug_men_seg.dat")){
-  ag_cor <- read.table(file, sep="")
-  ag_cor$V2 <- as.factor(ag_cor$V2)
-  values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
-  new_values <- unlist(lapply(values, '[[', 1))
-  ag_cor$value <- new_values
-  
-  print(paste(">>>> ", file))
-  delta <- ic(ag_cor$value)
-  print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
-  print(sample_size(ag_cor$value))
-}
-```
-
-## Comparing original groups x randomized groups!
-
-```{r cars}
-masc_files <- list.files(path = ".", pattern = "allMasculinoOrdInter*")
-
-masc_original <- read.table("../all100/allMasculinoOrdInter.dat")
-ag_orig <- filter(masc_original, V1 != "seguro?")
-seg_orig <- filter(masc_original, V1 == "seguro?")
-
-all_means_ag <- data.frame()
-all_means_seg <- data.frame()
-
-sink("rank_comparisons.dat")
-for (current_file in masc_files){
-   id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
-   print(paste("########### Iteration ", id))
-   
-   data <- read.table(current_file)
-   seg_data <- filter(data, V1 == "seguro?")
-   ag_data <- filter(data, V1 != "seguro?")
-   
-   merged <- merge(ag_orig, ag_data, by.x="V2", by.y="V2")
-   merged_seg <- merge(seg_orig, seg_data, by.x="V2", by.y="V2")
-   
-   print(paste(">>>>>>> Kendall distance Agrad: Men Old x Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
-   print(res)
-   print(paste(">>>>>>>> Correlation Agrad: Men Old x Men Random", res$estimate))
-   print(paste(">>>>>>> Kendall distance Seg: Men Old x Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
-   print(res)
-   print(paste(">>>>>>>> Correlation Seg: Men Old x Men Random", res$estimate))
-   
-   #Looking for corresponding data from women
-   current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
-   other_seg_data <- filter(current_other, V1 == "seguro?")
-   other_ag_data <- filter(current_other, V1 != "seguro?")
-  
-   merged <- merge(other_ag_data, ag_data, by.x="V2", by.y="V2")
-   merged_seg <- merge(other_seg_data, seg_data, by.x="V2", by.y="V2")
-   
-   print(paste(">>>>>>> Kendall distance Agrad: Women Fixed x Men Random", normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
-   res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
-   print(res)
-   print(paste(">>>>>>>> Correlation Agrad: Women Fixed x Men Random", res$estimate))
-   print(paste(">>>>>>> Kendall distance Seg: Women Fixed x Men Random", normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
-   res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
-   print(res)
-   print(paste(">>>>>>>> Correlation Seg: Women Fixed x Men Random", res$estimate))
-   
-   #Storing all means
-   if(length(all_means_ag) == 0){
-     all_means_ag <- select(ag_data, V1, V2, V3)
-     all_means_seg <- select(seg_data, V1, V2, V3)
-   }else{
-      all_means_ag <- merge(all_means_ag, select(ag_data, V2, V3), by.x="V2", by.y="V2")
-      all_means_seg <- merge(all_means_seg, select(seg_data, V2, V3), by.x="V2", by.y="V2")
-   }
-}
-sink()
-
-#Testing regressions for men
-all_means_ag$mean <- apply(all_means_ag[,3:ncol(all_means_ag)], 1, mean)
-all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
-
-combineFeaturesAndTestRegression(all_means_ag)
-combineFeaturesAndTestRegression(all_means_seg)
-
-#Evaluating confidence intervals for computed kendall correlations
-for (file in c("tau_men_agrad.dat", "tau_men_seg.dat")){
   ag_cor <- read.table(file, sep="")
   ag_cor$V2 <- as.factor(ag_cor$V2)
   values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))

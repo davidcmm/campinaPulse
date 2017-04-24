@@ -417,8 +417,8 @@ groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_
 
 ## Comparing original groups x randomized groups!
 ```{r cars}
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/" 
-for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
+for (folder in c("masculino60_feminino15/")){
     
     if(grepl("jovem", folder)){
         g1_files <- list.files(path = folder, pattern = "alljovemOrdInter*")
@@ -437,8 +437,8 @@ for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", 
         g1 <- "Media"
         g2 <- "Baixa"
     }else{
-        g1_files <- list.files(path = folder, pattern = "allMasculinoOrdInter*")
-        g2_files <- list.files(path = folder, pattern = "allFemininoOrdInter*")
+        g1_files <- list.files(path = folder, pattern = "allmasculinoOrdInter*")
+        g2_files <- list.files(path = folder, pattern = "allfemininoOrdInter*")
         
         g1_original <- read.table("../all100/allMasculinoOrdInter.dat")
         g2_original <- read.table("../all100/allFemininoOrdInter.dat")    
@@ -543,8 +543,8 @@ for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", 
   #combineFeaturesAndTestRegression(all_means_seg)
 }
 
-#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "jovem15_adulto60/"
-for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("masculino60_feminino15/")){
     data <- readLines(paste(folder, "rank_comparisons.dat", sep=""))
     index <- grep( ">>>>>>>> Correlation Agrad: Random",  data)
     sink(paste(folder, "tau_agrad.dat", sep=""))
@@ -558,8 +558,8 @@ for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", 
 }
 
 #Evaluating confidence intervals for computed kendall correlations
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/" 
-for (folder in c("jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/" , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("masculino60_feminino15/")){
   for (file in c(paste(folder, "tau_agrad.dat", sep=""), paste(folder, "tau_seg.dat", sep=""))){
     ag_cor <- read.table(file, sep="")
     ag_cor$V3 <- as.factor(ag_cor$V3)
@@ -615,8 +615,8 @@ combineFeaturesAndTestRegression <- function(dataset){
       print(summary(regGeneral))
 }
 
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
-for (folder in c("jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("masculino60_feminino15/")){
 
   if(grepl("jovem", folder)){
         g1 <- "Jovem"
@@ -673,18 +673,19 @@ for (folder in c("jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", 
   }
   sink()
   
-  print(">>> Agrad")
   all_means_ag_g1$mean <- apply(all_means_ag_g1[,3:ncol(all_means_ag_g1)], 1, mean)
-  print(">>> Seg")
   all_means_seg_g1$mean <- apply(all_means_seg_g1[,3:ncol(all_means_seg_g1)], 1, mean)
   
   sink(paste(folder, "regressions.dat", sep=""))
+  print(">>> Agrad")
   combineFeaturesAndTestRegression(all_means_ag_g1)
+  print(">>> Seg")
   combineFeaturesAndTestRegression(all_means_seg_g1)
   sink()
 }
 
-for (folder in c("jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#, "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("masculino60_feminino15/")){
     data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
     index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing Random",  data)
     sink(paste(folder, "taug_agrad.dat", sep=""))
@@ -697,7 +698,8 @@ for (folder in c("jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", 
     sink()
 }
 
-for (folder in c("jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#, "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("masculino60_feminino15/")){
     #Evaluating sample sizes
     for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
         ag_cor <- read.table(file, sep="")

@@ -79,11 +79,9 @@ for group in "masculino-feminino"; do #"jovem-adulto" "media-baixa" ; do #"mascu
 
 			sort -k 3 -r -o allDiff${group2}${group1}_${i}.dat allDiff${group2}${group1}_${i}.dat
 			#sort -k 3 -r -o allDiffFeminino_${i}.dat allDiffFeminino_${i}.dat
-
-			mv run*_*.csv all*_*.dat intersectionAll*.dat diff_*.dat ${group1}_*.dat ${group2}_*.dat ${group1}${size1}_${group2}${size2}
 		done
+		mv run*_*.csv all*_*.dat intersectionAll*.dat diff_*.dat ${group1}_*.dat ${group2}_*.dat ${group1}${size1}_${group2}${size2}
 	done
-
 done
 
 

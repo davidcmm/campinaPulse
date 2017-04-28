@@ -100,7 +100,7 @@ for folder in "hom60_mul15" "hom40_mul60" "hom95_mul95" "hom15_mul60" "jovem15_a
 		runFile1="${folder}/run${group1}_${i}.csv"
 		runFile2="${folder}/run${group2}_${i}.csv"
 
-		cat $runFile1 $runFile2 >> runMerged_${i}.csv
+		cat $runFile1 $runFile2 > runMerged_${i}.csv
 		runFile="runMerged_${i}.csv"
 
 		python ../classifier/createInputForClassification.py create $runFile ../tasksDef.csv ../usersInfo.dat ../classifier/images_description.dat > classifier_input_3classes.dat 
@@ -108,6 +108,8 @@ for folder in "hom60_mul15" "hom40_mul60" "hom95_mul95" "hom15_mul60" "jovem15_a
 		mv classifier_input_3classes.dat $folder/runMerged_${i}_3classes.dat
 		mv classifier_input_wodraw.dat $folder/runMerged_${i}_wodraw.dat
 	done
+
+	rm -f runMerged_*.csv
 done
 
 

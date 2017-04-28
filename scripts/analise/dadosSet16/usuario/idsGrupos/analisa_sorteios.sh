@@ -1,10 +1,7 @@
 #!/bin/bash
 #Selects Como é Campina? answers based on users ids, per randomized group, and then computes Q-Scores for selected answers
 
-
-
 for group in "masculino-feminino"; do #"jovem-adulto" "media-baixa" ; do #"masculino-feminino" "jovem-adulto" "media-baixa"
-
 
 	group1=`echo $group | cut -d \- -f 1`
 	group2=`echo $group | cut -d \- -f 2`
@@ -81,6 +78,35 @@ for group in "masculino-feminino"; do #"jovem-adulto" "media-baixa" ; do #"mascu
 			#sort -k 3 -r -o allDiffFeminino_${i}.dat allDiffFeminino_${i}.dat
 		done
 		mv run*_*.csv all*_*.dat intersectionAll*.dat diff_*.dat ${group1}_*.dat ${group2}_*.dat ${group1}${size1}_${group2}${size2}
+	done
+done
+
+#Creating files to be used for logit models
+for folder in "hom60_mul15" "hom40_mul60" "hom95_mul95" "hom15_mul60" "jovem15_adulto60" "jovem40_adulto60" "jovem60_adulto40" "jovem60_adulto15" "media15_baixa60" "media40_baixa60" "media60_baixa40" "media60_baixa15" ; do
+
+	if [[ $folder =~ .*hom.* ]] ; then 
+		group1="masculino"
+		group2="feminino" 
+        elif [[ $folder =~ .*jovem.* ]] ; then 
+		group1="jovem"
+		group2="adulto"
+        elif [[ $folder =~ .*baixa.* ]] ; then 
+		group1="baixa"
+		group2="media"  
+	fi
+
+	for i in {0..99}; do
+	#for runFile in `ls ${folder}/runmasculino_*.csv` ; do
+		runFile1="${folder}/run${group1}_${i}.csv"
+		runFile2="${folder}/run${group2}_${i}.csv"
+
+		cat $runFile1 $runFile2 >> runMerged_${i}.csv
+		runFile="runMerged_${i}.csv"
+
+		python ../classifier/createInputForClassification.py create $runFile ../tasksDef.csv ../usersInfo.dat ../classifier/images_description.dat > classifier_input_3classes.dat 
+		python ../classifier/createInputForClassification.py convert $runFile ../tasksDef.csv ../usersInfo.dat ../classifier/images_description.dat 
+		mv classifier_input_3classes.dat $folder/runMerged_${i}_3classes.dat
+		mv classifier_input_wodraw.dat $folder/runMerged_${i}_wodraw.dat
 	done
 done
 

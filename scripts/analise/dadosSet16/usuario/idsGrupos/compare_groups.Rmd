@@ -4,11 +4,28 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(dplyr)
-library(ggplot2)
-
 library(stringr)
+
+require(gmodels)
+require(vcd)
+require(lme4)
+library(nlme)
+library(caret)
+library(pscl)
+library(DT)
+library(ggplot2)
+theme_set(theme_bw())
+library(GGally)
+library(dplyr, warn.conflicts = F)
+library(broom)
+
+library(car)
+library(readr)
+
 source("../analisaICPorFoto.R")
+
+
+
 sample_size <- function(x) { 
     return ( ( ( sd(x) * qnorm(1-(0.05/2)) )  / ( 0.05 * mean(x) ) ) ** 2)  #95% confidence interval, significance level of 0.05 (alpha) - sample 100
   }
@@ -413,6 +430,35 @@ groupedData10 <- renomeiaGrupos2(groupedData10, c("q1", "q2", "q3"), c("build_di
 groupedData11 <- renomeiaGrupos2(groupedData11, c("q2", "q3"), c("outdoor_table", "street_furnit"))
 groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_col", "lights", "accent_col"))
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
+```
+
+## Evaluating pairwise comparisons and logit models
+```{r read}
+pairwise <- raw_data = read_delim(
+  "hom60_mul15//runmasculino_0_wodraw.dat",
+  delim = "\t",
+  col_types = cols(
+    .default = col_double(),
+    choice = col_character(),
+    question = col_character(),
+    photo1 = col_character(),
+    photo2 = col_character(),
+    choice = col_integer(),
+    userID = col_integer(),
+    gender = col_character(),
+    age = col_character(),
+    income = col_character(),
+    education = col_character(),
+    city = col_character(),
+    marital = col_character(),
+    graffiti1 = col_character(),
+    bairro1 = col_character(),
+    graffiti2 = col_character(),
+    bairro2 = col_character()
+    )
+  )
+
+
 ```
 
 ## Comparing original groups x randomized groups!

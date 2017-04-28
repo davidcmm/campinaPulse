@@ -31,6 +31,105 @@ python selectRunPerUsers.py run.csv notliberdade.dat > runNotLiberdade.csv
 
 mv media.dat baixa.dat adulto.dat jovem.dat solteiro.dat casado.dat feminino.dat masculino.dat medio.dat posgrad.dat catole.dat centro.dat liberdade.dat notcentro.dat notliberdade.dat notcatole.dat idsGrupos 
 
+#Analisa QScores Top 10 users que responderam
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/agra_3.dat classifier
+mv run_pred_user.dat run_pred_agra_3.dat
+
+python analisaQScore.py run_pred_agra_3.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_3.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/agra_4.dat classifier
+mv run_pred_user.dat run_pred_agra_4.dat
+
+python analisaQScore.py run_pred_agra_4.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_4.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/agra_5.dat classifier
+mv run_pred_user.dat run_pred_agra_5.dat
+
+python analisaQScore.py run_pred_agra_5.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_5.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/agra_6.dat classifier
+mv run_pred_user.dat run_pred_agra_6.dat
+
+python analisaQScore.py run_pred_agra_6.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_6.dat
+
+#Grupos
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/masculino.dat classifier
+mv run_pred_user.dat run_pred_agra_masc.dat
+
+python analisaQScore.py run_pred_agra_masc.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_masc.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/feminino.dat classifier
+mv run_pred_user.dat run_pred_agra_fem.dat
+
+python analisaQScore.py run_pred_agra_fem.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_fem.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/adulto.dat classifier
+mv run_pred_user.dat run_pred_agra_adu.dat
+
+python analisaQScore.py run_pred_agra_adu.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_adu.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/jovem.dat classifier
+mv run_pred_user.dat run_pred_agra_jov.dat
+
+python analisaQScore.py run_pred_agra_jov.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_jov.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/baixa.dat classifier
+mv run_pred_user.dat run_pred_agra_bai.dat
+
+python analisaQScore.py run_pred_agra_bai.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_bai.dat
+
+python selectRunPerUsers.py classifier/classifier_input_agrad_artificial_remove_photo.dat idsGrupos/media.dat classifier
+mv run_pred_user.dat run_pred_agra_med.dat
+
+python analisaQScore.py run_pred_agra_med.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_agra_med.dat
+
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/masculino.dat classifier
+mv run_pred_user.dat run_pred_seg_masc.dat
+
+python analisaQScore.py run_pred_seg_masc.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_masc.dat
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/feminino.dat classifier
+mv run_pred_user.dat run_pred_seg_fem.dat
+
+python analisaQScore.py run_pred_seg_fem.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_fem.dat
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/adulto.dat classifier
+mv run_pred_user.dat run_pred_seg_adu.dat
+
+python analisaQScore.py run_pred_seg_adu.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_adu.dat
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/jovem.dat classifier
+mv run_pred_user.dat run_pred_seg_jov.dat
+
+python analisaQScore.py run_pred_seg_jov.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_jov.dat
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/baixa.dat classifier
+mv run_pred_user.dat run_pred_seg_bai.dat
+
+python analisaQScore.py run_pred_seg_bai.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_bai.dat
+
+python selectRunPerUsers.py classifier/classifier_input_seg_artificial_remove_photo.dat idsGrupos/media.dat classifier
+mv run_pred_user.dat run_pred_seg_med.dat
+
+python analisaQScore.py run_pred_seg_med.dat 100 classifier/classifier_input_3classes.dat top10
+mv all_predicted.dat all_predicted_seg_med.dat
+
 #Analisa QScores
 python analisaQScore.py run.csv 100 tasksDef.csv campina
 

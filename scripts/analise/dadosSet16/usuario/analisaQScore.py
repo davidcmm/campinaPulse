@@ -225,6 +225,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 	#Reading from pybossa task-run CSV
 	for line in lines:
 		lineData = line.split("+")
+
 		executionID = lineData[0].strip(' \t\n\r"')
 		taskID = lineData[3].strip(' \t\n\r"')
 		userAnswer = lineData[9].strip(' \t\n\r"')

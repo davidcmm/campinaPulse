@@ -359,7 +359,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 	output.close()
 
 def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName, amountOfSamples):
-	""" Considering all predicted (classifiers) votes for each pair of photos and performing a simulation (bootstrap based)"""
+	""" Considering all predicted (classifiers) votes from wodraw and 3 classes files for each pair of photos and performing a simulation (bootstrap based)"""
 
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
@@ -395,30 +395,30 @@ def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName, amountOfS
 		allPhotos.add(photo2)
 
 	#Reading data with draws
-	for index, row in data_draws.iterrows():
-
-		answer = notKnown
-
-		quest = row['question'].strip(' \t\n\r"')
-		photo1 = row['photo1'].strip(' \t\n\r"')
-		photo2 = row['photo2'].strip(' \t\n\r"')
-
-		if "agrad" in quest:
-			question = possibleQuestions[0]
-		else:
-			question = possibleQuestions[1]
-	
-		#Creating votes dictionary
-		if not votes[question].has_key(photo1):
-			votes[question][photo1] = {}
-		if not votes[question][photo1].has_key(photo2):
-			votes[question][photo1][photo2] = set([])
-
-		#Saving votes from task-run
-		votes[question][photo1][photo2].add(answer)
-
-		allPhotos.add(photo1)
-		allPhotos.add(photo2)
+	#for index, row in data_draws.iterrows():
+#
+#		answer = notKnown
+#
+#		quest = row['question'].strip(' \t\n\r"')
+#		photo1 = row['photo1'].strip(' \t\n\r"')
+#		photo2 = row['photo2'].strip(' \t\n\r"')
+#
+#		if "agrad" in quest:
+#			question = possibleQuestions[0]
+#		else:
+#			question = possibleQuestions[1]
+#	
+#		#Creating votes dictionary
+#		if not votes[question].has_key(photo1):
+#			votes[question][photo1] = {}
+#		if not votes[question][photo1].has_key(photo2):
+#			votes[question][photo1][photo2] = set([])
+#
+#		#Saving votes from task-run
+#		votes[question][photo1][photo2].add(answer)
+#
+#		allPhotos.add(photo1)
+#		allPhotos.add(photo2)
 
 	#Evaluating votes in order to choose winning photos or ties
 	for i in range(0, amountOfSamples):
@@ -636,7 +636,7 @@ if __name__ == "__main__":
 		evaluateVotesStreetSeen(lines, "all_street_seen.dat")
 
 	else:
-		data_wodraw = pd.read_table(sys.argv[1], sep='\s+', encoding='utf8', header=0)#wodraw
+		data_wodraw = pd.read_table(sys.argv[1], sep='\s+', encoding='utf8', header=0)#wodraw sep="\s+", header=0
 		data_3classes = pd.read_table(sys.argv[3], sep='\t', encoding='utf8', header=0)#3classes
 		draws = data_3classes[(data_3classes.choice == 0)]
 

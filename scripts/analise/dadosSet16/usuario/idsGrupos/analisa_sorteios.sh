@@ -112,4 +112,5 @@ for folder in "hom60_mul15" "hom40_mul60" "hom95_mul95" "hom15_mul60" "jovem15_a
 	rm -f runMerged_*.csv
 done
 
+#Access agrad_random_user_nscaled@beta for beta values  ou agrad_random_user_nscaled@optinfo$val for beta e std do intercept (primeiro valor) ou melhor --> summary(agrad_random_user_nscaled)$coef[, "Pr(>|z|)"], summary(agrad_random_user_nscaled)$coef[, "Estimate"]["(Intercept)"]
 

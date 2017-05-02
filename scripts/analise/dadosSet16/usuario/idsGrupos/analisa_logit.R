@@ -43,8 +43,8 @@ extract_list_of_urban_features = function(summary_info, all_estimates, all_pvalu
   return (list(all_estimates, all_pvalues))
 }
 
-#"hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
-for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+#"hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
   
     g1_files <- list.files(path = folder, pattern = "*_wodraw.dat") #c("runMerged_0_wodraw.dat", "runMerged_1_wodraw.dat")
     if(grepl("jovem", folder)){

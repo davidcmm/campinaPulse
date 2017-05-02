@@ -82,13 +82,13 @@
 #done
 
 #Creating files to be used for logit models
-for folder in "hom60_mul15" "hom40_mul60" "hom95_mul95" "hom15_mul60" "jovem15_adulto60" "jovem40_adulto60" "jovem60_adulto40" "jovem60_adulto15" "media15_baixa60" "media40_baixa60" "media60_baixa40" "media60_baixa15" ; do
+for folder in "hom40_mul60" "hom95_mul95" "hom15_mul60" ; do #"hom60_mul15" "jovem15_adulto60" "jovem40_adulto60" "jovem60_adulto40" "jovem60_adulto15" "media15_baixa60" "media40_baixa60" "media60_baixa40" "media60_baixa15" ; do
 
 	if [[ $folder =~ .*hom.* ]] ; then 
-		if [[ $folder = "hom60_mul15"]] ; then
+		if [[ $folder = "hom60_mul15" ]] ; then
 			group1="masculino"
 			group2="feminino" 
-		elif 
+		else 
 			group1="Masculino"
 			group2="Feminino"
 		fi

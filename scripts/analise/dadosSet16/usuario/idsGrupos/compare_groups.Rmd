@@ -430,10 +430,10 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 ```
 
-## Comparing original groups x randomized groups!
+## Comparing original groups x randomized groups and both randomized groups!
 ```{r cars}
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
-for (folder in c("hom60_mul15/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
     
     if(grepl("jovem", folder)){
         g1_files <- list.files(path = folder, pattern = "alljovemOrdInter*")
@@ -452,8 +452,13 @@ for (folder in c("hom60_mul15/")){
         g1 <- "Media"
         g2 <- "Baixa"
     }else{
-        g1_files <- list.files(path = folder, pattern = "allmasculinoOrdInter*")
-        g2_files <- list.files(path = folder, pattern = "allfemininoOrdInter*")
+        if (folder == "hom60_mul15/") {
+            g1_files <- list.files(path = folder, pattern = "allmasculinoOrdInter*")
+            g2_files <- list.files(path = folder, pattern = "allfemininoOrdInter*")
+        }else {
+            g1_files <- list.files(path = folder, pattern = "allMasculinoOrdInter*")
+            g2_files <- list.files(path = folder, pattern = "allFemininoOrdInter*")
+        }
         
         g1_original <- read.table("../all100/allMasculinoOrdInter.dat")
         g2_original <- read.table("../all100/allFemininoOrdInter.dat")    
@@ -471,7 +476,7 @@ for (folder in c("hom60_mul15/")){
     all_means_ag_g2 <- data.frame()
     all_means_seg_g2 <- data.frame()
     
-    sink(paste(folder, "rank_comparisons.dat", sep=""))
+    sink(paste(folder, "rank_comparisons.dat", sep=""), append = TRUE)
     #for (current_file in masc_files){
     for (i in seq(1, 100)){
     
@@ -479,26 +484,26 @@ for (folder in c("hom60_mul15/")){
        print(paste("########### Iteration ", i))
        g1_file <- paste(folder, g1_files[i], sep="")
        g2_file <- paste(folder, g2_files[i], sep="")
-      
+       
       #Comparing men random x men original
        #data <- read.table(current_file)
        data_g1 <- read.table(g1_file)
        seg_g1 <- filter(data_g1, V1 == "seguro?")
        ag_g1 <- filter(data_g1, V1 != "seguro?")
        
-       merged_g1 <- merge(ag_orig_g1, ag_g1, by.x="V2", by.y="V2")
-       merged_seg_g1 <- merge(seg_orig_g1, seg_g1, by.x="V2", by.y="V2")
+#        merged_g1 <- merge(ag_orig_g1, ag_g1, by.x="V2", by.y="V2")
+#        merged_seg_g1 <- merge(seg_orig_g1, seg_g1, by.x="V2", by.y="V2")
+#        
+#        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g1, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+#        res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g1, res$estimate))
+#        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g1, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
+#        res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g1, res$estimate))
        
-       print(paste(">>>>>>> Kendall distance Agrad: Old x Random", g1, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
-       res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
-       print(res)
-       print(paste(">>>>>>>> Correlation Agrad: Old x Random", g1, res$estimate))
-       print(paste(">>>>>>> Kendall distance Seg: Old x Random", g1, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
-       res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
-       print(res)
-       print(paste(">>>>>>>> Correlation Seg: Old x Random", g1, res$estimate))
-       
-       #Looking for corresponding data from women
+       #Looking for corresponding data from women - UNUSED
        #current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
        #other_seg_data <- filter(current_other, V1 == "seguro?")
        #other_ag_data <- filter(current_other, V1 != "seguro?")
@@ -509,44 +514,81 @@ for (folder in c("hom60_mul15/")){
        data_g2 <- read.table(g2_file)
        seg_g2 <- filter(data_g2, V1 == "seguro?")
        ag_g2 <- filter(data_g2, V1 != "seguro?")
-       
-       merged_g2 <- merge(ag_orig_g2, ag_g2, by.x="V2", by.y="V2")
-       merged_seg_g2 <- merge(seg_orig_g2, seg_g2, by.x="V2", by.y="V2")
-      
-       print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g2, normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
-       res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
-       print(res)
-       print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g2, res$estimate))
-       print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g2, normalizedKendallTauDistance2(merged_seg_g2$V3.y, merged_seg_g2$V3.x)))
-       res <- cor.test(merged_seg_g2$V3.y, merged_seg_g2$V3.x, method="kendall")
-       print(res)
-       print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g2, res$estimate))
+#        
+#        merged_g2 <- merge(ag_orig_g2, ag_g2, by.x="V2", by.y="V2")
+#        merged_seg_g2 <- merge(seg_orig_g2, seg_g2, by.x="V2", by.y="V2")
+#       
+#        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g2, normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+#        res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g2, res$estimate))
+#        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g2, normalizedKendallTauDistance2(merged_seg_g2$V3.y, merged_seg_g2$V3.x)))
+#        res <- cor.test(merged_seg_g2$V3.y, merged_seg_g2$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g2, res$estimate))
        
        #Comparing women random x men random
-       merged <- merge(ag_g1, ag_g2, by.x="V2", by.y="V2")
-       merged_seg <- merge(seg_g1, seg_g2, by.x="V2", by.y="V2")
+#        merged <- merge(ag_g1, ag_g2, by.x="V2", by.y="V2")
+#        merged_seg <- merge(seg_g1, seg_g2, by.x="V2", by.y="V2")
+#        
+#        print(paste(">>>>>>> Kendall distance Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+#        res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Agrad: Random", g1, "x", g2, res$estimate))
+#        print(paste(">>>>>>> Kendall distance Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+#        res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Seg: Random", g1, "x", g2, res$estimate))
+      
+       #Comparing top 10 of women x top 10 of men
+       merged <- merge(head(ag_g1, n=10), head(ag_g2, n=10), by.x="V2", by.y="V2")
+       merged_seg <- merge(head(seg_g1, n=10), head(seg_g2, n=10), by.x="V2", by.y="V2")
        
-       print(paste(">>>>>>> Kendall distance Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+
+       print(paste(">>>>>>> Set diff Top10_Agrad: Random", g1, "x", g2, length(setdiff(head(ag_g1, n=10)$V2, head(ag_g2, n=10)$V2))))
+      print(paste(">>>>>>> Set diff Top10_Agrad: Random",  g2, "x", g1, length(setdiff(head(ag_g2, n=10)$V2, head(ag_g1, n=10)$V2))))
+       print(paste(">>>>>>> Kendall distance Top10_Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
        res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
        print(res)
-       print(paste(">>>>>>>> Correlation Agrad: Random", g1, "x", g2, res$estimate))
-       print(paste(">>>>>>> Kendall distance Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+       print(paste(">>>>>>>> Correlation Top10_Agrad: Random", g1, "x", g2, res$estimate))
+       
+        print(paste(">>>>>>> Set diff Top10_Seg: Random", g1, "x", g2, length(setdiff(head(seg_g1, n=10)$V2, head(ag_g2, n=10)$V2))))
+      print(paste(">>>>>>> Set diff Top10_Seg: Random",  g2, "x", g1, length(setdiff(head(ag_g2, n=10)$V2, head(seg_g1, n=10)$V2))))
+        print(paste(">>>>>>> Kendall distance Top10_Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
        res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
        print(res)
-       print(paste(">>>>>>>> Correlation Seg: Random", g1, "x", g2, res$estimate))
+       print(paste(">>>>>>>> Correlation Top10_Seg: Random", g1, "x", g2, res$estimate))
+      
+      #Comparing bottom 10 of women x bottom 10 of men
+       merged <- merge(tail(ag_g1, n=10), tail(ag_g2, n=10), by.x="V2", by.y="V2")
+       merged_seg <- merge(tail(seg_g1, n=10), tail(seg_g2, n=10), by.x="V2", by.y="V2")
+
+      print(paste(">>>>>>> Set diff Bot10_Agrad: Random", g1, "x", g2, length(setdiff(tail(ag_g1, n=10)$V2, tail(ag_g2, n=10)$V2))))
+      print(paste(">>>>>>> Set diff Bot10_Agrad: Random",  g2, "x", g1, length(setdiff(tail(ag_g2, n=10)$V2, tail(ag_g1, n=10)$V2))))
+       print(paste(">>>>>>> Kendall distance Bot10_Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+       res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+       print(res)
+       print(paste(">>>>>>>> Correlation Bot10_Agrad: Random", g1, "x", g2, res$estimate))
+
+        print(paste(">>>>>>> Set diff Bot10_Seg: Random", g1, "x", g2, length(setdiff(tail(seg_g1, n=10)$V2, tail(seg_g2, n=10)$V2))))
+      print(paste(">>>>>>> Set diff Bot10_Seg: Random",  g2, "x", g1, length(setdiff(tail(seg_g2, n=10)$V2, tail(seg_g1, n=10)$V2))))
+       print(paste(">>>>>>> Kendall distance Bot10_Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+       res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+       print(res)
+       print(paste(">>>>>>>> Correlation Bot10_Seg: Random", g1, "x", g2, res$estimate))
        
        #Storing all means
-       if(length(all_means_ag_g1) == 0){
-         all_means_ag_g1 <- select(ag_g1, V1, V2, V3)
-         all_means_seg_g1 <- select(seg_g1, V1, V2, V3)
-         all_means_ag_g2 <- select(ag_g2, V1, V2, V3)
-         all_means_seg_g2 <- select(seg_g2, V1, V2, V3)
-       }else{
-          all_means_ag_g1 <- merge(all_means_ag_g1, select(ag_g1, V2, V3), by.x="V2", by.y="V2")
-          all_means_seg_g1 <- merge(all_means_seg_g1, select(seg_g1, V2, V3), by.x="V2", by.y="V2")
-          all_means_ag_g2 <- merge(all_means_ag_g2, select(ag_g2, V2, V3), by.x="V2", by.y="V2")
-          all_means_seg_g2 <- merge(all_means_seg_g2, select(seg_g2, V2, V3), by.x="V2", by.y="V2")
-       }
+#        if(length(all_means_ag_g1) == 0){
+#          all_means_ag_g1 <- select(ag_g1, V1, V2, V3)
+#          all_means_seg_g1 <- select(seg_g1, V1, V2, V3)
+#          all_means_ag_g2 <- select(ag_g2, V1, V2, V3)
+#          all_means_seg_g2 <- select(seg_g2, V1, V2, V3)
+#        }else{
+#           all_means_ag_g1 <- merge(all_means_ag_g1, select(ag_g1, V2, V3), by.x="V2", by.y="V2")
+#           all_means_seg_g1 <- merge(all_means_seg_g1, select(seg_g1, V2, V3), by.x="V2", by.y="V2")
+#           all_means_ag_g2 <- merge(all_means_ag_g2, select(ag_g2, V2, V3), by.x="V2", by.y="V2")
+#           all_means_seg_g2 <- merge(all_means_seg_g2, select(seg_g2, V2, V3), by.x="V2", by.y="V2")
+#        }
     }
     sink()
   
@@ -558,9 +600,10 @@ for (folder in c("hom60_mul15/")){
   #combineFeaturesAndTestRegression(all_means_seg)
 }
 
-#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("hom60_mul15/")){
+#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
     data <- readLines(paste(folder, "rank_comparisons.dat", sep=""))
+    
     index <- grep( ">>>>>>>> Correlation Agrad: Random",  data)
     sink(paste(folder, "tau_agrad.dat", sep=""))
     print(data[index], row.names = FALSE, quote = FALSE)
@@ -570,12 +613,34 @@ for (folder in c("hom60_mul15/")){
     sink(paste(folder, "tau_seg.dat", sep=""))
     print(data[index], row.names = FALSE, quote = FALSE)
     sink()
+    
+    index <- grep( ">>>>>>>> Correlation Top10_Agrad: Random",  data)
+    sink(paste(folder, "taut10_agrad.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
+    
+    index <- grep( ">>>>>>>> Correlation Bot10_Agrad: Random",  data)
+    sink(paste(folder, "taub10_agrad.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
+    
+    index <- grep( ">>>>>>>> Correlation Top10_Seg: Random",  data)
+    sink(paste(folder, "taut10_seg.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
+    
+    index <- grep( ">>>>>>>> Correlation Bot10_Seg: Random",  data)
+    sink(paste(folder, "taub10_seg.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
 }
 
 #Evaluating confidence intervals for computed kendall correlations
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/" , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("hom60_mul15/")){
-  for (file in c(paste(folder, "tau_agrad.dat", sep=""), paste(folder, "tau_seg.dat", sep=""))){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+  
+  for ( file in c(paste(folder, "tau_agrad.dat", sep=""), paste(folder, "tau_seg.dat", sep=""), paste(folder, "taut10_agrad.dat", sep=""), paste(folder, "taut10_seg.dat", sep=""), paste(folder, "taub10_agrad.dat", sep=""), paste(folder, "taub10_agrad.dat", sep="")) ) {
+    
     ag_cor <- read.table(file, sep="")
     ag_cor$V3 <- as.factor(ag_cor$V3)
     #values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
@@ -588,6 +653,7 @@ for (folder in c("hom60_mul15/")){
     print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
     print(sample_size(ag_cor$value))
   }
+  
 }
 ```
 
@@ -877,4 +943,81 @@ all_pvalues_s <- list("(Intercept)"=c(), d_swidth=c(), d_mvcars=c(), d_pcars=c()
         print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05)) / length(all_pvalues_a[[column]]) )
     }  
 }
+```
+
+##Counting ages in randomized groups without draws!
+```{r read}
+for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+  
+    g1_files <- list.files(path = folder, pattern = "*_wodraw.dat") #c("runMerged_0_wodraw.dat", "runMerged_1_wodraw.dat")
+    if(grepl("jovem", folder)){
+        g1 <- "Jovem"
+        g2 <- "Adulto"
+    }else if(grepl("media", folder)){
+        g1 <- "Media"
+        g2 <- "Baixa"
+    }else{
+        g1 <- "Masculino"
+        g2 <- "Feminino"
+    }
+    
+    for ( i in seq(1, length(g1_files)) ){
+        current_file <- paste(folder, g1_files[i], sep="")
+        pairwise = read_delim(
+          current_file,
+          delim = "\t",
+          col_types = cols(
+            .default = col_double(),
+            choice = col_character(),
+            question = col_character(),
+            photo1 = col_character(),
+            photo2 = col_character(),
+            choice = col_integer(),
+            userID = col_integer(),
+            gender = col_character(),
+            age = col_character(),
+            income = col_character(),
+            education = col_character(),
+            city = col_character(),
+            marital = col_character(),
+            graffiti1 = col_character(),
+            bairro1 = col_character(),
+            graffiti2 = col_character(),
+            bairro2 = col_character()
+            )
+          )
+        
+        data = pairwise %>% 
+          mutate( # Recode
+            income = if_else(is.na(income), "media", income),
+            age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
+            inc_cat = if_else(income %in% c("baixa", "media baixa"),
+                                 "baixa", 
+                                 "media"), # substituirá os NA
+            choice = if_else(choice == "1", "0", 
+                               if_else(choice == "-1", "1", choice)), 
+            bair_cat = if_else(bairro1 == bairro2, "mesmo", 
+                               paste0(bairro1, "_", bairro2))    
+            ) %>% 
+          mutate_at( # to factor
+            vars(income, age_cat, inc_cat, choice, bair_cat, marital, gender),
+            as.factor) %>% 
+          mutate( # relevel
+            bair_cat = relevel(bair_cat,  "mesmo"),
+            marital = relevel(marital,  "solteiro"),
+            income = relevel(income,  "baixa"),
+            age_cat = relevel(age_cat,  "jovem"),
+            gender = relevel(gender,  "feminino"),
+            inc_cat = relevel(inc_cat,  "baixa")
+          ) 
+        
+        print(paste(g1, "x", g2, folder, "Age"))
+        print(table(data$age_cat))
+        print(paste(g1, "x", g2, folder, "Income"))
+        print(table(data$income))
+        print(paste(g1, "x", g2, folder, "Gender"))
+        print(table(data$gender))
+        
+    }
+}    
 ```

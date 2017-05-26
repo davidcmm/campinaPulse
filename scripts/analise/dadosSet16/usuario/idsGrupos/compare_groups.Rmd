@@ -751,7 +751,7 @@ combineFeaturesAndTestRegression <- function(dataset){
 }
 
 #Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem80_adulto80/")){
+for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
 
   if(grepl("jovem", folder)){
         g1 <- "Jovem"
@@ -760,8 +760,8 @@ for (folder in c("jovem80_adulto80/")){
         g1 <- "Media"
         g2 <- "Baixa"
   }else{
-        g1 <- "Masculino"
-        g2 <- "Feminino"
+        g1 <- "masculino" #"Masculino"
+        g2 <- "feminino" #"Feminino"
   }
   
   all_diff_m <- list.files(path = folder, pattern = "allDiff*_*")
@@ -820,7 +820,7 @@ for (folder in c("jovem80_adulto80/")){
 }
 
 #, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem80_adulto80/")){
+for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
     data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
     index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing Random",  data)
     sink(paste(folder, "taug_agrad.dat", sep=""))
@@ -834,7 +834,7 @@ for (folder in c("jovem80_adulto80/")){
 }
 
 #, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem80_adulto80/")){
+for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
     #Evaluating sample sizes
     for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
         ag_cor <- read.table(file, sep="")

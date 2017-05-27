@@ -1,12 +1,12 @@
 #!/bin/bash
 #Selects Como é Campina? answers based on users ids, per randomized group, and then computes Q-Scores for selected answers
 
-for group in "jovem-adulto"; do #"jovem-adulto" "media-baixa" ; do #"masculino-feminino" "jovem-adulto" "media-baixa"
+for group in "jovem-adulto" "media-baixa" "masculino-feminino"; do #"jovem-adulto" "media-baixa" ; do #"masculino-feminino" "jovem-adulto" "media-baixa"
 
 	group1=`echo $group | cut -d \- -f 1`
 	group2=`echo $group | cut -d \- -f 2`
 
-	for desb in "80-80" ; do #"60-15" "60-40" "15-60" "40-60" ; do
+	for desb in "60-60" ; do #"60-15" "60-40" "15-60" "40-60" ; do
 
 		size1=`echo $desb | cut -d \- -f 1`
 		size2=`echo $desb | cut -d \- -f 2`
@@ -82,10 +82,10 @@ for group in "jovem-adulto"; do #"jovem-adulto" "media-baixa" ; do #"masculino-f
 done
 
 #Creating files to be used for logit models
-for folder in "jovem80_adulto80" ; do #"hom40_mul60" "hom95_mul95" "hom15_mul60" "hom60_mul15" "jovem15_adulto60" "jovem40_adulto60" "jovem60_adulto40" "jovem60_adulto15" "media15_baixa60" "media40_baixa60" "media60_baixa40" "media60_baixa15" ; do
+for folder in "masculino60_feminino60" ; do #"hom40_mul60" "hom95_mul95" "hom15_mul60" "hom60_mul15" "jovem15_adulto60" "jovem40_adulto60" "jovem60_adulto40" "jovem60_adulto15" "media15_baixa60" "media40_baixa60" "media60_baixa40" "media60_baixa15" ; do
 
-	if [[ $folder =~ .*hom.* ]] ; then 
-		if [[ $folder = "hom60_mul15" ]] ; then
+	if [[ $folder =~ .*masculino.* ]] ; then 
+		if [[ $folder = "masculino60_feminino60" -o $folder = "hom60_mul15" ]] ; then
 			group1="masculino"
 			group2="feminino" 
 		else 

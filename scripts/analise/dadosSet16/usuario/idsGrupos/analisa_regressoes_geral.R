@@ -1,3 +1,10 @@
+library(stringr)
+library(ggplot2)
+library(car)
+library(readr)
+library(dplyr, warn.conflicts = F)
+
+
 extract_list_of_urban_features_general = function(summary_info, all_estimates, all_pvalues){
   estimates <- summary_info$coef[,"Estimate"]
   pvalues <- summary_info$coef[,"Pr(>|t|)"]

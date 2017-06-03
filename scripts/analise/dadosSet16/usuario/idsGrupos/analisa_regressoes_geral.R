@@ -440,10 +440,6 @@ extract_list_of_urban_features_general = function(summary_info, all_estimates, a
 combineFeaturesAndTestRegression <- function(dataset){
     
       colnames(dataset)[colnames(dataset) == "V2"] <- "image_url"
-      print(">>>>> Images and Rankings")
-      print(head(dataset, n=5))
-      print(">>>>>> Urban elements")
-      print(head(groupedData1,n=5))
 
       temp <- merge(groupedData1, dataset, by.x="image_url", by.y="image_url")
       temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")

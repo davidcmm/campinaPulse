@@ -495,11 +495,11 @@ for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/",
   all_means_ag_g1 <- data.frame()
   all_means_seg_g1 <- data.frame()
   
-  all_estimates_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), liberdade=c(), graffitiYes=c())
-all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), liberdade=c(), graffitiYes=c())
+  all_estimates_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
+all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
 
-  all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), liberdade=c(), graffitiYes=c())
-  all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), liberdade=c(), graffitiYes=c())
+  all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
+  all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
   
   for (i in seq(1,100)){
      print(paste("########### Iteration ", i))

@@ -1,8 +1,20 @@
 library(stringr)
+
+require(gmodels)
+require(vcd)
+require(lme4)
+library(nlme)
+library(caret)
+library(pscl)
+library(DT)
 library(ggplot2)
+theme_set(theme_bw())
+library(GGally)
+library(dplyr, warn.conflicts = F)
+library(broom)
+
 library(car)
 library(readr)
-library(dplyr, warn.conflicts = F)
 
 source("../analisaICPorFoto.R")
 
@@ -501,8 +513,8 @@ mutate(rank = 1:n())
 mutate(rank = 1:n())
      
       #Extracting features for current regression and saving them!
-      sum_agrad <- combineFeaturesAndTestRegression(all_means_ag_g1)
-      sum_seg <- combineFeaturesAndTestRegression(all_means_seg_g1)
+      sum_agrad <- combineFeaturesAndTestRegression(select(ag_g1, V1, V2, rank))
+      sum_seg <- combineFeaturesAndTestRegression(select(seg_g1, V1, V2, rank))
       
       partial_data <- extract_list_of_urban_features_general(sum_agrad, all_estimates_a, all_pvalues_a)
       all_estimates_a <- partial_data[[1]]

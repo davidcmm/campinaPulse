@@ -458,7 +458,7 @@ combineFeaturesAndTestRegression <- function(dataset){
       neigs1 <- unlist(lapply(temp1, '[[', 1))
       temp$bairro <- neigs1
       
-      temp <- arrange(temp, mean)  %>% mutate(rank = 1:n())
+      temp <- arrange(temp, V3)  %>% mutate(rank = 1:n())
       temp$centro <- 0
       temp$catole <- 0
       temp$liberdade <- 0
@@ -507,14 +507,12 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
      #General ranking removing men
      current_file <- paste(folder, all_diff_m[i], sep="")
      data <- read.table(current_file)
-     seg_g1 <- filter(data, V1 == "seguro?") %>% do(arrange(., V3)) %>%
-mutate(rank = 1:n())
-     ag_g1 <- filter(data, V1 != "seguro?") %>% do(arrange(., V3)) %>%
-mutate(rank = 1:n())
+     seg_g1 <- filter(data, V1 == "seguro?")
+     ag_g1 <- filter(data, V1 != "seguro?") 
      
       #Extracting features for current regression and saving them!
-      sum_agrad <- combineFeaturesAndTestRegression(select(ag_g1, V1, V2, rank))
-      sum_seg <- combineFeaturesAndTestRegression(select(seg_g1, V1, V2, rank))
+      sum_agrad <- combineFeaturesAndTestRegression(select(ag_g1, V1, V2, V3))
+      sum_seg <- combineFeaturesAndTestRegression(select(seg_g1, V1, V2, V3))
       
       partial_data <- extract_list_of_urban_features_general(sum_agrad, all_estimates_a, all_pvalues_a)
       all_estimates_a <- partial_data[[1]]

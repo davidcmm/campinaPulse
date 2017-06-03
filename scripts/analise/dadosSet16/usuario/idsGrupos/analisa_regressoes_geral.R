@@ -4,6 +4,413 @@ library(car)
 library(readr)
 library(dplyr, warn.conflicts = F)
 
+source("../analisaICPorFoto.R")
+
+sample_size <- function(x) { 
+    return ( ( ( sd(x) * qnorm(1-(0.05/2)) )  / ( 0.05 * mean(x) ) ) ** 2)  #95% confidence interval, significance level of 0.05 (alpha) - sample 100
+  }
+
+mergeSort <- function(x){
+  if(length(x) == 1){
+    inv <- 0
+  } else {
+    n <- length(x)
+    n1 <- ceiling(n/2)
+    n2 <- n-n1
+    y1 <- mergeSort(x[1:n1])
+    y2 <- mergeSort(x[n1+1:n2])
+    inv <- y1$inversions + y2$inversions
+    x1 <- y1$sortedVector
+    x2 <- y2$sortedVector
+    i1 <- 1
+    i2 <- 1
+    while(i1+i2 <= n1+n2+1){
+      if(i2 > n2 || (i1 <= n1 && x1[i1] <= x2[i2])){
+        x[i1+i2-1] <- x1[i1]
+        i1 <- i1 + 1
+      } else {
+        inv <- inv + n1 + 1 - i1
+        x[i1+i2-1] <- x2[i2]
+        i2 <- i2 + 1
+      }
+    }
+  }
+  return (list(inversions=inv,sortedVector=x))
+}
+
+numberOfInversions <- function(x){
+  r <- mergeSort(x)
+  return (r$inversions)
+}
+
+normalizedKendallTauDistance2 <- function(data1, data2){
+  x <- data1
+  y <- data2
+  
+  tau = numberOfInversions(order(x)[rank(y)])
+  print(tau)
+  nItens = length(x)
+  maxNumberOfInverstions <- (nItens*(nItens-1))/2
+  normalized = tau/maxNumberOfInverstions
+
+  print (normalized)
+}
+
+#Reading CrowdFlower features data
+dadosg1 <- read.csv("../regressao100/g1.csv")
+dadosg2 <- read.csv("../regressao100/g2.csv")
+dadosg3 <- read.csv("../regressao100/g3.csv")
+dadosg4 <- read.csv("../regressao100/g4.csv")
+dadosg5 <- read.csv("../regressao100/g5.csv")
+dadosg6 <- read.csv("../regressao100/g6.csv")
+dadosg7 <- read.csv("../regressao100/g7.csv")
+dadosg8 <- read.csv("../regressao100/g8.csv")
+dadosg9 <- read.csv("../regressao100/g9.csv")
+dadosg10 <- read.csv("../regressao100/g10.csv")
+dadosg11 <- read.csv("../regressao100/g11.csv")
+dadosg12 <- read.csv("../regressao100/g12.csv")
+dadosg13 <- read.csv("../regressao100/g13.csv")
+
+#Summing features values  - left and right
+somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+    dados1[is.na(dados1)] <- 0
+    dados2[is.na(dados2)] <- 0
+    
+    soma = dados1 + dados2
+    desvios = (desvio1 + desvio2)/2
+    
+    desvio = sd(soma)
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+}
+
+#Mean of features values - left and right
+mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+   for (i in 1:length(dados1)){
+       if(is.na(dados1[i])){
+         dados1[i] <- dados2[i]
+       }
+       if(is.na(dados2[i])){
+         dados2[i] <- dados1[i]
+       }
+    }
+    
+    soma = (dados1 + dados2) / 2
+    desvios = (desvio1 + desvio2)/2
+    
+    desvio = sd(soma)
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+}
+
+
+#Creating values for the cases where only 1 answer was obtained considering the desviations of other features answers
+geraValores <- function(lista, question, desvios, uplimit){
+   #desvio = sd(lista)
+   return (mean(lista, na.rm = TRUE))
+}
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+#Grouping by image and question - G1
+by_image <- group_by(dadosg1, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
+groupedData1 <- summarise(by_image,
+  #count = n(),
+  q1 = geraValores(question1, "1", desvios, 100),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 100),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 100),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 100)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
+
+#Grouping by image and question- G2
+by_image <- group_by(dadosg2, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
+groupedData2 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 100),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 200),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 100),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 100),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 100)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G3
+by_image <- group_by(dadosg3, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData3 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 5),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 5),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 5),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 5),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 5),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 5),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 5),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 5),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 5)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G4
+by_image <- group_by(dadosg4, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE))
+groupedData4 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 10),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 10)
+  #sdq2 = sd(question2, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G5
+by_image <- group_by(dadosg5, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(your_answer_is, na.rm = TRUE))
+groupedData5 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 20),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(your_answer_is, "2", desvios, 20)
+  #sdq2 = sd(question2, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G6
+by_image <- group_by(dadosg6, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
+groupedData6 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 1),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 1),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 1),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 1),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 1)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G7
+by_image <- group_by(dadosg7, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData7 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 3),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 1),
+  #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 1),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 1),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 1)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G8
+by_image <- group_by(dadosg8, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2_right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3_right_side, na.rm = TRUE)
+                  )
+groupedData8 <- summarise(by_image,
+  count = n(),
+  q1 = Mode(question1),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2_right_side, desvios$sd2l, desvios$sd2r, 40),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 20),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2_right_side, "2r", desvios, 20),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE)  
+  q3 = somaValores(question3__left_side, question3_right_side, desvios$sd3l, desvios$sd3r, 40),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 20),
+  q3_right = geraValores(question3_right_side, "3r", desvios, 20)
+  )
+
+#Grouping by image and question - G9
+by_image <- group_by(dadosg9, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE) )
+groupedData9 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 200),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 200),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 200)
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G10
+by_image <- group_by(dadosg10, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
+groupedData10 <- summarise(by_image,
+  count = n(),
+  q1 = Mode(x = question1),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 50),
+  #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 1)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G11
+by_image <- group_by(dadosg11, image_url)
+desvios <- summarise (by_image, 
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData11 <- summarise(by_image,
+  count = n(),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 10),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 10),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = somaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 80),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 40),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 40)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G12
+by_image <- group_by(dadosg12, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
+groupedData12 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 10),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 10),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 10),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios,10)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G13
+by_image <- group_by(dadosg13, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
+groupedData13 <- summarise(by_image,
+  count = n(),
+  q1 = somaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 30),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 10),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 15),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 1),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 1)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+  )
+
+#Renaming columns according to a fixed id
+renomeiaGrupos <- function(dadosPorGrupo, listaColunas, idGrupo) {
+    for (coluna in listaColunas){
+        colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- paste(idGrupo, coluna, sep="")
+    }
+    return(dadosPorGrupo)
+}
+
+renomeiaGrupos2 <- function(dadosPorGrupo, listaColunas, novosNomes) {
+    for (i in seq(1, length(listaColunas))){
+        coluna = listaColunas[i]
+        colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- novosNomes[i]
+    }
+    return(dadosPorGrupo)
+}
+
+groupedData1 <- renomeiaGrupos(groupedData1, c("q2_left", "q2_right", "count"), "g1")
+groupedData2 <- renomeiaGrupos(groupedData2, c("q2_left", "q2_right", "count"), "g2")
+groupedData3 <- renomeiaGrupos(groupedData3, c("q1_left", "q1_right","q2_left", "q2_right","q3_left", "q3_right", "count"), "g3")
+groupedData4 <- renomeiaGrupos(groupedData4, c("count"), "g4")
+groupedData5 <- renomeiaGrupos(groupedData5, c("count"), "g5")
+groupedData6 <- renomeiaGrupos(groupedData6, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g6")
+groupedData7 <- renomeiaGrupos(groupedData7, c("q3_left", "q3_right", "count"), "g7")
+groupedData8 <- renomeiaGrupos(groupedData8, c("q2_left", "q2_right","q3_left", "q3_right", "count"), "g8")
+groupedData9 <- renomeiaGrupos(groupedData9, c("q1_left", "q1_right", "count"), "g9")
+groupedData10 <- renomeiaGrupos(groupedData10, c("count"), "g10")
+groupedData11 <- renomeiaGrupos(groupedData11, c("q2_left", "q2_right","q3_left", "q3_right", "count"), "g11")
+groupedData12 <- renomeiaGrupos(groupedData12, c("q2_left", "q2_right", "count"), "g12")
+groupedData13 <- renomeiaGrupos(groupedData13, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g13")
+
+groupedData1 <- renomeiaGrupos2(groupedData1, c("q1", "q2", "q3"), c("street_wid", "sidewalk_wid", "public_art"))
+groupedData2 <- renomeiaGrupos2(groupedData2, c("q1", "q2", "q3"), c("mov_cars", "park_cars", "mov_ciclyst"))
+groupedData3 <- renomeiaGrupos2(groupedData3, c("q1", "q2", "q3"), c("debris", "pavement", "landscape"))
+groupedData4 <- renomeiaGrupos2(groupedData4, c("q1", "q2"), c("courtyards", "major_landsc"))
+groupedData5 <- renomeiaGrupos2(groupedData5, c("q1", "q2"), c("build_ident", "build_nrectan"))
+groupedData6 <- renomeiaGrupos2(groupedData6, c("q1", "q2"), c("prop_street_wall", "prop_wind"))
+groupedData7 <- renomeiaGrupos2(groupedData7, c("q1", "q2", "q3"), c("long_sight", "prop_sky_ahead", "prop_sky_across"))
+groupedData8 <- renomeiaGrupos2(groupedData8, c("q1", "q2", "q3"), c("graffiti", "trees", "small_planters"))
+groupedData9 <- renomeiaGrupos2(groupedData9, c("q1"), c("build_height"))
+groupedData10 <- renomeiaGrupos2(groupedData10, c("q1", "q2", "q3"), c("build_diff_ages", "diff_build", "prop_hist_build"))
+groupedData11 <- renomeiaGrupos2(groupedData11, c("q2", "q3"), c("outdoor_table", "street_furnit"))
+groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_col", "lights", "accent_col"))
+groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
+
 
 extract_list_of_urban_features_general = function(summary_info, all_estimates, all_pvalues){
   estimates <- summary_info$coef[,"Estimate"]

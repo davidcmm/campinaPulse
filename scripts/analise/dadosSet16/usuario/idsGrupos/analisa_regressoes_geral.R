@@ -526,15 +526,16 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
     sink(paste(folder, "regressions.dat", sep=""), append=TRUE)
     print(paste(">>>>> Groups ", g1, g2, folder))
     for (column in names(all_estimates_a)) { 
+	print(column)
         print( paste("#### Agrad Values", column, mean(all_estimates_a[[column]])) )
         print( paste("#### Agrad PValues", column, mean(all_pvalues_a[[column]])) )
-        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05)) / length(all_pvalues_a[[column]]) )
+        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05) / length(all_pvalues_a[[column]])) )
     } 
     
     for (column in names(all_estimates_s)) { 
         print( paste("#### Seg Values", column, mean(all_estimates_s[[column]])) )
         print( paste("#### Seg PValues", column, mean(all_pvalues_s[[column]])) )
-        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05)) / length(all_pvalues_a[[column]]) )
+        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05) / length(all_pvalues_a[[column]])) )
     }
     sink()
 }

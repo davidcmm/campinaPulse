@@ -788,11 +788,11 @@ for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/",
   all_means_ag_g1 <- data.frame()
   all_means_seg_g1 <- data.frame()
   
-    all_estimates_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
-all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
+  all_estimates_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
+all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), graffitiYes=c(), centro=c(), catole=c())
 
-  all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
-  all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), d_graff=c(), centro=c(), catole=c(), graffitiYes=c())
+  all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
+  all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
   
 #   sink(paste(folder, "rank_comparisons_general.dat", sep=""))
   for (i in seq(1,100)){
@@ -855,13 +855,13 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
     for (column in names(all_estimates_a)) { 
         print( paste("#### Agrad Values", column, mean(all_estimates_a[[column]])) )
         print( paste("#### Agrad PValues", column, mean(all_pvalues_a[[column]])) )
-        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05)) / length(all_pvalues_a[[column]]) )
+        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05, na.rm = TRUE) / length(which(!is.na(all_pvalues_a[[column]]))) ) )
     } 
     
     for (column in names(all_estimates_s)) { 
         print( paste("#### Seg Values", column, mean(all_estimates_s[[column]])) )
         print( paste("#### Seg PValues", column, mean(all_pvalues_s[[column]])) )
-        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05)) / length(all_pvalues_a[[column]]) )
+        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05, na.rm = TRUE) / length(which(!is.na(all_pvalues_a[[column]]))) ) )
     }
     sink()
 }

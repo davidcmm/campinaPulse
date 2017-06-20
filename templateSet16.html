@@ -1,0 +1,811 @@
+<link rel="stylesheet" href="https://contribua.org/comoecampina-static/imgs/fonts/cg.css">
+<style>
+	body {
+		background-color: #334759;
+		background-image: linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E), 
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E);
+		background-size:80px 140px;
+		background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+	}
+	p.title-cg {
+		font-size: 28px;
+		line-height: 75px;
+		text-transform: uppercase;
+		color: #fff;
+	}
+	@media (max-width: 768px) {
+		p.title-cg {
+			font-size: 22px;
+			line-height: 32px;
+		}
+	}
+	@media screen and (min-width: 768px) {
+		#taskpresenter {
+			margin-bottom: -50px;
+		}
+	}
+	.up {
+		color: #2ecc71;
+	}
+	.down {
+		color: #e74c3c;
+	}
+	div#skeleton {
+		margin-bottom: 20px;
+	}
+	div#skeleton .col-xs-6 {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	div#skeleton-finished {
+		margin-bottom: 40px;
+		color: #fff;
+	}
+	div#logo {
+		margin-top: 40px;
+		margin-bottom: 40px;
+	}
+	#imgs-wrapper {
+		margin: auto;
+	}
+	p.big {
+		font-size: 1.3em;
+	}
+	div.div-thumbnail:hover {
+		cursor: pointer;
+	}
+	img.img-thumbnail {
+		border-color: #fff;
+	}
+	img.img-safety-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-safety-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	img.img-nice-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-nice-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	div.score {
+		margin-top: 20px;
+		margin-bottom: 10px;
+	}
+	div.separator {
+		height: 23px;
+	}
+	.btn-rounded {
+	    position: relative;
+	    top: -25px;
+	    width: 100px;
+	    height: 100px;
+		border-radius: 50%;
+	    margin-bottom: -50px;
+	    font-size: 28px;
+	    z-index: 1;
+	    background-color: #2980b9;
+	    border: solid 6px #fff;
+	    transition: all 1s;
+	    color: #fff;
+	}
+	.btn-rounded:hover {
+	    background-color: #3498db;
+	    border: solid 6px #fff;
+	}
+	span.icon-cg {
+		font-size: 7em;
+	    transition: all 0.5s;
+	    color: #fff;
+	}
+	span.icon-cg-up {
+		font-size: 5em;
+		color: #2ecc71;
+	}
+	span.icon-cg-up-lg {
+		font-size: 4em;
+		color: #2ecc71;
+	}
+	span.icon-cg-down {
+		font-size: 5em;
+		color: #e74c3c;
+	}
+	span.icon-cg-down-lg {
+		font-size: 4em;
+		color: #e74c3c;
+	}
+	@media(max-width: 768px) {
+		span.icon-cg-down-lg,
+		span.icon-cg-up-lg {
+			font-size: 3em;
+			line-height: 67px;
+		}
+	}
+	div.icon-wrapper {
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		top: 50%;
+		margin-top: -45px;
+		margin-left: -15px;
+	}
+	@media(max-width: 768px) {
+		div.icon-wrapper {
+			margin-left: -5px;
+		}
+	}
+	.alert {
+		position: fixed;
+		z-index: 999;
+		right: 20px;
+	}
+	.modal p {
+		font-size: 14px;
+		line-height: 16px;
+	}
+	.modal-sm .modal-header {
+		padding: 0;
+	}
+	.modal-sm .modal-header .close {
+		position: absolute;
+		top: 5px;
+		right: 8px;
+		color: #fff;
+		opacity: 1;
+	}
+	.modal-sm .modal-header img {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+	@media (min-width: 768px) {
+		.modal-sm {
+		  width: 450px;
+		}
+	}
+	.modal-backdrop.in {
+		opacity: 0.8;
+	}
+	.carousel-indicators {
+		bottom: 0;
+		margin-bottom: 0;
+	}
+	.carousel-indicators li {
+		border-color: #34495E;
+	}
+	.carousel-indicators .active {
+		background-color: #34495E;
+	}
+	label {
+		font-weight: bold;
+	}
+	#userProgress {
+		margin-top: 10px;
+	}
+</style>
+<div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl">
+	<!-- Success and Error Messages for the user -->
+	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<span class="glyphicon glyphicon-ok"></span><strong> Sua resposta foi salva!</strong>
+	</div>
+	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+		Carregando próxima tarefa...
+	</div>
+	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+		<strong>Ops! Algo errado.</strong>
+		<br/>
+		<div class="alert-actions">
+			<a class="btn btn-danger" href="/project/comoecampinav2/newtask">Recarregar</a>
+		</div>
+	</div>
+	<!-- End Success and Error Messages for the user -->
+
+	<!-- Tutorial -->
+	<div id="modalTutorial" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
+	  <div class="modal-dialog modal-sm">
+	    <div class="modal-content" ng-init="tab = 1">
+		  <!-- tab1 -->
+	      <div id="tab1" ng-show="tab === 1">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_01.png" alt="Como é Campina" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p><strong>Seja bem-vindo</strong>. Sua contribuição é muito importante para traçarmos os locais mais seguros e agradáveis de Campina Grande.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 2">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab1 -->
+		  <!-- tab2 -->
+	      <div id="tab2" ng-show="tab === 2">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_02.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p>Dê sua opinião escolhendo dentre as quatro imagens o lugar <span class="up">mais agradável</span> e o <span class="down">menos agradável</span>, confirmando em seguida.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 3">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab2 -->
+		  <!-- tab3 -->
+	      <div id="tab3" ng-show="tab === 3">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_03.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar">Começar</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab3 -->
+
+	      <div class="modal-footer">
+	      	<ol class="carousel-indicators">
+				<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
+				<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
+				<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
+			</ol>
+	      </div>
+
+	    </div>
+	  </div>
+	</div>
+	<!-- END Tutorial -->
+
+	<!-- Profile -->
+	<div id="modalProfile" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Conte-nos um pouco mais sobre você</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label for="userage">Idade:</label>
+							<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
+						</div>
+						<div class="form-group">
+							<label for="usersex">Sexo:</label>
+							<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
+								<option value="M">Masculino</option>  
+								<option value="F">Feminino</option>  				
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="userrel">Estado Civil:</label>
+							<select class="form-control" id="userrel" name="userrel" ng-model="userProfile.rel">
+								<option value="casado">Casado</option>
+								<option value="solteiro" selected>Solteiro</option>
+								<option value="divorciado">Divorciado</option>
+								<option value="viuvo">Viúvo</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="userclass">Classe Social (renda mensal):</label>
+							<select class="form-control" id="userclass" name="userclass" ng-model="userProfile.clas">
+								<option value="alta">Alta (R$ 14.500 ou mais)</option>  
+								<option value="media alta">Média Alta (R$ 7.250 a R$ 14.499,99)</option>  
+								<option value="media" selected>Média (R$ 2.900 a R$ 7.249,99)</option>  
+								<option value="media baixa">Média Baixa (R$ 1.450 a R$ 2.899,99)</option>  
+								<option value="baixa">Baixa (até R$ 1.449,99)</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="usereduc">Grau de formação:</label>
+							<select class="form-control" id="usereduc" name="usereduc" name="userclass" ng-model="userProfile.educ">
+								<option value="doutorado">Doutorado</option>  
+								<option value="mestrado">Mestrado</option>  
+								<option value="graduacao" selected>Graduação</option>  
+								<option value="ensino medio">Ensino Médio</option>  
+								<option value="ensino fundamental">Ensino Fundamental</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="usercity">Cidade:</label>
+							<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
+						</div>
+						<p>Quais desses bairros você frequenta?</p>
+						<div class="row">
+							<div class="col-sm-4" ng-repeat="item in neighborhood">
+								<div class="checkbox">
+									<label for="{{item.id}}">
+										<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} -->
+                                        <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
+									</label>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+				</div>
+			</div>
+		</div>
+	</div><!-- /.modal -->
+	<!-- END Profile -->
+
+	<!-- Task skeleton -->
+	<div id="skeleton">
+		<div class="score" ng-style="readyToAnswer() && {'visibility': 'hidden'} || {'visibility': 'visible'}">
+			<div class="row" ng-show="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-safety-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais seguro</strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-safety-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos seguro</strong>?</p>
+					</div>
+				</div>
+			</div>
+			<div class="row" ng-hide="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-nice-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais agradável</strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-nice-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos agradável</strong>?</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="imgs-wrapper" resize ng-style="style()">
+			<div class="row">
+				<div
+					id="imgA"
+					class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+					ng-click="select(task.info.url_a)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_a)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_a}}"
+						ng-class="isSelected(task.info.url_a)">
+				</div>
+				<div
+					id="imgB"
+					class="col-xs-6 col-lg-5 div-thumbnail"
+					ng-click="select(task.info.url_b)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_b)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_b}}"
+						ng-class="isSelected(task.info.url_b)">
+				</div>
+			</div>
+			<div class="separator text-center">
+				<button
+					id="btn-answer"
+					class="btn btn-rounded"
+					ng-show="readyToAnswer()"
+					ng-click="saveTask()"><span class="fa fa-check-circle-o"></span></button>
+			</div>
+			<div class="row">
+				<div
+					id="imgC"
+					class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+					ng-click="select(task.info.url_c)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_c)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_c}}"
+						ng-class="isSelected(task.info.url_c)">
+				</div>
+				<div
+					id="imgD"
+					class="col-xs-6 col-lg-5 div-thumbnail"
+					ng-click="select(task.info.url_d)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_d)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_d}}"
+						ng-class="isSelected(task.info.url_d)">
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END Task skeleton -->
+	<!-- Task skeleton finished -->
+	<div id="skeleton-finished" class="text-center" style="display:none;">
+		<div class="row">
+			<div id="logo" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+				<img src="https://contribua.org/comoecampina-static/imgs/logo.png" alt="Como é Campina?" width="100%">
+			</div>
+		</div>
+		<p class="big">Parabéns! Você completou todas as tarefas.</p>
+		<p>Mas esse projeto ainda precisa de ajuda.<br>Ajude-nos a divulgar o projeto.</p>
+		<p class="big">
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-twitter"></span></a>
+			&nbsp;&nbsp;
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-facebook"></span></a>
+			&nbsp;&nbsp;
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-google-plus"></span></a>
+		</p>
+	</div>
+	<!-- User progress -->
+	<div id="others-controls">
+		<div class="row">
+			<div id="userProgress" class="col-lg-10 col-lg-offset-1">
+				<div class="progress">
+					<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{userProgress.done}}" aria-valuemin="0" aria-valuemax="{{userProgress.total}}" ng-style="{'width': (userProgress.progress | number : 2) + '%'}">
+						<span class="sr-only">{{userProgress.progress | number : 2}}%</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-9 col-md-offset-1 text-center">
+				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5">Não consigo escolher!</font></a> 
+			</div>
+			<div class="col-md-2 text-right">
+             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
+			</div>
+		</div>
+	</div>
+	<!-- END User progress -->
+</div>
+<!-- END ALL -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script>
+
+
+var previousProfiles = '[{ "id":"669","userProfile" : {"age":"17","sex":"F","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"668","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"667","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","lib","cat"]}},{ "id":"666","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"663","userProfile" : {"age":"36","sex":"M","rel":"casado","clas":"media","educ":"doutorado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"662","userProfile" : {"age":"31","sex":"F","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"660","userProfile" : {"age":"57","sex":"F","rel":"vi\u00favo","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"692","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"693","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"Montadas","neig":[""]}},{ "id":"691","userProfile" : {"age":"20","sex":"M","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Queimadas - Para\u00edba, Brasil","neig":[""]}},{ "id":"696","userProfile" : {"age":"20","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["jpi"]}},{ "id":"697","userProfile" : {"age":"29","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande","neig":["cen","lib","cat"]}},{ "id":"694","userProfile" : {"age":"20","sex":"M","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"","neig":[""]}},{ "id":"695","userProfile" : {"age":"28","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"698","userProfile" : {"age":"34","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","jpi","lib","cat"]}},{ "id":"549","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"","neig":["cen","cat"]}},{ "id":"678","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"679","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"674","userProfile" : {"age":"26","sex":"M","rel":"solteiro","clas":"baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"675","userProfile" : {"age":"19","sex":"F","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"676","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Queimadas - Para\u00edba, Brasil","neig":[""]}},{ "id":"677","userProfile" : {"age":"23","sex":"M","rel":"solteiro","clas":"baixa","educ":"graduacao","city":"Campina Grande","neig":["cen"]}},{ "id":"670","userProfile" : {"age":"17","sex":"M","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"671","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"baixa","educ":"graduacao","city":"Montadas - State of Para\u00edba, Brazil","neig":["cen"]}},{ "id":"672","userProfile" : {"age":"26","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"673","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"537","userProfile" : {"age":"33","sex":"M","rel":"casado","clas":"media","educ":"doutorado","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"593","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media baixa","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["lib","cat"]}},{ "id":"595","userProfile" : {"age":"28","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","jpi","lib","cat"]}},{ "id":"599","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen"]}},{ "id":"705","userProfile" : {"age":"42","sex":"F","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"campina  grande ","neig":[""]}},{ "id":"706","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande","neig":[""]}},{ "id":"707","userProfile" : {"age":"27","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"700","userProfile" : {"age":"44","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Bras\u00edlia - Distrito Federal, Brasil","neig":[""]}},{ "id":"701","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"702","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","jpi","lib","cat"]}},{ "id":"703","userProfile" : {"age":"27","sex":"F","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"714","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":[""]}},{ "id":"585","userProfile" : {"age":"23","sex":"F","rel":"solteiro","clas":"baixa","educ":"graduacao","city":"Campina Grande - PB, Brasil","neig":["cen","lib","cat"]}},{ "id":"742","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"Campina Grande ","neig":["cen"]}},{ "id":"641","userProfile" : {"age":"32","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib"]}},{ "id":"518","userProfile" : {"age":"26","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"643","userProfile" : {"age":"31","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"642","userProfile" : {"age":"43","sex":"M","rel":"divorciado","clas":"media","educ":"doutorado","city":"Ilh\u00e9us - Bahia, Brasil","neig":["cen","lib","cat"]}},{ "id":"647","userProfile" : {"age":"29","sex":"F","rel":"casado","clas":"media","educ":"mestrado","city":"jo\u00e3o pessoa","neig":["cen","cat"]}},{ "id":"646","userProfile" : {"age":"29","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande","neig":["cen","cat"]}},{ "id":"511","userProfile" : {"age":"36","sex":"F","rel":"casado","clas":"media","educ":"doutorado","city":"Campina Grande","neig":[""]}},{ "id":"513","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"512","userProfile" : {"age":"34","sex":"M","rel":"casado","clas":"media","educ":"mestrado","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"515","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media baixa","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"514","userProfile" : {"age":"29","sex":"M","rel":"casado","clas":"media","educ":"mestrado","city":"Campina Grande","neig":["cen"]}},{ "id":"516","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","lib"]}},{ "id":"622","userProfile" : {"age":"23","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"620","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - PB, Brasil","neig":["cen","cat"]}},{ "id":"626","userProfile" : {"age":"26","sex":"F","rel":"solteiro","clas":"media baixa","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"625","userProfile" : {"age":"31","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"624","userProfile" : {"age":"22","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande ","neig":["cen"]}},{ "id":"629","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"731","userProfile" : {"age":"19","sex":"F","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"747","userProfile" : {"age":"035","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - PB, Brasil","neig":["cen","lib","cat"]}},{ "id":"656","userProfile" : {"age":"30","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Jo\u00e3o Pessoa - Para\u00edba, Brazil","neig":[""]}},{ "id":"704","userProfile" : {"age":"54","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"654","userProfile" : {"age":"43","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"2","userProfile" : {"age":"49","sex":"M","rel":"casado","clas":"alta","educ":"doutorado","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"653","userProfile" : {"age":"32","sex":"M","rel":"casado","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"658","userProfile" : {"age":"28","sex":"F","rel":"solteiro","clas":"media","educ":"mestrado","city":"Florian\u00f3polis - Santa Catarina, Brasil","neig":[""]}},{ "id":"659","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"media baixa","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","jpi","cat"]}},{ "id":"630","userProfile" : {"age":"30","sex":"M","rel":"casado","clas":"media","educ":"graduacao","city":"Jo\u00e3o Pessoa, Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"632","userProfile" : {"age":"27","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"634","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"638","userProfile" : {"age":"26","sex":"F","rel":"solteiro","clas":"alta","educ":"graduacao","city":"Campina Grande","neig":["cen","cat"]}},{ "id":"639","userProfile" : {"age":"28","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"605","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande","neig":["cen","cat"]}},{ "id":"607","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"606","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["jpi"]}},{ "id":"601","userProfile" : {"age":"24","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"600","userProfile" : {"age":"24","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande","neig":["cen","lib","cat"]}},{ "id":"746","userProfile" : {"age":"21","sex":"M","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen"]}},{ "id":"602","userProfile" : {"age":"26","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"748","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - PB, Brasil","neig":["cen","cat"]}},{ "id":"749","userProfile" : {"age":"23","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - PB, Brasil","neig":["cen"]}},{ "id":"609","userProfile" : {"age":"18","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":["cen","cat"]}},{ "id":"744","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media","educ":"ensino medio","city":"Campina Grande - PB, Brasil","neig":["cen"]}},{ "id":"618","userProfile" : {"age":"62","sex":"M","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"619","userProfile" : {"age":"59","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["lib","cat"]}},{ "id":"612","userProfile" : {"age":"35","sex":"M","rel":"casado","clas":"media","educ":"doutorado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"610","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":[""]}},{ "id":"611","userProfile" : {"age":"29","sex":"M","rel":"casado","clas":"media baixa","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brazil","neig":["cen","jpi","lib","cat"]}},{ "id":"617","userProfile" : {"age":"0","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"","neig":["cen","jpi","lib","cat"]}},{ "id":"614","userProfile" : {"age":"25","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"615","userProfile" : {"age":"27","sex":"M","rel":"solteiro","clas":"media","educ":"mestrado","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","lib","cat"]}},{ "id":"649","userProfile" : {"age":"40","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"711","userProfile" : {"age":"22","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - State of Para\u00edba, Brazil","neig":[""]}},{ "id":"655","userProfile" : {"age":"33","sex":"F","rel":"casado","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","jpi"]}},{ "id":"710","userProfile" : {"age":"23","sex":"F","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"689","userProfile" : {"age":"17","sex":"F","rel":"solteiro","clas":"media","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"688","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}},{ "id":"684","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"campina grande","neig":["cen"]}},{ "id":"687","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"media baixa","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen","cat"]}},{ "id":"686","userProfile" : {"age":"20","sex":"F","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"681","userProfile" : {"age":"19","sex":"M","rel":"solteiro","clas":"media baixa","educ":"ensino medio","city":"Campina Grande - Para\u00edba, Brasil","neig":["cen"]}},{ "id":"683","userProfile" : {"age":"18","sex":"M","rel":"solteiro","clas":"baixa","educ":"ensino medio","city":"S\u00e3o Sebasti\u00e3o de Lagoa de Ro\u00e7a, Para\u00edba, Brasil","neig":[""]}},{ "id":"682","userProfile" :{"age":"19","sex":"M","rel":"solteiro","clas":"media","educ":"graduacao","city":"Campina Grande - Para\u00edba, Brasil","neig":[""]}}]';
+var previousProfilesData = JSON.parse(previousProfiles);
+
+	var apiUrl = 'https://contribua.org/api/';
+	var projectId = '556';
+	var formProfileStep = 10;
+	var app = angular.module('CampinaApp', ['ngCookies']);
+	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
+		$scope.userProgress = {
+			user_id: '',
+			total: 0,
+			done: 0,
+			progress: 0 
+		}
+		$scope.userProfile = {
+			age: 0,
+			sex: '',
+			rel: '',
+			clas: '',
+			educ: '',
+			city: '',
+			neig: []
+		}
+		$scope.shouldSaveProfile = false;
+		$scope.neighborhood = [
+			{
+				id: 'cen',
+				name: 'Centro'
+			},
+			{
+				id: 'lib',
+				name: 'Liberdade'
+			},
+			{
+				id: 'cat',
+				name: 'Catolé'
+			}
+		];
+		$scope.setNeighborhood = function(add, item) {
+			if (add) {
+				$scope.userProfile.neig.push(item)
+			} else {
+				for (var i=0; i < $scope.userProfile.neig.length; i++) {
+					if ($scope.userProfile.neig[i] == item) {
+						$scope.userProfile.neig.splice(i, 1);
+					}
+				}
+			}
+		};
+		var showTutorial = function() {
+  			var hasDisplayedTutorial = $cookies.get('cg-tutorial');
+  			if (typeof hasDisplayedTutorial == "undefined") {
+    			$cookies.put('cg-tutorial', 'true');
+				$('#modalTutorial').modal();
+    		} else {
+    			return;
+    		}
+		}
+		var showProfileForm = function() {
+			$('#modalProfile').modal();
+		}
+		var getUserProfile = function() {
+			//Iterating through previous profiles
+			//alert("Get user");
+			var foundInPrevious = false;
+			for (i = 0; i < previousProfilesData.length; i++){
+				var currentProfile = previousProfilesData[i];
+				if (currentProfile.id == $scope.userProgress.user_id){//previous answer found
+					$scope.userProfile = currentProfile.userProfile;
+					$scope.userProfile.age = parseInt($scope.userProfile.age);
+					foundInPrevious = true;
+                  			//alert("Encontrei!");
+				}
+			}
+
+			
+			//showProfileForm();
+
+			if (!foundInPrevious){//Profile not found in previous version, searching at task-run
+				var finishTime;
+				var offset = 0;
+         			//  	alert("Nao Encontrei prev!");
+				// console.log('Loading user task run...');
+				$http.get(apiUrl+'taskrun?project_id='+projectId+'&user_id='+$scope.userProgress.user_id+'&offset='+offset)
+					.then(function(response) {
+						var i;
+						if (response.data.length !== 0) {
+							for (i = 0; i < response.data.length; i++) {
+								var currentData = response.data[i];
+								// Checks if already have any profile data
+								if (typeof currentData.info.userProfile != "undefined") {
+									var currentFinishTime = new Date(currentData.finish_time);
+									if (finishTime == null || currentFinishTime > finishTime) {
+										finishTime = currentFinishTime;
+										$scope.userProfile = currentData.info.userProfile;
+										$scope.userProfile.age = parseInt($scope.userProfile.age);
+									}
+								}
+							}
+						}
+						// console.log($scope.userProfile);
+						// Calls the form profile if still have data to fill
+						// Neighborhood is not required
+						if (	$scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
+								$scope.userProfile.sex === '' ||
+								$scope.userProfile.rel === '' ||
+								$scope.userProfile.clas === '' ||
+								$scope.userProfile.educ === '' ||
+								$scope.userProfile.city === '') {
+							$scope.shouldSaveProfile = true;
+							showProfileForm();
+						} else {
+							$scope.shouldSaveProfile = false;
+						}
+					});
+			}else{//Checking if profile found in previous version is complete
+              	
+				if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
+					$scope.userProfile.sex === '' ||
+					$scope.userProfile.rel === '' ||
+					$scope.userProfile.clas === '' ||
+					$scope.userProfile.educ === '' ||
+					$scope.userProfile.city === '') {
+					$scope.shouldSaveProfile = true;
+					showProfileForm();
+				} else {
+                  	//alert("Encontrei prev cheio!");
+					$scope.shouldSaveProfile = false;
+				}
+			}
+			return;
+		}
+		var getUserProgress = function() {
+			// console.log('Loading user progress...');
+			$http.get(apiUrl+'project/'+projectId+'/userprogress')
+				.then(function(response) {
+					$scope.userProgress.user_id = response.data.user_id;
+					$scope.userProgress.total = response.data.total;
+					$scope.userProgress.done = response.data.done;
+					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
+					// console.log($scope.userProgress);
+
+					// Get user profile (10 steps)
+					//getUserProfile();
+					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
+						getUserProfile();
+					}
+				}, function getUserProgressErrorCallback(response) {
+					console.log('Request failed');
+					$('#error').show();
+					$('#skeleton').hide();
+				});
+		}
+		var newTask = function() {
+			getUserProgress();
+			// console.log('Loading task...');
+			$('#loading').fadeIn();
+			$http.get(apiUrl+'project/'+projectId+'/newtask')
+				.then(function(response) {
+					// Checks if theres no more tasks for the user
+					if (typeof response.data.id != 'undefined') {
+						$('#loading').hide();
+						$scope.task = response.data;
+						console.log('Loaded task '+$scope.task.id+' '+$scope.task.info.question);
+						$scope.answer = {
+							question: $scope.task.info.question,
+							theMost: '',
+							theLess: ''
+						}
+						$scope.selectingTheMost = function() {
+							return ($scope.answer.theMost === '' && $scope.answer.theLess === '');
+						}
+						$scope.selectingTheLess = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess === '');
+						}
+						$scope.readyToAnswer = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess !== '');
+						}
+						$scope.isSelectingSafety = function() {
+							return ($scope.task.info.question === 'seguro');
+						}
+						$scope.isSelected = function(answer) {
+							return {
+								'img-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'img-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'img-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'img-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+						$scope.isSelectedIcon = function(answer) {
+							return {
+								'icon-cg-up iconcg-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'icon-cg-up iconcg-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+						$scope.select = function(answer) {
+							if ($scope.selectingTheMost()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theMost = answer;
+								}
+							} else if ($scope.selectingTheLess()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theLess = answer;
+								}
+							} else {
+								$scope.answer.theLess = '';
+							}
+						}
+						// Save task
+						$scope.saveTaskTie = function(){
+							$scope.answer.theMost = 'equal';
+							$scope.answer.theLess = 'equal';
+							
+							$scope.saveTask();
+						}
+						$scope.saveTask = function() {
+							if ($scope.shouldSaveProfile === true) {
+								$scope.userProfile.city = document.getElementById("usercity").value;
+								$scope.answer.userProfile = $scope.userProfile;
+								$scope.shouldSaveProfile = false;
+							}
+							var taskrun = {
+								'project_id': $scope.task.project_id,
+								'task_id': $scope.task.id,
+								'info': $scope.answer
+							};
+							taskrun = JSON.stringify(taskrun);
+							console.log(taskrun);
+							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+								// console.log('Saved!');
+								$("#skeleton").fadeOut(0);
+								$("#success").fadeIn();
+								// After save, calls a new task again
+								newTask();
+								$("#skeleton").fadeIn(1000);
+								setTimeout(function() { $("#success").fadeOut() }, 1000);
+							}, function saveTaskErrorCallback(response) {
+								$('#error').show();
+							});
+						}
+					} else {
+						$('#skeleton').hide();
+						$('#loading').hide();
+						$('#skeleton-finished').show();
+						$('#others-controls').hide();
+						$('.row .col-md-12 p').hide();
+					}
+				}, function newTaskErrorCallback(response) {
+					console.log('Request failed');
+					$('#error').show();
+					$('#skeleton').hide();
+				});
+		}
+		newTask();
+		showTutorial();
+	}]);
+
+	app.directive('resize', function ($window) {
+	    return function (scope, element) {
+	        var w = angular.element($window);
+	        scope.getWindowDimensions = function () {
+	            return {
+	                'h': w.height(),
+	                'w': w.width()
+	            };
+	        };
+	        scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+	            scope.windowWidth = newValue.w;
+	            scope.windowHeight = newValue.h;
+
+	            scope.viewportWidth = newValue.h*1.1;
+
+	            scope.style = function () {
+	            	if (scope.windowHeight*1.1 < scope.windowWidth) {
+		                return {
+	                        'width': (scope.viewportWidth) + 'px'
+		                };
+	            	} else {
+	            		return;
+	            	}
+	            };
+
+	        }, true);
+
+	        w.bind('resize', function () {
+	            scope.$apply();
+	        });
+	    }
+	});
+
+	//Google autocomplete
+	var cityInput = document.getElementById('usercity');
+	var options = {
+		types: ['(cities)']
+	};
+	var autocomplete = new google.maps.places.Autocomplete(cityInput, options);
+	var pacContainerInitialized = false; 
+	$('#usercity').keypress(function() { 
+	    if (!pacContainerInitialized) { 
+	      $('.pac-container').css('z-index', '10000'); 
+	      pacContainerInitialized = true;  
+	    } 
+	}); 
+</script>

@@ -1125,7 +1125,10 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
 
 ## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
 ```{r read}
-  gavelData <- read.table("/local/david/workspace_doutorado/gavel/comoecampina/allPairwiseComparison.dat")
+for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat")){
+  print(paste(">>>>> Folder ", file))
+  
+  gavelData <- read.table(file)
   agrad_gavel <- filter(gavelData, V1 != "seguro?")
   seg_gavel <- filter(gavelData, V1 == "seguro?")
   
@@ -1146,4 +1149,5 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
   res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Seg: Q-Score x Gavel", res$estimate))
+}
 ```

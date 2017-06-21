@@ -1122,3 +1122,28 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
     }
 }    
 ```
+
+## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
+```{r read}
+  gavelData <- read.table("/local/david/workspace_doutorado/gavel/comoecampina/allPairwiseComparison.dat")
+  agrad_gavel <- filter(gavelData, V1 != "seguro?")
+  seg_gavel <- filter(gavelData, V1 == "seguro?")
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  seg_orig <- filter(all_original, V1 == "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_gavel, by.x="V2", by.y="V2")
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Gavel", res$estimate))
+  
+  #Safety
+  merged_g2 <- merge(seg_orig, seg_gavel, by.x="V2", by.y="V2")
+  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+  res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Seg: Q-Score x Gavel", res$estimate))
+```

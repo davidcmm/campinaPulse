@@ -1129,8 +1129,8 @@ for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwi
   print(paste(">>>>> Folder ", file))
   
   gavelData <- read.table(file)
-  agrad_gavel <- filter(gavelData, V1 != "seguro?")
-  seg_gavel <- filter(gavelData, V1 == "seguro?")
+  agrad_gavel <- arrange(filter(gavelData, V1 != "seguro?"), -V3)
+  seg_gavel <- arrange(filter(gavelData, V1 == "seguro?"), -V3)
   
   all_original <- read.table("../all100/all_ordenado.dat")
   ag_orig <- filter(all_original, V1 != "seguro?")
@@ -1143,11 +1143,42 @@ for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwi
   print(res)
   print(paste(">>>>>>>> Correlation Agrad: Q-Score x Gavel", res$estimate))
   
+  #Comparing top 10 of original x gavel
+  top_size <- 10
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_gavel, n=top_size)$V2))
+  diff2 <- length(setdiff(head(agrad_gavel, n=top_size)$V2, head(ag_orig, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
+  print(head(select(ag_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
+  print(head(agrad_gavel, n=10))
+  
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_gavel, n=top_size)$V2))
+  diff2 <- length(setdiff(tail(agrad_gavel, n=top_size)$V2, tail(ag_orig, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
+  print(tail(select(ag_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
+  print(tail(agrad_gavel, n=10))
+  
   #Safety
   merged_g2 <- merge(seg_orig, seg_gavel, by.x="V2", by.y="V2")
   print(paste(">>>>>>> Kendall distance Seg: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
   res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Seg: Q-Score x Gavel", res$estimate))
-}
+  
+  #Comparing top and bottom 10
+  diff1 <- length(setdiff(head(seg_orig, n=top_size)$V2, head(seg_gavel, n=top_size)$V2))
+  diff2 <- length(setdiff(head(seg_gavel, n=top_size)$V2, head(seg_orig, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Seg: Q-Score - Gavel", diff1))
+  print(head(select(seg_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Top10_Seg: Gavel - Q-Score",  diff2))
+  print(head(seg_gavel, n=10))
+  
+  diff1 <- length(setdiff(tail(seg_orig, n=top_size)$V2, tail(seg_gavel, n=top_size)$V2))
+  diff2 <- length(setdiff(tail(seg_gavel, n=top_size)$V2, tail(seg_orig, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bot10_Seg: Q-Score - Gavel", diff1))
+  print(tail(select(seg_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Bot10_Seg: Gavel - Q-Score",  diff2))
+  print(tail(seg_gavel, n=10))
+}  
 ```

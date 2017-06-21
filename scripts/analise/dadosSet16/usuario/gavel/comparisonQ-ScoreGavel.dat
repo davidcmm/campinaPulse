@@ -28,3 +28,123 @@ sample estimates:
       tau 
 0.8369678 
 [1] ">>>>>>>> Correlation Seg: Q-Score x Gavel 0.836967808930426"
+
+
+>   head(select(ag_orig, V1, V2, V3), n=10)
+                V1                                                                                  V2       V3
+1  agrad%C3%A1vel?    https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg 5.882176
+2  agrad%C3%A1vel?    https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg 5.764867
+3  agrad%C3%A1vel?         https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg 5.739129
+4  agrad%C3%A1vel? https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg 5.680655
+5  agrad%C3%A1vel?      https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg 5.612987
+6  agrad%C3%A1vel?        https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg 5.588960
+7  agrad%C3%A1vel?       https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg 5.526269
+8  agrad%C3%A1vel?          https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg 5.525654
+9  agrad%C3%A1vel?        https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg 5.521574
+10 agrad%C3%A1vel?       https://contribua.org/bairros/oeste/catole/Rua_Otacilio_Nepomuceno__76_90.jpg 5.518094
+>   print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
+[1] ">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel 2"
+>   head(arrange(agrad_gavel, -V3), n=10)
+                V1                                                                                                   V2       V3         V4
+1  agrad%C3%A1vel?                     https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg 3.500651 0.07053241
+2  agrad%C3%A1vel?                         https://contribua.org/bairros/oeste/catole/Rua_Olegario_Mariano__139_270.jpg 3.057097 0.05111270
+3  agrad%C3%A1vel?                  https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_270.jpg 2.725616 0.04302288
+4  agrad%C3%A1vel?                          https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg 2.457212 0.04130652
+5  agrad%C3%A1vel?                       https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_270.jpg 2.160051 0.03437358
+6  agrad%C3%A1vel?                         https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__270.jpg 2.040224 0.04668269
+7  agrad%C3%A1vel?                       https://contribua.org/bairros/oeste/catole/Rua_Joao_Francisco_Mota__64__90.jpg 2.032658 0.03384842
+8  agrad%C3%A1vel?                        https://contribua.org/bairros/oeste/catole/Rua_Luisa_Bezerra_Mota__246_90.jpg 1.898501 0.03245439
+9  agrad%C3%A1vel? https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg 1.871386 0.02759647
+10 agrad%C3%A1vel?                     https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg 1.818209 0.04416179
+>   print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
+[1] ">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score 2"
+>   tail(select(ag_orig, V1, V2, V3), n=10)
+                 V1                                                                                     V2       V3
+99  agrad%C3%A1vel?        https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg 3.968284
+100 agrad%C3%A1vel?           https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg 3.961394
+101 agrad%C3%A1vel?       https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg 3.960190
+102 agrad%C3%A1vel?               https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg 3.844063
+103 agrad%C3%A1vel?                https://contribua.org/bairros/norte/centro/Rua_Augusto_Severo__71_0.jpg 3.840352
+104 agrad%C3%A1vel?         https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg 3.761155
+105 agrad%C3%A1vel? https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg 3.698952
+106 agrad%C3%A1vel?          https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg 3.553667
+107 agrad%C3%A1vel?                 https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg 3.481107
+108 agrad%C3%A1vel?        https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg 3.351852
+>   print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
+[1] ">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel 2"
+>   tail(arrange(agrad_gavel, -V3), n=10)
+                 V1                                                                                       V2        V3         V4
+99  agrad%C3%A1vel?         https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg -1.789966 0.03612336
+100 agrad%C3%A1vel?                 https://contribua.org/bairros/norte/centro/Rua_Felix_Araujo__132__90.jpg -2.244960 0.04316101
+101 agrad%C3%A1vel?           https://contribua.org/bairros/norte/centro/Rua_Capitao_Joao_de_Sa__45__180.jpg -2.290804 0.04157289
+102 agrad%C3%A1vel?             https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg -2.305796 0.04836834
+103 agrad%C3%A1vel?          https://contribua.org/bairros/norte/centro/Rua_Pedro_Alvares_Cabral__129_90.jpg -2.335376 0.06693454
+104 agrad%C3%A1vel? https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg -2.339474 0.03763289
+105 agrad%C3%A1vel?   https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg -2.620337 0.04253468
+106 agrad%C3%A1vel?            https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_0.jpg -3.338098 0.06128563
+107 agrad%C3%A1vel?          https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg -3.371160 0.06731333
+108 agrad%C3%A1vel?                   https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg -3.826744 0.05687623
+>   print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
+[1] ">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score 2"
+
+
+
+
+
+>   head(select(seg_orig, V1, V2, V3), n=10)
+        V1                                                                                                   V2       V3
+1  seguro?                    https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg 5.624989
+2  seguro?                            https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg 5.514011
+3  seguro?               https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg 5.498992
+4  seguro? https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg 5.489402
+5  seguro?                     https://contribua.org/bairros/norte/centro/Avenida_Barao_Rio_Branco__141_270.jpg 5.447839
+6  seguro?                           https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__270.jpg 5.443348
+7  seguro?                          https://contribua.org/bairros/norte/centro/Avenida_Dom_Pedro_II__500_90.jpg 5.429769
+8  seguro?              https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg 5.408632
+9  seguro?                           https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg 5.377586
+10 seguro?            https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__271__90.jpg 5.373917
+>   print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
+[1] ">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel 4"
+>   head(arrange(seg_gavel, -V3), n=10)
+        V1                                                                                                   V2       V3         V4
+1  seguro?              https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg 2.375516 0.04459806
+2  seguro?                     https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__90.jpg 2.210399 0.04727549
+3  seguro?               https://contribua.org/bairros/norte/centro/Avenida_Presidente_Joao_Pessoa__128__90.jpg 2.076478 0.05705831
+4  seguro? https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha_-_Catole__Campina_Grande__90.jpg 1.971862 0.03444050
+5  seguro?                           https://contribua.org/bairros/oeste/liberdade/Rua_Odon_Bezerra__147_90.jpg 1.693820 0.03658341
+6  seguro?                          https://contribua.org/bairros/oeste/catole/Rua_Honorio_de_Melo__240__90.jpg 1.682879 0.03609976
+7  seguro?       https://contribua.org/bairros/oeste/catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_0.jpg 1.556090 0.03517481
+8  seguro?                    https://contribua.org/bairros/norte/centro/Rua_Doutor_Severino_Cruz__411__270.jpg 1.539218 0.04134332
+9  seguro?                             https://contribua.org/bairros/norte/centro/Rua_Joao_da_Mata__490_270.jpg 1.491335 0.03124346
+10 seguro?                            https://contribua.org/bairros/norte/centro/Rua_Quebra_Quilos__399__90.jpg 1.457429 0.02813419
+>   print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
+[1] ">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score 4"
+
+ tail(select(seg_orig, V1, V2, V3), n=10)
+         V1                                                                                     V2       V3
+99  seguro?     https://contribua.org/bairros/oeste/liberdade/Rua_Padre_Pedro_Serrao__207__270.jpg 3.978970
+100 seguro?               https://contribua.org/bairros/norte/centro/Rua_Elias_Aforas__202_180.jpg 3.916010
+101 seguro?        https://contribua.org/bairros/oeste/catole/Rua_Aluisio_Cunha_Linha__50__270.jpg 3.915480
+102 seguro?     https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg 3.897195
+103 seguro?  https://contribua.org/bairros/oeste/catole/Rua_Sebastiao_Vieira_da_Silva__1273__0.jpg 3.841600
+104 seguro?           https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg 3.835389
+105 seguro?        https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg 3.786736
+106 seguro? https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg 3.736435
+107 seguro?       https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg 3.648595
+108 seguro?                 https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg 3.429121
+> print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
+[1] ">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel 4"
+> tail(arrange(seg_gavel, -V3), n=10)
+         V1                                                                                       V2        V3         V4
+99  seguro? https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__210__0.jpg -1.841368 0.03898488
+100 seguro?            https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg -1.884277 0.03889765
+101 seguro?                  https://contribua.org/bairros/oeste/liberdade/Rua_Riachuelo__455__0.jpg -2.069386 0.05747378
+102 seguro?       https://contribua.org/bairros/oeste/catole/Rua_Inacio_Marques_da_Silva__434_90.jpg -2.114462 0.04981195
+103 seguro?          https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__180.jpg -2.352038 0.04277076
+104 seguro?         https://contribua.org/bairros/oeste/catole/Rua_Doutor_Antonio_Telha__68__270.jpg -2.375742 0.03655390
+105 seguro?             https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg -2.472790 0.04735254
+106 seguro?   https://contribua.org/bairros/oeste/catole/Rua_Cristina_Procopio_da_Silva__62__270.jpg -2.758284 0.04797282
+107 seguro?          https://contribua.org/bairros/norte/centro/Rua_Manoel_P._de_Araujo__370_180.jpg -2.761315 0.06072922
+108 seguro?                   https://contribua.org/bairros/oeste/liberdade/Rua_Sergipe__1337_90.jpg -3.394267 0.04832317
+> print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
+[1] ">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score 4"

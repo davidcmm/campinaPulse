@@ -1125,7 +1125,10 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
 
 ## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
 ```{r read}
-  gavelData <- read.table("/local/david/workspace_doutorado/gavel/comoecampina/allPairwiseComparison.dat")
+for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat")){
+  print(paste(">>>>> Folder ", file))
+  
+  gavelData <- read.table(file)
   agrad_gavel <- arrange(filter(gavelData, V1 != "seguro?"), -V3)
   seg_gavel <- arrange(filter(gavelData, V1 == "seguro?"), -V3)
   
@@ -1144,17 +1147,17 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
   top_size <- 10
   diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_gavel, n=top_size)$V2))
   diff2 <- length(setdiff(head(agrad_gavel, n=top_size)$V2, head(ag_orig, n=top_size)$V2))
-  head(select(ag_orig, V1, V2, V3), n=10)
   print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
-  head(arrange(agrad_gavel, -V3), n=10)
+  print(head(select(ag_orig, V1, V2, V3), n=10))
   print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
+  print(head(agrad_gavel, n=10))
   
   diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_gavel, n=top_size)$V2))
   diff2 <- length(setdiff(tail(agrad_gavel, n=top_size)$V2, tail(ag_orig, n=top_size)$V2))
-  tail(select(ag_orig, V1, V2, V3), n=10)
   print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
-  tail(arrange(agrad_gavel, -V3), n=10)
+  print(tail(select(ag_orig, V1, V2, V3), n=10))
   print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
+  print(tail(agrad_gavel, n=10))
   
   #Safety
   merged_g2 <- merge(seg_orig, seg_gavel, by.x="V2", by.y="V2")
@@ -1166,15 +1169,16 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
   #Comparing top and bottom 10
   diff1 <- length(setdiff(head(seg_orig, n=top_size)$V2, head(seg_gavel, n=top_size)$V2))
   diff2 <- length(setdiff(head(seg_gavel, n=top_size)$V2, head(seg_orig, n=top_size)$V2))
-  head(select(seg_orig, V1, V2, V3), n=10)
-  print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
-  head(arrange(seg_gavel, -V3), n=10)
-  print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
+  print(paste(">>>>>>> Set diff Top10_Seg: Q-Score - Gavel", diff1))
+  print(head(select(seg_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Top10_Seg: Gavel - Q-Score",  diff2))
+  print(head(seg_gavel, n=10))
   
   diff1 <- length(setdiff(tail(seg_orig, n=top_size)$V2, tail(seg_gavel, n=top_size)$V2))
   diff2 <- length(setdiff(tail(seg_gavel, n=top_size)$V2, tail(seg_orig, n=top_size)$V2))
-  tail(select(seg_orig, V1, V2, V3), n=10)
-  print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
-  tail(arrange(seg_gavel, -V3), n=10)
-  print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
+  print(paste(">>>>>>> Set diff Bot10_Seg: Q-Score - Gavel", diff1))
+  print(tail(select(seg_orig, V1, V2, V3), n=10))
+  print(paste(">>>>>>> Set diff Bot10_Seg: Gavel - Q-Score",  diff2))
+  print(tail(seg_gavel, n=10))
+}  
 ```

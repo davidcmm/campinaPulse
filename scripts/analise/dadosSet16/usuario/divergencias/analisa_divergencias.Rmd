@@ -431,11 +431,9 @@ all_original <- read.table("../all100/all_ordenado.dat")
 ag_orig <- filter(all_original, V1 != "seguro?")
 seg_orig <- filter(all_original, V1 == "seguro?")
 
-agrad.l <- ag_orig %>% do(arrange(., V3)) %>%
-mutate(rank = 1:n())
+agrad.l <- ag_orig %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
 
-seg.l <- seg_orig %>% do(arrange(., V3)) %>%
-mutate(rank = 1:n())
+seg.l <- seg_orig %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
 
 #Computing differences between each element and its next!
 agrad.l$rank_diff <- c(0, diff(agrad.l$rank))
@@ -443,22 +441,22 @@ agrad.l$score_diff <- c(0, diff(agrad.l$V3))
 
 #Evaluating differences
 sink("fotos_ordenadas_agrad_rank_diff.dat")
-for(i in 1:nrow(agrad.l)){
-  for(j in i+1:nrow(agrad.l)){
+for(i in seq(1, nrow(agrad.l)-1, 1)){
+  for(j in seq(i+1, nrow(agrad.l), 1)){
       first_elem <- agrad.l[i,]
       second_elem <- agrad.l[j,]
       
       score_diff <- second_elem$V3 - first_elem$V3
-      if(score_diff > 1.0){
-          rank_diff <- second_elem$rank - first_elem$rank
-          print(paste("Diff ", score_diff, rank_diff), quote=FALSE)
-      }
+      rank_diff <- second_elem$rank - first_elem$rank
+      print(paste("Diff ", score_diff, rank_diff), quote=FALSE)
   }
 }
 sink()
 
 diff_data <- read.table("fotos_ordenadas_agrad_rank_diff.dat")
-print(summary(diff_data$V4))
+print(summary(diff_data$V4))#Summary of all differences
+print(summary(filter(diff_data, V3 >= 1.0)$V4))#Summary of differences > 1.0 in score
+print(summary(filter(diff_data, V3 < 1.0)$V4))#Summary of differences < 1.0 in score
 
 #Computing differences between each element and its next! - Safety
 seg.l$rank_diff <- c(0, diff(seg.l$rank))
@@ -466,22 +464,24 @@ seg.l$score_diff <- c(0, diff(seg.l$V3))
 
 #Evaluating differences
 sink("fotos_ordenadas_seg_rank_diff.dat")
-for(i in 1:nrow(seg.l)){
-  for(j in i+1:nrow(seg.l)){
+for(i in seq(1, nrow(seg.l)-1, 1)){
+  for(j in seq(i+1, nrow(seg.l), 1)){
       first_elem <- seg.l[i,]
       second_elem <- seg.l[j,]
       
       score_diff <- second_elem$V3 - first_elem$V3
-      if(score_diff > 1.0){
-          rank_diff <- second_elem$rank - first_elem$rank
-          print(paste("Diff ", score_diff, rank_diff), quote=FALSE)
-      }
+      rank_diff <- second_elem$rank - first_elem$rank
+      print(paste("Diff ", score_diff, rank_diff), quote=FALSE)
   }
 }
 sink()
 
 diff_data <- read.table("fotos_ordenadas_seg_rank_diff.dat")
-print(summary(diff_data$V4))
+print(summary(diff_data$V4))#Summary of all differences
+print(summary(filter(diff_data, V3 >= 1.0)$V4))#Summary of differences > 1.0 in score
+print(summary(filter(diff_data, V3 < 1.0)$V4))#Summary of differences < 1.0 in score
+
+#Evaluating current ranking of places?
 
 #Evaluating photos divergences and urban elements
 same_places_diff_agrad <- read.table("fotos_ordenadas_agrad_rank_diff.dat", sep="+")
@@ -565,18 +565,20 @@ combineFeaturesAndTestRegression <- function(dataset){
       #temp$graffiti <- factor(temp$graffiti, levels = c("Yes", "No"))
       #temp$graffiti <- relevel(temp$graffiti,  "No")
       
-      regGeneral <- lm(rank ~  diff_street_wid + diff_mov_cars + diff_park_cars + diff_mov_ciclyst + diff_landscape + diff_build_ident + diff_trees + diff_build_height + diff_people + diff_diff_build + diff_graffiti, na.action = na.exclude, data = temp)
+      regGeneral <- lm(V3 ~  diff_street_wid + diff_mov_cars + diff_park_cars + diff_mov_ciclyst + diff_landscape + diff_build_ident + diff_trees + diff_build_height + diff_people + diff_diff_build + diff_graffiti, na.action = na.exclude, data = temp)
       print(summary(regGeneral))
       return(summary(regGeneral))
 }
 
-sink("all_divergences_x_elements.dat")
+sink("all_divergences_x_elements.dat", append = TRUE)
 print(">>>>> Pleasantness")
 combineFeaturesAndTestRegression(same_places_diff_agrad)
 print(">>>>> Top 11 divergences Pleasantness")
 combineFeaturesAndTestRegression(arrange(same_places_diff_agrad, -V3)[1:11,])
 print(">>>>> Safety")
 combineFeaturesAndTestRegression(same_places_diff_seg)
+print(">>>>> Top 7 divergences Safety")
+combineFeaturesAndTestRegression(arrange(same_places_diff_agrad, -V3)[1:7,])
 sink()
 
 ```

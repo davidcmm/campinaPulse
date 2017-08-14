@@ -7,7 +7,7 @@ from sets import Set
 
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
-task_size = 5
+task_size = 4
 photo_threshold = 25
 
 def buildMaxDiff(photos_filename, user_question):
@@ -34,35 +34,38 @@ def buildMaxDiff(photos_filename, user_question):
 	while len(allPhotos) > 0:
 		currentPhotos = []
 
-		while len(currentPhotos) < task_size:#Randomly selecting scenes that did not reached threshold comparisons
-			photos = random.sample( allPhotos, min(task_size - len(currentPhotos), len(allPhotos)) )
-			if len(photos) < task_size:
-				for i in range(0, task_size - len(photos)):
+		photos = []
+		#If there are less photos than task_size, add all remaining and repeat others!
+		if len(allPhotos) <= task_size:
+			photos.extend(allPhotos)
+			for i in range(0, task_size - len(photos)):#Retrieve remaining from bkp
+				photo = random.sample(allPhotos_bkp, 1)[0]
+				while photo in photos or photo in currentPhotos:
 					photo = random.sample(allPhotos_bkp, 1)[0]
-					while photo in photos:
-						photo = random.sample(allPhotos_bkp, 1)[0]
-					photos.append(photo)
+				photos.append(photo)
+		#Otherwise, randomize task_size photos
+		else:
+			photos = random.sample( allPhotos, task_size )
 
-			no_add = 0
-			previous_size = len(currentPhotos)
-
-			for photo in photos:
-				if photo_count.has_key(photo):
-					counter = photo_count.get(photo)
-
-				if (task_size - len(currentPhotos)) == len(allPhotos) or no_add >= 5:
-					currentPhotos.append(photo)
-					photo_count[photo] = photo_count[photo]+1					
-					no_add = 0
-				elif counter < photo_threshold:
-					currentPhotos.append(photo)
-					photo_count[photo] = photo_count[photo]+1
-	
-			if previous_size == len(currentPhotos):
-				no_add = no_add + 1
+		#Updating photos counters
+		for photo in photos:
+			if photo_count.has_key(photo):
+				counter = photo_count.get(photo)
+			else:
+				print ">>> Error, photo not found! " + photo
+				sys.exit(1)
+			if len(allPhotos) <= task_size:
+				currentPhotos.append(photo)
+				photo_count[photo] = photo_count[photo]+1
+			elif counter < photo_threshold:
+				currentPhotos.append(photo)
+				photo_count[photo] = photo_count[photo]+1
 
 		#Building current task
-		print question + "\t" + currentPhotos[0] + "\t" + currentPhotos[1] + "\t" + currentPhotos[2] + "\t" + currentPhotos[3] + "\t" + currentPhotos[4]
+		sys.stdout.write(question)
+		for i in range(0, len(currentPhotos)):
+			sys.stdout.write("\t" + currentPhotos[i])
+		sys.stdout.write("\n")
 		
 		#Checking if each photo reached threshold comparisons
 		for photo in currentPhotos:

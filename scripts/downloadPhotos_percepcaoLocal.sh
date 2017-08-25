@@ -1,8 +1,15 @@
 #!/bin/bash
 # This script is used to download photos from Google Street View - according to pre-selected places in order to evaluate perceptions of a place!
 
-#Pleasantness -> "Rua Inacio Marques da Silva 294" "Rua Inacio Marques da Silva 434" "Rua Inacio Marques da Silva 520"
-places=( "Rua Edesio Silva 602" "Rua Edesio Silva 522" "Rua Edesio Silva 474" "Rua Edesio Silva 352" "Avenida Prefeito Severino Bezerra Cabral 38" "Avenida Prefeito Severino Bezerra Cabral 218" "Avenida Prefeito Severino Bezerra Cabral 492" "Avenida Prefeito Severino Bezerra Cabral 774" "Rua Cristina Procopio da Silva 62" "Rua Cristina Procopio da Silva 436" "Rua Cristina Procopio da Silva 282" "Rua Cristina Procopio da Silva 64" "Avenida Presidente Getulio Vargas 206" "Avenida Presidente Getulio Vargas 118" "Avenida Presidente Getulio Vargas 280" "Avenida Presidente Getulio Vargas 610" "Rua Manoel P. de Araujo 370" "Rua Manoel P. de Araujo 222" "Rua Manoel P. de Araujo 450" "Vidal de Negreiros 91" "Vidal de Negreiros 48" "Vidal de Negreiros 299" "Vidal de Negreiros 253" "Treze de Maio 132" "Treze de Maio 276" "Treze de Maio 110" "Treze de Maio 338")
+#design 1: places=( "Rua Inacio Marques da Silva 294" "Rua Inacio Marques da Silva 434" "Rua Inacio Marques da Silva 520" "Rua Edesio Silva 602" "Rua Edesio Silva 522" "Rua Edesio Silva 474" "Rua Edesio Silva 352" "Avenida Prefeito Severino Bezerra Cabral 38" "Avenida Prefeito Severino Bezerra Cabral 218" "Avenida Prefeito Severino Bezerra Cabral 492" "Avenida Prefeito Severino Bezerra Cabral 774" "Rua Cristina Procopio da Silva 62" "Rua Cristina Procopio da Silva 436" "Rua Cristina Procopio da Silva 282" "Rua Cristina Procopio da Silva 64" "Avenida Presidente Getulio Vargas 206" "Avenida Presidente Getulio Vargas 118" "Avenida Presidente Getulio Vargas 280" "Avenida Presidente Getulio Vargas 610" "Rua Manoel P. de Araujo 370" "Rua Manoel P. de Araujo 222" "Rua Manoel P. de Araujo 450" "Vidal de Negreiros 91" "Vidal de Negreiros 48" "Vidal de Negreiros 299" "Vidal de Negreiros 253" "Treze de Maio 132" "Treze de Maio 276" "Treze de Maio 110" "Treze de Maio 338")
+
+#design 2: places=( "R. Edésio Silva 70" "R. Edésio Silva 202" "R. Edésio Silva 306" "R. Edésio Silva 474" "R. Edésio Silva 602" " R. Edésio Silva 650" "R. Edésio Silva 900" "R. Edésio Silva 1136" "R. Edésio Silva 1246" "R. Edésio Silva 1546" "R. Inácio Marquês da Silva 360" "R. Inácio Marquês da Silva 500" "R. Inácio Marquês da Silva 239" "R. Inácio Marquês da Silva 120" "R. Inácio Marquês da Silva 54" "R. Manoel Pereira de Araújo 392" "R. Manoel Pereira de Araújo 370" "R. Manoel Pereira de Araújo 300" "R. Manoel Pereira de Araújo 222" "R. Manoel Pereira de Araújo 188" "R. Maciel Pinheiro 360" "R. Maciel Pinheiro 284" "R. Maciel Pinheiro 248" "R. Maciel Pinheiro 190" "R. Maciel Pinheiro 130")
+#Edesio: 22 135 203 315
+#Inacio: 22 90ou112 203 270ou293
+#Manoel: 22 135 203 315 
+#Maciel Pinheiro: 360 112 180 270
+places=( "R. Maciel Pinheiro 360" "R. Maciel Pinheiro 284" "R. Maciel Pinheiro 248" "R. Maciel Pinheiro 190" "R. Maciel Pinheiro 130")
+
 for street in "${places[@]}" ; do
 
 	for angle in 22 45 67 90 112 135 157 180 203 225 247 270 293 315 337 360 ; do

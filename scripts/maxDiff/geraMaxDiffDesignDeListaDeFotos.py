@@ -8,7 +8,7 @@ from sets import Set
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
 task_size = 4
-photo_threshold = 25
+photo_threshold = 13
 
 def buildMaxDiff(photos_filename, user_question):
 

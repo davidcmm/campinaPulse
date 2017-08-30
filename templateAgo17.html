@@ -456,7 +456,7 @@
 		<div id="imgs-wrapper-2" resize ng-style="style()" ng-show="task_phase === 1">
 			<p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p>
 			<div class="row" align="center">
-				<div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; border: solid; background-color: white; display: inline-block">
+				<div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 20%; border: solid; background-color: white; display: inline-block">
 					<!--<img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}"> -->
 				</div>
 				<div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> 
@@ -472,10 +472,10 @@
 		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
 			<p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="down">pior local</strong>!</p>
 			<div class="row" align="center">
-				<div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; border: solid; background-color: white; display: inline-block">
+				<div id="pictureCanvas" style="width: 61%; height: 61%; position: absolute; left: 0; border: solid; background-color: white; display: inline-block">
 					<!--<img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theLess}}">-->
 				</div>
-				<div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> 
+				<div style="position: relative; top: 0px; left: 6%; width: 33%; height: 22%; border: solid; padding: 1%; display: inline-block"> 
 					<fieldset> 
 						<button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> 
 						<button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> 
@@ -534,11 +534,14 @@
 <script src="https://contribua.org/comoecampina-static/imgs/kinetic-v4.7.2.min.js" type="text/javascript"></script>
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script>
 <script>
+
 	var apiUrl = 'https://contribua.org/api/';
 	var projectId = '581';
 	var formProfileStep = 10;
 	var app = angular.module('CampinaApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
+		$scope.height = window.innerHeight;
+		$scope.width = window.innerWidth;
 		$scope.userProgress = {
 			user_id: '',
 			total: 0,

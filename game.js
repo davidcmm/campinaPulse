@@ -19,7 +19,7 @@ var scaledImageSize = window.innerWidth * 0.6;
 //var inverted = false;
 var currentImage = "";
 var normalImage;//, invImage;
-var bestWorstStage = 0;
+var bestWorstStage = -1;
 var clusterArea = null;
 var DEFAULT_CROSS_WIDTH = 6;
 
@@ -153,14 +153,27 @@ function createClusterEntry(posX, posY, shapeWidth) {
 }
 
 function setupKinect() {
-	stage = new Kinetic.Stage({
-		container: 'pictureCanvas',
-		width: imageSize,
-		height: imageSize,
-		x: 0,
-		y: 0,
-		draggable: false,
-	});
+	bestWorstStage = bestWorstStage + 1;
+
+	if (bestWorstStage === 0){
+		stage = new Kinetic.Stage({
+			container: 'pictureCanvas',
+			width: imageSize,
+			height: imageSize,
+			x: 0,
+			y: 0,
+			draggable: false,
+		});
+	}else{
+		stage = new Kinetic.Stage({
+			container: 'pictureCanvas2',
+			width: imageSize,
+			height: imageSize,
+			x: 0,
+			y: 0,
+			draggable: false,
+		});
+	}
 
 	sun = new Kinetic.Image({
 		x: 0,
@@ -450,7 +463,7 @@ function start(data) {
 }
 
 //Start a new game round for Como é Campina? where the worker is asked to add spots to the images that are related to the reasons why they selected those images!
-function start_comoecampina(taskID, image, currentStage) {
+function start_comoecampina(taskID, image) {
 
 	//TO DO: start hiding all images: $("#imgs-wrapper").hide() or (var img = document.getElementById("imgA"), img.style.visibility = "visible") or ($("container").empty(), $("container").append(...)) and then presenting only two selected images!
 	if (taskID === '' || taskID === null) {
@@ -470,7 +483,6 @@ function start_comoecampina(taskID, image, currentStage) {
 	}else{
 		currentImage = taskrun.info.theLess;
 	}*/
-	bestWorstStage = currentStage;
 	if (bestWorstStage == 1){
 		startOver();
 	}

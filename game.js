@@ -304,8 +304,8 @@ function reset() {
 
 	scale = 1;
 	inverted = false;
-	imageSize = window.innerWidth * 0.6;
-	scaledImageSize = window.innerWidth * 0.6;
+	imageSize = 0.4;
+	scaledImageSize = 0.4;
 	stage.setPosition(0, 0);
 	stage.setScale(scale);
 	stage.draw();

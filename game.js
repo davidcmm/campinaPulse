@@ -1,8 +1,11 @@
 ﻿var spotCount = 0;
-var clusterCount = 0;
+//var clusterCount = 0;
 
 var spots = new Array();
-var clusters = new Array();
+//var clusters = new Array();
+
+var bestImageSpotCount = 0;
+var bestImageSpots = new Array();
 
 var taskId = 0;
 var currentTaskRun;
@@ -16,7 +19,7 @@ var scaledImageSize = 600;
 //var inverted = false;
 var currentImage = "";
 var normalImage;//, invImage;
-var best_worst_stage = 0;
+var bestWorstStage = 0;
 var clusterArea = null;
 var DEFAULT_CROSS_WIDTH = 6;
 
@@ -285,6 +288,7 @@ function keepInViewPort(e) {
 };
 
 function reset() {
+
 	scale = 1;
 	inverted = false;
 	imageSize = 600;
@@ -297,25 +301,25 @@ function reset() {
 //Called when an image must be loaded for evaluation
 function loadImages() {
 	// Loading..
-	$("#imgs-wrapper").empty();
+	/*$("#imgs-wrapper").empty();
 	if(bestWorstStage === 1){
-		$("#imgs-wrapper").append('<div class="col-xs-10 col-sm-9"> <p class="title-cg"> Marque até 3 pontos na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p> </div> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> <div style="position: relative; top: 0px; left: 620px; width: 300px; height: 380px; border: solid; padding: 10px;"> <fieldset> <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();"></button> <button id="removeSpotOrCluster" class="btn" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();"></button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> </button> </fieldset> </div>');
+		$("#imgs-wrapper").append('<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 características (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que explicam o porquê dela ter sido o <strong class="up">melhor local</strong>!</p> </div> <div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 150px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>');
 	}else{
-		$("#imgs-wrapper").append('<div class="col-xs-10 col-sm-9"> <p class="title-cg"> Marque até 3 pontos na imagem que justifiquem o porquê ele ter sido o <strong class="up">pior local</strong>!</p> </div> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> <div style="position: relative; top: 0px; left: 620px; width: 300px; height: 380px; border: solid; padding: 10px;"> <fieldset> <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();"></button> <button id="removeSpotOrCluster" class="btn" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();"></button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> </button> </fieldset> </div>');
-	}
+		$("#imgs-wrapper").append('<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 características (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que explicam o porquê dela ter sido o <strong class="down">pior local</strong>!</p> </div> <div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 150px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>');
+	}*/
 
 	//Adding buttons texts!
-	$("#btnAddSpot").text("Adicionar ponto");
+	/*$("#btnAddSpot").text("Adicionar ponto");
 	$("#removeSpotOrCluster").text("Remover ponto");
 	if(bestWorstStage == 1){
 		$("#btnFinish").text("Próxima imagem");
 	}else{
 		$("#btnFinish").text("Tarefa concluída!");
-	}
+	}*/
 
 
-	$('#pictureCanvas').hide();
-	$('#loadingPicture').show();
+	/*$('#pictureCanvas').hide();
+	$('#loadingPicture').show();*/
 	//$("#btnInvert").attr('disabled', 'disabled');
 
 	// Set the image description
@@ -399,6 +403,10 @@ function enableAddCluster() {
 }
 
 function startOver() {
+	//Saving first image evaluation first before resetting!
+	bestImageSpotCount = spotCount;
+	bestImageSpots = spots;	
+
 	//reset canvas
 	for (var i = 0; i < spots.length; i++)
 		spots[i].getShape().remove();
@@ -417,7 +425,7 @@ function startOver() {
 	layer.draw();
 
 	//reset textbox
-	$('#txtObservation').val('');
+	//$('#txtObservation').val('');
 }
 
 //Start a new game round: sun-spot
@@ -435,69 +443,83 @@ function start(data) {
 	taskId = task.id;
 
 	// start!
-	currentImage = task.info.image;/* TO DO: Change to save both images, the best one and the worst one!*/
+	currentImage = task.info.image;
 	inverted = true;
 	reset();
 	loadImages();
 }
 
 //Start a new game round for Como é Campina? where the worker is asked to add spots to the images that are related to the reasons why they selected those images!
-function start_comoecampina(taskrun) {
+function start_comoecampina(taskID, image, currentStage) {
 
 	//TO DO: start hiding all images: $("#imgs-wrapper").hide() or (var img = document.getElementById("imgA"), img.style.visibility = "visible") or ($("container").empty(), $("container").append(...)) and then presenting only two selected images!
-	if ($.isEmptyObject(taskrun)) {
+	if (taskID === '' || taskID === null) {
             reset();
-            $("#mainDivGame").hide();
-            $("#finish").fadeIn(500);
+            $("#imgs-wrapper-2").hide();
+            $("#imgs-wrapper-3").hide();
+            //$("#finish").fadeIn(500);
             return;
         }
-	taskId = taskrun.task_id;
-	currentTaskRun = taskrun;
+	taskId = taskID;
+	currentImage = image;
+	//currentTaskRun = taskrun;
 	
 	// start!
-	if (bestWorstStage === 0){
+	/*if (bestWorstStage === 0){
 		currentImage = taskrun.info.theMost;
 	}else{
 		currentImage = taskrun.info.theLess;
+	}*/
+	bestWorstStage = currentStage;
+	if (bestWorstStage == 1){
+		startOver();
 	}
-	bestWorstStage = bestWorstStage + 1;
 	reset();
 	loadImages();
 }
 
 //Called when the evaluation of a certain image has finished (after adding spots to it!)
 function done() {
-	if (bestWorstStage == 1){//Presenting next image!
-		start_comoecampina(currentTaskRun);
-	}else{
-	//	var answer = spotCount + "~" + clusterCount + "~" + $('#txtObservation').val();
-		var answer = spotCount + "~" + $('#txtObservation').val();
-		// add spots
-		for (i = 0; i < spotCount; i++) {
-			var spot = spots[i];
-			var pos = spot.getPosition();
-			answer += createSpotEntry(pos.x, pos.y);
-		}
-		// add clusters
-		/*for (i = 0; i < clusterCount; i++) {
-			var cluster = clusters[i];
-			var pos = cluster.getPosition();
-			answer += createClusterEntry(pos.x, pos.y, cluster.getWidth());
-		}*/
-		currentTaskRun['spots'] = answer;
-		taskrunString = JSON.stringify(currentTaskRun);
-
-		//Saving in database!
-		$http.post('https://contribua.org/api/taskrun', taskrun).then(function(response) {
-			// console.log('Saved!');
-			$("#skeleton").fadeOut(0);
-			$("#success").fadeIn();
-			// After save, calls a new task again
-			newTask();
-			$("#skeleton").fadeIn(1000);
-			setTimeout(function() { $("#success").fadeOut() }, 1000);
-		}, function saveTaskErrorCallback(response) {
-			$('#error').show();
-		});
+	
+	//var answer = spotCount + "~" + clusterCount + "~" + $('#txtObservation').val();
+	var answer = bestImageSpotCount;
+	// add spots
+	for (i = 0; i < bestImageSpotCount; i++) {
+		var spot = bestImageSpots[i];
+		var pos = bestImageSpots.getPosition();
+		answer += createSpotEntry(pos.x, pos.y);
 	}
+
+	var answer2 = spotCount;
+	// add spots
+	for (i = 0; i < spotCount; i++) {
+		var spot = spots[i];
+		var pos = spots.getPosition();
+		answer += createSpotEntry(pos.x, pos.y);
+	}
+
+	var finalAnswer = new Array();
+	finalAnswer[0] = answer;
+	finalAnswer[1] = answer2;
+	return finalAnswer;
+
+	// add clusters
+	/*for (i = 0; i < clusterCount; i++) {
+		var cluster = clusters[i];
+		var pos = cluster.getPosition();
+		answer += createClusterEntry(pos.x, pos.y, cluster.getWidth());
+	}*/
+
+	//console.log(answer);
+        /*pybossa.saveTask(taskId, answer).done(
+                        function (data) {
+                                // Show dialog
+                                $('#completedDialog').modal('show');
+                                // Fade out the pop-up after a 1000 miliseconds
+                                //setTimeout(function() { $("#success").fadeOut() }, 1000);             
+                                startOver();
+                                pybossa.newTask(app_shortname).done(function(data) {
+                                        start(data);
+                                });
+        });*/
 }

@@ -199,6 +199,9 @@
 	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
 		Carregando próxima tarefa...
 	</div>
+	<div id="why" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+		Marque ao menos um ponto na imagem que ajude a explicar o porquê você a escolheu!
+	</div>
 	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
 		<strong>Ops! Algo errado.</strong>
 		<br/>
@@ -379,7 +382,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="imgs-wrapper" resize ng-style="style()">
+		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
 			<div class="row">
 				<div
 					id="imgA"
@@ -415,7 +418,7 @@
 					id="btn-answer"
 					class="btn btn-rounded"
 					ng-show="readyToAnswer()"
-					ng-click="saveTask()"><span class="fa fa-check-circle-o"></span></button>
+					ng-click="next_phase()"><span class="fa fa-check-circle-o"></span></button>
 			</div>
 			<div class="row">
 				<div
@@ -448,6 +451,41 @@
 				</div>
 			</div>
 		</div>
+		<!--<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p> </div> 
+<div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>  -->
+		<div id="imgs-wrapper-2" resize ng-style="style()" ng-show="task_phase === 1">
+			<p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p>
+			<div class="row" align="center">
+				<div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; border: solid; background-color: white; display: inline-block">
+					<!--<img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}"> -->
+				</div>
+				<div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> 
+					<fieldset> 
+						<button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> 
+						<button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> 
+						<button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" ng-click="next_phase()"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  
+					</fieldset> 
+				</div>
+			</div>
+
+		</div>
+		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
+			<p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="down">pior local</strong>!</p>
+			<div class="row" align="center">
+				<div id="pictureCanvas" style="width: 608px; height: 608px; position: absolute; left: 0; border: solid; background-color: white; display: inline-block">
+					<!--<img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theLess}}">-->
+				</div>
+				<div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> 
+					<fieldset> 
+						<button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> 
+						<button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> 
+						<button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="saveTask()"> <i class="icon-ok icon-white"></i> Tarefa Concluída!</button>  
+					</fieldset> 
+				</div>
+			</div>
+
+		</div>
+		
 	</div>
 	<!-- END Task skeleton -->
 	<!-- Task skeleton finished -->
@@ -493,6 +531,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script src="https://contribua.org/comoecampina-static/imgs/kinetic-v4.7.2.min.js" type="text/javascript"></script>
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script>
 <script>
 	var apiUrl = 'https://contribua.org/api/';
@@ -543,6 +582,7 @@
 				}
 			}
 		};
+		$scope.task_phase = 0;//Used to controll task phases: select best and worst image, mark points in best image, mark points in worst image
 		var showTutorial = function() {
   			var hasDisplayedTutorial = $cookies.get('cg-tutorial');
   			if (typeof hasDisplayedTutorial == "undefined") {
@@ -648,8 +688,7 @@
 				});
 		}
 		var newTask = function() {
-			$("#imgs-wrapper").empty();
-			$("#imgs-wrapper").append('<div class="row"> <div id="imgA" class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail" ng-click="select(task.info.url_a)" style="display: block; visibility: visible;"> <div class="icon-wrapper">  <span class="icon-cg icon-cg-up iconcg-nice-up" ng-class="isSelectedIcon(task.info.url_a)"></span> </div> <img class="img-thumbnail" width="100%" alt="" ng-src="{{task.info.url_a}}" ng-class="isSelected(task.info.url_a)"> </div> <div id="imgB" class="col-xs-6 col-lg-5 div-thumbnail" ng-click="select(task.info.url_b)" style="display: block;"> <div class="icon-wrapper"> <span class="icon-cg" ng-class="isSelectedIcon(task.info.url_b)"></span> </div> <img class="img-thumbnail" width="100%" alt="" ng-src="{{task.info.url_b}}" ng-class="isSelected(task.info.url_b)"> </div> </div> <div class="separator text-center"> <button id="btn-answer" class="btn btn-rounded" ng-show="readyToAnswer()" ng-click="saveTask()"><span class="fa fa-check-circle-o"></span></button> </div> <div class="row"> <div id="imgC" class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail" ng-click="select(task.info.url_c)" style="display: block;"> <div class="icon-wrapper"> <span class="icon-cg" ng-class="isSelectedIcon(task.info.url_c)"></span> </div> <img class="img-thumbnail" width="100%" alt="" ng-src="{{task.info.url_c}}" ng-class="isSelected(task.info.url_c)"> </div> <div id="imgD" class="col-xs-6 col-lg-5 div-thumbnail" ng-click="select(task.info.url_d)"> <div class="icon-wrapper"> <span class="icon-cg icon-cg-down iconcg-nice-down" ng-class="isSelectedIcon(task.info.url_d)"></span> </div> <img class="img-thumbnail" width="100%" alt="" ng-src="{{task.info.url_d}}" ng-class="isSelected(task.info.url_d)"> </div> </div>');
+			$scope.task_phase = 0;
 			getUserProgress();
 			// console.log('Loading task...');
 			$('#loading').fadeIn();
@@ -710,6 +749,16 @@
 								$scope.answer.theLess = '';
 							}
 						}
+						$scope.next_phase = function() {
+							$scope.task_phase = $scope.task_phase + 1;
+							if ($scope.task_phase === 1){
+								setupKinect();			
+								start_comoecampina($scope.task.id, $scope.answer.theMost, 0);
+							}else if ($scope.task_phase === 2){
+								setupKinect();
+								start_comoecampina($scope.task.id, $scope.answer.theLess, 1);
+							}	
+						}
 						// Save task
 						$scope.saveTaskTie = function(){
 							$scope.answer.theMost = 'equal';
@@ -723,32 +772,36 @@
 								$scope.answer.userProfile = $scope.userProfile;
 								$scope.shouldSaveProfile = false;
 							}
+
 							var taskrun = {
 								'project_id': $scope.task.project_id,
 								'task_id': $scope.task.id,
 								'info': $scope.answer,
-								'spots': '' 
+								'spotsBest': '',
+								'spotsWorst': '' 
 							};
+
+							if ( $scope.answer.theMost !== 'equal'){//Retrieving spots!
+								var spots = done();//Call done from game.js!
+								taskrun['spotsBest'] = spots[0];
+								taskrun['spotsWorst'] = spots[1];
+							}
 							taskrun = JSON.stringify(taskrun);
 							//console.log(taskrun);
 
 							//Asking for points in most and least preferred images
-							if ($scope.answer.theMost !== 'equal' ){
-								start_comoecampina(taskrun);
-							} else {
-								//Saving in database!
-								$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
-									// console.log('Saved!');
-									$("#skeleton").fadeOut(0);
-									$("#success").fadeIn();
-									// After save, calls a new task again
-									newTask();
-									$("#skeleton").fadeIn(1000);
-									setTimeout(function() { $("#success").fadeOut() }, 1000);
-								}, function saveTaskErrorCallback(response) {
-									$('#error').show();
-								});
-						     }
+							//Saving in database!
+							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+								// console.log('Saved!');
+								$("#skeleton").fadeOut(0);
+								$("#success").fadeIn();
+								// After save, calls a new task again
+								newTask();
+								$("#skeleton").fadeIn(1000);
+								setTimeout(function() { $("#success").fadeOut() }, 1000);
+							}, function saveTaskErrorCallback(response) {
+								$('#error').show();
+							});
 						}
 					} else {
 						$('#skeleton').hide();

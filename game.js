@@ -14,8 +14,8 @@ var layer = new Kinetic.Layer();
 var sun;
 var stage;
 var scale = 1;
-var imageSize = 0.4;/* TO DO: Images are smaller! -> 248.833 (hor) x 189.117 (ver)*/
-var scaledImageSize = 0.4;
+var imageSize = window.innerWidth * 0.4;/* TO DO: Images are smaller! -> 248.833 (hor) x 189.117 (ver)*/
+var scaledImageSize = window.innerWidth * 0.4;
 //var inverted = false;
 var currentImage = "";
 var normalImage;//, invImage;
@@ -304,8 +304,8 @@ function reset() {
 
 	scale = 1;
 	inverted = false;
-	imageSize = 0.4;
-	scaledImageSize = 0.4;
+	imageSize = window.innerWidth * 0.4;
+	scaledImageSize = window.innerWidth * 0.4;
 	stage.setPosition(0, 0);
 	stage.setScale(scale);
 	stage.draw();

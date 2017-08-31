@@ -309,36 +309,17 @@ function reset() {
 	stage.setPosition(0, 0);
 	stage.setScale(scale);
 	stage.draw();
+
+	//Restarting buttons!
+	$("#removeSpotOrCluster").removeAttr("disabled");
+	$("#btnAddSpot").removeAttr("disabled");
+	$("#removeSpotOrCluster").prop("enabled", "true");
+	$("#btnAddSpot").prop("enabled", "true");
+
 }
 
 //Called when an image must be loaded for evaluation
 function loadImages() {
-	// Loading..
-	/*$("#imgs-wrapper").empty();
-	if(bestWorstStage === 1){
-		$("#imgs-wrapper").append('<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 características (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que explicam o porquê dela ter sido o <strong class="up">melhor local</strong>!</p> </div> <div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 150px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>');
-	}else{
-		$("#imgs-wrapper").append('<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 características (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que explicam o porquê dela ter sido o <strong class="down">pior local</strong>!</p> </div> <div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" src="https://contribua.org/sun4allfiles/images/loading.gif" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 150px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>');
-	}*/
-
-	//Adding buttons texts!
-	/*$("#btnAddSpot").text("Adicionar ponto");
-	$("#removeSpotOrCluster").text("Remover ponto");
-	if(bestWorstStage == 1){
-		$("#btnFinish").text("Próxima imagem");
-	}else{
-		$("#btnFinish").text("Tarefa concluída!");
-	}*/
-
-
-	/*$('#pictureCanvas').hide();
-	$('#loadingPicture').show();*/
-	//$("#btnInvert").attr('disabled', 'disabled');
-
-	// Set the image description
-	//var parts = currentImage.split("_");
-	//var date = new Date('19' + parts[3], parts[2] - 1, parts[1]);
-	//$('#lblImage').text(getDataTakenInfo(date));
 
 	normalImage = new Image();
 	normalImage.onload = function () {

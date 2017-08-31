@@ -479,7 +479,7 @@ function done() {
 	// add spots
 	for (i = 0; i < bestImageSpotCount; i++) {
 		var spot = bestImageSpots[i];
-		var pos = bestImageSpots.getPosition();
+		var pos = spot.getPosition();
 		answer += createSpotEntry(pos.x, pos.y);
 	}
 
@@ -487,7 +487,7 @@ function done() {
 	// add spots
 	for (i = 0; i < spotCount; i++) {
 		var spot = spots[i];
-		var pos = spots.getPosition();
+		var pos = spot.getPosition();
 		answer += createSpotEntry(pos.x, pos.y);
 	}
 

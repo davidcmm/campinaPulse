@@ -131,6 +131,15 @@ CrossShape.prototype.getClassName = function(){
 	return "Cross";
 }
 
+//Functions related to drawing!
+function distanceBetween(point1, point2) {
+  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+}
+
+function angleBetween(point1, point2) {
+  return Math.atan2( point2.x - point1.x, point2.y - point1.y );
+}
+
 function createSpot(posX, posY) {
 	var origX = posX / scale;
 	var origY = posY / scale;
@@ -234,8 +243,8 @@ function setupKinect() {
 	// Keep the picture inside the div
 	stage.on("dragmove", keepInViewPort);
 	// Zoom events
-	stage.getContainer().addEventListener("mousewheel", zoom, false);
-	stage.getContainer().addEventListener("DOMMouseScroll", zoom, false); // firefox
+	//stage.getContainer().addEventListener("mousewheel", zoom, false);
+	//stage.getContainer().addEventListener("DOMMouseScroll", zoom, false); // firefox
 
 	// Key mapping
 	window.addEventListener('keydown', function(e) {

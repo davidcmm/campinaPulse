@@ -309,13 +309,6 @@ function reset() {
 	stage.setPosition(0, 0);
 	stage.setScale(scale);
 	stage.draw();
-
-	//Restarting buttons!
-	$("#removeSpotOrCluster").removeAttr("disabled");
-	$("#btnAddSpot").removeAttr("disabled");
-	$("#removeSpotOrCluster").prop("enabled", "true");
-	$("#btnAddSpot").prop("enabled", "true");
-
 }
 
 //Called when an image must be loaded for evaluation
@@ -464,6 +457,13 @@ function start_comoecampina(taskID, image) {
 	}else{
 		currentImage = taskrun.info.theLess;
 	}*/
+	//Restarting buttons!
+	$("#removeSpotOrCluster").removeAttr("disabled");
+	$("#btnAddSpot").removeAttr("disabled");
+	$("#removeSpotOrCluster").prop("enabled", "true");
+	$("#btnAddSpot").prop("enabled", "true");
+	document.body.style.cursor = "default";
+
 	if (bestWorstStage == 1){
 		startOver();
 	}

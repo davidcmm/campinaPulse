@@ -197,7 +197,8 @@
 <div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl">
 	<!-- Success and Error Messages for the user -->
 	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
-		<span class="glyphicon glyphicon-ok"></span><strong> Sua resposta foi salva!</strong>
+		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
+		<li class="fa fa-2x fa-check pull-left"></li> <strong> Sua resposta foi salva!</strong>
 	</div>
 	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
 		Carregando próxima tarefa...
@@ -255,6 +256,30 @@
 		      <div class="modal-body">
 		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>.</p>
 		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <div id="tab4" ng-show="tab === 4">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem o principal elemento que o motivou nessa escolha. Para isso basta clicar e arrastar o mouse para traçar um risco sobre este elemento!</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 5">Próximo</button>
+		      	</div>
+		      </div>
+	      </div>
+	      <div id="tab5" ng-show="tab === 5">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_05.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p>Faça o mesmo para o local <span class="up">pior avaliado!</span></p>
+		      	<div class="text-center">
 		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar">Começar</button>
 		      	</div>
 		      </div>
@@ -266,6 +291,8 @@
 				<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
 				<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
 				<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
+				<li ng-click="tab = 4" ng-class="{active:tab === 4}"></li>
+				<li ng-click="tab = 5" ng-class="{active:tab === 5}"></li>
 			</ol>
 	      </div>
 
@@ -464,16 +491,18 @@
 			<table>
 				<tr>
 					<td colspan="2">
-						<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
+						<div class="col-xs-12 col-sm-11">
+							<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
+						</div>
 					</td>
 				</tr>
 				<tr>
-					<td style="margin: 0 10px 0 0">	
-						<canvas id="canvas1" width="480" height="360">
+					<td>	
+						<canvas id="canvas1">
 						</canvas>
 					</td>
-					<td>
-						<p style="color:white"> <b>Seu mouse agora funciona como um pincel que lhe permite riscar a imagem! Marque na imagem o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que o levou a escolhê-la! </b></p> <br> <br>
+					<td style="padding: 0 0 0 15px">
+						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
 						<button id="reset" onclick="reset_draw()">Reiniciar marcação</button>
 						<button id="nextImage" ng-click="nextPhase()">Próxima imagem</button>
 					</td>
@@ -487,16 +516,18 @@
 			<table>
 				<tr>
 					<td colspan="2">
-						<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
+						<div class="col-xs-12 col-sm-11">
+							<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
+						</div>
 					</td>
 				</tr>
 				<tr>
-					<td style="margin: 0 10px 0 0">	
-						<canvas id="canvas2" width="480" height="360">
+					<td>	
+						<canvas id="canvas2">
 						</canvas>
 					</td>
-					<td>
-						<p style="color:white"> <b>Seu mouse agora funciona como um pincel que lhe permite riscar a imagem! Marque na imagem o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que o levou a escolhê-la!</b> </p> <br> <br>
+					<td style="padding: 0 0 0 15px">
+						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
 						<button id="reset2" onclick="reset_draw()">Reiniciar marcação</button>
 						<button id="taskFinished" ng-click="saveTask()">Tarefa concluída!</button>
 					</td>
@@ -556,7 +587,7 @@
 //Old code!
 	var apiUrl = 'https://contribua.org/api/';
 	var projectId = '583	';
-	var formProfileStep = 10;
+	var formProfileStep = 1;
 	var app = angular.module('CampinaApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.height = window.innerHeight;
@@ -650,6 +681,7 @@
 								if (typeof currentData.info.userProfile != "undefined") {
 									var currentFinishTime = new Date(currentData.finish_time);
 									if (finishTime == null || currentFinishTime > finishTime) {
+										alert("Achei Perfil!");
 										finishTime = currentFinishTime;
 										$scope.userProfile = currentData.info.userProfile;
 										$scope.userProfile.age = parseInt($scope.userProfile.age);
@@ -665,7 +697,7 @@
 								$scope.userProfile.clas === '' ||
 								$scope.userProfile.knowcampina === '' ||
 								$scope.userProfile.howknowcampina === '' ||
-								$scope.userProfile.city === '') {
+								$scope.userProfile.city === '' || $scope.userProfile.neig.length === 0) {
 							$scope.shouldSaveProfile = true;
 							showProfileForm();
 						} else {
@@ -679,7 +711,7 @@
 					$scope.userProfile.clas === '' ||
 					$scope.userProfile.knowcampina === '' ||
 					$scope.userProfile.howknowcampina === '' ||
-					$scope.userProfile.city === '') {
+					$scope.userProfile.city === '' || $scope.userProfile.neig.length === 0) {
 					$scope.shouldSaveProfile = true;
 					showProfileForm();
 				} else {
@@ -799,6 +831,8 @@
 								var selectedPoints = selectedPointsLess;
 							}
 							var canvas = document.getElementById(canvasID);
+							canvas.width = 0.26 * window.innerWidth;
+							canvas.height = 0.42 * window.innerHeight;
 							context = canvas.getContext('2d');
 
 							function distanceBetween(point1, point2) {
@@ -821,7 +855,7 @@
 								  }
 
 								  start_draw = function(){
-									context.drawImage(base_image, 0, 0, 480, 360);//640 x 480
+									context.drawImage(base_image, 0, 0, canvas.width, canvas.height);//640 x 480
 									var el = document.getElementById(canvasID);
 									var startX = el.getBoundingClientRect().x;
 									var startY = el.getBoundingClientRect().y;

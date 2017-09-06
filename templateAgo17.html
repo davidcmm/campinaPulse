@@ -254,7 +254,8 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_03.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>.</p>
+		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>. </p>
+			<p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
 		      	</div>
@@ -681,7 +682,7 @@
 								if (typeof currentData.info.userProfile != "undefined") {
 									var currentFinishTime = new Date(currentData.finish_time);
 									if (finishTime == null || currentFinishTime > finishTime) {
-										alert("Achei Perfil!");
+										//alert("Achei Perfil!");
 										finishTime = currentFinishTime;
 										$scope.userProfile = currentData.info.userProfile;
 										$scope.userProfile.age = parseInt($scope.userProfile.age);
@@ -807,8 +808,8 @@
 							}
 						}
 						
-						var selectedPointsMost = new Array();
-						var selectedPointsLess = new Array();
+						var selectedPointsMost = new Array();//[[],[],[]]?
+						var selectedPointsLess = new Array();//[[],[],[]]?
 			
 						$scope.nextPhase = function() {
 							$scope.task_phase = $scope.task_phase + 1;
@@ -819,7 +820,8 @@
 								setupKinect();
 								start_comoecampina($scope.task.id, $scope.answer.theLess, 1);
 							}*/
-			
+					
+							//Other alternative: http://fabricjs.com/freedrawing								
 							//Selecting and initing canvas according to phase (most or less image being evaluated)
 							if ($scope.task_phase === 1){
 								var canvasID = "canvas1";
@@ -849,7 +851,7 @@
 								  var index = 0;
 
 								  reset_draw = function(){
-									points = new Array();
+									points = new Array();//[[],[],[]]?
 									index = 0;
 									start_draw();
 								  }
@@ -943,13 +945,13 @@
 								for (var i = 0; i < selectedPointsMost.length; i++){
 									allPoints = allPoints + "(" + selectedPointsMost[i].x+","+selectedPointsMost[i].y+");";
 								}
-								alert(allPoints);
+								//alert(allPoints);
 								$scope.answer.markMost = allPoints;
 								allPoints = "";
 								for (var i = 0; i < selectedPointsLess.length; i++){
 									allPoints = allPoints + "(" + selectedPointsLess[i].x+","+selectedPointsLess[i].y+");";
 								}
-								alert(allPoints);
+								//alert(allPoints);
 								$scope.answer.markLess = allPoints;
 							}
 
@@ -960,7 +962,7 @@
 							};
 
 							taskrun = JSON.stringify(taskrun);
-							alert(taskrun);
+							//alert(taskrun);
 							//console.log(taskrun);
 
 							//Asking for points in most and least preferred images
@@ -1042,3 +1044,12 @@
 	});
 
 </script>
+
+
+
+<!-- Luiz:
+1. Mudança muito sutil entre agradável e seguro! Deixar mais claro?? Outra aplicação??
+2. Marcar mais de uma coisa?? As tres principais?? Arvores em mais de um lado??
+-->
+
+

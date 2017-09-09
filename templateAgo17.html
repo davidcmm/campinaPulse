@@ -504,8 +504,8 @@
 					</td>
 					<td style="padding: 0 0 0 15px">
 						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
-						<button id="reset" onclick="reset_draw()">Reiniciar marcação</button>
-						<button id="nextImage" ng-click="nextPhase()">Próxima imagem</button>
+						<button id="reset" class="btn btn-squared" onclick="reset_draw()">Reiniciar marcação</button>
+						<button id="nextImage" class="btn btn-squared" ng-click="nextPhase()">Próxima imagem</button>
 					</td>
 				</tr>
 			</table>
@@ -529,8 +529,8 @@
 					</td>
 					<td style="padding: 0 0 0 15px">
 						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
-						<button id="reset2" onclick="reset_draw()">Reiniciar marcação</button>
-						<button id="taskFinished" ng-click="saveTask()">Tarefa concluída!</button>
+						<button id="reset2" class="btn btn-squared" onclick="reset_draw()">Reiniciar marcação</button>
+						<button id="taskFinished" class="btn btn-squared" ng-click="saveTask()">Tarefa concluída!</button>
 					</td>
 				</tr>
 			</table>
@@ -569,7 +569,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-9 col-md-offset-1 text-center">
-				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5">Não consigo escolher!</font></a> 
+				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5">Não consigo escolher</font></a> 
 			</div>
 			<div class="col-md-2 text-right">
              			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
@@ -866,7 +866,7 @@
 
 									var isDrawing, lastPoint;
 
-									el.onmousedown = function(e) {
+									el.onmousedown = function(e) {//onpointerdown e up? touchstart, touchend e touchmove?
 										if (points.length == 0){
 											isDrawing = true;
 											lastPoint = { x: e.clientX - startX, y: e.clientY - startY };
@@ -1045,7 +1045,10 @@
 
 </script>
 
-
+<!-- David:
+1. Imagem muito pequena no celular e sem resize quando muda orientação!
+2. Marcar com pincel não funcionou no celular!
+-->
 
 <!-- Luiz:
 1. Mudança muito sutil entre agradável e seguro! Deixar mais claro?? Outra aplicação??

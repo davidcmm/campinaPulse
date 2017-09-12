@@ -255,7 +255,8 @@
 		      </div>
 		      <div class="modal-body">
 		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>. </p>
-			<p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p>
+			<!--<p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p> -->
+			<p><b>As questões sobre agradabilidade e segurança irão aparecer misturadas, então tenha cuidado em qual questão você está respondendo!</b></p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
 		      	</div>
@@ -303,71 +304,98 @@
 	<!-- END Tutorial -->
 
 	<!-- Profile -->
-	<div id="modalProfile" class="modal fade">
+	<div id="modalProfile" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
 		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Conte-nos um pouco mais sobre você</h4>
+			<div class="modal-content" ng-init="tab = 1">
+				<div id="tab1" ng-show="tab === 1">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+				        </div>
+					<div class="modal-body">
+						<p align="justify" style="font-size:120%;">Gostaríamos de conhecer um pouco mais sobre você e para isso gostaríamos de lhe fazer algumas perguntas, você poderia respondê-las?</p>
+						<div class="text-center">
+							<button class="btn btn-primary" ng-click="tab = 2">Sim</button>
+							<button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+						</div>
+					</div>
 				</div>
-				<div class="modal-body">
-					<form>
-						<div class="form-group">
-							<label for="userage">Idade:</label>
-							<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
-						</div>
-						<div class="form-group">
-							<label for="usersex">Sexo:</label>
-							<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
-								<option value="M">Masculino</option>  
-								<option value="F">Feminino</option>  				
-							</select>
-						</div>
-						<div class="form-group">
-							<label for="userclass">Classe Social (renda mensal):</label>
-							<select class="form-control" id="userclass" name="userclass" ng-model="userProfile.clas">
-								<option value="alta">Alta (R$ 14.500 ou mais)</option>  
-								<option value="media alta">Média Alta (R$ 7.250 a R$ 14.499,99)</option>  
-								<option value="media" selected>Média (R$ 2.900 a R$ 7.249,99)</option>  
-								<option value="media baixa">Média Baixa (R$ 1.450 a R$ 2.899,99)</option>  
-								<option value="baixa">Baixa (até R$ 1.449,99)</option>
-							</select>
-						</div>
-						<div class="form-group">
-							<label for="usercity">Em qual cidade você mora atualmente:</label>
-							<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
-						</div>
-						<div class="form-group">
-							<label for="knowcampina">Você conhece a cidade de Campina Grande - Paraíba?</label>
-							<select class="form-control" id="knowcampina" name="knowcampina" ng-model="userProfile.knowcampina">
-								<option value="yes">Sim</option>  
-								<option value="no">Não</option>  				
-							</select>
-						</div>
-						<div class="form-group">
-							<label for="howknowcampina">Se você conhece Campina, qual destas alternativas se enquadra melhor para você?</label>
-							<select class="form-control" id="howknowcampina" name="howknowcampina" ng-model="userProfile.howknowcampina">
-								<option value="live">Moro na cidade</option>  
-								<option value="study">Apenas estudo na cidade</option>  				
-								<option value="work">Apenas trabalho na cidade</option>  				
-								<option value="turism">Visito ou visitei esporadicamente a cidade</option>  				
-							</select>
-						</div>
-						<p>Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba?</p>
-						<div class="row">
-							<div class="col-sm-4" ng-repeat="item in neighborhood">
-								<div class="checkbox">
-									<label for="{{item.id}}">
-										<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} -->
-                                        <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
-									</label>
+				 <div id="tab2" ng-show="tab === 2">
+					<div class="modal-header">
+						<h4 class="modal-title">Conte-nos um pouco mais sobre você</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label for="userage">Idade:</label>
+								<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
+							</div>
+							<div class="form-group">
+								<label for="usersex">Sexo:</label>
+								<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
+									<option value="M">Masculino</option>  
+									<option value="F">Feminino</option>  				
+								</select>
+							</div>
+							<div class="form-group">
+								<!--<label for="userclass">Classe Social (renda mensal):</label> -->
+								<label for="userclass">Considerando os responsáveis pelo sustento da sua casa, a soma de seus rendimentos se enquadra em que faixa?</label>
+								<select class="form-control" id="userclass" name="userclass" ng-model="userProfile.clas">
+									<option value="alta">R$ 14.500 ou mais</option>  
+									<option value="media alta">R$ 7.250 a R$ 14.499,99</option>  
+									<option value="media" selected>R$ 2.900 a R$ 7.249,99</option>  
+									<option value="media baixa">R$ 1.450 a R$ 2.899,99</option>  
+									<option value="baixa">até R$ 1.449,99</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="usercity">Em qual cidade você mora atualmente:</label>
+								<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
+							</div>
+							<div class="form-group">
+								<label for="knowcampina">Você conhece a cidade de Campina Grande - Paraíba?</label>
+								<select class="form-control" id="knowcampina" name="knowcampina" ng-model="userProfile.knowcampina">
+									<option value="yes">Sim</option>  
+									<option value="no">Não</option>  				
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="howknowcampina">Se você conhece Campina, qual destas alternativas se enquadra melhor para você?</label>
+								<select class="form-control" id="howknowcampina" name="howknowcampina" ng-model="userProfile.howknowcampina">
+									<option value="live">Moro na cidade</option>  
+									<option value="study">Apenas estudo na cidade</option>  				
+									<option value="work">Apenas trabalho na cidade</option>  				
+									<option value="turism">Visito ou visitei esporadicamente a cidade</option>  				
+								</select>
+							</div>
+							<label for="howknowcampina">Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba?</label>
+							<div class="row">
+								<div class="col-sm-4" ng-repeat="item in neighborhood">
+									<div class="checkbox">
+										<label for="{{item.id}}">
+											<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} -->
+		                                <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
+										</label>
+									</div>
 								</div>
 							</div>
+						</form>
+						<br>
+						<div class="text-center">
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
 						</div>
-					</form>
+					</div>
+					<!--<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+					</div>-->
 				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
-				</div>
+
+			<div class="modal-footer">
+			      	<ol class="carousel-indicators">
+						<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
+						<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
+				</ol>
+		      </div>
 			</div>
 		</div>
 	</div><!-- /.modal -->
@@ -493,7 +521,7 @@
 				<tr>
 					<td colspan="2">
 						<div class="col-xs-12 col-sm-11">
-							<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
+							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
 						</div>
 					</td>
 				</tr>
@@ -503,9 +531,9 @@
 						</canvas>
 					</td>
 					<td style="padding: 0 0 0 15px">
-						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
-						<button id="reset" class="btn btn-squared" onclick="reset_draw()">Reiniciar marcação</button>
-						<button id="nextImage" class="btn btn-squared" ng-click="nextPhase()">Próxima imagem</button>
+						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
+						<button id="reset" class="btn btn-default" onclick="reset_draw()">Reiniciar marcação</button>
+						<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
 					</td>
 				</tr>
 			</table>
@@ -518,7 +546,7 @@
 				<tr>
 					<td colspan="2">
 						<div class="col-xs-12 col-sm-11">
-							<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
+							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
 						</div>
 					</td>
 				</tr>
@@ -528,9 +556,9 @@
 						</canvas>
 					</td>
 					<td style="padding: 0 0 0 15px">
-						<p style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
-						<button id="reset2" class="btn btn-squared" onclick="reset_draw()">Reiniciar marcação</button>
-						<button id="taskFinished" class="btn btn-squared" ng-click="saveTask()">Tarefa concluída!</button>
+						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
+						<button id="reset2" class="btn btn-default" onclick="reset_draw()">Reiniciar marcação</button>
+						<button id="taskFinished" class="btn btn-primary" ng-click="saveTask()">Tarefa concluída</button>
 					</td>
 				</tr>
 			</table>
@@ -569,7 +597,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-9 col-md-offset-1 text-center">
-				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5">Não consigo escolher</font></a> 
+				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5">Não consigo escolher</font></a> 
 			</div>
 			<div class="col-md-2 text-right">
              			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
@@ -693,6 +721,7 @@
 						// console.log($scope.userProfile);
 						// Calls the form profile if still have data to fill
 						// Neighborhood is not required
+						showProfileForm();
 						if (	$scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
 								$scope.userProfile.sex === '' ||
 								$scope.userProfile.clas === '' ||
@@ -733,7 +762,7 @@
 					// console.log($scope.userProgress);
 
 					// Get user profile (10 steps)
-                  //getUserProfile();
+					getUserProfile();
 					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
 						getUserProfile();
 					}
@@ -821,7 +850,7 @@
 								start_comoecampina($scope.task.id, $scope.answer.theLess, 1);
 							}*/
 					
-							//Other alternative: http://fabricjs.com/freedrawing								
+							//Other alternative: http://fabricjs.com/freedrawing
 							//Selecting and initing canvas according to phase (most or less image being evaluated)
 							if ($scope.task_phase === 1){
 								var canvasID = "canvas1";
@@ -837,6 +866,7 @@
 							canvas.height = 0.42 * window.innerHeight;
 							context = canvas.getContext('2d');
 
+							//Functions to calculate distance and angle between points of touch/mouse
 							function distanceBetween(point1, point2) {
 							  	return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
 							}
@@ -844,6 +874,7 @@
 							  	return Math.atan2( point2.x - point1.x, point2.y - point1.y );
 							}
 
+							//Function to config canvas
 							function make_base() {
 								  base_image = new Image();
 								  base_image.src = imageToEvaluate;  
@@ -865,15 +896,15 @@
 									ctx.lineJoin = ctx.lineCap = 'round';
 
 									var isDrawing, lastPoint;
-
-									el.onmousedown = function(e) {//onpointerdown e up? touchstart, touchend e touchmove?
+	
+									//Functions to deal with mouse/touch events
+									ondown = function(e) {
 										if (points.length == 0){
 											isDrawing = true;
 											lastPoint = { x: e.clientX - startX, y: e.clientY - startY };
 										}
-									};
-
-									el.onmousemove = function(e) {
+									}
+									onmove = function(e) {
 										if (!isDrawing) return;
 
 										var currentPoint = { x: e.clientX - startX, y: e.clientY - startY };
@@ -902,17 +933,45 @@
 										index = index+1;
 
 										lastPoint = currentPoint;
-
-									};
-
-									el.onmouseup = function() {
+									}
+									onup = function(){
 										isDrawing = false;
 										/*var allPoints = "";
 										for (var i = 0; i < points.length; i++){
 											allPoints = allPoints + "(" + points[i].x+","+points[i].y+");";
 										}
 										alert(allPoints);*/
+									}
+									 
+									//Reacting on mouse and touch calls
+									el.onmousedown = function(e) {//onpointerdown e up? touchstart, touchend e touchmove?
+										ondown(e);
 									};
+
+									el.onmousemove = function(e) {
+										onmove(e)
+									};	
+
+									el.onmouseup = function() {
+										onup();
+									};
+
+									try{
+										el.onpointerdown = function(e) {//onpointerdown e up? touchstart, touchend e touchmove?
+											ondown(e);
+										};
+
+										el.onpointermove = function(e) {
+											onmove(e)
+										};	
+
+										el.onpointerup = function() {
+											onup();
+										};
+									}catch(err){
+										console.log('Mouse and touch config failed!' + err.message);
+									}
+
 								  }
 	
 								  base_image.onload = function(){
@@ -1044,6 +1103,23 @@
 	});
 
 </script>
+
+<!-- Nazareno:
+#### Interface/app
+* 1. Tirar a 1a e 3a exclamações do texto de descrição do pp (do parágrafo _agora, estamos interessados em inv…_ inclusive, tira essa vírgula também :)
+2. Na 2a tela do tutorial, reduz esse texto: “É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!” (E esse ora aí não é hora não?)
+3. A tela de “conte-nos um pouco mais sobre você” aparece meio abruptamente. que tal se aparecesse primeiro algo como “queríamos lhe perguntar mais sobre você“, e quando a pessoa desse o ok ela caísse no form?
+4. Não tinha a parte de clicar no que você mais gostou/menos gostou na foto não?
+5. Os elementos da página são carregados em uma ordem meio estranha: primeiro aparece o texto todos desengonçado, e depois começam a aparecer as fotos, né. pergunta a jeff se não tem como melhorar isso
+6. Voltei pro ruascampina, e a pergunta que fica no topo da página não me diz o que é pra fazer. e tem um espaço estranho entre o título e as fotos.
+7. (tela da marcação) o espaço entre a letra azul e a branca, o alinhamento dos elementos que tem que ter uma lógica perceptível (tudo no mesmo ponto à esquerda por exemplo). talvez seja bom seguir a mesmo leiaute da parte anterior da tarefa, com a foto grande no centro da tela. aí acho que esse monte de texto junto da imagem precisa sair. pode ser algo como “clique/toque (dependendo se é no celular) no que nessa foto faz ela ser o melhor lugar”. e aí os botões de reiniciar e próxima precisam ficar um pouco mais longe um do outro e serem no mesmo look and feel da outra tela.
+8. Na parte do formulário do “conte-nos mais”, acho que precisamos tirar o termo “Classe social".  a renda mensal é mesmo da pessoa? ou da família? não está claro
+9. Na parte da marcação está aparecendo o “Não consigo escolher!“. É pra aparecer? E aliás, tira essa exclamação também
+10. E a do _Tarefa concluída!_ também
+
+#### Contribua
+1. Aida clicou no login via facebook e depois de logar ela foi levada pra uma tela pra editar o perfil que pede pra ela editar o email dela. quando ela editou, o contribua salvou mas não mandou ela de volta pra a tarefa. acho que isso não pode ficar assim. por que não pegamos o email do facebook já e depois de logada a pessoa já cai na tarefa?
+-->
 
 <!-- David:
 1. Imagem muito pequena no celular e sem resize quando muda orientação!

@@ -520,20 +520,20 @@
 			<table>
 				<tr>
 					<td colspan="2">
-						<div class="col-xs-12 col-sm-11">
+						<div class="col-xs-12 col-sm-12">
 							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
 						</div>
 					</td>
 				</tr>
 				<tr>
-					<td>	
+					<td class="col-xs-4">	
 						<canvas id="canvas1">
 						</canvas>
 					</td>
-					<td align="center" style="padding: 0 0 0 15px">
-						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
-						<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
-						<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
+					<td class="col-xs-8" align="center" style="padding: 0 0 0 15px">
+							<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
+							<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
+							<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
 					</td>
 				</tr>
 			</table>
@@ -541,7 +541,7 @@
 		</div>
 
 
-		<div id="imgs-wrapper-3" resize style="width: 100%; height: 40%" ng-show="task_phase === 2">
+		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
 			<table>
 				<tr>
 					<td colspan="2">
@@ -551,13 +551,13 @@
 					</td>
 				</tr>
 				<tr>
-					<td>	
+					<td class="col-xs-4">	
 						<canvas id="canvas2">
 						</canvas>
 					</td>
-					<td align="center" style="padding: 0 0 0 15px">
-						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
-						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button> <!--onclick="reset_draw()"-->
+					<td class="col-xs-8" align="center" style="padding: 0 0 0 15px">
+						<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
+						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
 						<button id="taskFinished" class="btn btn-primary" ng-click="saveTask()">Tarefa concluída</button>
 					</td>
 				</tr>
@@ -774,19 +774,18 @@
 				});
 		}
 
+		//Variables related to marking images!
+		var allowedPointsSize = 3;
+		var avoidPath = false;
+		var selectedPoints = [[],[],[]];
+		var selectedPointsMost = [[],[],[]];//[[],[],[]]?
+		var selectedPointsLess = [[],[],[]];//[[],[],[]]?
+		var canvas = null;
+		var markedElements = 0;
+
 		var newTask = function() {
 			$scope.task_phase = 0;
 			getUserProgress();
-
-			//Variables related to marking images!
-			var allowedPointsSize = 3;
-			var avoidPath = false;
-			var selectedPoints = [[],[],[]];
-			var selectedPointsMost = [[],[],[]];//[[],[],[]]?
-			var selectedPointsLess = [[],[],[]];//[[],[],[]]?
-			var canvas = null;
-			var imageToEvaluate = "";
-			var markedElements = 0;
 
 			// console.log('Loading task...');
 			$('#loading').fadeIn();
@@ -851,37 +850,50 @@
 						
 						$scope.nextPhase = function() {
 							$scope.task_phase = $scope.task_phase + 1;
-							markedElements = 0;
-							selectedPoints = [[],[],[]];
-							avoidPath = false;
 					
 							//Other alternative: http://fabricjs.com/freedrawing
 							//Selecting and initing canvas according to phase (most or less image being evaluated)
 							if ($scope.task_phase === 1){
 								var canvasID = "canvas1";
 								var resetID = "reset";
-								imageToEvaluate = $scope.answer.theMost;
+								//imageToEvaluate = $scope.answer.theMost;
 							}else{
 								var canvasID = "canvas2";
 								var resetID = "reset2";
-								imageToEvaluate = $scope.answer.theLess;
+								//imageToEvaluate = $scope.answer.theLess;
 								selectedPointsMost = selectedPoints.slice();
-
 								canvas.clear();
 								//canvas.dispose();
 							}
+							markedElements = 0;
+							avoidPath = false;
+							selectedPoints = [[],[],[]];
 
-							canvas = document.getElementById(canvasID);
+							/*canvas = document.getElementById(canvasID);
 							canvas.width = 0.26 * window.innerWidth;
-							canvas.height = 0.42 * window.innerHeight;
+							canvas.height = 0.42 * window.innerHeight;*/
 
-							function loadImage(currentImage){
+						        function loadImage(){
+								if ($scope.task_phase === 1){
+									var currentImage = $scope.answer.theMost;
+								}else{
+									var currentImage = $scope.answer.theLess;
+								}
 								fabric.Image.fromURL(currentImage, function(oImg) {
 									// scale image down, and flip it, before adding it onto canvas
 									//oImg.scale(0.5).set('flipX', true);
 									oImg.width = canvas.width;
 									oImg.height = canvas.height;
 									canvas.add(oImg);
+									canvas.renderAll();
+									markedElements = 0;
+									selectedPoints = [[],[],[]];
+									var objects = canvas.getObjects();
+									for (var j = 0; j < objects.length; j++){
+										objects[j].selectable = false;
+									}	
+									canvas.selection = false;
+									canvas.isDrawingMode = true;	
 								});
 							}
 	
@@ -891,26 +903,23 @@
 								}
 								alert(canvas.freeDrawingBrush._points);
 								canvas.clear();
-								loadImage(imageToEvaluate);
-								markedElements = 0;
-								selectedPoints = [[],[],[]];
-								var objects = canvas.getObjects();
-								for (var j = 0; j < objects.length; j++){
-									objects[j].selectable = false;
-								}	
-								canvas.selection = false;
-								canvas.isDrawingMode = true;
+								loadImage();
 							}
 
 							function configFabric() {
 								alert("Chamei fabric!");
 								var $ = function(id){return document.getElementById(id)};
-
+								
+								if (canvas !== null){
+									canvas.dispose();
+									canvas.clear();
+								}
 								canvas = this.__canvas = new fabric.Canvas(canvasID, {
 								   	isDrawingMode: true,
 									selection: false
 								});
-
+								canvas.setWidth(0.26 * window.innerWidth);
+								canvas.setHeight(0.42 * window.innerHeight);
 
 								fabric.Object.prototype.transparentCorners = false;
 
@@ -965,12 +974,11 @@
 										}
 									}
 							      }
-
 							}
 							alert("Vou chamar fabric!");
 							configFabric();
-							alert(imageToEvaluate);
-							loadImage(imageToEvaluate);
+							//alert(imageToEvaluate);
+							loadImage();
 						}	
 
 						// Save task
@@ -1043,8 +1051,8 @@
 
 							//Clearing canvas
 							canvas.clear();
-							canvas.dispose();
-							imageToEvaluate = "";
+							//canvas.dispose();
+							//imageToEvaluate = "";
 							markedElements = 0;
 							selectedPoints = [[],[],[]];
 							selectedPointsLess = [[],[],[]];
@@ -1052,7 +1060,7 @@
 
 							//Saving task answers
 							taskrun = JSON.stringify(taskrun);
-							//alert(taskrun);
+							alert(taskrun);
 							//console.log(taskrun);
 
 							newTask();

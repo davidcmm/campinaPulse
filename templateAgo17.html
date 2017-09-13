@@ -532,7 +532,7 @@
 					</td>
 					<td align="center" style="padding: 0 0 0 15px">
 						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha! </b></p> <br> <br>
-						<button id="reset" class="btn btn-default" onclick="reset_draw()">Reiniciar marcação</button>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+						<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
 						<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
 					</td>
 				</tr>
@@ -557,7 +557,7 @@
 					</td>
 					<td align="center" style="padding: 0 0 0 15px">
 						<p align="justify" style="color:white"> <b>Seu mouse agora funciona como um pincel. Você clicar e arrastar seu mouse pela imagem para marcar o principal elemento (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) que motivou sua escolha!</b> </p> <br> <br>
-						<button id="reset2" class="btn btn-default" onclick="reset_draw()">Reiniciar marcação</button> 
+						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button> <!--onclick="reset_draw()"-->
 						<button id="taskFinished" class="btn btn-primary" ng-click="saveTask()">Tarefa concluída</button>
 					</td>
 				</tr>
@@ -670,11 +670,11 @@
 		var showTutorial = function() {
   			var hasDisplayedTutorial = $cookies.get('cg-tutorial');
   			if (typeof hasDisplayedTutorial == "undefined") {
-    			$cookies.put('cg-tutorial', 'true');
+	    			$cookies.put('cg-tutorial', 'true');
 				$('#modalTutorial').modal();
-    		} else {
-    			return;
-    		}
+    			} else {
+    				return;
+    			}
 		}
 		var showProfileForm = function() {
 			$('#modalProfile').modal();
@@ -694,7 +694,7 @@
 			}*/
 
 			
-          //showProfileForm();
+          		//showProfileForm();
 
 			if (!foundInPrevious){//Profile not found in previous version, searching at task-run
 				var finishTime;
@@ -723,7 +723,7 @@
 						// Calls the form profile if still have data to fill
 						// Neighborhood is not required
 						showProfileForm();
-						if (	$scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
+						if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
 								$scope.userProfile.sex === '' ||
 								$scope.userProfile.clas === '' ||
 								$scope.userProfile.knowcampina === '' ||
@@ -743,19 +743,19 @@
 					$scope.userProfile.knowcampina === '' ||
 					$scope.userProfile.howknowcampina === '' ||
 					$scope.userProfile.city === '' || $scope.userProfile.neig.length === 0) {
-					$scope.shouldSaveProfile = true;
-					showProfileForm();
+						$scope.shouldSaveProfile = true;
+						showProfileForm();
 				} else {
-                  	//alert("Encontrei prev cheio!");
+                  			//alert("Encontrei prev cheio!");
 					$scope.shouldSaveProfile = false;
 				}
 			}
 			return;
 		}
+
 		var getUserProgress = function() {
 			// console.log('Loading user progress...');
-			$http.get(apiUrl+'project/'+projectId+'/userprogress')
-				.then(function(response) {
+			$http.get(apiUrl+'project/'+projectId+'/userprogress').then(function(response) {
 					$scope.userProgress.user_id = response.data.user_id;
 					$scope.userProgress.total = response.data.total;
 					$scope.userProgress.done = response.data.done;
@@ -773,13 +773,24 @@
 					$('#skeleton').hide();
 				});
 		}
+
 		var newTask = function() {
 			$scope.task_phase = 0;
 			getUserProgress();
+
+			//Variables related to marking images!
+			var allowedPointsSize = 3;
+			var avoidPath = false;
+			var selectedPoints = [[],[],[]];
+			var selectedPointsMost = [[],[],[]];//[[],[],[]]?
+			var selectedPointsLess = [[],[],[]];//[[],[],[]]?
+			var canvas = null;
+			var imageToEvaluate = "";
+			var markedElements = 0;
+
 			// console.log('Loading task...');
 			$('#loading').fadeIn();
-			$http.get(apiUrl+'project/'+projectId+'/newtask')
-				.then(function(response) {
+			$http.get(apiUrl+'project/'+projectId+'/newtask').then(function(response) {
 					// Checks if theres no more tasks for the user
 					if (typeof response.data.id != 'undefined') {
 						$('#loading').hide();
@@ -838,47 +849,34 @@
 							}
 						}
 						
-						var selectedPointsSize = 3;
-						var selectedPoints = [[],[],[]];
-						var selectedPointsMost;//[[],[],[]]?
-						var selectedPointsLess;//[[],[],[]]?
-						var canvas;
-			
 						$scope.nextPhase = function() {
 							$scope.task_phase = $scope.task_phase + 1;
-							/*if ($scope.task_phase === 1){
-								setupKinect();			
-								start_comoecampina($scope.task.id, $scope.answer.theMost, 0);
-							}else if ($scope.task_phase === 2){
-								setupKinect();
-								start_comoecampina($scope.task.id, $scope.answer.theLess, 1);
-							}*/
+							markedElements = 0;
+							selectedPoints = [[],[],[]];
+							avoidPath = false;
 					
 							//Other alternative: http://fabricjs.com/freedrawing
 							//Selecting and initing canvas according to phase (most or less image being evaluated)
 							if ($scope.task_phase === 1){
 								var canvasID = "canvas1";
 								var resetID = "reset";
-								var imageToEvaluate = $scope.answer.theMost;
+								imageToEvaluate = $scope.answer.theMost;
 							}else{
 								var canvasID = "canvas2";
 								var resetID = "reset2";
-								var imageToEvaluate = $scope.answer.theLess;
+								imageToEvaluate = $scope.answer.theLess;
 								selectedPointsMost = selectedPoints.slice();
+
+								canvas.clear();
+								//canvas.dispose();
 							}
-							
-							selectedPoints = [[],[],[]];
-							var markedElements = 0;
+
 							canvas = document.getElementById(canvasID);
 							canvas.width = 0.26 * window.innerWidth;
 							canvas.height = 0.42 * window.innerHeight;
-							/*context = canvas.getContext('2d');
-							base_image = new Image();
-							base_image.src = imageToEvaluate;
-							context.drawImage(base_image, 0, 0, canvas.width, canvas.height);//640 x 480 */
 
-							function loadImage(){
-								fabric.Image.fromURL(imageToEvaluate, function(oImg) {
+							function loadImage(currentImage){
+								fabric.Image.fromURL(currentImage, function(oImg) {
 									// scale image down, and flip it, before adding it onto canvas
 									//oImg.scale(0.5).set('flipX', true);
 									oImg.width = canvas.width;
@@ -887,83 +885,92 @@
 								});
 							}
 	
-							function reset(){
+							function reset_draw(){
+								if (markedElements === allowedPointsSize){
+									avoidPath = true;
+								}
 								alert(canvas.freeDrawingBrush._points);
 								canvas.clear();
-								canvas.isDrawingMode = true;
-								loadImage();
+								loadImage(imageToEvaluate);
 								markedElements = 0;
 								selectedPoints = [[],[],[]];
+								var objects = canvas.getObjects();
+								for (var j = 0; j < objects.length; j++){
+									objects[j].selectable = false;
+								}	
+								canvas.selection = false;
+								canvas.isDrawingMode = true;
 							}
 
 							function configFabric() {
 								alert("Chamei fabric!");
-								  var $ = function(id){return document.getElementById(id)};
+								var $ = function(id){return document.getElementById(id)};
 
-								  canvas = this.__canvas = new fabric.Canvas(canvasID, {
-								    isDrawingMode: true
-								  });
+								canvas = this.__canvas = new fabric.Canvas(canvasID, {
+								   	isDrawingMode: true,
+									selection: false
+								});
 
 
-								  fabric.Object.prototype.transparentCorners = false;
+								fabric.Object.prototype.transparentCorners = false;
 
-								  /*var drawingModeEl = $('drawing-mode'),
-								      drawingOptionsEl = $('drawing-mode-options'),*/
-								   var drawingColorEl = "#005E7A",
+								var drawingColorEl = "#005E7A",
 								      drawingShadowColorEl = "#005E7A",
 								      drawingLineWidthEl = 10,
 								      drawingShadowWidth = 0,
 								      drawingShadowOffset = 0,
 								      clearEl = $(resetID);//$('clear-canvas');TO DO: change to reset e reset2
 
-								  clearEl.onclick = function() { reset(); };
+								clearEl.onclick = function() { reset_draw(); };
 
 								  
-								  if (canvas.freeDrawingBrush) {
+								if (canvas.freeDrawingBrush) {
 									
-								    canvas.freeDrawingBrush.color = drawingColorEl;
-								    canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl, 10) || 1;
-								    canvas.freeDrawingBrush.shadow = new fabric.Shadow({
-								      blur: parseInt(drawingShadowWidth, 10) || 0,
-								      offsetX: 0,
-								      offsetY: 0,
-								      affectStroke: true,
-								      color: drawingShadowColorEl,
-								    });
+									canvas.freeDrawingBrush.color = drawingColorEl;
+									canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl, 10) || 1;
+									canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+										blur: parseInt(drawingShadowWidth, 10) || 0,
+										offsetX: 0,
+										offsetY: 0,
+										affectStroke: true,
+										color: drawingShadowColorEl
+									});
 
-									//TODO: onMouseDown check elements!
+									canvas.freeDrawingBrush.onMouseMove = function(pointer){
+										if (markedElements < allowedPointsSize && !(avoidPath)){
+										      this._captureDrawingPath(pointer);
+										      // redraw curve
+										      // clear top canvas
+										      this.canvas.clearContext(this.canvas.contextTop);
+										      this._render();
+										}
+									}
+
 									canvas.freeDrawingBrush.onMouseDown = function(pointer){
-									      if (markedElements < selectedPointsSize){
+										if (markedElements < allowedPointsSize){
 										      this._prepareForDrawing(pointer);
 										      // capture coordinates immediately
 										      // this allows to draw dots (when movement never occurs)
 										      this._captureDrawingPath(pointer);
 										      this._render();
-										}else{
-											canvas.isDrawingMode = false;
-											var objects = canvas.getObjects();
-											for (var j = 0; j < objects.length; j++){
-												objects[j].selectable = false;
-											}
+										      avoidPath = false;
 										}
-									};
-								    
-									canvas.freeDrawingBrush.onMouseUp = function() {
-										 if (markedElements < selectedPointsSize){
+									}
+
+									canvas.freeDrawingBrush.onMouseUp = function(){
+										 if (markedElements < allowedPointsSize){
 											selectedPoints[markedElements] = canvas.freeDrawingBrush._points.slice();
 											markedElements = markedElements + 1;
 											this._finalizeAndAddPath();
-										}else{
-											canvas.isDrawingMode = false;
 										}
-									};
-								  }
+									}
+							      }
 
 							}
 							alert("Vou chamar fabric!");
 							configFabric();
 							alert(imageToEvaluate);
-							loadImage();
+							loadImage(imageToEvaluate);
 						}	
 
 						// Save task
@@ -973,6 +980,7 @@
 							
 							$scope.saveTask();
 						}
+
 						$scope.saveTask = function() {
 							if ($scope.shouldSaveProfile === true) {
 								$scope.userProfile.city = document.getElementById("usercity").value;
@@ -982,23 +990,47 @@
 
 							selectedPointsLess = selectedPoints;
 							if ( $scope.answer.theMost !== 'equal'){//Retrieving spots!
-								/*var spots = done();//Call done from game.js!
-								taskrun['spotsBest'] = spots[0];
-								taskrun['spotsWorst'] = spots[1];*/
-								var allPoints = "";
-								for (var j = 0; j < selectedPointsSize; j++){
-									for (var i = 0; i < selectedPointsMost[j].length; i++){
-										allPoints = allPoints + "(" + selectedPointsMost[j][i].x+","+selectedPointsMost[j][i].y+");";
+								
+								var allPoints = "[";
+								var separator;
+								for (var j = 0; j < allowedPointsSize; j++){
+									separator = "";
+									if (j > 0){
+										separator = ",";
 									}
+									allPoints = allPoints + separator + "[";
+									for (var i = 0; i < selectedPointsMost[j].length; i++){
+										if (i > 0){
+											separator = ",";
+										}else{
+											separator = "";
+										}
+										allPoints = allPoints + separator + "(" + selectedPointsMost[j][i].x+","+selectedPointsMost[j][i].y+")";
+									}
+									allPoints = allPoints + "]";
 								}
+								allPoints = allPoints + "]";
 								//alert(allPoints);
 								$scope.answer.markMost = allPoints;
-								allPoints = "";
-								for (var j = 0; j < selectedPointsSize; j++){
+
+								allPoints = "[";
+								for (var j = 0; j < allowedPointsSize; j++){
+									separator = "";
+									if (j > 0){
+										separator = ",";
+									}
+									allPoints = allPoints + separator + "[";
 									for (var i = 0; i < selectedPointsLess[j].length; i++){
-										allPoints = allPoints + "(" + selectedPointsLess[j][i].x+","+selectedPointsLess[j][i].y+");";
+										if (i > 0){
+											separator = ",";
+										}else{
+											separator = "";
+										}
+										allPoints = allPoints + separator + "(" + selectedPointsLess[j][i].x+","+selectedPointsLess[j][i].y+")";
 									}	
-								}									
+									allPoints = allPoints + "]";
+								}	
+								allPoints = allPoints + "]";								
 								//alert(allPoints);
 								$scope.answer.markLess = allPoints;
 							}
@@ -1009,13 +1041,26 @@
 								'info': $scope.answer
 							};
 
+							//Clearing canvas
+							canvas.clear();
+							canvas.dispose();
+							imageToEvaluate = "";
+							markedElements = 0;
+							selectedPoints = [[],[],[]];
+							selectedPointsLess = [[],[],[]];
+							selectedPointsMost = [[],[],[]];
+
+							//Saving task answers
 							taskrun = JSON.stringify(taskrun);
 							//alert(taskrun);
 							//console.log(taskrun);
 
+							newTask();
+							$("#skeleton").fadeIn(1000);
+							setTimeout(function() { $("#success").fadeOut() }, 1000);
 							//Asking for points in most and least preferred images
 							//Saving in database!
-							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+							/*$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
 								// console.log('Saved!');
 								$("#skeleton").fadeOut(0);
 								$("#success").fadeIn();
@@ -1025,8 +1070,9 @@
 								setTimeout(function() { $("#success").fadeOut() }, 1000);
 							}, function saveTaskErrorCallback(response) {
 								$('#error').show();
-							});
-						}
+							});*/
+
+					      }
 					} else {
 						$('#skeleton').hide();
 						$('#loading').hide();
@@ -1062,7 +1108,7 @@
 	            scope.style = function () {
 	            	if (scope.windowHeight*1.1 < scope.windowWidth) {
 		                return {
-	                        'width': (scope.viewportWidth) + 'px'
+	                        	'width': (scope.viewportWidth) + 'px'
 		                };
 	            	} else {
 	            		return;
@@ -1078,7 +1124,7 @@
 	});
 
 	//Google autocomplete
-  var cityInput = document.getElementById('usercity');
+  	var cityInput = document.getElementById('usercity');
 	var options = {
 		types: ['(cities)']
 	};
@@ -1086,8 +1132,8 @@
 	var pacContainerInitialized = false; 
 	$('#usercity').keypress(function() { 
 	    if (!pacContainerInitialized) { 
-	      $('.pac-container').css('z-index', '10000'); 
-	      pacContainerInitialized = true;  
+		      $('.pac-container').css('z-index', '10000'); 
+		      pacContainerInitialized = true;  
 	    } 
 	});
 

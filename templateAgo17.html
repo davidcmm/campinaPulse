@@ -441,6 +441,16 @@
 				</div>
 			</div>
 		</div>
+		<div class="row" ng-show="task_phase === 1">
+				<div class="col-xs-12 col-lg-12">
+					<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
+				</div>
+		</div>
+		<div class="row" ng-show="task_phase === 2">
+				<div class="col-xs-12 col-lg-12">
+							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
+				</div>
+		</div>
 
 		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
 			<div class="row">
@@ -517,54 +527,48 @@
 <div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>  -->
 
 		<div id="imgs-wrapper-2" resize ng-style="style()" ng-show="task_phase === 1">
-			<table>
-				<tr>
-					<td colspan="2">
-						<div class="col-xs-12 col-sm-12">
-							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td class="col-xs-4">	
+			<div class="row">
+				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
 						<canvas id="canvas1">
 						</canvas>
-					</td>
-					<td class="col-xs-8" align="center" style="padding: 0 0 0 15px">
-							<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
-							<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
-							<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
-					</td>
-				</tr>
-			</table>
-
+				</div>	
+				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
+					<br> <br> 
+					<div class="row">
+						<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
+					</div>
+					<div class="row col-lg-offset-2">
+						<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp;
+					</div> <br> <br>
+					<div class="row col-lg-offset-2">
+						<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
+					</div>
+				</div>
+			</div>
 		</div>
 
 
 		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
-			<table>
-				<tr>
-					<td colspan="2">
-						<div class="col-xs-12 col-sm-11">
-							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td class="col-xs-4">	
+			<div class="row">
+				<div class="col-xs-6 col-lg-5 col-lg-offset-1">	
 						<canvas id="canvas2">
-						</canvas>
-					</td>
-					<td class="col-xs-8" align="center" style="padding: 0 0 0 15px">
+				</div>	
+				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
+					<br> <br> 
+					<div class="row">	
 						<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
-						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <!--onclick="reset_draw()"-->
+					</div>
+					<div class="row col-lg-offset-2">
+						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button>
+					</div> <br> <br>
+					<div class="row col-lg-offset-2">
 						<button id="taskFinished" class="btn btn-primary" ng-click="saveTask()">Tarefa concluída</button>
-					</td>
-				</tr>
-			</table>
-
+					</div>
+				</div>
+			</div>
 		</div>
-		
+	<br> <br>
+
 	</div>
 	<!-- END Task skeleton -->
 	<!-- Task skeleton finished -->

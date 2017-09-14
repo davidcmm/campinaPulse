@@ -1,4 +1,10 @@
 <link rel="stylesheet" href="https://contribua.org/comoecampina-static/imgs/fonts/cg.css">
+<!-- background-image: linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E), 
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E); background-image:  url("https://contribua.org/comoecampina-static/imgs/building2.png"); -->
 <style>
 	body {
 		background-color: #334759;
@@ -204,7 +210,7 @@
 		Carregando próxima tarefa...
 	</div>
 	<div id="why" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
-		Marque ao menos um ponto na imagem que ajude a explicar o porquê você a escolheu!
+		<li class="fa fa-exclamation-triangle"></li> Marque ao menos um ponto na imagem que ajude a explicar o porquê você a escolheu!
 	</div>
 	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
 		<strong>Ops! Algo errado.</strong>
@@ -268,7 +274,7 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem o principal elemento que o motivou nessa escolha. Para isso basta clicar e arrastar o mouse para traçar um risco sobre este elemento!</p>
+		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar e arrastar o mouse para traçar um risco sobre cada elemento!</p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 5">Próximo</button>
 		      	</div>
@@ -403,7 +409,8 @@
 
 	<!-- Task skeleton -->
 	<div id="skeleton">
-		<div class="score" ng-style="readyToAnswer() && {'visibility': 'hidden'} || {'visibility': 'visible'}">
+		
+		<div class="score" ng-style="readyToAnswer() && {'display': 'none'} || {'display': 'block'}">
 			<div class="row" ng-show="isSelectingSafety()">
 				<div ng-show="selectingTheMost()">
 					<div class="col-xs-2 col-sm-3 text-right">
@@ -441,15 +448,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="row" ng-show="task_phase === 1">
-				<div class="col-xs-12 col-lg-12">
-					<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
-				</div>
+
+		<div ng-show="task_phase === 1">
+			<p class="title-cg" align="center">Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
 		</div>
-		<div class="row" ng-show="task_phase === 2">
-				<div class="col-xs-12 col-lg-12">
-							<p align="justify" class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
-				</div>
+		<div ng-show="task_phase === 2">
+			<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
 		</div>
 
 		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
@@ -523,47 +527,50 @@
 		</div>
 		
 
-		<!--<div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p> </div> 
-<div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>  -->
+<!-- <div class="column"> <div class="col-xs-15 col-sm-12" align="left"> <p class="title-cg"> Marque até 3 pontos (árvores, prédios bem ou mal mantidos, pessoas nas ruas, etc.) na imagem que justifiquem o porquê ele ter sido o <strong class="up">melhor local</strong>!</p> </div> 
+<div class="row" align="center"> <div style="display: inline-block"> <label id="lblImage">City Image</label> <img style="width: 600px; height: 600px; border: solid;" ng-src="{{answer.theMost}}" id="loadingPicture" /> <div id="pictureCanvas" style="width: 600px; height: 600px; position: absolute; left: 0; display: none; border: solid; background-color: white"></div> </div> <div style="position: relative; top: 0px; left: 50px; width: 300px; height: 200px; border: solid; padding: 10px; display: inline-block"> <fieldset>  <button id="btnAddSpot" class="btn btn-warning" type="button" style="width: 100%;" onclick="javascript:enableAddSpot();">Adicionar marca</button> <button id="removeSpotOrCluster" class="btn btn-warning" type="button" style="width: 100%; margin-top: 10px" onclick="javascript:enableRemoveMark();">Remover marca</button> <button id="btnFinish" class="btn btn-success" type="button" style="width: 100%; height: 60px; margin-top: 5px" onclick="javascript:done();"> <i class="icon-ok icon-white"></i> Próxima imagem</button>  </fieldset>  </div>  </div>  </div>
+-->
 
 		<div id="imgs-wrapper-2" resize ng-style="style()" ng-show="task_phase === 1">
 			<div class="row">
-				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
-						<canvas id="canvas1">
-						</canvas>
+				<div class="col-md-8 col-md-offset-3">
+						<canvas id="canvas1"></canvas>
 				</div>	
-				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
-					<br> <br> 
+				<br> <br>
+				<div class="col-md-12">
+					
+					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</h4>
 					<div class="row">
-						<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
+						<div class="col-sm-6">
+							<button id="reset" class="btn btn-default btn-block" >Reiniciar marcação</button>
+						</div>
+						<div class="col-sm-6">
+							<button id="nextImage" class="btn btn-primary btn-block" ng-click="nextPhase()">Próxima imagem</button>
+						</div>
 					</div>
-					<div class="row col-lg-offset-2">
-						<button id="reset" class="btn btn-default" >Reiniciar marcação</button>&nbsp; &nbsp; &nbsp;
-					</div> <br> <br>
-					<div class="row col-lg-offset-2">
-						<button id="nextImage" class="btn btn-primary" ng-click="nextPhase()">Próxima imagem</button>
-					</div>
+					
 				</div>
 			</div>
 		</div>
 
-
 		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
 			<div class="row">
-				<div class="col-xs-6 col-lg-5 col-lg-offset-1">	
-						<canvas id="canvas2">
+				<div class="col-md-8 col-md-offset-3">	
+						<canvas id="canvas2"></canvas>
 				</div>	
-				<div class="col-xs-6 col-lg-5 col-lg-offset-1">
-					<br> <br> 
-					<div class="row">	
-						<p align="justify" style="color:white"> <b>Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</b></p> <br> <br>
+				<br> <br>
+				<div class="col-md-12">
+					
+					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</h4>
+					<div class="row">
+						<div class="col-sm-6">
+							<button id="reset2" class="btn btn-default btn-block" >Reiniciar marcação</button>
+						</div>
+						<div class="col-sm-6">
+							<button id="taskFinished" class="btn btn-primary btn-block" ng-click="saveTask()">Tarefa concluída</button>
+						</div>
 					</div>
-					<div class="row col-lg-offset-2">
-						<button id="reset2" class="btn btn-default" >Reiniciar marcação</button>
-					</div> <br> <br>
-					<div class="row col-lg-offset-2">
-						<button id="taskFinished" class="btn btn-primary" ng-click="saveTask()">Tarefa concluída</button>
-					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -601,10 +608,10 @@
 		</div>
 		<div class="row">
 			<div class="col-md-9 col-md-offset-1 text-center">
-				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5">Não consigo escolher</font></a> 
+				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5" style="color:white">Não consigo escolher</font></a> 
 			</div>
 			<div class="col-md-2 text-right">
-             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
+             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5" style="color:white">Ajuda</font></a>
 			</div>
 		</div>
 	</div>
@@ -618,7 +625,6 @@
 <!--<script src="https://contribua.org/comoecampina-static/imgs/kinetic-v4.7.2.min.js" type="text/javascript"></script>
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script> -->
 <script>
-//Old code!
 	var apiUrl = 'https://contribua.org/api/';
 	var projectId = '583	';
 	var formProfileStep = 1;
@@ -685,7 +691,6 @@
 		}
 		var getUserProfile = function() {
 			//Iterating through previous profiles
-			//alert("Get user");
 			var foundInPrevious = false;
 			/*for (i = 0; i < previousProfilesData.length; i++){
 				var currentProfile = previousProfilesData[i];
@@ -698,13 +703,10 @@
 			}*/
 
 			
-          		//showProfileForm();
-
 			if (!foundInPrevious){//Profile not found in previous version, searching at task-run
 				var finishTime;
 				var offset = 0;
-         			//  	alert("Nao Encontrei prev!");
-				// console.log('Loading user task run...');
+
 				$http.get(apiUrl+'taskrun?project_id='+projectId+'&user_id='+$scope.userProgress.user_id+'&offset='+offset)
 					.then(function(response) {
 						var i;
@@ -715,7 +717,6 @@
 								if (typeof currentData.info.userProfile != "undefined") {
 									var currentFinishTime = new Date(currentData.finish_time);
 									if (finishTime == null || currentFinishTime > finishTime) {
-										//alert("Achei Perfil!");
 										finishTime = currentFinishTime;
 										$scope.userProfile = currentData.info.userProfile;
 										$scope.userProfile.age = parseInt($scope.userProfile.age);
@@ -723,9 +724,7 @@
 								}
 							}
 						}
-						// console.log($scope.userProfile);
 						// Calls the form profile if still have data to fill
-						// Neighborhood is not required
 						showProfileForm();
 						if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
 								$scope.userProfile.sex === '' ||
@@ -764,7 +763,6 @@
 					$scope.userProgress.total = response.data.total;
 					$scope.userProgress.done = response.data.done;
 					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
-					// console.log($scope.userProgress);
 
 					// Get user profile (10 steps)
 					getUserProfile();
@@ -791,7 +789,6 @@
 			$scope.task_phase = 0;
 			getUserProgress();
 
-			// console.log('Loading task...');
 			$('#loading').fadeIn();
 			$http.get(apiUrl+'project/'+projectId+'/newtask').then(function(response) {
 					// Checks if theres no more tasks for the user
@@ -826,6 +823,7 @@
 								'img-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
 							}
 						}
+						//Choosing icon to be presented for pleasantness or safety according to best or worst image selected
 						$scope.isSelectedIcon = function(answer) {
 							return {
 								'icon-cg-up iconcg-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
@@ -834,6 +832,8 @@
 								'icon-cg-down iconcg-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
 							}
 						}
+
+						//Selecting best or worst image
 						$scope.select = function(answer) {
 							if ($scope.selectingTheMost()) {
 								if ($scope.answer.theMost === answer) {
@@ -855,20 +855,22 @@
 						$scope.nextPhase = function() {
 							$scope.task_phase = $scope.task_phase + 1;
 					
-							//Other alternative: http://fabricjs.com/freedrawing
 							//Selecting and initing canvas according to phase (most or less image being evaluated)
 							if ($scope.task_phase === 1){
 								var canvasID = "canvas1";
 								var resetID = "reset";
-								//imageToEvaluate = $scope.answer.theMost;
-							}else{
+							}else if (markedElements > 0) {//Checking if at least one element was marked on best image!
 								var canvasID = "canvas2";
 								var resetID = "reset2";
-								//imageToEvaluate = $scope.answer.theLess;
 								selectedPointsMost = selectedPoints.slice();
 								canvas.clear();
-								//canvas.dispose();
+							}else{
+								$scope.task_phase = $scope.task_phase - 1;
+								$("#why").fadeIn();
+								setTimeout(function() { $("#why").fadeOut() }, 1500);
+								return;
 							}
+
 							markedElements = 0;
 							avoidPath = false;
 							selectedPoints = [[],[],[]];
@@ -877,6 +879,7 @@
 							canvas.width = 0.26 * window.innerWidth;
 							canvas.height = 0.42 * window.innerHeight;*/
 
+							//Load canvas background image
 						        function loadImage(){
 								if ($scope.task_phase === 1){
 									var currentImage = $scope.answer.theMost;
@@ -884,8 +887,6 @@
 									var currentImage = $scope.answer.theLess;
 								}
 								fabric.Image.fromURL(currentImage, function(oImg) {
-									// scale image down, and flip it, before adding it onto canvas
-									//oImg.scale(0.5).set('flipX', true);
 									oImg.width = canvas.width;
 									oImg.height = canvas.height;
 									canvas.add(oImg);
@@ -901,6 +902,7 @@
 								});
 							}
 	
+							//Restart canvas
 							function reset_draw(){
 								if (markedElements === allowedPointsSize){
 									avoidPath = true;
@@ -910,6 +912,7 @@
 								loadImage();
 							}
 
+							//Init canvas from Fabric.js
 							function configFabric() {
 								alert("Chamei fabric!");
 								var $ = function(id){return document.getElementById(id)};
@@ -922,8 +925,14 @@
 								   	isDrawingMode: true,
 									selection: false
 								});
-								canvas.setWidth(0.26 * window.innerWidth);
-								canvas.setHeight(0.42 * window.innerHeight);
+
+								if (screen.width <= 768){//For phones use whole width
+									canvas.setWidth(window.innerWidth * 0.9);
+									canvas.setHeight((window.innerWidth*0.9)/1.3333);
+								}else{
+									canvas.setWidth(500);
+									canvas.setHeight(375);
+								}
 
 								fabric.Object.prototype.transparentCorners = false;
 
@@ -932,7 +941,7 @@
 								      drawingLineWidthEl = 10,
 								      drawingShadowWidth = 0,
 								      drawingShadowOffset = 0,
-								      clearEl = $(resetID);//$('clear-canvas');TO DO: change to reset e reset2
+								      clearEl = $(resetID);
 
 								clearEl.onclick = function() { reset_draw(); };
 
@@ -981,7 +990,6 @@
 							}
 							alert("Vou chamar fabric!");
 							configFabric();
-							//alert(imageToEvaluate);
 							loadImage();
 						}	
 
@@ -994,12 +1002,21 @@
 						}
 
 						$scope.saveTask = function() {
+							//Checking if at least one element was marked on worst image!
+							if ($scope.answer.theMost !== 'equal' && markedElements === 0){
+								$("#why").fadeIn();
+								setTimeout(function() { $("#why").fadeOut() }, 1500);
+								return;
+							}
+
+							//Checking if user profile should be persisted
 							if ($scope.shouldSaveProfile === true) {
 								$scope.userProfile.city = document.getElementById("usercity").value;
 								$scope.answer.userProfile = $scope.userProfile;
 								$scope.shouldSaveProfile = false;
 							}
 
+							//Retrieving and formatting marked points on best and worst image for output
 							selectedPointsLess = selectedPoints;
 							if ( $scope.answer.theMost !== 'equal'){//Retrieving spots!
 								
@@ -1047,6 +1064,7 @@
 								$scope.answer.markLess = allPoints;
 							}
 
+							//Building answer to be persisted
 							var taskrun = {
 								'project_id': $scope.task.project_id,
 								'task_id': $scope.task.id,
@@ -1054,13 +1072,13 @@
 							};
 
 							//Clearing canvas
-							canvas.clear();
-							//canvas.dispose();
-							//imageToEvaluate = "";
-							markedElements = 0;
-							selectedPoints = [[],[],[]];
-							selectedPointsLess = [[],[],[]];
-							selectedPointsMost = [[],[],[]];
+							if ( $scope.answer.theMost !== 'equal'){
+								canvas.clear();
+								markedElements = 0;
+								selectedPoints = [[],[],[]];
+								selectedPointsLess = [[],[],[]];
+								selectedPointsMost = [[],[],[]];
+							}
 
 							//Saving task answers
 							taskrun = JSON.stringify(taskrun);
@@ -1154,15 +1172,15 @@
 <!-- Nazareno:
 #### Interface/app
 * 1. Tirar a 1a e 3a exclamações do texto de descrição do pp (do parágrafo _agora, estamos interessados em inv…_ inclusive, tira essa vírgula também :)
-2. Na 2a tela do tutorial, reduz esse texto: “É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!” (E esse ora aí não é hora não?)
-3. A tela de “conte-nos um pouco mais sobre você” aparece meio abruptamente. que tal se aparecesse primeiro algo como “queríamos lhe perguntar mais sobre você“, e quando a pessoa desse o ok ela caísse no form?
-4. Não tinha a parte de clicar no que você mais gostou/menos gostou na foto não?
+* 2. Na 2a tela do tutorial, reduz esse texto: “É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!” (E esse ora aí não é hora não?)
+* 3. A tela de “conte-nos um pouco mais sobre você” aparece meio abruptamente. que tal se aparecesse primeiro algo como “queríamos lhe perguntar mais sobre você“, e quando a pessoa desse o ok ela caísse no form?
+* 4. Não tinha a parte de clicar no que você mais gostou/menos gostou na foto não?
 5. Os elementos da página são carregados em uma ordem meio estranha: primeiro aparece o texto todos desengonçado, e depois começam a aparecer as fotos, né. pergunta a jeff se não tem como melhorar isso
 6. Voltei pro ruascampina, e a pergunta que fica no topo da página não me diz o que é pra fazer. e tem um espaço estranho entre o título e as fotos.
 7. (tela da marcação) o espaço entre a letra azul e a branca, o alinhamento dos elementos que tem que ter uma lógica perceptível (tudo no mesmo ponto à esquerda por exemplo). talvez seja bom seguir a mesmo leiaute da parte anterior da tarefa, com a foto grande no centro da tela. aí acho que esse monte de texto junto da imagem precisa sair. pode ser algo como “clique/toque (dependendo se é no celular) no que nessa foto faz ela ser o melhor lugar”. e aí os botões de reiniciar e próxima precisam ficar um pouco mais longe um do outro e serem no mesmo look and feel da outra tela.
-8. Na parte do formulário do “conte-nos mais”, acho que precisamos tirar o termo “Classe social".  a renda mensal é mesmo da pessoa? ou da família? não está claro
-9. Na parte da marcação está aparecendo o “Não consigo escolher!“. É pra aparecer? E aliás, tira essa exclamação também
-10. E a do _Tarefa concluída!_ também
+* 8. Na parte do formulário do “conte-nos mais”, acho que precisamos tirar o termo “Classe social".  a renda mensal é mesmo da pessoa? ou da família? não está claro
+* 9. Na parte da marcação está aparecendo o “Não consigo escolher!“. É pra aparecer? E aliás, tira essa exclamação também
+* 10. E a do _Tarefa concluída!_ também
 
 #### Contribua
 1. Aida clicou no login via facebook e depois de logar ela foi levada pra uma tela pra editar o perfil que pede pra ela editar o email dela. quando ela editou, o contribua salvou mas não mandou ela de volta pra a tarefa. acho que isso não pode ficar assim. por que não pegamos o email do facebook já e depois de logada a pessoa já cai na tarefa?
@@ -1170,12 +1188,17 @@
 
 <!-- David:
 1. Imagem muito pequena no celular e sem resize quando muda orientação!
-2. Marcar com pincel não funcionou no celular!
+* 2. Marcar com pincel não funcionou no celular!
 -->
 
 <!-- Luiz:
 1. Mudança muito sutil entre agradável e seguro! Deixar mais claro?? Outra aplicação??
-2. Marcar mais de uma coisa?? As tres principais?? Arvores em mais de um lado??
+* 2. Marcar mais de uma coisa?? As tres principais?? Arvores em mais de um lado??
 -->
+
+<!-- Paulo:
+1. Zoom nas imagens na hora de escolher a melhor e a pior
+-->
+
 
 

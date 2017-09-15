@@ -537,8 +537,7 @@
 						<canvas id="canvas1"></canvas>
 				</div>	
 				<br> <br>
-				<div class="col-md-12">
-					
+				<div class="col-md-11 col-md-offset-1">
 					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</h4>
 					<div class="row">
 						<div class="col-sm-6">
@@ -925,13 +924,17 @@
 								});
 
 								if (screen.width <= 768){//For phones use whole width
-									canvas.setWidth(window.innerWidth * 0.9);
-									canvas.setHeight((window.innerWidth*0.9)/1.3333);
-								}else{
+									canvas.setWidth(window.innerWidth * 0.8);
+									canvas.setHeight((window.innerWidth*0.8)/1.3333);
+								}else if (screen.width <= 1200){
 									canvas.setWidth(500);
 									canvas.setHeight(375);
+								}else{
+									canvas.setWidth(600);
+									canvas.setHeight(450);
 								}
 
+		
 								fabric.Object.prototype.transparentCorners = false;
 
 								var drawingColorEl = "#005E7A",

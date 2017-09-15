@@ -626,8 +626,8 @@
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script> -->
 <script>
 	var apiUrl = 'https://contribua.org/api/';
-	var projectId = '583	';
-	var formProfileStep = 1;
+	var projectId = '583';
+	var formProfileStep = 10;
 	var app = angular.module('CampinaApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.height = window.innerHeight;
@@ -725,7 +725,6 @@
 							}
 						}
 						// Calls the form profile if still have data to fill
-						showProfileForm();
 						if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
 								$scope.userProfile.sex === '' ||
 								$scope.userProfile.clas === '' ||
@@ -765,7 +764,6 @@
 					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
 
 					// Get user profile (10 steps)
-					getUserProfile();
 					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
 						getUserProfile();
 					}
@@ -907,14 +905,14 @@
 								if (markedElements === allowedPointsSize){
 									avoidPath = true;
 								}
-								alert(canvas.freeDrawingBrush._points);
+								//alert(canvas.freeDrawingBrush._points);
 								canvas.clear();
 								loadImage();
 							}
 
 							//Init canvas from Fabric.js
 							function configFabric() {
-								alert("Chamei fabric!");
+								//alert("Chamei fabric!");
 								var $ = function(id){return document.getElementById(id)};
 								
 								if (canvas !== null){
@@ -988,7 +986,7 @@
 									}
 							      }
 							}
-							alert("Vou chamar fabric!");
+							//alert("Vou chamar fabric!");
 							configFabric();
 							loadImage();
 						}	
@@ -1082,15 +1080,12 @@
 
 							//Saving task answers
 							taskrun = JSON.stringify(taskrun);
-							alert(taskrun);
+							//alert(taskrun);
 							//console.log(taskrun);
 
-							newTask();
-							$("#skeleton").fadeIn(1000);
-							setTimeout(function() { $("#success").fadeOut() }, 1000);
 							//Asking for points in most and least preferred images
 							//Saving in database!
-							/*$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
 								// console.log('Saved!');
 								$("#skeleton").fadeOut(0);
 								$("#success").fadeIn();
@@ -1100,7 +1095,7 @@
 								setTimeout(function() { $("#success").fadeOut() }, 1000);
 							}, function saveTaskErrorCallback(response) {
 								$('#error').show();
-							});*/
+							});
 
 					      }
 					} else {

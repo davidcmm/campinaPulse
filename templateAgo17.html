@@ -274,7 +274,7 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar e arrastar o mouse para traçar um risco sobre cada elemento!</p>
+		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para traçar um risco sobre cada elemento!</p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 5">Próximo</button>
 		      	</div>
@@ -453,7 +453,7 @@
 			<p class="title-cg" align="center">Marque na imagem o que o levou a avaliá-la como o <strong class="up">melhor local</strong>!</p>
 		</div>
 		<div ng-show="task_phase === 2">
-			<p class="title-cg" align="center"> Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
+			<p class="title-cg" align="center">Marque na imagem o que o levou a avaliá-la como o <strong class="down">pior local</strong>!</p>
 		</div>
 
 		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
@@ -537,9 +537,8 @@
 						<canvas id="canvas1"></canvas>
 				</div>	
 				<br> <br>
-				<div class="col-md-12">
-					
-					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha. </h4>
+				<div class="col-md-11 col-md-offset-1">
+					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha. Você pode fazer <font color="yellow">até 3 marcações</font> na imagem.</h4>
 					<div class="row">
 						<div class="col-sm-6">
 							<button id="reset" class="btn btn-default btn-block" >Reiniciar marcação</button>
@@ -559,9 +558,8 @@
 						<canvas id="canvas2"></canvas>
 				</div>	
 				<br> <br>
-				<div class="col-md-12">
-					
-					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha</h4>
+				<div class="col-md-11 col-md-offset-1">
+					<h4 style="color:white" align="justify">Você pode clicar, ou tocar, e arrastar para riscar os principais elementos que justificam sua escolha. Você pode fazer <font color="yellow">até 3 marcações</font> na imagem.</h4>
 					<div class="row">
 						<div class="col-sm-6">
 							<button id="reset2" class="btn btn-default btn-block" >Reiniciar marcação</button>
@@ -626,8 +624,8 @@
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script> -->
 <script>
 	var apiUrl = 'https://contribua.org/api/';
-	var projectId = '583	';
-	var formProfileStep = 1;
+	var projectId = '583';
+	var formProfileStep = 10;
 	var app = angular.module('CampinaApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.height = window.innerHeight;
@@ -725,7 +723,6 @@
 							}
 						}
 						// Calls the form profile if still have data to fill
-						showProfileForm();
 						if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
 								$scope.userProfile.sex === '' ||
 								$scope.userProfile.clas === '' ||
@@ -765,7 +762,6 @@
 					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
 
 					// Get user profile (10 steps)
-					getUserProfile();
 					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
 						getUserProfile();
 					}
@@ -907,14 +903,14 @@
 								if (markedElements === allowedPointsSize){
 									avoidPath = true;
 								}
-								alert(canvas.freeDrawingBrush._points);
+								//alert(canvas.freeDrawingBrush._points);
 								canvas.clear();
 								loadImage();
 							}
 
 							//Init canvas from Fabric.js
 							function configFabric() {
-								alert("Chamei fabric!");
+								//alert("Chamei fabric!");
 								var $ = function(id){return document.getElementById(id)};
 								
 								if (canvas !== null){
@@ -927,13 +923,17 @@
 								});
 
 								if (screen.width <= 768){//For phones use whole width
-									canvas.setWidth(window.innerWidth * 0.9);
-									canvas.setHeight((window.innerWidth*0.9)/1.3333);
-								}else{
+									canvas.setWidth(window.innerWidth * 0.8);
+									canvas.setHeight((window.innerWidth*0.8)/1.3333);
+								}else if (screen.width <= 1200){
 									canvas.setWidth(500);
 									canvas.setHeight(375);
+								}else{
+									canvas.setWidth(600);
+									canvas.setHeight(450);
 								}
 
+		
 								fabric.Object.prototype.transparentCorners = false;
 
 								var drawingColorEl = "#005E7A",
@@ -988,7 +988,7 @@
 									}
 							      }
 							}
-							alert("Vou chamar fabric!");
+							//alert("Vou chamar fabric!");
 							configFabric();
 							loadImage();
 						}	
@@ -1082,15 +1082,12 @@
 
 							//Saving task answers
 							taskrun = JSON.stringify(taskrun);
-							alert(taskrun);
+							//alert(taskrun);
 							//console.log(taskrun);
 
-							newTask();
-							$("#skeleton").fadeIn(1000);
-							setTimeout(function() { $("#success").fadeOut() }, 1000);
 							//Asking for points in most and least preferred images
 							//Saving in database!
-							/*$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
 								// console.log('Saved!');
 								$("#skeleton").fadeOut(0);
 								$("#success").fadeIn();
@@ -1100,7 +1097,7 @@
 								setTimeout(function() { $("#success").fadeOut() }, 1000);
 							}, function saveTaskErrorCallback(response) {
 								$('#error').show();
-							});*/
+							});
 
 					      }
 					} else {
@@ -1175,19 +1172,19 @@
 * 2. Na 2a tela do tutorial, reduz esse texto: “É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!” (E esse ora aí não é hora não?)
 * 3. A tela de “conte-nos um pouco mais sobre você” aparece meio abruptamente. que tal se aparecesse primeiro algo como “queríamos lhe perguntar mais sobre você“, e quando a pessoa desse o ok ela caísse no form?
 * 4. Não tinha a parte de clicar no que você mais gostou/menos gostou na foto não?
-5. Os elementos da página são carregados em uma ordem meio estranha: primeiro aparece o texto todos desengonçado, e depois começam a aparecer as fotos, né. pergunta a jeff se não tem como melhorar isso
-6. Voltei pro ruascampina, e a pergunta que fica no topo da página não me diz o que é pra fazer. e tem um espaço estranho entre o título e as fotos.
-7. (tela da marcação) o espaço entre a letra azul e a branca, o alinhamento dos elementos que tem que ter uma lógica perceptível (tudo no mesmo ponto à esquerda por exemplo). talvez seja bom seguir a mesmo leiaute da parte anterior da tarefa, com a foto grande no centro da tela. aí acho que esse monte de texto junto da imagem precisa sair. pode ser algo como “clique/toque (dependendo se é no celular) no que nessa foto faz ela ser o melhor lugar”. e aí os botões de reiniciar e próxima precisam ficar um pouco mais longe um do outro e serem no mesmo look and feel da outra tela.
+* 5. Os elementos da página são carregados em uma ordem meio estranha: primeiro aparece o texto todos desengonçado, e depois começam a aparecer as fotos, né. pergunta a jeff se não tem como melhorar isso
+* 6. Voltei pro ruascampina, e a pergunta que fica no topo da página não me diz o que é pra fazer. e tem um espaço estranho entre o título e as fotos.
+* 7. (tela da marcação) o espaço entre a letra azul e a branca, o alinhamento dos elementos que tem que ter uma lógica perceptível (tudo no mesmo ponto à esquerda por exemplo). talvez seja bom seguir a mesmo leiaute da parte anterior da tarefa, com a foto grande no centro da tela. aí acho que esse monte de texto junto da imagem precisa sair. pode ser algo como “clique/toque (dependendo se é no celular) no que nessa foto faz ela ser o melhor lugar”. e aí os botões de reiniciar e próxima precisam ficar um pouco mais longe um do outro e serem no mesmo look and feel da outra tela.
 * 8. Na parte do formulário do “conte-nos mais”, acho que precisamos tirar o termo “Classe social".  a renda mensal é mesmo da pessoa? ou da família? não está claro
 * 9. Na parte da marcação está aparecendo o “Não consigo escolher!“. É pra aparecer? E aliás, tira essa exclamação também
 * 10. E a do _Tarefa concluída!_ também
 
 #### Contribua
-1. Aida clicou no login via facebook e depois de logar ela foi levada pra uma tela pra editar o perfil que pede pra ela editar o email dela. quando ela editou, o contribua salvou mas não mandou ela de volta pra a tarefa. acho que isso não pode ficar assim. por que não pegamos o email do facebook já e depois de logada a pessoa já cai na tarefa?
+* 1. Aida clicou no login via facebook e depois de logar ela foi levada pra uma tela pra editar o perfil que pede pra ela editar o email dela. quando ela editou, o contribua salvou mas não mandou ela de volta pra a tarefa. acho que isso não pode ficar assim. por que não pegamos o email do facebook já e depois de logada a pessoa já cai na tarefa? -> em signin.html não estava sendo repassado o next da requisição para as urls de logins de Facebook e Twitter, apesar de se testar se o next era nulo ou não!
 -->
 
 <!-- David:
-1. Imagem muito pequena no celular e sem resize quando muda orientação!
+* 1. Imagem muito pequena no celular e sem resize quando muda orientação!
 * 2. Marcar com pincel não funcionou no celular!
 -->
 

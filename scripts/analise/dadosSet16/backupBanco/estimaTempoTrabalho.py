@@ -28,7 +28,7 @@ def readUserData(lines1, lines2, outputFileName):
 		time_info.extend(time_info[5].split("."))
 		init_time = datetime.datetime(int(created[0]), int(created[1]), int(created[2]), int(created[3]), int(created[4]), int(created[6]), int(created[7]))
 		finish_time = datetime.datetime(int(time_info[0]), int(time_info[1]), int(time_info[2]), int(time_info[3]), int(time_info[4]), int(time_info[6]), int(time_info[7]))
-		
+
 		if user_id in users_tasks.keys():
 			user_worktimes = users_tasks[user_id]
 			user_worktimes_diff = users_tasks_diff[user_id]
@@ -68,7 +68,6 @@ def readUserData(lines1, lines2, outputFileName):
 		users_tasks[user_id] = user_worktimes
 		users_tasks_diff[user_id] = user_worktimes_diff
 
-	print str(user_worktimes)
 	#Computing average worktime per user
 	for user_id in users_tasks.keys():
 		user_worktimes = users_tasks[user_id]
@@ -89,6 +88,11 @@ def readUserData(lines1, lines2, outputFileName):
 			if worktime <= 5 * 60:
 				current_diffs.append(worktime)
 
+		#if user_id == "617":
+		#	for value in user_worktimes:
+		#		print "work\t" + str(value)
+		#	for value in current_diffs:
+		#		print "diff\t" + str(value)
 		print user_id + "\t" + str(np.mean(user_worktimes)) + "\t" + str(np.median(user_worktimes)) + "\t" + str(np.sum(user_worktimes)) + "\t" + str(np.mean(current_diffs)) + "\t" + str(np.median(current_diffs)) + "\t" + str(np.sum(current_diffs))
 
 

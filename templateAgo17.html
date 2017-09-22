@@ -232,7 +232,7 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_01.png" alt="Como é Campina" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p><strong>Seja bem-vindo</strong>. Sua contribuição é muito importante para traçarmos os locais mais seguros e agradáveis de Campina Grande.</p>
+		      	<p><strong>Seja bem-vindo</strong>. Sua contribuição é muito importante para entendermos sobre locais agradáveis em Campina Grande, Paraíba.</p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 2">Próximo</button>
 		      	</div>
@@ -254,6 +254,7 @@
 	      </div>
 	      <!--  END tab2 -->
 		  <!-- tab3 -->
+<!--
 	      <div id="tab3" ng-show="tab === 3">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
@@ -261,14 +262,14 @@
 		      </div>
 		      <div class="modal-body">
 		      	<p>Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>. </p>
-			<!--<p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p> -->
-			<p><b>As questões sobre agradabilidade e segurança irão aparecer misturadas, então tenha cuidado em qual questão você está respondendo!</b></p>
+			<!-- <p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p> --> 
+			<!--<p><b>As questões sobre agradabilidade e segurança irão aparecer misturadas, então tenha cuidado em qual questão você está respondendo!</b></p>
 		      	<div class="text-center">
 		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
 		      	</div>
 		      </div>
-	      </div>
-	      <div id="tab4" ng-show="tab === 4">
+	      </div> -->
+	      <div id="tab4" ng-show="tab === 3">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
@@ -276,11 +277,11 @@
 		      <div class="modal-body">
 		      	<p>Para o local <span class="up">melhor avaliado</span>, você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para traçar um risco sobre cada elemento!</p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" ng-click="tab = 5">Próximo</button>
+		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
 		      	</div>
 		      </div>
 	      </div>
-	      <div id="tab5" ng-show="tab === 5">
+	      <div id="tab5" ng-show="tab === 4">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_05.gif" alt="" width="100%">
@@ -298,9 +299,9 @@
 	      	<ol class="carousel-indicators">
 				<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
 				<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
-				<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
-				<li ng-click="tab = 4" ng-class="{active:tab === 4}"></li>
-				<li ng-click="tab = 5" ng-class="{active:tab === 5}"></li>
+				<!--<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li> -->
+				<li ng-click="tab = 4" ng-class="{active:tab === 3}"></li>
+				<li ng-click="tab = 5" ng-class="{active:tab === 4}"></li>
 			</ol>
 	      </div>
 
@@ -1034,7 +1035,7 @@
 										}else{
 											separator = "";
 										}
-										allPoints = allPoints + separator + "(" + selectedPointsMost[j][i].x+","+selectedPointsMost[j][i].y+")";
+										allPoints = allPoints + separator + "[" + selectedPointsMost[j][i].x+","+selectedPointsMost[j][i].y+"]";
 									}
 									allPoints = allPoints + "]";
 								}
@@ -1055,7 +1056,7 @@
 										}else{
 											separator = "";
 										}
-										allPoints = allPoints + separator + "(" + selectedPointsLess[j][i].x+","+selectedPointsLess[j][i].y+")";
+										allPoints = allPoints + separator + "[" + selectedPointsLess[j][i].x+","+selectedPointsLess[j][i].y+"]";
 									}	
 									allPoints = allPoints + "]";
 								}	

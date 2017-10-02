@@ -324,7 +324,7 @@
 	<!-- Profile -->
 	<div id="modalProfile" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
-			<div class="modal-content" ng-init="tab = 1">
+			<div class="modal-content active" ng-init="tab = 1">
 				<div id="tab1" ng-show="tab === 1">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
@@ -401,22 +401,35 @@
 						</form>
 						<br>
 						<div class="text-center">
-							<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+							<button type="button" class="btn btn-primary" ng-click="tab = 3">Continuar</button>
 						</div>
 					</div>
 					<!--<div class="modal-footer">
 						<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
 					</div>-->
+			</div>
+			<div id="tab3" ng-show="tab === 3">
+				<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 				</div>
+				<div class="modal-body">
+					<p align="justify" style="font-size:120%;">Muito obrigado por responder a estas perguntas! Agora para que possamos salvar os seus dados por favor responda à próxima comparação de fotos.</p>
+					<div class="text-center">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
+					</div>
+				</div>
+				
+			</div>
 
 			<div class="modal-footer">
 			      	<ol class="carousel-indicators">
 						<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
 						<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
+						<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
 				</ol>
 		      </div>
-			</div>
 		</div>
+	     </div>
 	</div><!-- /.modal -->
 	<!-- END Profile -->
 

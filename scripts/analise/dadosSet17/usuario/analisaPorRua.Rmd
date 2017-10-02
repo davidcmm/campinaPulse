@@ -1,0 +1,89 @@
+---
+title: "analisaPorRua"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("vioplot")
+library("ggplot2")
+library("dplyr")
+```
+
+## Analisando a dispersão por rua
+
+Se formos olhar os ICs por rua:
+
+```{r}
+data <- read.csv("qscores-df.csv", header = TRUE)
+
+edesio_scores = filter(data, street == "R._Edésio_Silva")$qscore
+edesio_sd = sd(edesio_scores)
+inacio_scores = filter(data, street == "R._Inácio_Marquês_da_Silva")$qscore
+inacio_sd = sd(inacio_scores)
+manoel_scores = filter(data, street == "R._Manoel_Pereira_de_Araújo")$qscore
+manoel_sd = sd(manoel_scores)
+maciel_scores = filter(data, street == "R._Maciel_Pinheiro")$qscore
+maciel_sd = sd(maciel_scores)
+
+new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores)))
+
+ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))
+
+```
+
+Os intervalos de confiança mostram que:
+- A Manoel P. de Araújo realmente está bem abaixo das demais ruas
+- As outras três ruas possuem valores médios próximos, que podem ser confundíveis
+
+E aqui surge então a questão, será que apesar dessa semelhança nas médias, essas três ruas são similares assim?
+
+```{r cars}
+value <- data$qscore
+
+with(data , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("R._Inácio_Marquês_da_Silva","R._Edésio_Silva","R._Manoel_Pereira_de_Araújo", "R._Maciel_Pinheiro") ))
+```
+Aqui estão apresentados as dispersões dos Q-Scores por rua. Alguns pontos iniciais importantes:
+
+- A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas, conforme esperado;
+- A Inacio Marques e a Edesio silva tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações de locais mais ou menos conservados nessas ruas;
+- A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua;
+
+Com isso temos dois pontos importantes:
+1) A Maciel Pinheiro é mais homogênea que a Edésio Silva e a Inacio Marques;
+2) A Inacio Marques e a Edesio Silva são mais heterogeneas e tem QScores que variam em quase 2 pontos. Essa variação, apesar da maior homogeneidade, também pode ser notada na Maciel Pinheiro.
+
+Abaixo o sumário na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
+```{r cars}
+summary(filter(data, street == "R._Inácio_Marquês_da_Silva")$qscore)
+summary(filter(data, street == "R._Edésio_Silva")$qscore)
+summary(filter(data, street == "R._Maciel_Pinheiro")$qscore)
+summary(filter(data, street == "R._Manoel_Pereira_de_Araújo")$qscore)
+```
+
+Olhando as ruas ao longo de seus números, podemos tentar ter uma melhor ideia como a opiniao varia ao longo da rua.
+
+```{r cars}
+summary_inacio = filter(data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
+summary_edesio = filter(data, street == "R._Edésio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
+summary_maciel = filter(data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
+summary_manoel = filter(data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
+```
+
+```{r cars}
+summary_inacio
+```
+Para a Inacio Marques percebemos uma variação de aproximadamente 1.7 no QScore entre o número 500 (região de muros logo após o museu) e o número 239 (regiao residencial no quarteirão seguinte ao museu) 
+
+```{r cars}
+summary_edesio
+```
+Para a Edesio Silva
+
+```{r cars}
+summary_maciel
+```
+Para a Maciel Pinheiro

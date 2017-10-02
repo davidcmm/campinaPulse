@@ -1,6 +1,8 @@
 ---
 title: "analisaPorRua"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -41,7 +43,7 @@ Os intervalos de confiança mostram que:
 
 E aqui surge então a questão, será que apesar dessa semelhança nas médias, essas três ruas são similares assim?
 
-```{r cars}
+```{r }
 value <- data$qscore
 
 with(data , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("R._Inácio_Marquês_da_Silva","R._Edésio_Silva","R._Manoel_Pereira_de_Araújo", "R._Maciel_Pinheiro") ))
@@ -57,7 +59,7 @@ Com isso temos dois pontos importantes:
 2) A Inacio Marques e a Edesio Silva são mais heterogeneas e tem QScores que variam em quase 2 pontos. Essa variação, apesar da maior homogeneidade, também pode ser notada na Maciel Pinheiro.
 
 Abaixo o sumário na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
-```{r cars}
+```{r }
 summary(filter(data, street == "R._Inácio_Marquês_da_Silva")$qscore)
 summary(filter(data, street == "R._Edésio_Silva")$qscore)
 summary(filter(data, street == "R._Maciel_Pinheiro")$qscore)
@@ -66,24 +68,25 @@ summary(filter(data, street == "R._Manoel_Pereira_de_Araújo")$qscore)
 
 Olhando as ruas ao longo de seus números, podemos tentar ter uma melhor ideia como a opiniao varia ao longo da rua.
 
-```{r cars}
+```{r }
 summary_inacio = filter(data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
 summary_edesio = filter(data, street == "R._Edésio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
 summary_maciel = filter(data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
 summary_manoel = filter(data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% summarise(media_ponto = mean(qscore))
 ```
 
-```{r cars}
+```{r }
 summary_inacio
 ```
 Para a Inacio Marques percebemos uma variação de aproximadamente 1.7 no QScore entre o número 500 (região de muros logo após o museu) e o número 239 (regiao residencial no quarteirão seguinte ao museu) 
+![Numero 54](https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_22.jpg)
 
-```{r cars}
+```{r }
 summary_edesio
 ```
 Para a Edesio Silva
 
-```{r cars}
+```{r }
 summary_maciel
 ```
 Para a Maciel Pinheiro

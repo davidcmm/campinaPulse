@@ -83,11 +83,12 @@ summary_inacio
 Para a Inacio Marques percebemos uma **variação de aproximadamente 1.7** nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua.
 
 Analisando as imagens de cada ângulo em cada ponto da rua, pode-se observar **diferenças de 1 ou mais pontos no QScore entre ângulos do mesmo número**. Por exemplo:
+
 - no número 54, as variações para os ângulos 203 e 293
 - no número 120 a baixa nota do ângulo 203
-- no número 239 existe uma maior homogeneidade
+- no número 239 existe uma maior homogeneidade, de forma positiva
 - no número 360 os números 90 e 203 
-- no número 500 também temos uma maior homogeneidade
+- no número 500 também temos uma maior homogeneidade, de forma negativa
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 library("knitr")
@@ -126,13 +127,24 @@ Combinando as variações de QScores por ângulos, com as variações nas média
 summary_edesio
 ```
 
-Para a Edesio percebemos **uma variação de aproximadamente 1.4** nas médias do QScore do número 1136 () e do número 1546 (). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua.
+Para a Edesio percebemos **uma variação de aproximadamente 1.4** nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua.
+
+Analisando as imagens de cada ângulo em cada ponto da rua, pode-se observar **diferenças de 1 ou mais pontos no QScore entre ângulos do mesmo número**. Por exemplo:
+
+- no número 70, as variações do angulo 22 com os demais
+- no número 306 a baixa nota do ângulo 315
+- no número 602 as melhores notas dos ângulos 22 e 315
+- no número 1136 temos uma maior homogeneidade, de forma negativa
+- no número 1546 temos uma maior homogeneidade, de forma positiva
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 edesio <- filter(data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 show_street_data(edesio)
 ```
-Para a Edesio Silva
+
+Combinando as variações de QScores por ângulos, com as variações nas médias por números, consegue-se perceber, conforme esperado, que os locais com menor conservação e menos verde apresentam QScores mais baixos, indicando que ações de melhoria/cuidado poderiam ser direcionados para essas áreas. Um fato interessante é que, por exemplo, no número 1136, 315 a presença de uma casa em melhor estado de conservação melhora razoavelmente a nota desta cena apesar de termos um terreno vazio ao lado da casa. 
+
+Além disso, com esse nível de detalhe conseguimos perceber que a Edesio Silva é uma rua que possui uma área muito pouco cuidada (número 1136) e outras áreas com níveis de cuidado variados, onde poderíamos apontar setores nos números 70, 602 que poderiam ser melhor cuidados.
 
 ## Maciel Pinheiro
 

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>analisaPorRua</title>
+
+<script src="analisaPorRua_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="analisaPorRua_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="analisaPorRua_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="analisaPorRua_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="analisaPorRua_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="analisaPorRua_files/navigation-1.1/tabsets.js"></script>
+<link href="analisaPorRua_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="analisaPorRua_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">analisaPorRua</h1>
+
+</div>
+
+
+<div id="impressao-geral-das-ruas" class="section level1">
+<h1>Impressão Geral das Ruas</h1>
+<p>Se formos olhar os ICs por rua:</p>
+<pre class="r"><code>data &lt;- read.csv(&quot;qscores-df.csv&quot;, header = TRUE)
+
+edesio_scores = filter(data, street == &quot;R._Edésio_Silva&quot;)$qscore
+edesio_sd = sd(edesio_scores)
+inacio_scores = filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore
+inacio_sd = sd(inacio_scores)
+manoel_scores = filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore
+manoel_sd = sd(manoel_scores)
+maciel_scores = filter(data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore
+maciel_sd = sd(maciel_scores)
+
+new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores)), street = c(&quot;Maciel&quot;, &quot;Manoel&quot;, &quot;Edesio&quot;, &quot;Inacio&quot;), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores)))
+
+ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
+    geom_bar(position=position_dodge(), stat=&quot;identity&quot;) +
+    geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9))</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<ul>
+<li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas</li>
+<li>As outras três ruas possuem valores médios próximos, que podem ser confundíveis</li>
+</ul>
+<p>E aqui surge então uma questão: será que apesar dessa semelhança nas médias, essas três ruas são similares assim? Para isso computamos os violin plots de cada rua.</p>
+<pre class="r"><code>value &lt;- data$qscore
+
+with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , value[street==&quot;R._Edésio_Silva&quot;], value[street==&quot;R._Manoel_Pereira_de_Araújo&quot;], value[street==&quot;R._Maciel_Pinheiro&quot;],  col=rgb(0.1,0.4,0.7,0.7) , names=c(&quot;R._Inácio_Marquês_da_Silva&quot;,&quot;R._Edésio_Silva&quot;,&quot;R._Manoel_Pereira_de_Araújo&quot;, &quot;R._Maciel_Pinheiro&quot;) ))</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
+<ul>
+<li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua mais abaixo, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
+<li>A Inacio Marques e a Edesio silva tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados);</li>
+<li>A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua. Isso a torna mais homogênea que a Inacio e a Edesio, porém mais heterogênea que a Manoel P. de Araujo;</li>
+<li>A Inacio, Edesio e Maciel possuem QScores que variam em 2 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas nas ruas!</li>
+</ul>
+<p>Para complemento numérico dos violin plots, o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.</p>
+<pre class="r"><code>summary(filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.931   4.388   5.353   5.210   5.801   6.788</code></pre>
+<pre class="r"><code>summary(filter(data, street == &quot;R._Edésio_Silva&quot;)$qscore)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.338   4.397   5.031   5.080   5.819   6.627</code></pre>
+<pre class="r"><code>summary(filter(data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.571   4.833   5.154   5.119   5.384   6.274</code></pre>
+<pre class="r"><code>summary(filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   2.431   3.174   3.468   3.406   3.636   4.091</code></pre>
+</div>
+<div id="analisando-em-detalhe-cada-rua" class="section level1">
+<h1>Analisando em detalhe cada rua</h1>
+<p>Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua.</p>
+<div id="inacio-marques" class="section level2">
+<h2>Inacio Marques</h2>
+<pre class="r"><code>summary_inacio = filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_edesio = filter(data, street == &quot;R._Edésio_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_maciel = filter(data, street == &quot;R._Maciel_Pinheiro&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_manoel = filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))</code></pre>
+<pre class="r"><code>summary_inacio</code></pre>
+<pre><code>## # A tibble: 5 × 3
+##     num media_ponto        sd
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+## 1    54    5.049375 0.7751654
+## 2   120    5.824043 1.1426385
+## 3   239    5.963948 0.3130889
+## 4   360    4.982353 0.6778414
+## 5   500    4.232576 0.2360467</code></pre>
+<p>Para a Inacio Marques percebemos uma <strong>variação de aproximadamente 1.7</strong> nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua.</p>
+<p>Analisando as imagens de cada ângulo em cada ponto da rua, pode-se observar <strong>diferenças de 1 ou mais pontos no QScore entre ângulos do mesmo número</strong>. Por exemplo: - no número 54, as variações para os ângulos 203 e 293 - no número 120 a baixa nota do ângulo 203 - no número 239 existe uma maior homogeneidade - no número 360 os números 90 e 203 - no número 500 também temos uma maior homogeneidade</p>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_22.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 54, 22 -&gt; 5.889837
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_112.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 54, 112 -&gt; 5.525339
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_203.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 54, 203 -&gt; 4.431391
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_293.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 54, 293 -&gt; 4.350932
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_22.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 120, 22 -&gt; 6.788134
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_112.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 120, 112 -&gt; 5.400738
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_203.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 120, 203 -&gt; 4.399963
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_293.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 120, 293 -&gt; 6.707336
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_22.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 239, 22 -&gt; 6.35906
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_90.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 239, 90 -&gt; 6.064436
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_203.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 239, 203 -&gt; 5.66588
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_270.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 239, 270 -&gt; 5.766418
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_22.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 360, 22 -&gt; 5.305779
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_90.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 360, 90 -&gt; 4.556008
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 360, 203 -&gt; 4.296678
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_270.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 360, 270 -&gt; 5.770948
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_22.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 500, 22 -&gt; 4.485732
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_90.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 500, 90 -&gt; 4.18147
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_203.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 500, 203 -&gt; 3.931499
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_270.jpg' width='300px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.331605
+</div>
+</div>
+</div>
+<div class='row'>
+
+
+<p>Combinando as variações de QScores por ângulos, com as variações nas médias por números, consegue-se perceber, conforme esperado, que os locais com menor conservação e menos verde apresentam QScores mais baixos, indicando que ações de melhoria/cuidado poderiam ser direcionados para essas áreas. Além disso, com esse nível de detalhe conseguimos perceber que a Inácio Marques é uma rua que possui uma área muito pouco cuidada (número 500) e outras áreas com níveis de cuidado variados, onde poderíamos apontar setores nos números 54, 120 e 360, principalmente, que poderiam receber melhores cuidados.</p>
+</div>
+<div id="edesio-silva" class="section level2">
+<h2>Edesio Silva</h2>
+<pre class="r"><code>summary_edesio</code></pre>
+<pre><code>## # A tibble: 5 × 3
+##     num media_ponto        sd
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+## 1    70    4.749495 1.3419225
+## 2   306    5.509479 0.6110485
+## 3   602    4.918967 1.1838373
+## 4  1136    4.408774 0.3125229
+## 5  1546    5.814258 0.3402293</code></pre>
+<p>Para a Edesio percebemos <strong>uma variação de aproximadamente 1.4</strong> nas médias do QScore do número 1136 () e do número 1546 (). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua.</p>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_22.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 70, 22 -&gt; 6.626981
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_135.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 70, 135 -&gt; 4.598184
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_203.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 70, 203 -&gt; 4.31336
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_315.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 70, 315 -&gt; 3.459454
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_22.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 306, 22 -&gt; 5.676199
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 306, 135 -&gt; 5.105193
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_203.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 306, 203 -&gt; 6.299336
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_315.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 306, 315 -&gt; 4.957188
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_22.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 602, 22 -&gt; 6.056166
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_135.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 602, 135 -&gt; 4.746278
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_203.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 602, 203 -&gt; 3.337569
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_315.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 602, 315 -&gt; 5.535853
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_22.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1136, 22 -&gt; 4.090785
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_135.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1136, 135 -&gt; 4.289931
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_203.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1136, 203 -&gt; 4.424264
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_315.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1136, 315 -&gt; 4.830118
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_22.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1546, 22 -&gt; 6.225581
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_135.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1546, 135 -&gt; 5.817739
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_203.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1546, 203 -&gt; 5.821376
+</div>
+</div>
+<div class="col-xs-3">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_315.jpg' width='300px'>
+<div class="caption">
+R._Edésio_Silva 1546, 315 -&gt; 5.392336
+</div>
+</div>
+</div>
+<div class='row'>
+<p>Para a Edesio Silva</p>
+</div>
+<div id="maciel-pinheiro" class="section level2">
+<h2>Maciel Pinheiro</h2>
+<pre class="r"><code>summary_maciel</code></pre>
+<pre><code>## # A tibble: 5 × 3
+##     num media_ponto        sd
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+## 1   130    5.097402 0.5245478
+## 2   190    5.427872 0.8307156
+## 3   248    4.942481 0.5408222
+## 4   284    5.169547 0.5217971
+## 5   360    4.955728 1.0178216</code></pre>
+<pre class="r"><code>maciel &lt;- filter(data, street == &quot;R._Maciel_Pinheiro&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
+show_street_data(maciel)</code></pre>
+<pre><code>## &lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_90.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 130, 90 -&gt; 5.009101&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_180.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 130, 180 -&gt; 5.847765&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 130, 270 -&gt; 4.633242&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_360.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 130, 360 -&gt; 4.899499&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_90.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 190, 90 -&gt; 5.018308&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_180.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 190, 180 -&gt; 4.471002&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_270.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 190, 270 -&gt; 5.94776&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_360.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 190, 360 -&gt; 6.274417&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_90.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 248, 90 -&gt; 5.245809&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_180.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 248, 180 -&gt; 5.20904&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_270.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 248, 270 -&gt; 5.182902&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_360.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 248, 360 -&gt; 4.132171&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_90.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 284, 90 -&gt; 5.180266&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_180.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 284, 180 -&gt; 5.799671&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_270.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 284, 270 -&gt; 4.521784&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_360.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 284, 360 -&gt; 5.176469&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 360, 90 -&gt; 5.096936&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_180.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 360, 180 -&gt; 5.131871&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_270.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 360, 270 -&gt; 3.570968&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_360.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Maciel_Pinheiro 360, 360 -&gt; 6.023135&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;</code></pre>
+<p>Para a Maciel Pinheiro</p>
+</div>
+<div id="manoel-pereira" class="section level2">
+<h2>Manoel Pereira</h2>
+<pre class="r"><code>summary_manoel</code></pre>
+<pre><code>## # A tibble: 5 × 3
+##     num media_ponto        sd
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+## 1   188    3.547238 0.2020125
+## 2   222    3.234445 0.6083918
+## 3   300    3.430233 0.5032115
+## 4   370    3.430127 0.4495817
+## 5   392    3.388549 0.1999999</code></pre>
+<pre class="r"><code>manoel &lt;- filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
+show_street_data(manoel)</code></pre>
+<pre><code>## &lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_22.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 188, 22 -&gt; 3.741649&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_135.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 188, 135 -&gt; 3.263296&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_203.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 188, 203 -&gt; 3.59151&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_315.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 188, 315 -&gt; 3.592497&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_22.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 222, 22 -&gt; 2.430605&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_135.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 222, 135 -&gt; 3.178369&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_203.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 222, 203 -&gt; 3.450641&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_315.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 222, 315 -&gt; 3.878167&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_22.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 300, 22 -&gt; 3.118282&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_135.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 300, 135 -&gt; 3.543032&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_203.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 300, 203 -&gt; 4.090968&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_315.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 300, 315 -&gt; 2.968652&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_22.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 370, 22 -&gt; 3.268886&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_135.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 370, 135 -&gt; 3.873807&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_203.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 370, 203 -&gt; 3.703417&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_315.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 370, 315 -&gt; 2.8744&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_22.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 392, 22 -&gt; 3.162354&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_112.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 392, 112 -&gt; 3.293678&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_225.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 392, 225 -&gt; 3.484685&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;col-xs-3&#39;&gt;&lt;img src=&#39;https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_293.jpg&#39; width=&#39;300px&#39;&gt;&lt;div class=&#39;caption&#39;&gt;R._Manoel_Pereira_de_Araújo 392, 293 -&gt; 3.613478&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&#39;row&#39;&gt;</code></pre>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

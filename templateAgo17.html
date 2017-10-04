@@ -226,7 +226,7 @@
 		margin-top: 10px;
 	}
 </style>
-<div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl">
+<div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl" style="display:none;">
 	<!-- Success and Error Messages for the user -->
 	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
 		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
@@ -829,6 +829,8 @@
 					// Checks if theres no more tasks for the user
 					if (typeof response.data.id != 'undefined') {
 						$('#loading').hide();
+						document.getElementById("taskpresenter").style.display = "block";
+
 						$scope.task = response.data;
 						console.log('Loaded task '+$scope.task.id+' '+$scope.task.info.question);
 						$scope.answer = {

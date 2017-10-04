@@ -168,7 +168,7 @@ A partir do diagonóstico com base nos dados de percepção podemos olhar as fot
 summary_maciel
 ```
 
-Para a Maciel percebemos **uma variação de aproximadamente 0.5** nas médias do QScore do número 248 e do número 190. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros.
+Para a Maciel percebemos **uma variação de aproximadamente 0.5** nas médias do QScore do número 248 e do número 190. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. Outro ponto importante é a presença de QScores tipicamente mais altos dentro do conjunto avaliado.
 
 Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **diferenças de 1 ou mais pontos** no QScore entre ângulos do mesmo número. Por exemplo:
 
@@ -182,7 +182,18 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **di
 maciel <- filter(data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 show_street_data(maciel)
 ```
-Para a Maciel Pinheiro
+
+Com esse nível de detalhe conseguimos perceber que a Maciel Pinheiro é uma rua mais homogênea, com pouca variação entre os vários pontos da rua. Entretanto, alguns pontos despertaram percepções mais negativas nos respondentes e devem ser melhor avaliados. 
+
+Analisando de forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um bom nível de manutenção o que condiz com as notas mais altas de percepção (acima de 5.0, próximo a 6.0).  
+
+A partir do diagonóstico com base nos dados de percepção podemos olhar as fotos, ou o próprio local, e perceber que:
+
+- No número 360, ângulo 270 temos um prédio em pior estado de conservação e um caminhão estacionado impedindo a visão de outros detalhes da rua;
+- No número 284, ângulo 270 temos um estacionamento e um prédio um pouco mais antigo;
+- No número 248, ângulo 360 podemos ter um caso de preferência de estilo de vitrines e prédios;
+- No número 190, ângulo 180 temos um prédio em pior estado de conservação;
+- No número 130, ângulo 270 podemos ter um caso de preferência de estilo de vitrines e prédios.
 
 ## Manoel Pereira
 
@@ -190,7 +201,25 @@ Para a Maciel Pinheiro
 summary_manoel
 ```
 
+Para a Manoel percebemos **uma variação de aproximadamente 0.3** nas médias do QScore do número 222 e do número 188. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo. Outro ponto importante é a presença de QScores tipicamente mais baixos dentro do conjunto avaliado, o que sugere que a rua é mais problemática que as demais ruas avaliadas.
+
+Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que apesar das notas tipicamente baixas ainda temos casos **de diferenças de 0.5 ou 1 ou mais pontos** no QScore entre ângulos do mesmo número. Por exemplo:
+
+- No número 370, no ângulo 315 temos quase 1 ponto a menos do melhor ponto da rua;
+- No número 300, ângulo 315 temos quase 1 ponto a menos  do melhor ponto da rua;
+- No número 222, ângulo 22 temos mais de 1 ponto a menos do melhor ponto da rua;
+
 ```{r results='asis', echo=FALSE, out.extra=''}
 manoel <- filter(data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 show_street_data(manoel)
 ```
+
+Com esse nível de detalhe conseguimos perceber que a Manoel P é uma rua mais homogênea, de forma negativa, com pouca variação entre os vários pontos da rua. Entretanto, alguns pontos despertaram percepções ainda mais negativas nos respondentes e devem ser melhor avaliados. Essas observações são importantes porque acrescentam que, apesar dos QScores sugerirem que a rua toda é mais problemática que as demais avaliadas, ainda assim existem pontos mais críticos na rua.
+
+Analisando de forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3).  
+
+A partir do diagonóstico com base nos dados de percepção podemos olhar as fotos, ou o próprio local, e perceber que:
+
+- No número 370, no ângulo 315 temos ainda mais barracas e sujo na rua;
+- No número 300, ângulo 315 temos alguns prédios mais antigos e pouco cuidados combinados com itens na rua;
+- No número 222, ângulo 22 temos prédios em pior estado de conservação combinados com itens na rua;

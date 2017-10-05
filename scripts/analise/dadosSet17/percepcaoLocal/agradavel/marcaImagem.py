@@ -1,3 +1,4 @@
+# coding=utf-8
 from PIL import Image, ImageDraw, ImageFont
 import urllib, cStringIO
 import sys
@@ -16,29 +17,31 @@ data = json.loads(response.read())
 while len(data) > 0:
 	for i in range(0, len(data)):
 		current_run = data[i]
+		task_id = current_run['id']
 		info = current_run['info']
 		best_image = info['theMost']
 		worst_image = info['theLess']
+
 		if best_image != 'equal' or worst_image != 'equal':
 			best_points = eval(info['markMost'])
 			worst_points = eval(info['markLess'])
 
 			best_image = urllib.quote(best_image.encode('utf8'), ':/')
 			worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
-		
+
 			if best_image in best_map:
 				all_best_points = best_map[best_image]
 			else:
 				all_best_points = []
-			all_best_points.extend(best_points)
+			all_best_points.append([task_id, best_points])
 			best_map[best_image] = all_best_points
 	
 			if worst_image in worst_map:
 				all_worst_points = worst_map[worst_image]
 			else:
 				all_worst_points = []
-			all_worst_points.extend(best_points)
-			worst_map[worst_image] = all_best_points
+			all_worst_points.append([task_id, worst_points])
+			worst_map[worst_image] = all_worst_points
 		
 	#Requesting next window of data
 	offset = offset + len(data)
@@ -55,18 +58,21 @@ for image in best_map.keys():
 
 	image_data = best_map[image]
 	#print str(image_data)
-	for points in image_data:
-		for point in points:
-			x = point[0]
-			y = point[1]
+	for values in image_data:
+		points = values[1]
 
-			eX, eY = 5, 5 #Size of Bounding Box for ellipse
-			bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
-			draw = ImageDraw.Draw(base)
-			draw.ellipse(bbox, fill='green')
+		for sublist in points:
+			for point in sublist:
+				x = point[0]
+				y = point[1]
+
+				eX, eY = 5, 5 #Size of Bounding Box for ellipse
+				bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
+				draw.ellipse(bbox, fill='green')
 	image_name = image.split("/")[6]
 	base.save("melhores/"+image_name, "JPEG")
 
+#index = 0
 for image in worst_map.keys():
 	# get an image
 	file = cStringIO.StringIO(urllib.urlopen(image).read())
@@ -74,15 +80,30 @@ for image in worst_map.keys():
 	draw = ImageDraw.Draw(base)
 
 	image_data = worst_map[image]
-	for points in image_data:
-		for point in points:
-			x = point[0]
-			y = point[1]
+	for values in image_data:
+		#if image == "https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_70_135.jpg":
+		#	base2 = Image.open(file)
+		#	draw2 = ImageDraw.Draw(base2)
+		#	index = index + 1
+		#else:
+		#	base2 = ""
 
-			eX, eY = 5, 5 #Size of Bounding Box for ellipse
-			bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
-			draw = ImageDraw.Draw(base)
-			draw.ellipse(bbox, fill='red')
+		points = values[1]
+		for sublist in points:
+			for point in sublist:
+				x = point[0]
+				y = point[1]
+
+				eX, eY = 5, 5 #Size of Bounding Box for ellipse
+				bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
+				draw.ellipse(bbox, fill='red')
+		
+				#if image == "https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_70_135.jpg":
+				#	draw2.ellipse(bbox, fill='red')
+
+#		if image == "https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_70_135.jpg":
+#			image_name = image.split("/")[6]
+#			base2.save("piores/"+image_name+"_"+str(index), "JPEG")
 
 	image_name = image.split("/")[6]
 	base.save("piores/"+image_name, "JPEG")

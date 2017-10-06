@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: cp860 -*- 
 # Prepares a HTML page containing the photos and their QScore per question, filtered according to an intersection file containing the set of photos to be considered or not, and prints the set of photos that will appear in the HTML page
 
 import sys
@@ -69,9 +69,7 @@ if __name__ == "__main__":
 				resultsFilter[question].append(photo+" "+qscore)
 	
 	#Writing html
-	if filterScore:
-		outputFilter.write("<body style=\"overflow:scroll\">\n");
-
+	outputFile.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
 	outputFile.write("<body style=\"overflow:scroll\">\n");
 	counter = 0
 	for question, questionPhotos in results.iteritems():
@@ -81,8 +79,7 @@ if __name__ == "__main__":
 		outputFile.write("<tr>\n")
 		for data in questionPhotos:
 			currentData = data.split(" ")
-			
-			outputFile.write("<td><img src=\""+currentData[0]+"\" width=\"400\" height=\"300\"></td>\n")
+			outputFile.write("<td><img src=\""+ currentData[0]+"\" width=\"400\" height=\"300\"></td>\n")
 			outputFile.write("<td>"+currentData[0] + " " + currentData[1]+"</td>\n")
 			counter += 1
 

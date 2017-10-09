@@ -120,10 +120,41 @@ $(document).ready(function () {
 </div>
 
 
+<p>Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:</p>
+<ol style="list-style-type: decimal">
+<li>Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?</li>
+</ol>
+<ul>
+<li>O contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais</li>
+<li>As ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar</li>
+<li>E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais. Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.</li>
+</ul>
+<p>Para isso, foram escolhidas 4 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 2 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva e Inácio Marques), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e a outra rua é uma rua importante do centro da cidade (Maciel Pinheiro), que tem uma tendência de homogeneidade, com notas boas.</p>
+<p>Alguns questionamentos foram inicialmente levantados:</p>
+<ol style="list-style-type: decimal">
+<li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
+<li>Será que ruas que são parecidas na média, são de fato similares?</li>
+<li>Olhando a dispersão da rua como um todo, posso tentar dizer algo sobre a rua?</li>
+<li>Olhando as variações dos QScores por número/ponto na rua, consigo perceber variações que podem indicar problemas?</li>
+<li>Confrontando as variações no QScores com as fotos, podemos apontar problemas/virtudes das ruas?</li>
+</ol>
 <div id="impressao-geral-das-ruas" class="section level1">
 <h1>Impressão Geral das Ruas</h1>
-<p>Se formos olhar os ICs por rua:</p>
-<pre class="r"><code>data &lt;- read.csv(&quot;qscores-df.csv&quot;, header = TRUE)
+<ol style="list-style-type: decimal">
+<li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
+</ol>
+<pre class="r"><code>#Checking sample size
+data2 &lt;- read.table(&quot;all_ordenado.dat&quot;)
+data2$sd &lt;- apply(data2[,4:ncol(data2)], 1, sd)
+data2$n &lt;- ( 1.96 * data2$sd / 0.2) ** 2  #All QScores
+print(&quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;</code></pre>
+<pre class="r"><code>print(max(data2$n))</code></pre>
+<pre><code>## [1] 0.1628784</code></pre>
+<pre class="r"><code>print(min(data2$n))</code></pre>
+<pre><code>## [1] 0.0002110622</code></pre>
+<pre class="r"><code>#Getting data for each street
+data &lt;- read.csv(&quot;qscores-df.csv&quot;, header = TRUE)
 
 edesio_scores = filter(data, street == &quot;R._Edésio_Silva&quot;)$qscore
 edesio_sd = sd(edesio_scores)
@@ -143,20 +174,25 @@ ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) +
                   position=position_dodge(.9))</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <ul>
-<li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas</li>
-<li>As outras três ruas possuem valores médios próximos, que podem ser confundíveis</li>
+<li>Os ICs com 95% de confiança das 20 fotos foi razoavelmente curto, permitindo uma comparação das médias;</li>
+<li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas;</li>
+<li>As outras três ruas possuem intervalos próximos, que podem ser confundíveis;</li>
 </ul>
-<p>E aqui surge então uma questão: será que apesar dessa semelhança nas médias, essas três ruas são similares assim? Para isso computamos os violin plots de cada rua.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Será que ruas que são parecidas na média, são de fato similares?</li>
+<li>Olhando a dispersão da rua como um todo, posso tentar dizer algo sobre a rua?</li>
+</ol>
+<p>Três das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.</p>
 <pre class="r"><code>value &lt;- data$qscore
 
-with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , value[street==&quot;R._Edésio_Silva&quot;], value[street==&quot;R._Manoel_Pereira_de_Araújo&quot;], value[street==&quot;R._Maciel_Pinheiro&quot;],  col=rgb(0.1,0.4,0.7,0.7) , names=c(&quot;R._Inácio_Marquês_da_Silva&quot;,&quot;R._Edésio_Silva&quot;,&quot;R._Manoel_Pereira_de_Araújo&quot;, &quot;R._Maciel_Pinheiro&quot;) ))</code></pre>
+with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , value[street==&quot;R._Edésio_Silva&quot;], value[street==&quot;R._Manoel_Pereira_de_Araújo&quot;], value[street==&quot;R._Maciel_Pinheiro&quot;],  col=rgb(0.1,0.4,0.7,0.7) , names=c(&quot;Inacio&quot;,&quot;Edesio&quot;,&quot;Manoel&quot;, &quot;Maciel&quot;) ))</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 <p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
 <ul>
-<li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua mais abaixo, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
-<li>A Inacio Marques e a Edesio silva tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados);</li>
+<li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
+<li>A Inacio Marques e a Edesio silva tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados). A Edesio tem uma maior concentração de valores medianos, e medianos para bom e para ruim, já a Inácio tem uma maior concentração de valores para medianos bons e ruins;</li>
 <li>A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua. Isso a torna mais homogênea que a Inacio e a Edesio, porém mais heterogênea que a Manoel P. de Araujo;</li>
-<li>A Inacio, Edesio e Maciel possuem QScores que variam em 2 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas nas ruas!</li>
+<li>A Inacio, Edesio e Maciel possuem QScores que variam em 2 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!</li>
 </ul>
 <p>Para complemento numérico dos violin plots, o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.</p>
 <pre class="r"><code>summary(filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore)</code></pre>
@@ -174,7 +210,11 @@ with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , v
 </div>
 <div id="analisando-em-detalhe-cada-rua" class="section level1">
 <h1>Analisando em detalhe cada rua</h1>
-<p>Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua.</p>
+<p>Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua e confrontá-los com as imagens para tentar responder as duas questões:</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Olhando as variações dos QScores por número/ponto na rua, consigo perceber variações que podem indicar problemas?</li>
+<li>Confrontando as variações no QScores com as fotos, podemos apontar problemas/virtudes das ruas?</li>
+</ol>
 <div id="inacio-marques" class="section level2">
 <h2>Inacio Marques</h2>
 <pre class="r"><code>summary_inacio = filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))

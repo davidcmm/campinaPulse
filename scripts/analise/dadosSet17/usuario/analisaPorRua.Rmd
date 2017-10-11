@@ -28,10 +28,7 @@ Alguns questionamentos foram inicialmente levantados:
 4. Olhando as variações dos QScores por número/ponto na rua, consigo perceber variações que podem indicar problemas?
 5. Confrontando as variações no QScores com as fotos, podemos apontar problemas/virtudes das ruas?
 
-# Impressão Geral das Ruas
-
-
-1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
+# Tamanho das amostras e comparação entre rankings
 
 ```{r}
 #Checking sample size
@@ -42,6 +39,66 @@ print(">>>> Maior e menor amostra necessária ")
 print(max(data2$n))
 print(min(data2$n))
 
+#Checking rankings similarity
+mergeSort <- function(x){
+  if(length(x) == 1){
+    inv <- 0
+  } else {
+    n <- length(x)
+    n1 <- ceiling(n/2)
+    n2 <- n-n1
+    y1 <- mergeSort(x[1:n1])
+    y2 <- mergeSort(x[n1+1:n2])
+    inv <- y1$inversions + y2$inversions
+    x1 <- y1$sortedVector
+    x2 <- y2$sortedVector
+    i1 <- 1
+    i2 <- 1
+    while(i1+i2 <= n1+n2+1){
+      if(i2 > n2 || (i1 <= n1 && x1[i1] <= x2[i2])){
+        x[i1+i2-1] <- x1[i1]
+        i1 <- i1 + 1
+      } else {
+        inv <- inv + n1 + 1 - i1
+        x[i1+i2-1] <- x2[i2]
+        i2 <- i2 + 1
+      }
+    }
+  }
+  return (list(inversions=inv,sortedVector=x))
+}
+numberOfInversions <- function(x){
+  r <- mergeSort(x)
+  return (r$inversions)
+}
+normalizedKendallTauDistance2 <- function(data1, data2){
+  x <- data1
+  y <- data2
+  
+  tau = numberOfInversions(order(x)[rank(y)])
+  print(tau)
+  nItens = length(x)
+  maxNumberOfInverstions <- (nItens*(nItens-1))/2
+  normalized = tau/maxNumberOfInverstions
+
+  print (normalized)
+}
+data29 <- read.table("29users/all_ordenado.dat")
+
+merged <- merge(select(data29, V2, V3), select(data2, V2, V3), by = "V2")
+print(cor.test(merged$V3.x, merged$V3.y, method = "kendall"))
+print(cor.test(merged$V3.x, merged$V3.y, method = "spearman"))
+
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x, merged$V3.y)))
+```
+
+
+# Impressão Geral das Ruas
+
+
+1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
+
+```{r}
 #Getting data for each street
 data <- read.csv("qscores-df.csv", header = TRUE)
 
@@ -116,13 +173,13 @@ summary_inacio
 ```
 Para a Inacio Marques percebemos uma **variação de aproximadamente 1.3** nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.
 
-Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças variam de 0.01 a 2.1 entre ângulos do mesmo número**. Essas diferenças podem ser indicativos de variações de manutenção/qualidade de locais muito próximos. Por exemplo:
+Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças variam de 0.2 a 2.1 entre ângulos do mesmo número**. Essas diferenças podem ser indicativos de variações de manutenção/qualidade de locais muito próximos. Por exemplo:
 
 - no número 54, as variações para os ângulos 203 e 293
 - no número 120 a baixa nota do ângulo 203
-- no número 239 existe uma grande homogeneidade, de forma positiva
+- no número 239 existe uma homogeneidade, de forma positiva
 - no número 360 as variações para os números 90 e 203 
-- no número 500 também temos uma maior homogeneidade, de forma negativa
+- no número 500 temos o ângulo 203 com uma nota mais baixa
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 library("knitr")
@@ -130,6 +187,7 @@ inacio <- filter(data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(nu
 
 show_street_data <- function (current_df){
     cat("<div class='row'>")
+    angleData = c()
     for(i in 1:nrow(current_df)) {
       row <- current_df[i,]
       url <- as.character(row$url)
@@ -137,13 +195,17 @@ show_street_data <- function (current_df){
       num <- row$num
       angle <- row$angle
       score <- row$qscore
+      angleData <- append(angleData, score)
+      
       cat("<div class='col-xs-3'>")
       cat("<img src='", url,"' width='300px'>", sep = "")
       cat("<div class='caption'>", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 4 == 0){
         cat("</div>")
+        cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
         cat("<div class='row'>")
+        angleData = c()
       }
     }
 }
@@ -157,7 +219,9 @@ Com esse nível de detalhe conseguimos confrontar os scores com as imagens e per
 
 - a Inácio Marques é uma rua que possui seu final como sendo uma área pouco cuidada (número 500), com muros/construções pouco cuidadas, terrenos, sem atrativo;
 - o início da rua (segunda área de score mais baixo) tem alguns trechos de casas mais simples e/ou pouco cuidadas, lixo, vegetação pouco cuidada e vegetação bem cuidada em um angulo apenas;
-- outras áreas com níveis de cuidado variados, onde poderíamos apontar setores nos números 120 e 360, principalmente, que poderiam receber melhores cuidados. No número 360, angulos 90 e 203, temos terrenos que precisam de maiores cuidados, contrapostos a uma bela visão proporcionada pela presença do museu e sua vegetação melhor cuidada. No número 120, ângulos 203 temos lixo e melhoria necessária nas construções, e no ângulo 112 temos mais uma indicação de melhoria em construção/construção inacabada contraposta com outras construções bem cuidadas e com verde;
+- outras áreas com níveis de cuidado variados, onde poderíamos apontar setores nos números 120 e 360, principalmente, que poderiam receber melhores cuidados. 
++ No número 360, angulos 90 e 203, temos terrenos que precisam de maiores cuidados, contrapostos a uma bela visão proporcionada pela presença do museu e sua vegetação melhor cuidada. 
++ No número 120, ângulos 203 temos lixo e melhoria necessária nas construções, e no ângulo 112 temos mais uma indicação de melhoria em construção/construção inacabada contraposta com outras construções bem cuidadas e com verde;
 - a região do número 239 sintetiza boas avaliações e vai de acordo com nossa avaliação anterior: boa manutenção, verde, rua larga
 
 Analisando de forma geral as fotos percebemos que, conforme esperado, os locais com menor conservação e menos verde apresentam QScores mais baixos, indicando que ações de melhoria/cuidado poderiam ser direcionados para essas áreas. 
@@ -168,9 +232,9 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 summary_edesio
 ```
 
-Para a Edesio percebemos **uma variação de aproximadamente 1.34** nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.
+Para a Edesio percebemos **uma variação de aproximadamente 1.35** nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.
 
-Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças variam de 0.21 a 2.3 no QScore entre ângulos do mesmo número**. Por exemplo:
+Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças variam de 0.24 a 2.4 no QScore entre ângulos do mesmo número**. Por exemplo:
 
 - no número 70, o ângulo 22 com nota distoante dos demais ângulos;
 - no número 306 a melhor nota do ângulo 203;
@@ -186,7 +250,10 @@ show_street_data(edesio)
 Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:
 
 - a Edesio Silva possui uma área muito pouco cuidada (número 1136), com os ângulos 22, 135 e 203 temos problemas de terrenos, lixo e casas pouco cuidadas;
-- no restante da rua temos variações de melhoras e piores nas notas entre os números e entre os ângulos. No número 70, ângulo 135 existe uma construção inacabada que afeta a vista da rua, nos angulos 135 e 203 existe lixo na rua, nos angulos 135, 203 e 315 existem algumas casas que precisam de melhor cuidado e falta verde na rua. No número 602, ângulo 203 temos um terreno com lixos, angulo 135 temos alem de um muro pouco cuidado uma falta de verde (apesar de termos arvores em crescimento!). No número 306 temos notas medianas que condizem com a combinação de vegetação com casas de boa manutenção e algumas de menor manutenção, ou artefatos de construção.
+- no restante da rua temos variações de melhoras e piores nas notas entre os números e entre os ângulos. 
++ No número 70, ângulo 135 existe uma construção inacabada que afeta a vista da rua, nos angulos 135 e 203 existe lixo na rua, nos angulos 135, 203 e 315 existem algumas casas que precisam de melhor cuidado e falta verde na rua. 
++ No número 602, ângulo 203 temos um terreno com lixos, angulo 135 temos alem de um muro pouco cuidado uma falta de verde (apesar de termos arvores em crescimento!). 
++ No número 306 temos notas medianas que condizem com a combinação de vegetação com casas de boa manutenção e algumas de menor manutenção, ou artefatos de construção.
 
 Analisando de forma geral as fotos percebemos que, conforme esperado, os locais com menor conservação e menos verde apresentam QScores mais baixos, indicando que ações de melhoria/cuidado poderiam ser direcionados para essas áreas. 
 
@@ -198,10 +265,10 @@ summary_maciel
 
 Para a Maciel percebemos **uma variação de aproximadamente 0.2** nas médias do QScore do número 248 e dos números 130 e 360. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias mais no centro da rua.
 
-Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças por ângulo variam de 1 a 1.2 entre angulos do mesmo número**. Esta variação, ao contrário da Edesio e Inacio, sugere que em cada número existe ao menos 1 angulo que desperta um sentimento mais positivo ou negativo. >>> Por exemplo:
+Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **que as maiores diferenças por ângulo variam de 0.9 a 1.25 entre angulos do mesmo número**. Esta variação, ao contrário da Edesio e Inacio, sugere que em cada número existe ao menos 1 angulo que desperta um sentimento mais positivo ou negativo. Por exemplo:
 
-- No número 360, temos uma nota mais alta para o ângulo 360;
-- No número 284, temos uma nota mais baixa para o ângulo 270;
+- No número 360, temos uma nota mais baixa para o ângulo 90;
+- No número 284, temos uma nota mais baixa para o ângulo 90;
 - No número 248, temos uma nota mais baixa para o ângulo 360;
 - No número 190, temos uma nota mais baixa para o ângulo 180;
 - No número 130, temos uma nota mais baixa para o ângulo 270
@@ -211,17 +278,17 @@ maciel <- filter(data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arr
 show_street_data(maciel)
 ```
 
-Com esse nível de detalhe conseguimos perceber que a Maciel Pinheiro é uma rua mais homogênea, com pouca variação entre os vários pontos da rua. Entretanto, alguns pontos despertaram percepções mais negativas nos respondentes e devem ser melhor avaliados. 
+Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:
 
-Analisando de forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um bom nível de manutenção o que condiz com as notas mais altas de percepção (acima de 5.0, próximo a 6.0).  
+- A maciel é a rua mais homogêna de nosso conjunto, dado a semelhança geral que existe entre os espaços capturados nas fotos;
+- Apesar dessa homogeneidade, todos os números considerados apresentaram ao menos um ângulo com uma diferença próxima a 1 ponto para a melhor nota do número. 
++ No número 360, ângulo 90 podemos ter um caso de preferências por fachadas;
++ No número 284, ângulo 90 também pode ser um caso de preferências por fachadas;
++ No número 248, ângulo 360 podemos ter um caso de preferência de estilo de vitrines e prédios;
++ No número 190, ângulo 180 temos um prédio em pior estado de conservação;
++ No número 130, ângulo 270 podemos ter um caso de preferência de estilo de vitrines e prédios.
 
-A partir do diagonóstico com base nos dados de percepção podemos olhar as fotos, ou o próprio local, e perceber que:
-
-- No número 360, ângulo 270 temos um prédio em pior estado de conservação e um caminhão estacionado impedindo a visão de outros detalhes da rua;
-- No número 284, ângulo 270 temos um estacionamento e um prédio um pouco mais antigo;
-- No número 248, ângulo 360 podemos ter um caso de preferência de estilo de vitrines e prédios;
-- No número 190, ângulo 180 temos um prédio em pior estado de conservação;
-- No número 130, ângulo 270 podemos ter um caso de preferência de estilo de vitrines e prédios.
+De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um bom nível de manutenção o que condiz com as notas mais altas de percepção (acima de 5.0, próximo a 6.0). Por outro lado, essas variações maiores de scores em certas cenas sugere uma melhor investigação com os pontos marcados pelos usuários e que pode gerar sugestões de melhorias para as fachadas. 
 
 ## Manoel Pereira
 
@@ -229,25 +296,25 @@ A partir do diagonóstico com base nos dados de percepção podemos olhar as fot
 summary_manoel
 ```
 
-Para a Manoel percebemos **uma variação de aproximadamente 0.3** nas médias do QScore do número 222 e do número 188. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo. O número 222 parece apresentar ligeiramente uma maior deficiência que os demais pontos da rua. Outro ponto importante é a presença de QScores tipicamente mais baixos dentro do conjunto avaliado, o que sugere que a rua é mais problemática que as demais ruas avaliadas.
+Para a Manoel percebemos **uma variação de aproximadamente 0.4** nas médias do QScore do número 300 e do número 188. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo. 
 
-Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que apesar das notas tipicamente baixas ainda temos casos **de diferenças de 0.5 ou 1 ou mais pontos** no QScore entre ângulos do mesmo número. Por exemplo:
+Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que, apesar das notas tipicamente baixas, 
+**as maiores diferenças variam de 0.3 a 1.8 entre ângulos do mesmo número**. Por exemplo:
 
-- No número 370, no ângulo 315 temos quase 1 ponto a menos do melhor ponto da rua;
-- No número 300, ângulo 315 temos quase 1 ponto a menos  do melhor ponto da rua;
-- No número 222, ângulo 22 temos mais de 1 ponto a menos do melhor ponto da rua;
+- No número 370, no ângulo 315 temos aprox. 0.8 a menos do melhor ponto da rua;
+- No número 300, ângulo 315 temos aprox. 1.6 a menos  do melhor ponto da rua;
+- No número 222, ângulo 22 temos 1.8 a menos do melhor ponto da rua;
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 manoel <- filter(data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 show_street_data(manoel)
 ```
 
-Com esse nível de detalhe conseguimos perceber que a Manoel P é uma rua mais homogênea, de forma negativa, com pouca variação entre os vários pontos da rua. Entretanto, alguns pontos despertaram percepções ainda mais negativas nos respondentes e devem ser melhor avaliados. Essas observações são importantes porque acrescentam que, apesar dos QScores sugerirem que a rua toda é mais problemática que as demais avaliadas, ainda assim existem pontos mais críticos na rua.
+Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:
 
-Analisando de forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3).  
+- Apesar da média geral baixa e de uma maior homogeneidade da rua, ainda assim existem cenas/locais que despertam sentimentos e emoções ainda mais negativos nas pessoas. Essas observações são importantes porque acrescentam que, apesar dos QScores sugerirem que a rua toda é mais problemática que as demais avaliadas, existem pontos ainda mais críticos na rua;
++ No número 370, no ângulo 315 temos ainda mais barracas e sujo na rua;
++ No número 300, ângulo 315 temos alguns prédios mais antigos e pouco cuidados combinados com itens na rua;
++ No número 222, ângulo 22 temos prédios em pior estado de conservação combinados com itens na rua;
 
-A partir do diagonóstico com base nos dados de percepção podemos olhar as fotos, ou o próprio local, e perceber que:
-
-- No número 370, no ângulo 315 temos ainda mais barracas e sujo na rua;
-- No número 300, ângulo 315 temos alguns prédios mais antigos e pouco cuidados combinados com itens na rua;
-- No número 222, ângulo 22 temos prédios em pior estado de conservação combinados com itens na rua;
+De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3-4).  

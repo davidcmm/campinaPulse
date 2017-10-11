@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 import urllib, cStringIO
 import sys
 import urllib, json
+from os import walk
 
 #Reading task-run from Contribua
 apiUrl = 'https://contribua.org/api/'
@@ -22,7 +23,7 @@ while len(data) > 0:
 		best_image = info['theMost']
 		worst_image = info['theLess']
 
-		if best_image != 'equal' or worst_image != 'equal':
+		if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
 			best_points = eval(info['markMost'])
 			worst_points = eval(info['markLess'])
 
@@ -69,7 +70,7 @@ for image in best_map.keys():
 				eX, eY = 5, 5 #Size of Bounding Box for ellipse
 				bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
 				draw.ellipse(bbox, fill='green')
-	image_name = image.split("/")[6]
+	image_name = urllib.unquote(image.split("/")[6]).decode('utf8')
 	base.save("melhores/"+image_name, "JPEG")
 
 #index = 0
@@ -105,8 +106,54 @@ for image in worst_map.keys():
 #			image_name = image.split("/")[6]
 #			base2.save("piores/"+image_name+"_"+str(index), "JPEG")
 
-	image_name = image.split("/")[6]
+	image_name = urllib.unquote(image.split("/")[6]).decode('utf8')
 	base.save("piores/"+image_name, "JPEG")
+
+#Creating webpage for marked images
+best_images = []
+for (dirpath, dirnames, filenames) in walk("./melhores"):
+    best_images.extend(filenames)
+worst_images = []
+for (dirpath, dirnames, filenames) in walk("./piores"):
+    worst_images.extend(filenames)
+
+def create_rows(images, folder, output_file):
+	counter = 0
+	for image in images:
+		print str(folder) + str(image)
+		output_file.write("<td><img src=\""+ str(folder) + str(image.decode("ASCII")) + "\" width=\"400\" height=\"300\"></td>\n")
+		output_file.write("<td>" + folder + image + "</td>\n")
+		counter += 1
+
+		if counter % 3 == 0:
+			output_file.write("</tr>\n")
+			output_file.write("<tr>\n")
+
+def create_page_for_marked_images(best_images, worst_images):
+	output_file = open("markedImages.html", "w")
+	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
+	output_file.write("<body style=\"overflow:scroll\">\n")
+
+	#Best evaluated images
+	output_file.write("<h2> Melhores </h2>")
+	output_file.write("<table>\n")
+	output_file.write("<tr>\n")
+	create_rows(best_images, "melhores/", output_file)
+	output_file.write("</tr>\n")
+	output_file.write("</table>")
+
+	#Worst evaluated images
+	output_file.write("<h2> Piores </h2>")
+	output_file.write("<table>\n")
+	output_file.write("<tr>\n")
+	create_rows(worst_images, "piores/", output_file)
+	output_file.write("</tr>\n")
+	output_file.write("</table>")
+	
+	output_file.write("</body>\n");	
+	output_file.close()
+
+create_page_for_marked_images(best_images, worst_images)
 
 #x, y =  base.size
 #bbox =  (x/2 - eX/2, y/2 - eY/2, x/2 + eX/2, y/2 + eY/2)

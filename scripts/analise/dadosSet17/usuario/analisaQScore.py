@@ -242,6 +242,10 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 			photo1 = data['theMost'].strip(' \t\n\r"')
 			photo2 = data['theLess'].strip(' \t\n\r"')
 
+			if len(photo1) == 0 or len(photo2) == 0:#Error in persisting photos!
+				print "Foto zerada! " + line
+				continue
+
 			taskDef = tasksDefinitions[taskID]
 			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
 			if photo1 != completeTie:
@@ -600,7 +604,7 @@ def readTasksDefinitions(linesTasks):
 
 	for line in linesTasks:
 		data = line.split("+")	
-		print data
+		#print data
 		taskID = data[0].strip(' \t\n\r')
 		currentDef = json.loads(data[7].strip(' \t\n\r\"'))
 

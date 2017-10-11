@@ -1,6 +1,7 @@
 #!/bin/bash
 
-python analisaUsuarios.py runOld.csv runNew.csv
+#First file is being ignored!
+python analisaUsuarios.py run.csv run.csv
 
 python separaGrupo.py usersInfo.dat
 

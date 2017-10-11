@@ -36,11 +36,15 @@ if __name__ == "__main__":
 	df['angulo'] = df[1].apply(get_street_angle)
 
 	#Group by street and then street, number to see summaries: http://pandas.pydata.org/pandas-docs/stable/groupby.html#applying-multiple-functions-at-once
+	out_summary = open("qscores-df-summary.dat", "w")
 	grouped = df.groupby('rua')
-	print(str(grouped[2].describe()))#Description of mean value of Q-Scores simulations per street
+	out_summary.write(str(grouped[2].describe()))#Description of mean value of Q-Scores simulations per street
+	out_summary.write("\n")
 
 	grouped = df.groupby(['rua', 'numero'], as_index=False)
-	print(str(grouped[2].describe()))
+	out_summary.write(str(grouped[2].describe()))
+	out_summary.write("\n")
+	out_summary.close()
 
 	#Output dataframe
 	df.to_csv("./qscores-df.csv", index=False, header=['question', 'url', 'qscore', 'street', 'num', 'angle'], columns=[0, 1, 2, 'rua', 'numero', 'angulo'], encoding='utf-8')

@@ -30,6 +30,8 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada) com a amostra atual contendo 61 pessoas.
+
 ```{r}
 #Checking sample size
 data2 <- read.table("all_ordenado.dat")
@@ -94,6 +96,47 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x,
 
 
 # Impressão Geral das Ruas
+
+## Ranking Geral
+
+Computados os QScores as cinco melhores e cinco piores imagens avaliadas foram as seguintes
+
+```{r results='asis', echo=FALSE, out.extra=''}
+library("knitr")
+
+show_general_ranking <- function (data){
+    top_5 <- head(data2, n=5)
+    bottom_5 <- tail(data2, n=5)
+    
+    cat("<div class='row'>")
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      url <- as.character(row$url)
+      street <- as.character(row$street)
+      num <- row$num
+      angle <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      cat("<div class='col-xs-3'>")
+      cat("<img src='", url,"' width='300px'>", sep = "")
+      cat("<div class='caption'>", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
+      cat("</div>")
+      if (i > 1 && i %% 4 == 0){
+        cat("</div>")
+        cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
+        cat("<div class='row'>")
+        angleData = c()
+      }
+    }
+}
+
+show_general_ranking(data2)
+
+```
+
+## Análise das Ruas
 
 
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?

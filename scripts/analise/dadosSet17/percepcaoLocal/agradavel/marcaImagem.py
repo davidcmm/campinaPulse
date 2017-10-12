@@ -113,23 +113,27 @@ for image in worst_map.keys():
 best_images = []
 for (dirpath, dirnames, filenames) in walk("./melhores"):
     best_images.extend(filenames)
+best_images.sort()
+
 worst_images = []
 for (dirpath, dirnames, filenames) in walk("./piores"):
     worst_images.extend(filenames)
+worst_images.sort()
 
-def create_rows(images, folder, output_file):
+def create_rows(images, current_map, folder, output_file):
 	counter = 0
 	for image in images:
 		print str(folder) + str(image)
-		output_file.write("<td><img src=\""+ str(folder) + str(image.decode("ASCII")) + "\" width=\"400\" height=\"300\"></td>\n")
-		output_file.write("<td>" + folder + image + "</td>\n")
+		image_points = len(current_map.get(urllib.quote(image.encode('utf8'), ':/')))#UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 5: ordinal not in range(128)
+		output_file.write("<td><img src=\""+ str(folder) + str(image) + "\" width=\"400\" height=\"300\"></td>\n")
+		output_file.write("<td>" + folder + image + " " + image_points + "</td>\n")
 		counter += 1
 
 		if counter % 3 == 0:
 			output_file.write("</tr>\n")
 			output_file.write("<tr>\n")
 
-def create_page_for_marked_images(best_images, worst_images):
+def create_page_for_marked_images(best_images, worst_images, best_map, worst_map):
 	output_file = open("markedImages.html", "w")
 	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
 	output_file.write("<body style=\"overflow:scroll\">\n")
@@ -138,7 +142,7 @@ def create_page_for_marked_images(best_images, worst_images):
 	output_file.write("<h2> Melhores </h2>")
 	output_file.write("<table>\n")
 	output_file.write("<tr>\n")
-	create_rows(best_images, "melhores/", output_file)
+	create_rows(best_images, best_map, "melhores/", output_file)
 	output_file.write("</tr>\n")
 	output_file.write("</table>")
 
@@ -146,14 +150,14 @@ def create_page_for_marked_images(best_images, worst_images):
 	output_file.write("<h2> Piores </h2>")
 	output_file.write("<table>\n")
 	output_file.write("<tr>\n")
-	create_rows(worst_images, "piores/", output_file)
+	create_rows(worst_images, worst_map, "piores/", output_file)
 	output_file.write("</tr>\n")
 	output_file.write("</table>")
 	
 	output_file.write("</body>\n");	
 	output_file.close()
 
-create_page_for_marked_images(best_images, worst_images)
+create_page_for_marked_images(best_images, worst_images, best_map, worst_map)
 
 #x, y =  base.size
 #bbox =  (x/2 - eX/2, y/2 - eY/2, x/2 + eX/2, y/2 + eY/2)

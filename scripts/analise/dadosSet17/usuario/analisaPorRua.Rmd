@@ -99,7 +99,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x,
 
 ## Ranking Geral
 
-Computados os QScores as cinco melhores e cinco piores imagens avaliadas foram as seguintes
+Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 library("knitr")
@@ -108,33 +108,53 @@ show_general_ranking <- function (data){
     top_5 <- head(data2, n=5)
     bottom_5 <- tail(data2, n=5)
     
+    cat("<h3>Top 5</h3>")
     cat("<div class='row'>")
-    angleData = c()
-    for(i in 1:nrow(current_df)) {
-      row <- current_df[i,]
-      url <- as.character(row$url)
-      street <- as.character(row$street)
-      num <- row$num
-      angle <- row$angle
-      score <- row$qscore
-      angleData <- append(angleData, score)
+    for(i in 1:nrow(top_5)) {
+      row <- top_5[i,]
+      photo_name <- as.character(row$photo_name)
+      score <- row$V3
       
-      cat("<div class='col-xs-3'>")
-      cat("<img src='", url,"' width='300px'>", sep = "")
-      cat("<div class='caption'>", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
+      cat("<div class='col-xs-4'>")
+      cat("<img src='", "../percepcaoLocal/agradavel/melhores/",photo_name,"' width='400px'>", sep = "")
+      cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
       cat("</div>")
-      if (i > 1 && i %% 4 == 0){
+      if (i > 1 && i %% 3 == 0){
         cat("</div>")
-        cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
         cat("<div class='row'>")
-        angleData = c()
       }
     }
+    cat("</div>")
+    
+    cat("<h3>Bottom 5</h3>")
+    cat("<div class='row'>")
+    for(i in 1:nrow(bottom_5)) {
+      row <- bottom_5[i,]
+      photo_name <- as.character(row$photo_name)
+      score <- row$V3
+      
+      cat("<div class='col-xs-4'>")
+      cat("<img src='", "../percepcaoLocal/agradavel/piores/",photo_name,"' width='400px'>", sep = "")
+      cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
+      cat("</div>")
+      if (i > 1 && i %% 3 == 0){
+        cat("</div>")
+        cat("<div class='row'>")
+      }
+    }
+    cat("</div>")
 }
 
+novoV2 <- lapply(as.character(data2$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+photo <- unlist(lapply(novoV2, '[[', 1))
+data2$photo_name <- photo
 show_general_ranking(data2)
 
 ```
+
+Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.
+
+Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 5 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
 
 ## Análise das Ruas
 
@@ -206,9 +226,20 @@ Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao 
 
 ```{r }
 summary_inacio = filter(data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_inacio$upper <- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / 4
+summary_inacio$lower <- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / 4
+
 summary_edesio = filter(data, street == "R._Edésio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_edesio$upper <- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / 4
+summary_edesio$lower <- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / 4
+
 summary_maciel = filter(data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_maciel$upper <- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / 4
+summary_maciel$lower <- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / 4
+
 summary_manoel = filter(data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
+summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
 ```
 
 ```{r }

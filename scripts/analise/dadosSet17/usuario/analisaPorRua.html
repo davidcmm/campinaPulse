@@ -140,6 +140,7 @@ $(document).ready(function () {
 </ol>
 <div id="tamanho-das-amostras-e-comparacao-entre-rankings" class="section level1">
 <h1>Tamanho das amostras e comparação entre rankings</h1>
+<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada) com a amostra atual contendo 61 pessoas.</p>
 <pre class="r"><code>#Checking sample size
 data2 &lt;- read.table(&quot;all_ordenado.dat&quot;)
 data2$sd &lt;- apply(data2[,4:ncol(data2)], 1, sd)
@@ -224,6 +225,88 @@ print(cor.test(merged$V3.x, merged$V3.y, method = &quot;kendall&quot;))</code></
 </div>
 <div id="impressao-geral-das-ruas" class="section level1">
 <h1>Impressão Geral das Ruas</h1>
+<div id="ranking-geral" class="section level2">
+<h2>Ranking Geral</h2>
+<p>Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.</p>
+<h3>
+Top 5
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/R._Ed%C3%A9sio_Silva_1546_22.jpg' width='400px'>
+<div class="caption">
+R._Edésio_Silva_1546_22.jpg 6.314355
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_293.jpg' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_120_293.jpg 6.078449
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22.jpg' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_120_22.jpg 6.027601
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_270.jpg' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_360_270.jpg 5.882828
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_203.jpg' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_239_203.jpg 5.866313
+</div>
+</div>
+</div>
+<h3>
+Bottom 5
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315.jpg' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_315.jpg 3.230543
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135.jpg' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_135.jpg 3.132294
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22.jpg' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_22.jpg 2.908218
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315.jpg' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_315.jpg 2.826411
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22.jpg' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_22.jpg 2.29382
+</div>
+</div>
+</div>
+<p>Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.</p>
+<p>Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 5 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.</p>
+</div>
+<div id="analise-das-ruas" class="section level2">
+<h2>Análise das Ruas</h2>
 <ol style="list-style-type: decimal">
 <li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
 </ol>
@@ -246,7 +329,7 @@ ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) +
     geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9))</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <ul>
 <li>Os ICs com 95% de confiança das 20 fotos foi razoavelmente curto, permitindo uma comparação das médias;</li>
 <li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas;</li>
@@ -260,7 +343,7 @@ ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) +
 <pre class="r"><code>value &lt;- data$qscore
 
 with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , value[street==&quot;R._Edésio_Silva&quot;], value[street==&quot;R._Manoel_Pereira_de_Araújo&quot;], value[street==&quot;R._Maciel_Pinheiro&quot;],  col=rgb(0.1,0.4,0.7,0.7) , names=c(&quot;Inacio&quot;,&quot;Edesio&quot;,&quot;Manoel&quot;, &quot;Maciel&quot;) ))</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
 <ul>
 <li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
@@ -282,6 +365,7 @@ with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , v
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   2.294   3.260   3.557   3.560   3.991   4.456</code></pre>
 </div>
+</div>
 <div id="analisando-em-detalhe-cada-rua" class="section level1">
 <h1>Analisando em detalhe cada rua</h1>
 <p>Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua e confrontá-los com as imagens para tentar responder as duas questões:</p>
@@ -292,18 +376,29 @@ with(data , vioplot( value[street==&quot;R._Inácio_Marquês_da_Silva&quot;] , v
 <div id="inacio-marques" class="section level2">
 <h2>Inacio Marques</h2>
 <pre class="r"><code>summary_inacio = filter(data, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_inacio$upper &lt;- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / 4
+summary_inacio$lower &lt;- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / 4
+
 summary_edesio = filter(data, street == &quot;R._Edésio_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_edesio$upper &lt;- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / 4
+summary_edesio$lower &lt;- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / 4
+
 summary_maciel = filter(data, street == &quot;R._Maciel_Pinheiro&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_manoel = filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))</code></pre>
+summary_maciel$upper &lt;- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / 4
+summary_maciel$lower &lt;- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / 4
+
+summary_manoel = filter(data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_manoel$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
+summary_manoel$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4</code></pre>
 <pre class="r"><code>summary_inacio</code></pre>
-<pre><code>## # A tibble: 5 x 3
-##     num media_ponto        sd
-##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-## 1    54    4.851188 0.6197779
-## 2   120    5.387927 1.0098817
-## 3   239    5.770217 0.1068515
-## 4   360    5.393801 0.5283351
-## 5   500    4.492854 0.3446491</code></pre>
+<pre><code>## # A tibble: 5 x 5
+##     num media_ponto        sd    upper    lower
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1    54    4.851188 0.6197779 5.154879 4.547497
+## 2   120    5.387927 1.0098817 5.882769 4.893085
+## 3   239    5.770217 0.1068515 5.822575 5.717860
+## 4   360    5.393801 0.5283351 5.652685 5.134917
+## 5   500    4.492854 0.3446491 4.661732 4.323976</code></pre>
 <p>Para a Inacio Marques percebemos uma <strong>variação de aproximadamente 1.3</strong> nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças variam de 0.2 a 2.1 entre ângulos do mesmo número</strong>. Essas diferenças podem ser indicativos de variações de manutenção/qualidade de locais muito próximos. Por exemplo:</p>
 <ul>
@@ -465,14 +560,14 @@ R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.701639
 <div id="edesio-silva" class="section level2">
 <h2>Edesio Silva</h2>
 <pre class="r"><code>summary_edesio</code></pre>
-<pre><code>## # A tibble: 5 x 3
-##     num media_ponto        sd
-##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-## 1    70    4.778325 0.6312803
-## 2   306    5.035911 0.4202165
-## 3   602    4.912701 1.1304220
-## 4  1136    4.294094 0.1264927
-## 5  1546    5.656879 0.4793835</code></pre>
+<pre><code>## # A tibble: 5 x 5
+##     num media_ponto        sd    upper    lower
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1    70    4.778325 0.6312803 5.087652 4.468997
+## 2   306    5.035911 0.4202165 5.241817 4.830005
+## 3   602    4.912701 1.1304220 5.466608 4.358794
+## 4  1136    4.294094 0.1264927 4.356076 4.232113
+## 5  1546    5.656879 0.4793835 5.891777 5.421981</code></pre>
 <p>Para a Edesio percebemos <strong>uma variação de aproximadamente 1.35</strong> nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças variam de 0.24 a 2.4 no QScore entre ângulos do mesmo número</strong>. Por exemplo:</p>
 <ul>
@@ -632,14 +727,14 @@ R._Edésio_Silva 1546, 315 -&gt; 5.427946
 <div id="maciel-pinheiro" class="section level2">
 <h2>Maciel Pinheiro</h2>
 <pre class="r"><code>summary_maciel</code></pre>
-<pre><code>## # A tibble: 5 x 3
-##     num media_ponto        sd
-##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-## 1   130    5.159256 0.4562257
-## 2   190    5.321966 0.4091744
-## 3   248    5.389094 0.5457682
-## 4   284    5.281727 0.4171822
-## 5   360    5.195762 0.5213922</code></pre>
+<pre><code>## # A tibble: 5 x 5
+##     num media_ponto        sd    upper    lower
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1   130    5.159256 0.4562257 5.382806 4.935705
+## 2   190    5.321966 0.4091744 5.522461 5.121470
+## 3   248    5.389094 0.5457682 5.656520 5.121667
+## 4   284    5.281727 0.4171822 5.486147 5.077308
+## 5   360    5.195762 0.5213922 5.451244 4.940280</code></pre>
 <p>Para a Maciel percebemos <strong>uma variação de aproximadamente 0.2</strong> nas médias do QScore do número 248 e dos números 130 e 360. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias mais no centro da rua.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças por ângulo variam de 0.9 a 1.25 entre angulos do mesmo número</strong>. Esta variação, ao contrário da Edesio e Inacio, sugere que em cada número existe ao menos 1 angulo que desperta um sentimento mais positivo ou negativo. Por exemplo:</p>
 <ul>
@@ -801,14 +896,14 @@ R._Maciel_Pinheiro 360, 360 -&gt; 5.837291
 <div id="manoel-pereira" class="section level2">
 <h2>Manoel Pereira</h2>
 <pre class="r"><code>summary_manoel</code></pre>
-<pre><code>## # A tibble: 5 x 3
-##     num media_ponto        sd
-##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;
-## 1   188    3.752037 0.4245225
-## 2   222    3.461186 0.8205288
-## 3   300    3.330669 0.7611185
-## 4   370    3.634329 0.3423896
-## 5   392    3.622906 0.1534037</code></pre>
+<pre><code>## # A tibble: 5 x 5
+##     num media_ponto        sd    upper    lower
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1   188    3.752037 0.4245225 3.960053 3.544021
+## 2   222    3.461186 0.8205288 3.863245 3.059127
+## 3   300    3.330669 0.7611185 3.703617 2.957721
+## 4   370    3.634329 0.3423896 3.802100 3.466558
+## 5   392    3.622906 0.1534037 3.698073 3.547738</code></pre>
 <p>Para a Manoel percebemos <strong>uma variação de aproximadamente 0.4</strong> nas médias do QScore do número 300 e do número 188. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que, apesar das notas tipicamente baixas, <strong>as maiores diferenças variam de 0.3 a 1.8 entre ângulos do mesmo número</strong>. Por exemplo:</p>
 <ul>

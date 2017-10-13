@@ -156,6 +156,30 @@ Qualitativamente analisando estas imagens, conforme esperado, percebe-se que veg
 
 Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 5 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
 
+Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
+
+```{r}
+library(texreg)
+input_regressao <- read.csv("input_regressao/regressao-input.csv")
+plotRegAndLinear <- function(reg, test){
+  #http://blog.minitab.com/blog/adventures-in-statistics-2/why-you-need-to-check-your-residual-plots-for-regression-analysis
+  plot(reg)
+  
+  plot(test$street_wid, reg$resid)
+  plot(test$sidewalk_wid, reg$resid)
+  plot(test$landscape, reg$resid)
+  plot(test$trees, reg$resid)
+  plot(test$build_ident, reg$resid)
+}
+
+merged <- merge(data2, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
+reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(merged, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+
+texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#Analysing regression!
+plotRegAndLinear(reg, merged)
+```
+
 ## Análise das Ruas
 
 

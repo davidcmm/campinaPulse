@@ -4,6 +4,7 @@ import urllib, cStringIO
 import sys
 import urllib, json
 from os import walk
+import pickle
 
 #Reading task-run from Contribua
 apiUrl = 'https://contribua.org/api/'
@@ -120,13 +121,33 @@ for (dirpath, dirnames, filenames) in walk("./piores"):
     worst_images.extend(filenames)
 worst_images.sort()
 
+#Persisting points dictionaries
+#best_file = open("./best-dict.pkl", "rb")
+#pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
+#best_map = pickle.load(best_file)
+#best_file.close()
+#worst_file = open("./worst-dict.pkl", "rb")
+#pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
+#worst_map = pickle.load(worst_file)
+#worst_file.close()
+
 def create_rows(images, current_map, folder, output_file):
 	counter = 0
+	keys = []
+	for key in current_map.keys():#Decoding keys from task-run
+		new_key = urllib.unquote(key).decode('utf8')
+		keys.append([new_key, key])
+
 	for image in images:
-		print str(folder) + str(image)
-		image_points = len(current_map.get(urllib.quote(image.encode('utf8'), ':/')))#UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 5: ordinal not in range(128)
+		selected_key = None
+		for key_list in keys:
+			if image.decode("utf8") in key_list[0]:
+				selected_key = key_list[1]
+				break
+
+		image_points = len(current_map.get(selected_key))#UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 5: ordinal not in range(128)
 		output_file.write("<td><img src=\""+ str(folder) + str(image) + "\" width=\"400\" height=\"300\"></td>\n")
-		output_file.write("<td>" + folder + image + " " + image_points + "</td>\n")
+		output_file.write("<td>" + folder + image + " " + str(image_points) + "</td>\n")
 		counter += 1
 
 		if counter % 3 == 0:
@@ -138,6 +159,8 @@ def create_page_for_marked_images(best_images, worst_images, best_map, worst_map
 	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
 	output_file.write("<body style=\"overflow:scroll\">\n")
 
+	out_file.write(">>> Para cada imagem temos todas as marcações quando ela foi escolhida como melhor ou pior imagem de um conjunto de 4 fotos. Além disso, ao lado do nome de cada imagem temos o número de vezes que a imagem foi escolhida como melhor ou pior!")
+	
 	#Best evaluated images
 	output_file.write("<h2> Melhores </h2>")
 	output_file.write("<table>\n")

@@ -101,12 +101,12 @@ if __name__ == "__main__":
 		print "Uso: <arquivo com execucoes das tarefas e perfis dos usuarios - V1> <arquivo com execucoes das tarefas e perfis dos usuarios - V2>"
 		sys.exit(1)
 
-	dataFile1 = open(sys.argv[1], 'r')
+	dataFile1 = ""#open(sys.argv[1], 'r')
 	dataFile2 = open(sys.argv[2], 'r')
 	
-	lines1 = dataFile1.readlines()
+	lines1 = []#dataFile1.readlines()
 	lines2 = dataFile2.readlines()
 
 	usersTasks = readUserData(lines1, lines2, "worktime.dat")
-	dataFile1.close()
+	#dataFile1.close()
 	dataFile2.close()

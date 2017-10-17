@@ -8,7 +8,7 @@ def sendEmails(emails):
 
 	fromaddr = 'comoecampina@gmail.com'
 	username = 'comoecampina@gmail.com'
-	password = 'c0m0ec@mp1n@LSD'
+	password = 'comoecampina2017'
 	server = None
 
 	try:
@@ -24,7 +24,7 @@ def sendEmails(emails):
 		toaddrs  = userData[1]
 
 		# Prepare actual message
-		msg = 'Olá ' + userData[0] + ', \n Como está? Estamos te enviando primeiramente para agradecer por sua contribuição em nossa versão anterior do projeto Como é Campina? na plataforma Contribua (https://contribua.org). A partir da sua ajuda conseguimos entender melhor a relação entre elementos presentes nas cidades, como árvores, carros, pessoas nas ruas e as percepções de segurança e agradabilidade de nossos contribuidores. Com isso, pudemos contribuir para o aperfeiçoamento da maneira como pesquisas de percepção podem utilizar ferramentas de computação como o Como é Campina? \nAgora uma nova versão do projeto foi lançada na plataforma. Nessa nova fase, estamos tentando melhorar ainda mais essas ferramentas de modo que automaticamente possamos construir a percepção sobre ruas e, assim, possamos agilizar ainda mais o trabalho de gestores e urbanistas na detecção de problemas e na melhoria das nossas cidades. Para isso precisamos novamente da sua ajuda! \n Você poderia nos ajudar novamente? Basta acessar a URL do projeto https://contribua.org/project/ruascampina/, fazer login com a sua conta e em 5 minutos responder mais algumas comparações de imagens. Sua ajuda é muito importante para nós. \n\n\n Atenciosamente, Equipe do Como é Campina?'
+		msg = 'Olá ' + userData[0] + ', \n Como está? Estamos te enviando primeiramente para agradecer por sua contribuição em nossa versão anterior do projeto Como é Campina? na plataforma Contribua (https://contribua.org). A partir da sua ajuda conseguimos entender melhor a relação entre elementos presentes nas cidades, como árvores, carros, pessoas nas ruas e as percepções de segurança e agradabilidade de nossos contribuidores. Com isso, pudemos contribuir para o aperfeiçoamento da maneira como pesquisas de percepção podem utilizar ferramentas de computação como o Como é Campina? \nAgora uma nova versão do projeto foi lançada na plataforma. Nessa nova fase, estamos tentando melhorar ainda mais essas ferramentas de modo que automaticamente possamos construir a percepção sobre ruas e, assim, possamos agilizar ainda mais o trabalho de gestores e urbanistas na detecção de problemas e na melhoria das nossas cidades. Para isso precisamos novamente da sua ajuda! \n Você poderia nos ajudar novamente? Basta acessar a URL do projeto https://contribua.org/project/ruascampina/, fazer login com a sua conta e em 5 minutos responder mais algumas comparações de imagens. Sua ajuda é muito importante para nós. \n\n\n Atenciosamente, \n Equipe do Como é Campina?'
 		message = """\From: %s\nTo: %s\nSubject: %s\n\n%s
 		""" % (fromaddr, toaddrs, "Nova Versão do Como é Campina?", msg)
 		try:		

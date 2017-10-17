@@ -60,7 +60,7 @@ def parseUserData(lines):
 
 		if len(data[1]) > 0:#TODO: Add gender based on name?
 			#Separating by age
-			if len(profile[0]) > 0:
+			if len(profile[0]) > 0 and profile[0] != "None":
 				age = int(profile[0].lower())
 				if age <= 24:
 					young.add(userID)
@@ -74,7 +74,7 @@ def parseUserData(lines):
 
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
-			if len(profile[1]) > 0:
+			if len(profile[1]) > 0 and profile[1] != "None":
 				sex = profile[1].lower()
 				if sex[0] == 'f':
 					feminine.add(userID)
@@ -86,7 +86,7 @@ def parseUserData(lines):
 					tasksMasc.update(tasksIDAgra)
 		
 			#Separating by income
-			if len(profile[2]) > 0:
+			if len(profile[2]) > 0 and profile[2] != "None":
 				income = profile[2]
 				if income == possibleIncomesOld[0] or income == possibleIncomesOld[1] or income == possibleIncomesNew[0] or income == possibleIncomesNew[1]:
 					low.add(userID)
@@ -98,7 +98,7 @@ def parseUserData(lines):
 					tasksHigh.update(tasksIDAgra)
 		
 			#Separating by education degree
-			if len(profile[3]) > 0:
+			if len(profile[3]) > 0 and profile[3] != "None":
 				education = profile[3]
 				if education[0].lower() == 'e':
 					highSchool.add(userID)
@@ -110,7 +110,7 @@ def parseUserData(lines):
 					tasksPosGrad.update(tasksIDAgra)
 
 			#Separating by relationship
-			if len(profile[6]) > 0:
+			if len(profile[6]) > 0 and profile[6] != "None":
 				rel = profile[6].lower()
 				if rel[0] == 's':
 					single.add(userID)
@@ -122,7 +122,7 @@ def parseUserData(lines):
 					tasksMarried.update(tasksIDAgra)
 
 			#Separating by known places
-			if len(profile[7]) > 0:
+			if len(profile[7]) > 0 and profile[7] != "None":
 				places = profile[7].lower()
 				if len(places) > 0:
 					if "cen" in places.strip():

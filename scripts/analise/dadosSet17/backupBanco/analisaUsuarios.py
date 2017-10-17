@@ -40,21 +40,22 @@ def plotAge():
 	lev5 = 0
 	lev6 = 0
 
-	for age in userAge.keys():
-		intAge = int(age)
+	for age in userAge.keys():	
+		if eval(age) != None and len(age) > 0:
+			intAge = int(age)
 
-		if intAge < 18:
-			lev0 += 1 * userAge[age]
-		elif intAge >= 18 and intAge <= 24:
-			lev1 += 1 * userAge[age]
-		elif intAge >= 25 and intAge <= 34:
-			lev2 += 1 * userAge[age]
-		elif intAge >= 35 and intAge <= 44:		
-			lev3 += 1 * userAge[age]
-		elif intAge >= 45 and intAge <= 54:		
-			lev4 += 1 * userAge[age]
-		elif intAge >= 55 and intAge <= 64:		
-			lev5 += 1 * userAge[age]
+			if intAge < 18:
+				lev0 += 1 * userAge[age]
+			elif intAge >= 18 and intAge <= 24:
+				lev1 += 1 * userAge[age]
+			elif intAge >= 25 and intAge <= 34:
+				lev2 += 1 * userAge[age]
+			elif intAge >= 35 and intAge <= 44:		
+				lev3 += 1 * userAge[age]
+			elif intAge >= 45 and intAge <= 54:		
+				lev4 += 1 * userAge[age]
+			elif intAge >= 55 and intAge <= 64:		
+				lev5 += 1 * userAge[age]
 		#else:
 		#	lev6 += 1
 	labels = '18l', '18a24', '25a34', '35a44', '45a54', '55a64'
@@ -74,8 +75,9 @@ def plotSex():
 	labels = []
 	sizes = []
 	for sex in userSex.keys():
-		labels.append(sex)
-		sizes.append(userSex[sex])
+		if sex != None and len(sex) > 0:
+			labels.append(sex)
+			sizes.append(userSex[sex])
 	colors = ['lightcoral', 'lightskyblue']
 	plt.figure()
 	plt.clf()
@@ -90,8 +92,9 @@ def plotClass():
 	labels = []
 	sizes = []
 	for clas in userClass.keys():
-		labels.append(clas)
-		sizes.append(userClass[clas])
+		if clas != None and len(clas) > 0:
+			labels.append(clas)
+			sizes.append(userClass[clas])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red']
 	plt.figure()
 	plt.clf()
@@ -106,8 +109,9 @@ def plotEduc():
 	labels = []
 	sizes = []
 	for educ in userEduc.keys():
-		labels.append(educ)
-		sizes.append(userEduc[educ])
+		if educ != None and len(educ) > 0:
+			labels.append(educ)
+			sizes.append(userEduc[educ])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
@@ -124,13 +128,14 @@ def plotCity():
 	campinaCounting = 0
 	joaoPessoaCounting = 0
 	for city in userCity.keys():
-		if 'campina' in city.lower():
-			campinaCounting += userCity[city]
-		elif 'pessoa' in city.lower():
-			joaoPessoaCounting += userCity[city]
-		else:
-			labels.append(city[0:5])
-			sizes.append(userCity[city])
+		if city != None and len(city) > 0:
+			if 'campina' in city.lower():
+				campinaCounting += userCity[city]
+			elif 'pessoa' in city.lower():
+				joaoPessoaCounting += userCity[city]
+			else:
+				labels.append(city[0:5])
+				sizes.append(userCity[city])
 	labels.append("Campina Grande")
 	labels.append("Joao Pessoa")
 	sizes.append(campinaCounting)
@@ -153,7 +158,7 @@ def plotTime():
 	lev5 = 0
 	lev6 = 0
 	for time in userTime.keys():
-		if len(time) > 0:
+		if time != None and len(time) > 0:
 			intTime = int(time)
 			if intTime < 10:
 				lev1 += 1 * userTime[time]
@@ -183,8 +188,9 @@ def plotRel():
 	labels = []
 	sizes = []
 	for rel in userRel.keys():
-		labels.append(rel)
-		sizes.append(userRel[rel])
+		if rel != None and len(rel) > 0:
+			labels.append(rel)
+			sizes.append(userRel[rel])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
@@ -449,7 +455,7 @@ def readUserData(lines1, lines2, outputFileName):
 			userExecutions[2].append(taskID)
 			userExecutions[4].append(answer)
 		else:
-			print "Error! " + question
+			print "Error! " + question + " " + possibleQuestions[0] + " " + possibleQuestions[1]
 
 		if finish_time > userExecutions[5]:
 			userExecutions[5] = finish_time
@@ -502,7 +508,7 @@ def readUserData(lines1, lines2, outputFileName):
 		photo1 = data['theMost'].strip(' \t\n\r"')
 		photo2 = data['theLess'].strip(' \t\n\r"')
 
-		print str(photosAnsweredPerQuestion.keys())	
+		#print str(photosAnsweredPerQuestion.keys())	
 		if userID in photosAnsweredPerQuestion[question].keys():
 			photos = photosAnsweredPerQuestion[question][userID]
 		else:
@@ -512,10 +518,10 @@ def readUserData(lines1, lines2, outputFileName):
 		photosAnsweredPerQuestion[question][userID] = photos
 
 		#Saving user answer near task ID
-		if question+"?" == possibleQuestions[0]:#Agra
+		if question == possibleQuestions[0]:#Agra
 			userExecutions[1].append(taskID)
 			userExecutions[3].append(answer)
-		elif question+"?" == possibleQuestions[1]:#Seg
+		elif question == possibleQuestions[1]:#Seg
 			userExecutions[2].append(taskID)
 			userExecutions[4].append(answer)
 		else:

@@ -230,19 +230,19 @@
 	<!-- Success and Error Messages for the user -->
 	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
 		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
-		<li class="fa fa-2x fa-check pull-left"></li> <strong> Sua resposta foi salva!</strong>
+		<li class="fa fa-2x fa-check pull-left"></li> <strong id="i18n_welldone_text"> Your answer has been saved!</strong>
 	</div>
 	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
-		Carregando próxima tarefa...
+		<span id="i18n_loading_next_task">Loading next task...</span>
 	</div>
 	<div id="why" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
-		<li class="fa fa-exclamation-triangle"></li> Marque ao menos um ponto na imagem que ajude a explicar o porquê você a escolheu!
+		<li class="fa fa-exclamation-triangle"></li> <span id="i18n_action_missed">Circle at least one element in the picture that helps explaining why you choose it!</span>
 	</div>
 	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
-		<strong>Ops! Algo errado.</strong>
+		<strong id="i18n_error">Ops! Something wrong.</strong>
 		<br/>
 		<div class="alert-actions">
-			<a class="btn btn-danger" href="/project/comoecampinanaomoradores/newtask">Recarregar</a>
+			<a id="i18n_reload" class="btn btn-danger" href="/project/comoecampinanaomoradores/newtask">Reload</a>
 		</div>
 	</div>
 	<!-- End Success and Error Messages for the user -->
@@ -258,9 +258,9 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_01.png" alt="Como é Campina" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p align="justify"><strong>Seja bem-vindo</strong>. Sua contribuição é muito importante para podermos construir informação sobre ruas agradáveis em Campina Grande, Paraíba.</p>
+		      	<p align="justify"><strong id="i18n_welcome">Welcome</strong>. <span id="i18n_welcome_msg">Your contribution is very important to us so that we can build information about pleasant streets in Campina Grande, Paraíba. </span></p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" ng-click="tab = 2">Próximo</button>
+		      		<button class="btn btn-default" ng-click="tab = 2"><span id="i18n_next">Next</span></button>
 		      	</div>
 		      </div>
 	      </div>
@@ -272,9 +272,9 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_02.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p align="justify">Dê sua opinião escolhendo dentre as quatro imagens o lugar <span class="up">mais agradável</span> e o <span class="down">menos agradável</span>, confirmando em seguida.</p>
+		      	<p align="justify"><span id="i18n_tutorial1">Give your opinion by choosing from the four pictures</span> <span class="up" id="i18n_most_pleasant1">the most pleasant</span> <span id="i18n_and">and</span> <span class="down" id="i18n_least_pleasant1">the least pleasant</span>, <span id="i18n_confirm">confirming then</span>.</p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" ng-click="tab = 3">Próximo</button>
+		      		<button class="btn btn-default" ng-click="tab = 3"><span id="i18n_next2">Next</span></button>
 		      	</div>
 		      </div>
 	      </div>
@@ -301,9 +301,9 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p align="justify">Para o local <span class="up">mais agradável</span>, você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para circular cada elemento!</p>
+		      	<p align="justify"> <span id="i18n_place">For</span> <span class="up" id="i18n_most_pleasant2">the most pleasant</span>, <span id="i18n_mark_image">you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element</span>!</p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
+		      		<button class="btn btn-default" ng-click="tab = 4"><span id="i18n_next2">Próximo</span></button>
 		      	</div>
 		      </div>
 	      </div>
@@ -313,9 +313,9 @@
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_05.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
-		      	<p align="justify">Faça o mesmo para o local <span class="down">menos agradável!</span></p>
+		      	<p align="justify"><span id="i18n_same">Do the same for</span> <span class="down" id="i18n_least_pleasant2">the least pleasant</span>!</p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar">Começar</button>
+		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar"><span id="i18n_start">Start</span></button>
 		      	</div>
 		      </div>
 	      </div>
@@ -345,64 +345,64 @@
 						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 				        </div>
 					<div class="modal-body">
-						<p align="justify" style="font-size:120%;">Gostaríamos de conhecer um pouco mais sobre você e para isso gostaríamos de lhe fazer algumas perguntas, você poderia respondê-las?</p>
+						<p align="justify" style="font-size:120%;"> <span id="i18n_info">We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them</span>?</p>
 						<div class="text-center">
-							<button class="btn btn-primary" ng-click="tab = 2">Sim</button>
-							<button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+							<button class="btn btn-primary" ng-click="tab = 2"><span id="i18n_yes">Yes</span></button>
+							<button type="button" class="btn btn-default" data-dismiss="modal"><span id="i18n_no">No</span></button>
 						</div>
 					</div>
 				</div>
 				 <div id="tab2" ng-show="tab === 2">
 					<div class="modal-header">
-						<h4 class="modal-title">Conte-nos um pouco mais sobre você</h4>
+						<h4 class="modal-title"> <span id="i18n_more">Tell us a bit more about you </span></h4>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 					</div>
 					<div class="modal-body">
 						<form>
 							<div class="form-group">
-								<label for="userage">Idade:</label>
+								<label for="userage"><span id="i18n_age">Age</span>:</label>
 								<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
 							</div>
 							<div class="form-group">
-								<label for="usersex">Sexo:</label>
+								<label for="usersex"><span id="i18n_sex">Sex</span>:</label>
 								<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
-									<option value="M">Masculino</option>  
-									<option value="F">Feminino</option>  				
+									<option value="M" id="i18n_men">Man</option>  
+									<option value="F" id="i18n_women"> Woman</option>  				
 								</select>
 							</div>
 							<div class="form-group">
 								<!--<label for="userclass">Classe Social (renda mensal):</label> -->
-								<label for="userclass">Considerando os responsáveis pelo sustento da sua casa, a soma de seus rendimentos se enquadra em que faixa?</label>
+								<label for="userclass"><span id="i18n_income">Considering those responsible for the maintenance of your house, the sum of their income fits into which range</span>?</label>
 								<select class="form-control" id="userclass" name="userclass" ng-model="userProfile.clas">
-									<option value="alta">R$ 14.500 ou mais</option>  
-									<option value="media alta">R$ 7.250 a R$ 14.499,99</option>  
-									<option value="media" selected>R$ 2.900 a R$ 7.249,99</option>  
-									<option value="media baixa">R$ 1.450 a R$ 2.899,99</option>  
-									<option value="baixa">até R$ 1.449,99</option>
+									<option value="alta" id="i18n_alta">R$ 14.500 or more</option>  
+									<option value="media alta" id="i18n_med_alta">R$ 7.250 to R$ 14.499,99</option>  
+									<option value="media" selected id="i18n_media">R$ 2.900 to R$ 7.249,99</option>  
+									<option value="media baixa" id="i18n_med_baixa">R$ 1.450 to R$ 2.899,99</option>  
+									<option value="baixa" id="i18n_baixa"> less than R$ 1.449,99</option>
 								</select>
 							</div>
 							<div class="form-group">
-								<label for="usercity">Em qual cidade você mora atualmente:</label>
+								<label for="usercity"><span id="i18n_city">In which city do you currently live</span>:</label>
 								<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
 							</div>
 							<div class="form-group">
-								<label for="knowcampina">Você conhece a cidade de Campina Grande - Paraíba?</label>
+								<label for="knowcampina"><span id="i18n_know_campina">Do you know the city of Campina Grande, Paraíba</span>?</label>
 								<select class="form-control" id="knowcampina" name="knowcampina" ng-model="userProfile.knowcampina">
-									<option value="yes">Sim</option>  
-									<option value="no">Não</option>  				
+									<option value="yes"> <span id="i18n_yes">Yes</span></option>  
+									<option value="no"> <span id="i18n_yes">No</span></option>  				
 								</select>
 							</div>
 							<div class="form-group">
-								<label for="howknowcampina">Qual destas alternativas se enquadra melhor para você?</label>
+								<label for="howknowcampina"><span id="i18n_how_know_campina">Which of these alternatives fits you best</span>?</label>
 								<select class="form-control" id="howknowcampina" name="howknowcampina" ng-model="userProfile.howknowcampina">
-									<option value="live">Moro na cidade</option>  
-									<option value="study">Apenas estudo na cidade</option>  				
-									<option value="work">Apenas trabalho na cidade</option>  				
-									<option value="turism">Visito ou visitei esporadicamente a cidade</option>  				
-									<option value="never">Nunca visitei a cidade</option>  				
+									<option value="live" id="i18n_live">Live in the city</option>  
+									<option value="study" id="i18n_study">Only study in the city</option>  				
+									<option value="work" id="i18n_work">Only work in the city</option>  				
+									<option value="turism" id="i18n_turism">I visit or visited the city sporadically</option>  				
+									<option value="never"id="i18n_never">Never visited the city</option>  				
 								</select>
 							</div>
-							<label for="neig">Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba?</label>
+							<label for="neig"><span id="i18n_neig">Do you travel to or from any of these neighborhoods in Campina Grande, Paraíba</span>?</label>
 							<div class="row">
 								<div class="col-sm-4" ng-repeat="item in neighborhood">
 									<div class="checkbox">
@@ -416,7 +416,7 @@
 						</form>
 						<br>
 						<div class="text-center">
-							<button type="button" class="btn btn-primary" ng-click="tab = 3">Continuar</button>
+							<button type="button" class="btn btn-primary" ng-click="tab = 3"><span id="i18n_continue">Continue</span></button>
 						</div>
 					</div>
 					<!--<div class="modal-footer">
@@ -428,9 +428,9 @@
 							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
-					<p align="justify" style="font-size:120%;">Muito obrigado por responder a estas perguntas! Agora para que possamos salvar os seus dados por favor responda à próxima comparação de fotos.</p>
+					<p align="justify" style="font-size:120%;"><span id="i18n_form_thanks">Thanks for answering these questions! Now for us to save your data please answer the next photo comparison</span>.</p>
 					<div class="text-center">
-						<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal"><span id="i18n_continue">Continue</span></button>
 					</div>
 				</div>
 				
@@ -458,7 +458,7 @@
 						<span class="icon-cg-lg icon-cg-up-lg iconcg-safety-up"></span>
 					</div>
 					<div class="col-xs-10 col-sm-9">
-						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais seguro</strong>?</p>
+						<p class="title-cg"><span id="i18n_question1">Which place looks</span> <strong class="up"><span id="i18n_safer">safer</span></strong>?</p>
 					</div>
 				</div>
 				<div ng-hide="selectingTheMost()">
@@ -466,7 +466,7 @@
 						<span class="icon-cg-lg icon-cg-down-lg iconcg-safety-down"></span>
 					</div>
 					<div class="col-xs-10 col-sm-9">
-						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos seguro</strong>?</p>
+						<p class="title-cg"><span id="i18n_question2">Which place looks</span> <strong class="down"><span id="i18n_less_safe">less safe</span></strong>?</p>
 					</div>
 				</div>
 			</div>
@@ -476,7 +476,7 @@
 						<span class="icon-cg-lg icon-cg-up-lg iconcg-nice-up"></span>
 					</div>
 					<div class="col-xs-10 col-sm-9">
-						<p class="title-cg">Qual lugar lhe parece <strong class="up">mais agradável</strong>?</p>
+						<p class="title-cg"><span id="i18n_question3">Which place looks</span> <strong class="up"><span id="i18n_more_pleasant1">more pleasant</span></strong>?</p>
 					</div>
 				</div>
 				<div ng-hide="selectingTheMost()">
@@ -484,17 +484,17 @@
 						<span class="icon-cg-lg icon-cg-down-lg iconcg-nice-down"></span>
 					</div>
 					<div class="col-xs-10 col-sm-9">
-						<p class="title-cg">Qual lugar lhe parece <strong class="down">menos agradável</strong>?</p>
+						<p class="title-cg"><span id="i18n_question4">Which place looks</span> <strong class="down"><span id="i18n_less_pleasant1">less pleasant</span></strong>?</p>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div resize class="col-sm-12" ng-show="task_phase === 1">
-			<p class="title-cg" align="center">O que na imagem a torna <strong class="up">mais agradável</strong>?</p>
+			<p class="title-cg" align="center"><span id="i18n_mark_question1">What in the picture makes it</span> <strong class="up"><span id="i18n_more_pleasant2">more pleasant</span></strong>?</p>
 		</div>
 		<div resize class="col-sm-12" ng-show="task_phase === 2">
-			<p class="title-cg" align="center">O que na imagem a torna <strong class="down">menos agradável</strong>?</p>
+			<p class="title-cg" align="center"><span id="i18n_mark_question2">What in the picture makes it</span> <strong class="down"><span id="i18n_less_pleasant2">less pleasant</span></strong>?</p>
 		</div>
 
 		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
@@ -533,7 +533,7 @@
 					id="btn-answer"
 					class="btn btn-rounded"
 					ng-show="readyToAnswer()"
-					ng-click="nextPhase()"><span class="fa fa-check-circle-o"></span>&nbspConfirmar</button>
+					ng-click="nextPhase()"><span class="fa fa-check-circle-o"></span>&nbsp<span id="i18n_confirm2">Confirm</span></button>
 			</div>
 			<div class="row">
 				<div
@@ -577,15 +577,15 @@
 			<br> <br>
 			<div class="row">
 				<div class="col-sm-12">
-					<p class="subtitle-cg" align="center"> Clique ou toque e arraste para circular <font color="yellow">até 3 elementos</font> na imagem.</p>
+					<p class="subtitle-cg" align="center"> <span id="i18n_mark_instruction1">Click or touch and drag to circle</span> <font color="yellow"><span id="i18n_mark_instruction2">up to 3 elements</span></font> <span id="i18n_mark_instruction3">in the picture</span>.</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
-					<button id="reset" class="btn btn-warning btn-block" >Reiniciar marcação</button>
+					<button id="reset" class="btn btn-warning btn-block"><span id="i18n_restart1">Reset marks</span></button>
 				</div>
 				<div class="col-sm-6">
-					<button id="nextImage" class="btn btn-success btn-block" ng-click="nextPhase()">Terminei de marcar</button>
+					<button id="nextImage" class="btn btn-success btn-block" ng-click="nextPhase()"><span id="i18n_finish_mark1">Finished marking</span></button>
 				</div>
 			</div>
 					
@@ -601,15 +601,15 @@
 			<br> <br>
 			<div class="row">
 				<div class="col-sm-12">
-					<p class="subtitle-cg" align="center"> Clique ou toque e arraste para circular <font color="yellow">até 3 elementos</font> na imagem.</p>
+					<p class="subtitle-cg" align="center"> <span id="i18n_mark_instruction1_2">Click or touch and drag to circle</span> <font color="yellow"><span id="i18n_mark_instruction2_2">up to 3 elements</span></font> <span id="i18n_mark_instruction3_2">in the picture</span>.</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
-					<button id="reset2" class="btn btn-warning btn-block" >Reiniciar marcação</button>
+					<button id="reset2" class="btn btn-warning btn-block"><span id="i18n_restart2">Reset marks</span></button>
 				</div>
 				<div class="col-sm-6">
-					<button id="taskFinished" class="btn btn-success btn-block" ng-click="saveTask()">Terminei de marcar</button>
+					<button id="taskFinished" class="btn btn-success btn-block" ng-click="saveTask()"><span id="i18n_finish_mark2">Finished marking</span></button>
 				</div>
 			</div>
 		</div>
@@ -624,8 +624,8 @@
 				<img src="https://contribua.org/comoecampina-static/imgs/logo.png" alt="Como é Campina?" width="100%">
 			</div>
 		</div>
-		<p class="big">Parabéns! Você completou todas as tarefas.</p>
-		<p>Mas esse projeto ainda precisa de ajuda.<br>Ajude-nos a divulgar o projeto.</p>
+		<p class="big"><span id="i18n_congrat">Congratulations! You have completed all tasks</span>.</p>
+		<p><span id="i18n_help">But this project still needs your help</span>.<br><span id="i18n_help2">Help us to spread about the project</span>.</p>
 		<p class="big">
 			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-twitter"></span></a>
 			&nbsp;&nbsp;
@@ -647,10 +647,10 @@
 		</div> -->
 		<div class="row">
 			<div class="col-sm-9 col-sm-offset-1 text-center">
-				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5" style="color:white">Não consigo escolher</font></a> 
+				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5" style="color:white"><span id="i18n_equals">I can't choose</span></font></a> 
 			</div>
 			<div class="col-sm-2 text-right">
-             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5" style="color:white">Ajuda</font></a>
+             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5" style="color:white"><span id="i18n_help_btn">Help</span></font></a>
 			</div>
 		</div>
 	</div>
@@ -665,6 +665,176 @@
 <!--<script src="https://contribua.org/comoecampina-static/imgs/kinetic-v4.7.2.min.js" type="text/javascript"></script>
 <script src="https://contribua.org/comoecampina-static/imgs/game.js"></script> -->
 <script>
+// Default language
+var userLocale = "pt_br";
+// Translations
+var messages = {"en": {
+                        "i18n_welldone_text": "Your answer has been saved!",
+                        "i18n_loading_next_task": "Loading next task...",
+                        "i18n_action_missed": "Circle at least one element in the picture that helps explaining why you choose it!",
+                        "i18n_error": "Ops! Something wrong.",
+                        "i18n_reload": "Reload",
+                        "i18n_welcome": "Welcome",
+                        "i18n_welcome_msg": "Your contribution is very important to us so that we can build information about pleasant streets in Campina Grande, Paraíba.",
+                        "i18n_next": "Next",
+                        "i18n_tutorial1": "Give your opinion by choosing from the four pictures",
+                        "i18n_most_pleasant1": "the most pleasant",
+                        "i18n_most_pleasant2": "the most pleasant",
+                        "i18n_and": "and",
+                        "i18n_least_pleasant1": "the least pleasant",
+                        "i18n_least_pleasant2": "the least pleasant",
+                        "i18n_confirm": "confirming then",
+                        "i18n_next2": "Next",
+			"i18n_place": "For the",
+			"i18n_mark_image": "you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element",
+			"i18n_same": "Do the same for the",
+			"i18n_start": "Start",
+			"i18n_info": "We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them",
+			"i18n_yes": "Yes",
+			"i18n_no": "No",
+			"i18n_more": "Tell us a bit more about you",
+			"i18n_age": "Age",
+			"i18n_sex": "Sex",
+			"i18n_men": "Man",
+			"i18n_women": "Woman",
+			"i18n_income": "Considering those responsible for the maintenance of your house, the sum of their income fits into which range",
+			"i18n_alta": "R$ 14.500 or more",
+			"i18n_med_alta": "R$ 7.250 to R$ 14.499,99",
+			"i18n_media": "R$ 2.900 to R$ 7.249,99",
+			"i18n_med_baixa": "R$ 1.450 to R$ 2.899,99",
+			"i18n_baixa": "less than R$ 1.449,99",
+			"i18n_city": "In which city do you currently live",
+			"i18n_know_campina": "Do you know the city of Campina Grande, Paraíba",
+			"i18n_how_know_campina": "Which of these alternatives fits you best",
+			"i18n_live": "Live in the city",
+			"i18n_study": "Only study in the city",
+			"i18n_work": "Only work in the city",
+			"i18n_turism": "I visit or visited the city sporadically",
+			"i18n_never": "Never visited the city",
+			"i18n_neig": "Do you travel to or from any of these neighborhoods in Campina Grande, Paraíba",
+			"i18n_continue": "Continue",
+			"i18n_form_thanks": "Thanks for answering these questions! Now for us to save your data please answer the next photo comparison",
+			"i18n_question1": "Which place looks",
+			"i18n_question2": "Which place looks",
+			"i18n_question3": "Which place looks",
+			"i18n_question4": "Which place looks",
+			"i18n_safer": "safer",
+			"i18n_less_safe": "less safe",
+			"i18n_more_pleasant1": "more pleasant",
+			"i18n_more_pleasant2": "more pleasant",
+			"i18n_less_pleasant1": "less pleasant",
+			"i18n_less_pleasant2": "less pleasant",
+			"i18n_mark_question1": "What in the picture makes it",
+			"i18n_mark_question2": "What in the picture makes it",
+			"i18n_confirm2": "Confirm",
+			"i18n_mark_instruction1": "Click or touch and drag to circle",
+			"i18n_mark_instruction1_2": "Click or touch and drag to circle",
+			"i18n_mark_instruction2": "up to 3 elements",
+			"i18n_mark_instruction2_2": "up to 3 elements",
+			"i18n_mark_instruction3": "in the picture",
+			"i18n_mark_instruction3_2": "in the picture",
+			"i18n_restart1": "Reset marks",
+			"i18n_restart2": "Reset marks",
+			"i18n_finish_mark1": "Finished marking",
+			"i18n_finish_mark2": "Finished marking",
+			"i18n_congrat": "Congratulations! You have completed all tasks",
+			"i18n_help": "But this project still needs your help",
+			"i18n_help2": "Help us to spread about the project",
+			"i18n_equals": "I can't choose",
+			"i18n_help_btn": "Help",								
+                      },
+        "pt_br": {
+                        "i18n_welldone_text": "Sua resposta foi salva!",
+                        "i18n_loading_next_task": "Carregando próxima tarefa...",
+                        "i18n_action_missed": "Circule ao menos um elemento na imagem que ajude a explicar o porquê você a escolheu!",
+                        "i18n_error": "Ops! Algo errado.",
+                        "i18n_reload": "Recarregar",
+                        "i18n_welcome": "Seja bem-vindo",
+                        "i18n_welcome_msg": "Sua contribuição é muito importante para podermos construir informação sobre ruas agradáveis em Campina Grande, Paraíba.",
+                        "i18n_next": "Próximo",
+                        "i18n_tutorial1": "Dê sua opinião escolhendo dentre as quatro imagens o lugar",
+                          "i18n_most_pleasant1": "o mais agradável",
+                        "i18n_most_pleasant2": "o mais agradável",
+                        "i18n_and": "e o",
+                        "i18n_least_pleasant1": "menos agradável",
+                        "i18n_least_pleasant2": "menos agradável",
+                        "i18n_confirm": "confirmando em seguida",
+                        "i18n_next2": "Próximo",
+			"i18n_place": "Para o local",
+			"i18n_mark_image": "você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para circular cada elemento",
+			"i18n_same": "Faça o mesmo para o local",
+			"i18n_start": "Começar",
+			"i18n_info": "Gostaríamos de conhecer um pouco mais sobre você e para isso gostaríamos de lhe fazer algumas perguntas, você poderia respondê-las",
+			"i18n_yes": "Sim",
+			"i18n_no": "Não",
+			"i18n_more": "Conte-nos um pouco mais sobre você",
+			"i18n_age": "Idade",
+			"i18n_sex": "Sexo",
+			"i18n_men": "Masculino",
+			"i18n_women": "Feminino",
+			"i18n_income": "Considerando os responsáveis pelo sustento da sua casa, a soma de seus rendimentos se enquadra em que faixa",
+			"i18n_alta": "R$ 14.500ou mais",
+			"i18n_med_alta": "R$ 7.250 a R$ 14.499,99",
+			"i18n_media": "R$ 2.900 a R$ 7.249,99",
+			"i18n_med_baixa": "R$ 1.450 a R$ 2.899,99",
+			"i18n_baixa": "menos de R$ 1.449,99",
+			"i18n_city": "Em qual cidade você mora atualmente",
+			"i18n_know_campina": "Você conhece a cidade de Campina Grande - Paraíba",
+			"i18n_how_know_campina": "Qual destas alternativas se enquadra melhor para você",
+			"i18n_live": "Moro na cidade",
+			"i18n_study": "Apenas estudo na cidade",
+			"i18n_work": "Apenas trabalho na cidade",
+			"i18n_turism": "Visito ou visitei esporadicamente a cidade",
+			"i18n_never": "Nunca visitei a cidade",
+			"i18n_neig": "Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba",
+			"i18n_continue": "Continuar",
+			"i18n_form_thanks": "Muito obrigado por responder a estas perguntas! Agora para que possamos salvar os seus dados por favor responda à próxima comparação de fotos",
+			"i18n_question1": "Qual lugar lhe parece",
+			"i18n_question2": "Qual lugar lhe parece",
+			"i18n_question3": "Qual lugar lhe parece",
+			"i18n_question4": "Qual lugar lhe parece",
+			"i18n_safer": "mais seguro",
+			"i18n_less_safe": "menos seguro",
+			"i18n_more_pleasant1": "mais agradável",
+			"i18n_more_pleasant2": "mais agradável",
+			"i18n_less_pleasant1": "menos agradável",
+			"i18n_less_pleasant2": "menos agradável",
+			"i18n_mark_question1": "O que na imagem a torna",
+			"i18n_mark_question2": "O que na imagem a torna",
+			"i18n_confirm2": "Confirmar",
+			"i18n_mark_instruction1": "Clique ou toque e arraste para circular",
+			"i18n_mark_instruction1_2": "Clique ou toque e arraste para circular",
+			"i18n_mark_instruction2": "até 3 elementos",
+			"i18n_mark_instruction2_2": "até 3 elementos",
+			"i18n_mark_instruction3": "na imagem",
+			"i18n_mark_instruction3_2": "na imagem",
+			"i18n_restart1": "Reiniciar marcação",
+			"i18n_restart2": "Reiniciar marcação",
+			"i18n_finish_mark1": "Terminei de marcar",
+			"i18n_finish_mark2": "Terminei de marcar",
+			"i18n_congrat": "Parabéns! Você completou todas as tarefas",
+			"i18n_help": "Mas esse projeto ainda precisa de ajuda",
+			"i18n_help2": "Ajude-nos a divulgar o projeto",
+			"i18n_equals": "Não consigo escolher",
+			"i18n_help_btn": "Ajuda",
+                      },
+               };
+
+function i18n_translate() { 
+    // Update userLocale with server side information
+    pybossaLocale = document.getElementById('PYBOSSA_USER_LOCALE').textContent.trim();
+    if (pybossaLocale != null && pybossaLocale.length > 0){
+	userLocale = pybossaLocale;
+    }
+
+    var ids = Object.keys(messages[userLocale]);
+    for (i=0; i<ids.length; i++) {
+       //console.log("Translating: " + ids[i] + " to " + userLocale);
+       // document.getElementById(ids[i]).innerHTML = messages[userLocale][ids[i]]; -> Error!
+	document.getElementById(ids[i]).textContent = messages[userLocale][ids[i]];
+    }
+}
+
 	var apiUrl = 'https://contribua.org/api/';
 	var projectId = '583';
 	var formProfileStep = 6;
@@ -826,6 +996,7 @@
 		var newTask = function() {
 			$scope.task_phase = 0;
 			getUserProgress();
+			i18n_translate();
 
 			$('#loading').fadeIn();
 			$http.get(apiUrl+'project/'+projectId+'/newtask').then(function(response) {

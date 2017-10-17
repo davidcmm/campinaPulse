@@ -159,7 +159,7 @@ def create_page_for_marked_images(best_images, worst_images, best_map, worst_map
 	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
 	output_file.write("<body style=\"overflow:scroll\">\n")
 
-	out_file.write(">>> Para cada imagem temos todas as marcações quando ela foi escolhida como melhor ou pior imagem de um conjunto de 4 fotos. Além disso, ao lado do nome de cada imagem temos o número de vezes que a imagem foi escolhida como melhor ou pior!")
+	output_file.write(">>> Para cada imagem temos todas as marcações quando ela foi escolhida como melhor ou pior imagem de um conjunto de 4 fotos. Além disso, ao lado do nome de cada imagem temos o número de vezes que a imagem foi escolhida como melhor ou pior!")
 	
 	#Best evaluated images
 	output_file.write("<h2> Melhores </h2>")

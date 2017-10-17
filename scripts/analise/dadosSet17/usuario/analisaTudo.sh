@@ -4,6 +4,7 @@
 python analisaUsuarios.py run.csv run.csv
 
 python separaGrupo.py usersInfo.dat
+sort -t "|" -k 1 -o usersInfo.dat usersInfo.dat
 
 #Combinando todas as execucoes
 sed -i -e 's/^/N/g' runNew.csv #Adicionando identificadorno inicio de cada linha do arquivo

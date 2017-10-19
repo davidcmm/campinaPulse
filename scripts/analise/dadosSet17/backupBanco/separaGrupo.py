@@ -1,5 +1,6 @@
 import sys
 from sets import Set
+import re
 
 possibleIncomesOld = ["Baixa (at\u00e9 R$ 1.449,99)", "M\u00e9dia Baixa (R$ 1.450 a R$ 2.899,99)", "M\u00e9dia (R$ 2.900 a R$ 7.249,99)", "M\u00e9dia Alta (R$ 7.250 a R$ 14.499,99)", "Alta (R$ 14.500 ou mais)"]
 possibleIncomesNew = ["baixa", "media baixa", "media", "media alta", "alta"]
@@ -7,48 +8,53 @@ possibleIncomesNew = ["baixa", "media baixa", "media", "media alta", "alta"]
 def parseUserData(lines):
 	""" Reading user data """
 	feminine = Set([])
-	tasksFem = Set([])
+	tasks_fem = Set([])
 	#fSeg = Set([])
 	masculine = Set([])
-	tasksMasc = Set([])
+	tasks_masc = Set([])
 	#mSeg = Set([])
 
 	single = Set([])
-	tasksSingle = Set([])
+	tasks_single = Set([])
 	#sSeg = Set([])
 	married = Set([])
-	tasksMarried = Set([])
+	tasks_married = Set([])
 	#cSeg = Set([])
 
 	low = Set([])
-	tasksLow = Set([])
+	tasks_low = Set([])
 	high = Set([])
-	tasksHigh = Set([])
+	tasks_high = Set([])
 	
 	young = Set([])
-	tasksYoung = Set([])
+	tasks_young = Set([])
 	old = Set([])
-	tasksOld = Set([])
+	tasks_old = Set([])
 
 	highSchool = Set([])
-	tasksHighSchool = Set([])
+	tasks_highSchool = Set([])
 	posGrad = Set([])
-	tasksPosGrad = Set([])
+	tasks_posgrad = Set([])
 		
 	centro = Set([])
-	tasksCentro = Set([])
+	tasks_centro = Set([])
 	notCentro = Set([])
-	tasksNotCentro = Set([])
+	tasks_notcentro = Set([])
 
 	catole = Set([])
-	tasksCatole = Set([])
+	tasks_catole = Set([])
 	notCatole = Set([])
-	tasksNotCatole = Set([])
+	tasks_notcatole = Set([])
 
 	liberdade = Set([])
-	tasksLiberdade = Set([])
+	tasks_liberdade = Set([])
 	notLiberdade = Set([])
-	tasksNotLiberdade = Set([])
+	tasks_notliberdade = Set([])
+
+	campina = Set([])
+	tasks_campina = Set([])
+	notCampina = Set([])
+	tasks_notcampina = Set([])
 
 	for line in lines:
 		data = line.split("|")
@@ -64,13 +70,13 @@ def parseUserData(lines):
 				age = int(profile[0].lower())
 				if age <= 24:
 					young.add(userID)
-					tasksYoung.update(tasksIDSeg)
-					tasksYoung.update(tasksIDAgra)
+					tasks_young.update(tasksIDSeg)
+					tasks_young.update(tasksIDAgra)
 				#elif age >= 35 and age <= 44:
 				elif age >= 25:
 					old.add(userID)
-					tasksOld.update(tasksIDSeg)
-					tasksOld.update(tasksIDAgra)
+					tasks_old.update(tasksIDSeg)
+					tasks_old.update(tasksIDAgra)
 
 			#Separating by sex
 			#print str(profile)+"\t"+str(len(data[1]))
@@ -78,48 +84,61 @@ def parseUserData(lines):
 				sex = profile[1].lower()
 				if sex[0] == 'f':
 					feminine.add(userID)
-					tasksFem.update(tasksIDSeg)
-					tasksFem.update(tasksIDAgra)
+					tasks_fem.update(tasksIDSeg)
+					tasks_fem.update(tasksIDAgra)
 				else:
 					masculine.add(userID)
-					tasksMasc.update(tasksIDSeg)
-					tasksMasc.update(tasksIDAgra)
+					tasks_masc.update(tasksIDSeg)
+					tasks_masc.update(tasksIDAgra)
 		
 			#Separating by income
 			if len(profile[2]) > 0 and profile[2] != "None":
 				income = profile[2]
 				if income == possibleIncomesOld[0] or income == possibleIncomesOld[1] or income == possibleIncomesNew[0] or income == possibleIncomesNew[1]:
 					low.add(userID)
-					tasksLow.update(tasksIDSeg)
-					tasksLow.update(tasksIDAgra)
+					tasks_low.update(tasksIDSeg)
+					tasks_low.update(tasksIDAgra)
 				elif income == possibleIncomesOld[2] or income == possibleIncomesOld[3] or income == possibleIncomesNew[2] or income == possibleIncomesNew[3]:
 					high.add(userID)
-					tasksHigh.update(tasksIDSeg)
-					tasksHigh.update(tasksIDAgra)
+					tasks_high.update(tasksIDSeg)
+					tasks_high.update(tasksIDAgra)
 		
 			#Separating by education degree
 			if len(profile[3]) > 0 and profile[3] != "None":
 				education = profile[3]
 				if education[0].lower() == 'e':
 					highSchool.add(userID)
-					tasksHighSchool.update(tasksIDSeg)
-					tasksHighSchool.update(tasksIDAgra)
+					tasks_highSchool.update(tasksIDSeg)
+					tasks_highSchool.update(tasksIDAgra)
 				elif education[0].lower == 'm' or education[0].lower() == 'd':
 					posGrad.add(userID)
-					tasksPosGrad.update(tasksIDSeg)
-					tasksPosGrad.update(tasksIDAgra)
+					tasks_posgrad.update(tasksIDSeg)
+					tasks_posgrad.update(tasksIDAgra)
+
+			#Separating by being from Campina Grande or not
+			if len(profile[4]) > 0 and profile[4] != "None":
+				city = profile[4]
+				city = re.sub(r'\s{2,}', " ", city)#Replacing 2 or more spaces that are together with a single space
+				if city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1:#City is exactly Campina Grande and not Campina Grande do Sul - PR
+					campina.add(userID)
+					tasks_campina.update(tasksIDSeg)
+					tasks_campina.update(tasksIDAgra)
+				else:
+					notCampina.add(userID)
+					tasks_notcampina.update(tasksIDSeg)
+					tasks_notcampina.update(tasksIDAgra)
 
 			#Separating by relationship
 			if len(profile[6]) > 0 and profile[6] != "None":
 				rel = profile[6].lower()
 				if rel[0] == 's':
 					single.add(userID)
-					tasksSingle.update(tasksIDSeg)
-					tasksSingle.update(tasksIDAgra)
+					tasks_single.update(tasksIDSeg)
+					tasks_single.update(tasksIDAgra)
 				elif rel[0] == 'c':
 					married.add(userID)
-					tasksMarried.update(tasksIDSeg)
-					tasksMarried.update(tasksIDAgra)
+					tasks_married.update(tasksIDSeg)
+					tasks_married.update(tasksIDAgra)
 
 			#Separating by known places
 			if len(profile[7]) > 0 and profile[7] != "None":
@@ -127,129 +146,141 @@ def parseUserData(lines):
 				if len(places) > 0:
 					if "cen" in places.strip():
 						centro.add(userID)
-						tasksCentro.update(tasksIDSeg)
-						tasksCentro.update(tasksIDAgra)
+						tasks_centro.update(tasksIDSeg)
+						tasks_centro.update(tasksIDAgra)
 					else:
 						notCentro.add(userID)
-						tasksNotCentro.update(tasksIDSeg)
-						tasksNotCentro.update(tasksIDAgra)
+						tasks_notcentro.update(tasksIDSeg)
+						tasks_notcentro.update(tasksIDAgra)
 
 					if "lib" in places.strip():
 						liberdade.add(userID)
-						tasksLiberdade.update(tasksIDSeg)
-						tasksLiberdade.update(tasksIDAgra)
+						tasks_liberdade.update(tasksIDSeg)
+						tasks_liberdade.update(tasksIDAgra)
 					else:
 						notLiberdade.add(userID)
-						tasksNotLiberdade.update(tasksIDSeg)
-						tasksNotLiberdade.update(tasksIDAgra)
+						tasks_notliberdade.update(tasksIDSeg)
+						tasks_notliberdade.update(tasksIDAgra)
 
 					if "cat" in places.strip():
 						catole.add(userID)
-						tasksCatole.update(tasksIDSeg)
-						tasksCatole.update(tasksIDAgra)
+						tasks_catole.update(tasksIDSeg)
+						tasks_catole.update(tasksIDAgra)
 					else:
 						notCatole.add(userID)
-						tasksNotCatole.update(tasksIDSeg)
-						tasksNotCatole.update(tasksIDAgra)
+						tasks_notcatole.update(tasksIDSeg)
+						tasks_notcatole.update(tasksIDAgra)
 
-	singleFile = open("solteiro.dat", "w")
-	#singleFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
-	singleFile.write("[]\n")
+	single_file = open("solteiro.dat", "w")
+	#single_file.write(str(list(tasks_single.intersection(tasks_married)))+"\n")
+	single_file.write("[]\n")
 	for userID in single:
-		singleFile.write(str(userID)+"\n")#FIXME: add tasksID
-	singleFile.close()
-	marriedFile = open("casado.dat", "w")
-	#marriedFile.write(str(list(tasksSingle.intersection(tasksMarried)))+"\n")
-	marriedFile.write("[]\n")
+		single_file.write(str(userID)+"\n")#FIXME: add tasksID
+	single_file.close()
+	married_file = open("casado.dat", "w")
+	#married_file.write(str(list(tasks_single.intersection(tasks_married)))+"\n")
+	married_file.write("[]\n")
 	for userID in married:
-		marriedFile.write(str(userID)+"\n")
-	marriedFile.close()
+		married_file.write(str(userID)+"\n")
+	married_file.close()
 
-	femFile = open("feminino.dat", "w")
-	#femFile.write(str(list(tasksFem.intersection(tasksMasc)))+"\n")
-	femFile.write("[]\n")
+	fem_file = open("feminino.dat", "w")
+	#fem_file.write(str(list(tasks_fem.intersection(tasks_masc)))+"\n")
+	fem_file.write("[]\n")
 	for userID in feminine:
-		femFile.write(str(userID)+"\n")
-	femFile.close()
-	masFile = open("masculino.dat", "w")
-	#masFile.write(str(list(tasksFem.intersection(tasksMasc)))+"\n")
-	masFile.write("[]\n")
+		fem_file.write(str(userID)+"\n")
+	fem_file.close()
+	mas_file = open("masculino.dat", "w")
+	#mas_file.write(str(list(tasks_fem.intersection(tasks_masc)))+"\n")
+	mas_file.write("[]\n")
 	for userID in masculine:
-		masFile.write(str(userID)+"\n")
-	masFile.close()
+		mas_file.write(str(userID)+"\n")
+	mas_file.close()
 
-	youngFile = open("jovem.dat", "w")
-#	youngFile.write(str(list(tasksYoung.intersection(tasksOld)))+"\n")
-	youngFile.write("\n")
+	young_file = open("jovem.dat", "w")
+#	young_file.write(str(list(tasks_young.intersection(tasks_old)))+"\n")
+	young_file.write("\n")
 	for userID in young:
-		youngFile.write(str(userID)+"\n")
-	youngFile.close()
-	oldFile = open("adulto.dat", "w")
-#	oldFile.write(str(list(tasksYoung.intersection(tasksOld)))+"\n")
-	oldFile.write("[]\n")
+		young_file.write(str(userID)+"\n")
+	young_file.close()
+	old_file = open("adulto.dat", "w")
+#	old_file.write(str(list(tasks_young.intersection(tasks_old)))+"\n")
+	old_file.write("[]\n")
 	for userID in old:
-		oldFile.write(str(userID)+"\n")
-	oldFile.close()
+		old_file.write(str(userID)+"\n")
+	old_file.close()
 
-	lowFile = open("baixa.dat", "w")
-	#lowFile.write(str(list(tasksLow.intersection(tasksHigh)))+"\n")
-	lowFile.write("[]\n")
+	low_file = open("baixa.dat", "w")
+	#low_file.write(str(list(tasks_low.intersection(tasks_high)))+"\n")
+	low_file.write("[]\n")
 	for userID in low:
-		lowFile.write(str(userID)+"\n")
-	lowFile.close()
-	highFile = open("media.dat", "w")
-#	highFile.write(str(list(tasksLow.intersection(tasksHigh)))+"\n")
-	highFile.write("[]\n")
+		low_file.write(str(userID)+"\n")
+	low_file.close()
+	high_file = open("media.dat", "w")
+#	high_file.write(str(list(tasks_low.intersection(tasks_high)))+"\n")
+	high_file.write("[]\n")
 	for userID in high:
-		highFile.write(str(userID)+"\n")
-	highFile.close()
+		high_file.write(str(userID)+"\n")
+	high_file.close()
 
-	highSchoolFile = open("medio.dat", "w")
-#	highSchoolFile.write(str(list(tasksHighSchool.intersection(tasksPosGrad)))+"\n")
-	highSchoolFile.write("[]\n")
+	high_school_file = open("medio.dat", "w")
+#	high_school_file.write(str(list(tasks_highSchool.intersection(tasks_posgrad)))+"\n")
+	high_school_file.write("[]\n")
 	for userID in highSchool:
-		highSchoolFile.write(str(userID)+"\n")
-	highSchoolFile.close()
-	posGradFile = open("posgrad.dat", "w")
-#	posGradFile.write(str(list(tasksHighSchool.intersection(tasksPosGrad)))+"\n")
-	posGradFile.write("[]\n")
+		high_school_file.write(str(userID)+"\n")
+	high_school_file.close()
+	pos_grad_file = open("posgrad.dat", "w")
+#	pos_grad_file.write(str(list(tasks_highSchool.intersection(tasks_posgrad)))+"\n")
+	pos_grad_file.write("[]\n")
 	for userID in high:
-		posGradFile.write(str(userID)+"\n")
-	posGradFile.close()
+		pos_grad_file.write(str(userID)+"\n")
+	pos_grad_file.close()
 
-	
-	centroFile = open("centro.dat", "w")
-	centroFile.write("[]\n")
+
+	campina_file = open("campina.dat", "w")
+	campina_file.write("[]\n")
+	for userID in campina:
+		campina_file.write(str(userID)+"\n")
+	campina_file.close()
+
+	notcampina_file = open("notcampina.dat", "w")
+	notcampina_file.write("[]\n")
+	for userID in notCampina:
+		notcampina_file.write(str(userID)+"\n")
+	notcampina_file.close()
+
+	centro_file = open("centro.dat", "w")
+	centro_file.write("[]\n")
 	for userID in centro:
-		centroFile.write(str(userID)+"\n")
-	centroFile.close()
-	notCentroFile = open("notcentro.dat", "w")
-	notCentroFile.write("[]\n")
+		centro_file.write(str(userID)+"\n")
+	centro_file.close()
+	notcentro_file = open("notcentro.dat", "w")
+	notcentro_file.write("[]\n")
 	for userID in notCentro:
-		notCentroFile.write(str(userID)+"\n")
-	notCentroFile.close()
+		notcentro_file.write(str(userID)+"\n")
+	notcentro_file.close()
 
-	liberdadeFile = open("liberdade.dat", "w")
-	liberdadeFile.write("[]\n")
+	liberdade_file = open("liberdade.dat", "w")
+	liberdade_file.write("[]\n")
 	for userID in liberdade:
-		liberdadeFile.write(str(userID)+"\n")
-	liberdadeFile.close()
-	notLiberdadeFile = open("notliberdade.dat", "w")
-	notLiberdadeFile.write("[]\n")
+		liberdade_file.write(str(userID)+"\n")
+	liberdade_file.close()
+	notliberdade_file = open("notliberdade.dat", "w")
+	notliberdade_file.write("[]\n")
 	for userID in notLiberdade:
-		notLiberdadeFile.write(str(userID)+"\n")
-	notLiberdadeFile.close()
+		notliberdade_file.write(str(userID)+"\n")
+	notliberdade_file.close()
 
-	catoleFile = open("catole.dat", "w")
-	catoleFile.write("[]\n")
+	catole_file = open("catole.dat", "w")
+	catole_file.write("[]\n")
 	for userID in catole:
-		catoleFile.write(str(userID)+"\n")
-	catoleFile.close()
-	notCatoleFile = open("notcatole.dat", "w")
-	notCatoleFile.write("[]\n")
+		catole_file.write(str(userID)+"\n")
+	catole_file.close()
+	notcatole_file = open("notcatole.dat", "w")
+	notcatole_file.write("[]\n")
 	for userID in notCatole:
-		notCatoleFile.write(str(userID)+"\n")
-	notCatoleFile.close()
+		notcatole_file.write(str(userID)+"\n")
+	notcatole_file.close()
 
 def createOneFileWithAllProfiledUsers(inputFiles):
 	usersWithProfile = Set([])

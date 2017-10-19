@@ -6,7 +6,7 @@ import time as tm
 import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 from sets import Set
-import json
+import json, urllib
 
 #User profiles summary dictionaries
 userAge = {}
@@ -471,6 +471,7 @@ def readUserData(lines1, lines2, outputFileName):
 
 		taskID = data[3]
 		userID = data[4]
+		userIP = data[5]
 		timeInfo = data[6].split("T")[0].split("-")#2015-02-17T18:19:52.589591
 		finish_time = datetime.date(int(timeInfo[0]), int(timeInfo[1]), int(timeInfo[2]))
 		
@@ -497,7 +498,19 @@ def readUserData(lines1, lines2, outputFileName):
 			rel = userProfileData['rel'].encode('utf-8').strip(' \t\n\r"')
 			neig = userProfileData['neig']
 
+			if len(city) == 0:
+				if len(userIP) > 0:
+					response = urllib.urlopen("http://ip-api.com/json/"+userIP)
+					data = json.loads(response.read())
+					city =  data['city'] + "," + data['country']
+
 			userExecutions[0] = str(age)+"+"+sex+"+"+currentClass+"+"+educ+"+"+city+"+"+""+"+"+rel+"+"+str(neig)
+		else:
+			if len(userIP) > 0:
+				response = urllib.urlopen("http://ip-api.com/json/"+userIP)
+				data = json.loads(response.read())
+				city =  data['city'] + "," + data['country']
+				userExecutions[0] = ""+"+"+""+"+"+""+"+"+""+"+"+city+"+"+""+"+"+""+"+"+""
 			
 		#Saving photos that user evaluated
 		question = data['question'].strip(' \t\n\r"')

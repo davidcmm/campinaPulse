@@ -7,17 +7,18 @@ import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 from sets import Set
 import json, urllib
+import numpy as np
 
 #User profiles summary dictionaries
-userAge = {}
-userSex = {}
-userClass = {}
-userEduc = {}
-userCity = {}
-userTime = {}
-userRel = {}
-userNeig = {}
-vazio = 0
+user_age = {}
+user_sex = {}
+user_class = {}
+user_educ = {}
+user_city = {}
+user_time = {}
+user_rel = {}
+user_neig = {}
+empty = 0
 
 #possible questions
 #possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
@@ -26,7 +27,7 @@ possibleQuestions = ["agradavel?", "seguro?"]
 photosAnsweredPerQuestion = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 
 #Tasks definition
-tasksIDDefinition = {}
+tasks_id_definition = {}
 
 def plotAge():
 	pp = PdfPages('age.pdf')
@@ -40,22 +41,22 @@ def plotAge():
 	lev5 = 0
 	lev6 = 0
 
-	for age in userAge.keys():	
+	for age in user_age.keys():	
 		if eval(age) != None and len(age) > 0:
 			intAge = int(age)
 
 			if intAge < 18:
-				lev0 += 1 * userAge[age]
+				lev0 += 1 * user_age[age]
 			elif intAge >= 18 and intAge <= 24:
-				lev1 += 1 * userAge[age]
+				lev1 += 1 * user_age[age]
 			elif intAge >= 25 and intAge <= 34:
-				lev2 += 1 * userAge[age]
+				lev2 += 1 * user_age[age]
 			elif intAge >= 35 and intAge <= 44:		
-				lev3 += 1 * userAge[age]
+				lev3 += 1 * user_age[age]
 			elif intAge >= 45 and intAge <= 54:		
-				lev4 += 1 * userAge[age]
+				lev4 += 1 * user_age[age]
 			elif intAge >= 55 and intAge <= 64:		
-				lev5 += 1 * userAge[age]
+				lev5 += 1 * user_age[age]
 		#else:
 		#	lev6 += 1
 	labels = '18l', '18a24', '25a34', '35a44', '45a54', '55a64'
@@ -74,10 +75,10 @@ def plotSex():
 	pp = PdfPages('sex.pdf')
 	labels = []
 	sizes = []
-	for sex in userSex.keys():
+	for sex in user_sex.keys():
 		if sex != None and len(sex) > 0:
 			labels.append(sex)
-			sizes.append(userSex[sex])
+			sizes.append(user_sex[sex])
 	colors = ['lightcoral', 'lightskyblue']
 	plt.figure()
 	plt.clf()
@@ -91,10 +92,10 @@ def plotClass():
 	pp = PdfPages('class.pdf')
 	labels = []
 	sizes = []
-	for clas in userClass.keys():
+	for clas in user_class.keys():
 		if clas != None and len(clas) > 0:
 			labels.append(clas)
-			sizes.append(userClass[clas])
+			sizes.append(user_class[clas])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red']
 	plt.figure()
 	plt.clf()
@@ -108,10 +109,10 @@ def plotEduc():
 	pp = PdfPages('educ.pdf')
 	labels = []
 	sizes = []
-	for educ in userEduc.keys():
+	for educ in user_educ.keys():
 		if educ != None and len(educ) > 0:
 			labels.append(educ)
-			sizes.append(userEduc[educ])
+			sizes.append(user_educ[educ])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
@@ -127,15 +128,15 @@ def plotCity():
 	sizes = []
 	campinaCounting = 0
 	joaoPessoaCounting = 0
-	for city in userCity.keys():
+	for city in user_city.keys():
 		if city != None and len(city) > 0:
 			if 'campina' in city.lower():
-				campinaCounting += userCity[city]
+				campinaCounting += user_city[city]
 			elif 'pessoa' in city.lower():
-				joaoPessoaCounting += userCity[city]
+				joaoPessoaCounting += user_city[city]
 			else:
 				labels.append(city[0:5])
-				sizes.append(userCity[city])
+				sizes.append(user_city[city])
 	labels.append("Campina Grande")
 	labels.append("Joao Pessoa")
 	sizes.append(campinaCounting)
@@ -157,21 +158,21 @@ def plotTime():
 	lev4 = 0
 	lev5 = 0
 	lev6 = 0
-	for time in userTime.keys():
+	for time in user_time.keys():
 		if time != None and len(time) > 0:
 			intTime = int(time)
 			if intTime < 10:
-				lev1 += 1 * userTime[time]
+				lev1 += 1 * user_time[time]
 			elif intTime >=10 and intTime < 20:
-				lev2 += 1 * userTime[time]
+				lev2 += 1 * user_time[time]
 			elif intTime >= 20 and intTime < 30:		
-				lev3 += 1 * userTime[time]
+				lev3 += 1 * user_time[time]
 			elif intTime >=30 and intTime < 40:		
-				lev4 += 1 * userTime[time]
+				lev4 += 1 * user_time[time]
 			elif intTime >=40 and intTime < 50:		
-				lev5 += 1 * userTime[time]
+				lev5 += 1 * user_time[time]
 			else:
-				lev6 += 1 * userTime[time]
+				lev6 += 1 * user_time[time]
 	labels = '10-', '10-20', '20-30', '30-40', '40-50', '50+'
 	sizes = [lev1, lev2, lev3, lev4, lev5, lev6] 		
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red']
@@ -187,10 +188,10 @@ def plotRel():
 	pp = PdfPages('rel.pdf')
 	labels = []
 	sizes = []
-	for rel in userRel.keys():
+	for rel in user_rel.keys():
 		if rel != None and len(rel) > 0:
 			labels.append(rel)
-			sizes.append(userRel[rel])
+			sizes.append(user_rel[rel])
 	colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
@@ -202,12 +203,12 @@ def plotRel():
 def plotNeig():
 	#Neighborhood levels
 	pp = PdfPages('neig.pdf')
-	cen = userNeig['cen']
-	lib = userNeig['lib']
-	catol = userNeig['cat'] 
+	cen = user_neig['cen']
+	lib = user_neig['lib']
+	catol = user_neig['cat'] 
 
 	labels = 'Centro', 'Liberdade', 'Catole', 'Nao responderam ou Nao conhecem'
-	sizes = [cen, lib, catol, vazio]
+	sizes = [cen, lib, catol, empty]
 	colors = ['yellowgreen', 'green', 'lightskyblue', 'lightcoral']
 	plt.figure()
 	plt.clf()
@@ -238,7 +239,7 @@ def plotSummary():
 	#plt.savefig(pp, format='pdf')
 
 def countSummary(profileInfo):
-	global vazio
+	global empty
 
 	if len(profileInfo) > 0:
 		#Extracting profile
@@ -255,300 +256,257 @@ def countSummary(profileInfo):
 
 		#Saving occurrences of profiles
 		if len(age) > 0:
-			if age in userAge.keys():
-				userAge[age] = userAge[age] + 1
+			if age in user_age.keys():
+				user_age[age] = user_age[age] + 1
 			else:
-				userAge[age] = 1
+				user_age[age] = 1
 		if len(sex) > 0:
-			if sex in userSex.keys():
-				userSex[sex] = userSex[sex] + 1
+			if sex in user_sex.keys():
+				user_sex[sex] = user_sex[sex] + 1
 			else:
-				userSex[sex] = 1
+				user_sex[sex] = 1
 		if len(currentClass) > 0:
-			if currentClass in userClass.keys():
-				userClass[currentClass] = userClass[currentClass] + 1
+			if currentClass in user_class.keys():
+				user_class[currentClass] = user_class[currentClass] + 1
 			else:
-				userClass[currentClass] = 1
+				user_class[currentClass] = 1
 		if len(educ) > 0:
-			if educ in userEduc.keys():
-				userEduc[educ] = userEduc[educ] + 1
+			if educ in user_educ.keys():
+				user_educ[educ] = user_educ[educ] + 1
 			else:
-				userEduc[educ] = 1
+				user_educ[educ] = 1
 		if len(city) > 0:
-			if city in userCity.keys():
-				userCity[city] = userCity[city] + 1
+			if city in user_city.keys():
+				user_city[city] = user_city[city] + 1
 			else:
-				userCity[city] = 1
+				user_city[city] = 1
 		if len(time) > 0:
-			if time in userTime.keys():
-				userTime[time] = userTime[time] + 1
+			if time in user_time.keys():
+				user_time[time] = user_time[time] + 1
 			else:
-				userTime[time] = 1
+				user_time[time] = 1
 		if len(rel) > 0:
-			if rel in userRel.keys():
-				userRel[rel] = userRel[rel] + 1
+			if rel in user_rel.keys():
+				user_rel[rel] = user_rel[rel] + 1
 			else:
-				userRel[rel] = 1
+				user_rel[rel] = 1
 		if len(neig) > 0:
-			if neig in userNeig.keys():
-				userNeig[neig] = userNeig[neig] + 1
+			if neig in user_neig.keys():
+				user_neig[neig] = user_neig[neig] + 1
 			else:
-				userNeig[neig] = 1
+				user_neig[neig] = 1
 			if 'cen' in neig.lower():
-				if 'cen' in userNeig.keys():
-					userNeig['cen'] = userNeig['cen'] + 1
+				if 'cen' in user_neig.keys():
+					user_neig['cen'] = user_neig['cen'] + 1
 				else:
-					userNeig['cen'] = 1
+					user_neig['cen'] = 1
 			if 'lib' in neig.lower():
-				if 'lib' in userNeig.keys():
-					userNeig['lib'] = userNeig['lib'] + 1
+				if 'lib' in user_neig.keys():
+					user_neig['lib'] = user_neig['lib'] + 1
 				else:
-					userNeig['lib'] = 1
+					user_neig['lib'] = 1
 			if 'cat' in neig.lower():
-				if 'cat' in userNeig.keys():
-					userNeig['cat'] = userNeig['cat'] + 1
+				if 'cat' in user_neig.keys():
+					user_neig['cat'] = user_neig['cat'] + 1
 				else:
-					userNeig['cat'] = 1
+					user_neig['cat'] = 1
 		if len(neig) == 0:
-			vazio += 1
+			empty += 1
 
 
-def writeOutput(usersTasks):
-	outputFile = open("usersInfo.dat", "w")
-	answeredProfile = 0
-	nAnsweredProfile = 0
-	usersIDNAnsweredProfile = []
-	finishTimeNAnswered = []
+def writeOutput(users_tasks):
+	output_file = open("usersInfo.dat", "w")
+	answered_profile = 0
+	nanswered_profile = 0
+	users_id_nanswered_profile = []
+	finish_time_nanswered = []
 
 	#Writing users profile and tasks executed
-	for userID in usersTasks.keys():
-		userData = usersTasks[userID]
-		print userID+"|"+str(userData[0])+"|"+str(userData[1])+"|"+str(userData[2])+"|"+str(userData[3])+"|"+str(userData[4])+"\n"
-		outputFile.write(userID+"|"+str(userData[0])+"|"+str(userData[1])+"|"+str(userData[2])+"|"+str(userData[3])+"|"+str(userData[4])+"\n")
-		countSummary(userData[0])
+	for user_id in users_tasks.keys():
+		user_data = users_tasks[user_id]
+		user_profile = str(user_data[0]['age']) + "+" + str(user_data[0]['sex']) + "+" + str(user_data[0]['clas']) + "+" + str(user_data[0]['edu']) + "+" + str(user_data[0]['cit']) + "+" + str(user_data[0]['time']) + "+" + str(user_data[0]['rel']) + "+" + str(user_data[0]['nei'])
 		
-		if len(userData[0]) > 0:
-			answeredProfile += 1
+		output_file.write(user_id+"|" + user_profile + "|" + str(user_data[1]) + "|" + str(user_data[2]) + "|" + str(user_data[3]) + "|" + str(user_data[4]) + "\n")
+		countSummary(user_profile)
+		
+		if user_data[0]['age'] != -1 and len(user_data[0]['sex']) > 0 and len(user_data[0]['clas']) > 0 and len(user_data[0]['cit']) > 0:
+			answered_profile += 1
 		else:
-			nAnsweredProfile += 1
-			usersIDNAnsweredProfile.append(userID)
-			finishTimeNAnswered.append(userData[5])
-	outputFile.close()
+			nanswered_profile += 1
+			users_id_nanswered_profile.append(user_id)
+			finish_time_nanswered.append(user_data[5])
+	output_file.close()
 	
 	#Writing profile summary
-	outputFile = open("usersInfoSummary.dat", "w")
-	outputFile.write("Answered\t" + str(answeredProfile) + "\t" + str(nAnsweredProfile) + "\t" + str(answeredProfile*1.0/(answeredProfile+nAnsweredProfile)) + "\t" + str(nAnsweredProfile*1.0/(answeredProfile+nAnsweredProfile)) + "\n")
-	outputFile.write(str(userAge)+"\n")
-	outputFile.write(str(userSex)+"\n")
-	outputFile.write(str(userClass)+"\n")		
-	outputFile.write(str(userEduc)+"\n")
-	outputFile.write(str(userCity)+"\n")
-	outputFile.write(str(userTime)+"\n")
-	outputFile.write(str(userRel)+"\n")
-	outputFile.write(str(userNeig)+"\n")
-	outputFile.close()
+	output_file = open("usersInfoSummary.dat", "w")
+	output_file.write("Answered\t" + str(answered_profile) + "\t" + str(nanswered_profile) + "\t" + str(answered_profile*1.0/(answered_profile+nanswered_profile)) + "\t" + str(nanswered_profile*1.0/(answered_profile+nanswered_profile)) + "\n")
+	output_file.write(str(user_age)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_age.values()))+"\n")
+	output_file.write(str(user_sex)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_sex.values()))+"\n")
+	output_file.write(str(user_class)+"\n")		
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_class.values()))+"\n")
+	output_file.write(str(user_educ)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_educ.values()))+"\n")
+	output_file.write(str(user_city)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_city.values()))+"\n")
+	output_file.write(str(user_time)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_time.values()))+"\n")
+	output_file.write(str(user_rel)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_rel.values()))+"\n")
+	output_file.write(str(user_neig)+"\n")
+	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_neig.values()))+"\n")
+	output_file.close()
 	plotSummary()
 
 	#Writing tasks definition
-	outputFile = open("tasksDefinition.dat", "w")
-	for taskID in tasksIDDefinition.keys():
-		outputFile.write(taskID+"\t"+tasksIDDefinition[taskID].encode('utf-8')+"\n")
-	outputFile.close()
+	output_file = open("tasksDefinition.dat", "w")
+	for task_id in tasks_id_definition.keys():
+		output_file.write(task_id+"\t"+tasks_id_definition[task_id].encode('utf-8')+"\n")
+	output_file.close()
 
 	#Writing photos evaluated by user
-	outputFile = open("usersPhotosAgrad.dat", "w")
-	for userID in photosAnsweredPerQuestion[possibleQuestions[0]].keys():
-		for photo in photosAnsweredPerQuestion[possibleQuestions[0]][userID]:
-			outputFile.write(userID+"\t"+photo.encode('utf-8')+"\n")
-	outputFile.close()
+	output_file = open("usersPhotosAgrad.dat", "w")
+	for user_id in photosAnsweredPerQuestion[possibleQuestions[0]].keys():
+		for photo in photosAnsweredPerQuestion[possibleQuestions[0]][user_id]:
+			output_file.write(user_id+"\t"+photo.encode('utf-8')+"\n")
+	output_file.close()
 
 	#Writing photos evaluated by user
-	outputFile = open("usersPhotosSeg.dat", "w")
-	for userID in photosAnsweredPerQuestion[possibleQuestions[1]].keys():
-		for photo in photosAnsweredPerQuestion[possibleQuestions[1]][userID]:
-			outputFile.write(userID+"\t"+photo.encode('utf-8')+"\n")
-	outputFile.close()
+	output_file = open("usersPhotosSeg.dat", "w")
+	for user_id in photosAnsweredPerQuestion[possibleQuestions[1]].keys():
+		for photo in photosAnsweredPerQuestion[possibleQuestions[1]][user_id]:
+			output_file.write(user_id+"\t"+photo.encode('utf-8')+"\n")
+	output_file.close()
 
 	#Writing users that did not answered profile
-	outputFile = open("usersNAnswered.dat", "w")
-	usersProfileFile = open("users.csv", "r")
-	usersProfile = usersProfileFile.readlines()
+	output_file = open("usersNAnswered.dat", "w")
+	users_profile_file = open("users.csv", "r")
+	users_profile = users_profile_file.readlines()
 
-	for index in range(0, len(usersIDNAnsweredProfile)):
-		userID = usersIDNAnsweredProfile[index]
-		for profile in usersProfile:
+	for index in range(0, len(users_id_nanswered_profile)):
+		user_id = users_id_nanswered_profile[index]
+		for profile in users_profile:
 			data = profile.split(",")
-			if data[0].strip() == userID:
-				outputFile.write(userID+"\t"+data[2]+"\t"+str(finishTimeNAnswered[index])+"\n")
-	outputFile.close()
-	usersProfileFile.close()
+			if data[0].strip() == user_id:
+				output_file.write(user_id+"\t"+data[2]+"\t"+str(finish_time_nanswered[index])+"\n")
+	output_file.close()
+	users_profile_file.close()
 
 
 def readUserData(lines1, lines2, outputFileName):
 	""" Reading user profile """
 	
-	usersTasks = {}
+	users_tasks = {}
 	firstDate = datetime.date(1970, 6, 24)
 	agrad_dic = {"agradavel?" : "agrad%C3%A1vel?", "agrad%C3%A1vel?" : "agradavel?"}
 
 	#Reading from pybossa task-run CSV - V1
 	for line in lines1:
-		data = line.split("+")
+		print ">>>> Deprecated"
 
-		taskID = data[3]
-		userID = data[4]
-		timeInfo = data[6].split("T")[0].split("-")#2015-02-17T18:19:52.589591
-		finish_time = datetime.date(int(timeInfo[0]), int(timeInfo[1]), int(timeInfo[2]))
-		
-		userAnswer = data[9].strip(' \t\n\r"')
-		
-		if userID in usersTasks.keys():
-			userExecutions = usersTasks[userID]
-		else:
-			userExecutions = ["", [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
-
-		#In user answers that contain profile information extract profile
-		if userAnswer[0] == '{':
-			index = userAnswer.find("}")
-			if index == -1:
-				raise Exception("Line with profile does not contain final delimiter: " + userAnswer)
-			currentAnswer = userAnswer[0:index+1]
-			
-			#Extracting profile
-			userProfileData = currentAnswer.split("|")
-			age = userProfileData[0].split("=")[1].encode('utf-8')
-			sex = userProfileData[1].split("=")[1].encode('utf-8')
-			currentClass = userProfileData[2].split("=")[1].encode('utf-8')
-			educ =  userProfileData[3].split("=")[1].encode('utf-8')
-			city = userProfileData[4].split("=")[1].encode('utf-8')
-			time = userProfileData[5].split("=")[1].encode('utf-8')
-			rel = userProfileData[6].split("=")[1].encode('utf-8')
-			neig = userProfileData[7].split("=")[1]
-			neig = neig[0:len(neig)-1]
-
-			userExecutions[0] = age+"+"+sex+"+"+currentClass+"+"+educ+"+"+city+"+"+time+"+"+rel+"+"+neig
-			
-		#Saving photos that user evaluated
-		index = userAnswer.find("Qual")
-		userAnswer = userAnswer[index:].split(" ")
- 		
-		question = userAnswer[5].strip(' \t\n\r"')
-		if 'agrad' in question and question == "agrad%C3%A1vel?":
-			question = agrad_dic[question]
-		answer = userAnswer[6].strip(' \t\n\r"')
-		photo1 = userAnswer[7].strip(' \t\n\r"')
-		photo2 = userAnswer[8].strip(' \t\n\r"')
-
-		if userID in photosAnsweredPerQuestion[question].keys():
-			photos = photosAnsweredPerQuestion[question][userID]
-		else:
-			photos = Set([])
-		photos.add(photo1)
-		photos.add(photo2)
-		photosAnsweredPerQuestion[question][userID] = photos
-
-		#Saving user answer near task ID
-		if question == possibleQuestions[0]:#Agra
-			userExecutions[1].append(taskID)
-			userExecutions[3].append(answer)
-		elif question == possibleQuestions[1]:#Seg
-			userExecutions[2].append(taskID)
-			userExecutions[4].append(answer)
-		else:
-			print "Error! " + question + " " + possibleQuestions[0] + " " + possibleQuestions[1]
-
-		if finish_time > userExecutions[5]:
-			userExecutions[5] = finish_time
-
-		#Saving task ID definition
-		tasksIDDefinition[taskID] = photo1+"\t"+photo2
-
-		usersTasks[userID] = userExecutions
-
+	index = 0
 	#Reading from pybossa task-run CSV - V2
 	for line in lines2:
+		print ">>> Mais uma linha " + str(index)
+		index = index + 1
+
 		data = line.split("+")
 
-		taskID = data[3]
-		userID = data[4]
-		userIP = data[5]
+		task_id = data[3]
+		user_id = data[4]
+		user_ip = data[5]
 		timeInfo = data[6].split("T")[0].split("-")#2015-02-17T18:19:52.589591
 		finish_time = datetime.date(int(timeInfo[0]), int(timeInfo[1]), int(timeInfo[2]))
 		
-		userAnswer = data[9].strip(' \t\n\r"')
+		user_answer = data[9].strip(' \t\n\r"')
 		
-		if userID in usersTasks.keys():
-			userExecutions = usersTasks[userID]
+		if user_id in users_tasks.keys():
+			user_executions = users_tasks[user_id]
 		else:
-			userExecutions = ["", [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
+			user_executions = [{'age': -1, 'sex': "", 'clas': "", 'edu': "", 'cit': "", "time": "", 'rel': "", 'nei': ""}, [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
 
 		#In user answers that contain profile information extract profile: {"userProfile": {"city": "Campina Grande - State of Para\u00edba, Brazil", "age": 33, "sex": "M", "rel": "casado", "educ": "doutorado", "neig": ["cen"], "clas": "media alta"}, "question": "agradavel", "theLess": "https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg", "theMost": "https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg"}
-		data = json.loads(userAnswer)
+		user_answer_data = json.loads(user_answer)
 
-		if data.has_key('userProfile'):
+		if user_answer_data.has_key('userProfile'):
 			#Extracting profile
-			userProfileData = data['userProfile']
+			user_profile_data = user_answer_data['userProfile']
 
-			age = userProfileData['age']
-			sex = userProfileData['sex'].encode('utf-8').strip(' \t\n\r"')
-			currentClass = userProfileData['clas'].encode('utf-8').strip(' \t\n\r"')
-			educ =  userProfileData['educ'].encode('utf-8').strip(' \t\n\r"')
-			city = userProfileData['city'].encode('utf-8').strip(' \t\n\r"')
+			age = user_profile_data['age']
+			sex = user_profile_data['sex'].encode('utf-8').strip(' \t\n\r"')
+			currentClass = user_profile_data['clas'].encode('utf-8').strip(' \t\n\r"')
+			educ =  user_profile_data['educ'].encode('utf-8').strip(' \t\n\r"')
+			city = user_profile_data['city'].encode('utf-8').strip(' \t\n\r"')
 			#time = userProfileData['time'].strip(' \t\n\r"')
-			rel = userProfileData['rel'].encode('utf-8').strip(' \t\n\r"')
-			neig = userProfileData['neig']
+			rel = user_profile_data['rel'].encode('utf-8').strip(' \t\n\r"')
+			neig = user_profile_data['neig'] 
 
 			if len(city) == 0:
-				if len(userIP) > 0:
-					response = urllib.urlopen("http://ip-api.com/json/"+userIP)
-					data = json.loads(response.read())
-					city =  data['city'] + "," + data['country']
+				if len(user_ip) > 0:
+					response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
+					ip_data = json.loads(response.read())
+					city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
 
-			userExecutions[0] = str(age)+"+"+sex+"+"+currentClass+"+"+educ+"+"+city+"+"+""+"+"+rel+"+"+str(neig)
+			if user_executions[0]['age'] == -1:
+				user_executions[0]['age'] = age
+			if len(user_executions[0]['sex'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['sex'] = sex
+			if len(user_executions[0]['clas'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['clas'] = currentClass
+			if len(user_executions[0]['edu'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['edu'] = educ
+			if len(user_executions[0]['cit'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['cit'] = city
+			if len(user_executions[0]['rel'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['rel'] = rel
+			if len(user_executions[0]['nei'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['nei'] = str(neig)
 		else:
-			if len(userIP) > 0:
-				response = urllib.urlopen("http://ip-api.com/json/"+userIP)
-				data = json.loads(response.read())
-				city =  data['city'] + "," + data['country']
-				userExecutions[0] = ""+"+"+""+"+"+""+"+"+""+"+"+city+"+"+""+"+"+""+"+"+""
+			if len(user_ip) > 0:
+				if len(user_executions[0]['cit'].strip(' \t\n\r"')) == 0:
+					response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
+					ip_data = json.loads(response.read())
+					city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
+					user_executions[0]['cit'] = city
 			
 		#Saving photos that user evaluated
-		question = data['question'].strip(' \t\n\r"')
+		question = user_answer_data['question'].strip(' \t\n\r"')
 		if 'agrad' in question and question == "agrad%C3%A1vel?":
 			question = agrad_dic[question]
 
 		answer = "Left*"
-		photo1 = data['theMost'].strip(' \t\n\r"')
-		photo2 = data['theLess'].strip(' \t\n\r"')
+		photo1 = user_answer_data['theMost'].strip(' \t\n\r"')
+		photo2 = user_answer_data['theLess'].strip(' \t\n\r"')
 
 		#print str(photosAnsweredPerQuestion.keys())	
-		if userID in photosAnsweredPerQuestion[question].keys():
-			photos = photosAnsweredPerQuestion[question][userID]
+		if user_id in photosAnsweredPerQuestion[question].keys():
+			photos = photosAnsweredPerQuestion[question][user_id]
 		else:
 			photos = Set([])
 		photos.add(photo1)
 		photos.add(photo2)
-		photosAnsweredPerQuestion[question][userID] = photos
+		photosAnsweredPerQuestion[question][user_id] = photos
 
 		#Saving user answer near task ID
 		if question == possibleQuestions[0]:#Agra
-			userExecutions[1].append(taskID)
-			userExecutions[3].append(answer)
+			user_executions[1].append(task_id)
+			user_executions[3].append(answer)
 		elif question == possibleQuestions[1]:#Seg
-			userExecutions[2].append(taskID)
-			userExecutions[4].append(answer)
+			user_executions[2].append(task_id)
+			user_executions[4].append(answer)
 		else:
 			print "Error! " + question
 
-		if finish_time > userExecutions[5]:
-			userExecutions[5] = finish_time
+		if finish_time > user_executions[5]:
+			user_executions[5] = finish_time
 
 		#Saving task ID definition
-		tasksIDDefinition[taskID] = photo1+"\t"+photo2
+		tasks_id_definition[task_id] = photo1+"\t"+photo2
 
-		usersTasks[userID] = userExecutions
+		users_tasks[user_id] = user_executions
 
-	return usersTasks
+	return users_tasks
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
@@ -561,8 +519,8 @@ if __name__ == "__main__":
 	lines1 = []#dataFile1.readlines() - This file does not exist for this version of app!
 	lines2 = dataFile2.readlines()
 
-	usersTasks = readUserData(lines1, lines2, "users.dat")
-	writeOutput(usersTasks)	
+	users_tasks = readUserData(lines1, lines2, "users.dat")
+	writeOutput(users_tasks)	
 	#dataFile1.close()
 	dataFile2.close()
 

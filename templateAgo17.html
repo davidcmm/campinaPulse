@@ -297,7 +297,7 @@
 	      </div> -->
 	      <div id="tab4" ng-show="tab === 3">
 		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar" style="color:#334759"><span aria-hidden="true">&times;</span></button>
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
@@ -309,7 +309,7 @@
 	      </div>
 	      <div id="tab5" ng-show="tab === 4">
 		      <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar" style="color:#334759"><span aria-hidden="true">&times;</span></button>
 		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_05.gif" alt="" width="100%">
 		      </div>
 		      <div class="modal-body">
@@ -823,8 +823,10 @@ var messages = {"en": {
 function i18n_translate() { 
     // Update userLocale with server side information
     pybossaLocale = document.getElementById('PYBOSSA_USER_LOCALE').textContent.trim();
-    if (pybossaLocale != null && pybossaLocale.length > 0){
-	userLocale = pybossaLocale;
+    if (pybossaLocale !== null && pybossaLocale !== undefined){
+	if (pybossaLocale.length > 0 && messages.hasOwnProperty(pybossaLocale)){
+		userLocale = pybossaLocale;
+	}
     }
 
     var ids = Object.keys(messages[userLocale]);

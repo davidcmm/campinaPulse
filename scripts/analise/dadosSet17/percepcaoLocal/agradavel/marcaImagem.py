@@ -107,19 +107,19 @@ for image in best_map.keys():
 for image in worst_map.keys():
 	save_image_marks(image, worst_map, "piores/", 'red')
 
-for user_id in users_map.keys():
-	user_data = users_map[user_id]
-	user_best = user_data['best']
-	for image in user_best.keys():
-		mkdir('melhores/'+str(user_id))
-		save_image_marks(image, user_best, "melhores/"+str(user_id), "green")
+#for user_id in users_map.keys():
+#	user_data = users_map[user_id]
+#	user_best = user_data['best']
+#	for image in user_best.keys():
+#		mkdir('melhores/'+str(user_id))
+#		save_image_marks(image, user_best, "melhores/"+str(user_id), "green")
+#
+#	user_worst = user_data['worst']
+#	for image in user_worst.keys():
+#		mkdir('piores/'+str(user_id))
+#		save_image_marks(image, user_worst, "piores/"+str(user_id), "red")
 
-	user_worst = user_data['worst']
-	for image in user_worst.keys():
-		mkdir('piores/'+str(user_id))
-		save_image_marks(image, user_worst, "piores/"+str(user_id), "red")
-
-#Creating webpage for marked images
+#Reading all best and worst marked images filenames
 best_images = []
 for filename in listdir("./melhores/"):
     if "jpg" in filename:
@@ -179,7 +179,7 @@ def evaluate_user_rows(user_id, user_data, best_dir, worst_dir, output_file):
 			for i in range(1, len(tasks_ids)):
 				print ""
 	
-
+#Creating webpage for marked images
 def create_page_for_marked_images(best_images, worst_images, best_map, worst_map):
 	output_file = open("markedImages.html", "w")
 	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")

@@ -158,6 +158,26 @@ photo <- unlist(lapply(novoV2, '[[', 1))
 data2$photo_name <- photo
 show_general_ranking(data2)
 
+#Showing CI for each photo
+data2$ci <- data2$sd * 1.96 / 100
+data2 <- arrange(data2, photo_name)
+
+plot_ci_per_photo <- function(data){
+  pd <- position_dodge(0.1) 
+  ggplot(data, aes(x=photo_name, y=V3, colour=photo_name)) + 
+      geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) +
+      geom_line(position=pd) +
+      geom_point(position=pd, size=3) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+}
+
+plot_ci_per_photo(data2[c(1:10),])
+plot_ci_per_photo(data2[c(11:20),])
+plot_ci_per_photo(data2[c(21:30),])
+plot_ci_per_photo(data2[c(31:40),])
+plot_ci_per_photo(data2[c(41:50),])
+plot_ci_per_photo(data2[c(51:60),])
+plot_ci_per_photo(data2[c(61:70),])
+plot_ci_per_photo(data2[c(71:80),])
 ```
 
 Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.

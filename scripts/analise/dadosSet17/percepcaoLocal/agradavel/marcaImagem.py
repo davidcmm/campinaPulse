@@ -222,3 +222,8 @@ create_page_for_marked_images(best_images, worst_images, best_map, worst_map)
 #base.save(sys.stdout, "PNG")
 
 
+#Center of circle given 3 points: http://paulbourke.net/geometry/circlesphere/
+# Area and centroid of a polygon: http://paulbourke.net/geometry/polygonmesh/
+# Bounding rectangle: [minX, minY, maxX, maxY] http://developer.classpath.org/doc/java/awt/Rectangle-source.html http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/java/awt/Rectangle.java
+
+

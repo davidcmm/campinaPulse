@@ -5,6 +5,7 @@ import sys
 import urllib, json
 from os import listdir, mkdir
 import pickle
+import operator
 
 class MyRectangle(object):
 	""" A simple class to represent a rectangle """
@@ -14,6 +15,9 @@ class MyRectangle(object):
 		self.y_left = y_left
 		self.x_right = x_right
 		self.y_right = y_right
+
+	def getBottomLeftCorner(self):
+		return [self.x_left, self.y_left] 
 
 	def getWidth(self):
 		return self.x_right - self.x_left
@@ -98,6 +102,33 @@ def compute_rectangles(current_marks):
 				rectangles.append(MyRectangle(minX, minY, maxX, maxY))
 	return rectangles
 
+def intersects(rectangle1, rectangle2): 
+
+	r1_data = rectangle1.getBottomLeftCorner()
+	r2_data = rectangle2.getBottomLeftCorner()
+
+	#tw = rectangle1.getWidth()
+        #th = rectangle1.getHeight()
+
+        #rw = rectangle2.getWidth()
+        #rh = rectangle2.getHeight()
+
+        #tx = r1_data[0]
+        #ty = r1_data[1]
+        #rx = r2_data[0]
+        #ry = r2_data[1]
+
+        #rw += rx;
+        #rh += ry;
+        #tw += tx;
+        #th += ty;
+
+        #return ((rw < rx or rw > tx) and (rh < ry or rh > ty) and (tw < tx or tw > rx) and (th < ty or th > ry))
+
+        #double x0 = getX()
+        #double y0 = getY()
+        return (r2_data[0] + rectangle2.getWidth() > r1_data[0] and r2_data[1] + rectangle2.getHeight() > r1_data[1] and r2_data[0] < r1_data[0] + rectangle1.getWidth() and r2_data[1] < r1_data[1] + rectangle1.getHeight())
+
 def intersect(rectangle1, rectangle2):
        x1 = max(rectangle1.getMinX(), rectangle2.getMinX())
        y1 = max(rectangle1.getMinY(), rectangle2.getMinY())
@@ -167,8 +198,12 @@ def save_image_rects(image, current_map, path):
 def evaluate_intersections(images_map, folder):
 	intersects_per_level = {}
 
-	for image in images_map.keys():
+	images = images_map.keys()
+	images.sort()
 
+	for image in images:
+	
+		#image = "https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_70_203.jpg"
 		image_data = images_map[image]
 		current_marks = []
 		for evaluation in image_data:
@@ -180,15 +215,26 @@ def evaluate_intersections(images_map, folder):
 		intersections = []
 		level = 0
 
+		#current_marks.sort(key=operator.attrgetter('x_left'))
+		#for mark in current_marks:
+		#	print ">>> MARKS " + str(mark)
+
 		#while len(current_marks) > 0:
 		for index in range(0, len(current_marks)):
 			for index2 in range(index+1, len(current_marks)):
 				mark1 = current_marks[index]
 				mark2 = current_marks[index2]
 
-				intersection = intersect(mark1, mark2)
-				if intersection != None:
-					intersections.append(intersection)
+				if intersects(mark1, mark2):
+					intersection = intersect(mark1, mark2)
+					#print ">>> CURRENT_INTER " + str(intersection) + " ENTRE " + str(mark1) + " " + str(mark2)	
+
+					if intersection != None:
+						intersections.append(intersection)
+
+		#intersections.sort(key=operator.attrgetter('x_left'))
+		#for mark in intersections:
+		#	print ">>> ALL INTER " + str(mark)
 
 		level = level + 1
 		if image in intersects_per_level.keys():
@@ -207,6 +253,7 @@ def evaluate_intersections(images_map, folder):
 		current_marks = intersections
 		intersections = []
 		#end while
+		break
 
 	for image in intersects_per_level.keys():
 		image_rects_level = intersects_per_level[image]
@@ -254,88 +301,88 @@ if __name__ == "__main__":
 	worst_map = {}
 	users_map = {}
 
-	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
-	response = urllib.urlopen(url)
-	data = json.loads(response.read())
-
-	while len(data) > 0:
-		for i in range(0, len(data)):
-			current_run = data[i]
-			task_id = current_run['id']
-			info = current_run['info']
-			best_image = info['theMost']
-			worst_image = info['theLess']	
-			user_id = current_run['user_id']
-
-			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
-				best_points = eval(info['markMost'])
-				worst_points = eval(info['markLess'])
-
-				best_image = urllib.quote(best_image.encode('utf8'), ':/')
-				worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
-
-				if best_image in best_map:
-					all_best_points = best_map[best_image]
-				else:
-					all_best_points = []
-				all_best_points.append([task_id, best_points])
-				best_map[best_image] = all_best_points
-	
-				if worst_image in worst_map:
-					all_worst_points = worst_map[worst_image]
-				else:
-					all_worst_points = []
-				all_worst_points.append([task_id, worst_points])
-				worst_map[worst_image] = all_worst_points
-
-				#Persisting per user
-				if user_id in users_map:
-					users_marks = users_map[user_id]
-				else:
-					users_marks = {"best": {}, "worst":{}}
-				if best_image in users_marks['best']:
-					best_marks = users_marks['best'][best_image]
-				else:
-					best_marks = []
-				best_marks.append([task_id, best_points.sort()])
-				users_marks['best'][best_image] = best_marks
-				users_map[user_id] = users_marks
-
-				if worst_image in users_marks['worst']:
-					worst_marks = users_marks['worst'][worst_image]
-				else:
-					worst_marks = []
-				worst_marks.extend([task_id, worst_points.sort()])
-				users_marks['worst'][worst_image] = worst_marks
-				users_map[user_id] = users_marks
+#	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+#	response = urllib.urlopen(url)
+#	data = json.loads(response.read())
+#
+#	while len(data) > 0:
+#		for i in range(0, len(data)):
+#			current_run = data[i]
+#			task_id = current_run['id']
+#			info = current_run['info']
+#			best_image = info['theMost']
+#			worst_image = info['theLess']	
+#			user_id = current_run['user_id']
+#
+#			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
+#				best_points = eval(info['markMost'])
+#				worst_points = eval(info['markLess'])
+#
+#				best_image = urllib.quote(best_image.encode('utf8'), ':/')
+#				worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
+#
+#				if best_image in best_map:
+#					all_best_points = best_map[best_image]
+#				else:
+#					all_best_points = []
+#				all_best_points.append([task_id, best_points])
+#				best_map[best_image] = all_best_points
+#	
+#				if worst_image in worst_map:
+#					all_worst_points = worst_map[worst_image]
+#				else:
+#					all_worst_points = []
+#				all_worst_points.append([task_id, worst_points])
+#				worst_map[worst_image] = all_worst_points
+#
+#				#Persisting per user
+#				if user_id in users_map:
+#					users_marks = users_map[user_id]
+#				else:
+#					users_marks = {"best": {}, "worst":{}}
+#				if best_image in users_marks['best']:
+#					best_marks = users_marks['best'][best_image]
+#				else:
+#					best_marks = []
+#				best_marks.append([task_id, best_points.sort()])
+#				users_marks['best'][best_image] = best_marks
+#				users_map[user_id] = users_marks
+#
+#				if worst_image in users_marks['worst']:
+#					worst_marks = users_marks['worst'][worst_image]
+#				else:
+#					worst_marks = []
+#				worst_marks.extend([task_id, worst_points.sort()])
+#				users_marks['worst'][worst_image] = worst_marks
+#				users_map[user_id] = users_marks
 			
 	
-		#Requesting next window of data
-		offset = offset + len(data)
-		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
-		response = urllib.urlopen(url)
-		data = json.loads(response.read())
+#		#Requesting next window of data
+#		offset = offset + len(data)
+#		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+#		response = urllib.urlopen(url)
+#		data = json.loads(response.read())
 
 	#Iterating through images to add marks and save images
-	for image in best_map.keys():
-		save_image_marks(image, best_map, "melhores/", 'green')
+#	for image in best_map.keys():
+#		save_image_marks(image, best_map, "melhores/", 'green')
 
 	#index = 0
-	for image in worst_map.keys():
-		save_image_marks(image, worst_map, "piores/", 'red')
+#	for image in worst_map.keys():
+#		save_image_marks(image, worst_map, "piores/", 'red')
 
 	#Reading all best and worst marked images filenames
-	best_images = []
-	for filename in listdir("./melhores/"):
-	    if "jpg" in filename:
-		    best_images.append(filename)
-	best_images.sort()
+#	best_images = []
+#	for filename in listdir("./melhores/"):
+#	    if "jpg" in filename:
+#		    best_images.append(filename)
+#	best_images.sort()
 
-	worst_images = []
-	for filename in listdir("./piores/"):
-	    if "jpg" in filename:
-	    	worst_images.append(filename)
-	worst_images.sort()
+#	worst_images = []
+#	for filename in listdir("./piores/"):
+#	    if "jpg" in filename:
+#	    	worst_images.append(filename)
+#	worst_images.sort()
 
 	#for user_id in users_map.keys():
 	#	user_data = users_map[user_id]
@@ -350,21 +397,21 @@ if __name__ == "__main__":
 	#		save_image_marks(image, user_worst, "piores/"+str(user_id), "red")
 
 	#Persisting points dictionaries
-	#best_file = open("./best-dict.pkl", "rb")
+	best_file = open("./best-dict.pkl", "rb")
 	#pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
-	#best_map = pickle.load(best_file)
-	#best_file.close()
-	#worst_file = open("./worst-dict.pkl", "rb")
+	best_map = pickle.load(best_file)
+	best_file.close()
+	worst_file = open("./worst-dict.pkl", "rb")
 	#pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
-	#worst_map = pickle.load(worst_file)
-	#worst_file.close()
+	worst_map = pickle.load(worst_file)
+	worst_file.close()
 	#users_marks_file = open("./users-dict-marks.pkl", "rb")
 	#pickle.dump(users_map, users_marks_file, pickle.HIGHEST_PROTOCOL)
 	#users_map = pickle.load(users_marks_file)
 	#users_marks_file.close()
 
 	#Creating page for users marks
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html")
+	#create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html")
 
 	#Compute intersections of users marks
 	evaluate_intersections(best_map, "melhores")
@@ -372,13 +419,13 @@ if __name__ == "__main__":
 
 	#Retrieving intersects files
 	best_images = []
-	for filename in listdir("./melhores/intersects"):
+	for filename in listdir("./melhores/intersects/"):
 	    if "jpg" in filename:
 		    best_images.append(filename)
 	best_images.sort()
 
 	worst_images = []
-	for filename in listdir("./piores/intersects"):
+	for filename in listdir("./piores/intersects/"):
 	    if "jpg" in filename:
 	    	worst_images.append(filename)
 	worst_images.sort()

@@ -9,6 +9,8 @@ output:
 library("vioplot")
 library("ggplot2")
 library("dplyr")
+library("knitr")
+library("texreg")
 ```
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
@@ -34,12 +36,12 @@ Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra 
 
 ```{r}
 #Checking sample size
-data2 <- read.table("all100/all_ordenado.dat")
-data2$sd <- apply(data2[,4:ncol(data2)], 1, sd)
-data2$n <- ( 1.96 * data2$sd / 0.2) ** 2  #All QScores
+current_data <- read.table("all100/all_ordenado.dat")
+current_data$sd <- apply(current_data[,4:ncol(current_data)], 1, sd)
+current_data$n <- ( 1.96 * current_data$sd / 0.2) ** 2  #All QScores
 print(">>>> Maior e menor amostra necessária ")
-print(max(data2$n))
-print(min(data2$n))
+print(max(current_data$n))
+print(min(current_data$n))
 
 #Checking rankings similarity
 mergeSort <- function(x){
@@ -87,19 +89,19 @@ normalizedKendallTauDistance2 <- function(data1, data2){
 }
 data29 <- read.table("29users/all_ordenado.dat")
 
-merged <- merge(select(data29, V2, V3), select(data2, V2, V3), by = "V2")
-print(cor.test(merged$V3.x, merged$V3.y, method = "kendall"))
-print(cor.test(merged$V3.x, merged$V3.y, method = "spearman"))
+d29_cur <- merge(select(data29, V2, V3), select(current_data, V2, V3), by = "V2")
+print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = "kendall"))
+print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = "spearman"))
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x, merged$V3.y)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d29_cur$V3.x, d29_cur$V3.y)))
 
 data69 <- read.table("69users/all_ordenado.dat")
 
-merged <- merge(select(data69, V2, V3), select(data2, V2, V3), by = "V2")
-print(cor.test(merged$V3.x, merged$V3.y, method = "kendall"))
-print(cor.test(merged$V3.x, merged$V3.y, method = "spearman"))
+d69_cur <- merge(select(data69, V2, V3), select(current_data, V2, V3), by = "V2")
+print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = "kendall"))
+print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = "spearman"))
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x, merged$V3.y)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))
 ```
 
 # Comparação entre rankings de moradores e não moradores
@@ -110,11 +112,11 @@ Feita a seleção de quem é morador e não morador de Campina temos, atualmente
 datacampina <- read.table("all100/all_campina_ordenado.dat")
 datanotcampina <- read.table("all100/all_notcampina_ordenado.dat")
 
-merged <- merge(select(datacampina, V2, V3), select(datanotcampina, V2, V3), by = "V2")
-print(cor.test(merged$V3.x, merged$V3.y, method = "kendall"))
-print(cor.test(merged$V3.x, merged$V3.y, method = "spearman"))
+camp_notcampina <- merge(select(datacampina, V2, V3), select(datanotcampina, V2, V3), by = "V2")
+print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = "kendall"))
+print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = "spearman"))
 
-print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x, merged$V3.y)))
+print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcampina$V3.x, camp_notcampina$V3.y)))
 ```
 
 
@@ -125,11 +127,9 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(merged$V3.x,
 Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
 ```{r results='asis', echo=FALSE, out.extra=''}
-library("knitr")
-
 show_general_ranking <- function (data){
-    top <- head(data2, n=10)
-    bottom <- tail(data2, n=10)
+    top <- head(data, n=10)
+    bottom <- tail(data, n=10)
     
     cat("<h3>Top</h3>")
     cat("<div class='row'>")
@@ -168,31 +168,42 @@ show_general_ranking <- function (data){
     cat("</div>")
 }
 
-novoV2 <- lapply(as.character(data2$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- lapply(as.character(current_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
 photo <- unlist(lapply(novoV2, '[[', 1))
-data2$photo_name <- photo
-show_general_ranking(data2)
+current_data$photo_name <- photo
+show_general_ranking(current_data)
 
-#Showing CI for each photo
-data2$ci <- data2$sd * 1.96 / 100
-data2 <- arrange(data2, photo_name)
+#Calculating CI for each photo
+current_data$ci <- current_data$sd * 1.96 / 100
+current_data <- arrange(current_data, photo_name)
 
-plot_ci_per_photo <- function(data){
-  pd <- position_dodge(0.1) 
-  ggplot(data, aes(x=photo_name, y=V3, colour=photo_name)) + 
+qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
+qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
+qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
+
+#Plotting Q-Scores through the street
+all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")
+all_data$street <- as.character(all_data$street)
+all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
+  pd <- position_dodge(0.1)
+  data$xlabel <- factor(data$xlabel, levels = data$xlabel)
+  data$side <- ""
+  data$side[data$angle %in% ids1] <- "Side 1"
+  data$side[data$angle %in% ids2] <- "Side 2"
+  
+  ggplot(data, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + 
       geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) +
       geom_line(position=pd) +
-      geom_point(position=pd, size=3) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + ylim(c(2, 7))
+      geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + facet_grid(~side, scales='free') #scale_colour_gradientn(colours=rainbow(4))
 }
 
-plot_ci_per_photo(data2[c(1:10),])
-plot_ci_per_photo(data2[c(11:20),])
-plot_ci_per_photo(data2[c(21:30),])
-plot_ci_per_photo(data2[c(31:40),])
-plot_ci_per_photo(data2[c(41:50),])
-plot_ci_per_photo(data2[c(51:60),])
-plot_ci_per_photo(data2[c(61:70),])
-plot_ci_per_photo(data2[c(71:80),])
+all_data$xlabel <- paste("Num.:", all_data$num, " Angle: ", all_data$angle)
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Edésio_Silva"), num, angle), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), num, angle), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Maciel_Pinheiro"), num, angle), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), num, angle), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 ```
 
 Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.
@@ -202,7 +213,6 @@ Para as imagens com pior avaliação, a presença de itens na rua (barracas mal 
 Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
 
 ```{r}
-library(texreg)
 input_regressao <- read.csv("input_regressao/regressao-input.csv")
 plotRegAndLinear <- function(reg, test){
   #http://blog.minitab.com/blog/adventures-in-statistics-2/why-you-need-to-check-your-residual-plots-for-regression-analysis
@@ -215,24 +225,41 @@ plotRegAndLinear <- function(reg, test){
   plot(test$build_ident, reg$resid)
 }
 
-merged <- merge(data2, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(merged, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_input <- merge(current_data, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
+reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
 texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression!
-plotRegAndLinear(reg, merged)
+plotRegAndLinear(reg, reg_input)
+
+#Standardized regression
+reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+
+texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
 
 Realizando a mesma regressão acima para moradores e não moradores de forma separada
 
 ```{r}
-merged <- merge(datacampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(merged, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#CAmpina residents
+reg_input <- merge(datacampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
+reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
 texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
-merged <- merge(datanotcampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(merged, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#Standardized regression
+reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+
+texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+#Campina non-residents
+reg_input <- merge(datanotcampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
+reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+
+texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+#Standardized regression
+reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
 texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
@@ -243,7 +270,7 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 
 ```{r}
-#Getting data for each street
+#Getting data for each street to plot means and ICs for each street
 plot_street_means <- function(data){
   edesio_scores = filter(data, street == "R._Edésio_Silva")$qscore
   edesio_sd = sd(edesio_scores)
@@ -263,9 +290,6 @@ plot_street_means <- function(data){
                     position=position_dodge(.9))
 }
 
-qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
-qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
-qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 
 plot_street_means(qscoresDFGeral)
 plot_street_means(qscoresDFCampina)
@@ -338,11 +362,10 @@ summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 
 summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
 ```
 
-```{r }
+```{r}
 summary_inacio
 
-plot_ci_per_photo(data2[c(21:30),])
-plot_ci_per_photo(data2[c(31:40),])
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), num, angle), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 ```
 
 Para a Inacio Marques percebemos uma **variação de aproximadamente 1.2** nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.
@@ -371,7 +394,7 @@ show_street_data <- function (current_df){
       score <- row$qscore
       angleData <- append(angleData, score)
       
-      cat("<div class='col-xs-3'>")
+      cat("<div class='col-xs-3' background-color='#FF0000'>")
       cat("<img src='", url,"' width='300px'>", sep = "")
       cat("<div class='caption'>", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
       cat("</div>")
@@ -405,8 +428,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 ```{r}
 summary_edesio
 
-plot_ci_per_photo(data2[c(1:10),])
-plot_ci_per_photo(data2[c(11:20),])
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Edésio_Silva"), num, angle), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 ```
 
 Para a Edesio percebemos **uma variação de aproximadamente 0.9** nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.
@@ -439,8 +461,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 ```{r }
 summary_maciel
 
-plot_ci_per_photo(data2[c(41:50),])
-plot_ci_per_photo(data2[c(51:60),])
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Maciel_Pinheiro"), num, angle), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 ```
 
 Para a Maciel percebemos **uma variação de aproximadamente 0.2** nas médias do QScore do número 248 e dos números 130 e 248. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. A análise dos intervalos acaba revelando um similaridade ao longo de toda a rua. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias na faixa dos números 190 e 248.
@@ -475,8 +496,7 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 ```{r }
 summary_manoel
 
-plot_ci_per_photo(data2[c(61:70),])
-plot_ci_per_photo(data2[c(71:80),])
+plot_ci_per_photo(arrange(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), num, angle), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 ```
 
 Para a Manoel percebemos **uma variação de aproximadamente 0.14** nas médias do QScore do número 392 e do número 370. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo. 

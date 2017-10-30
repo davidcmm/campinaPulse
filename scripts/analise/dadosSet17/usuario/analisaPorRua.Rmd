@@ -11,6 +11,44 @@ library("ggplot2")
 library("dplyr")
 library("knitr")
 library("texreg")
+library("ineq")
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
 ```
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
@@ -126,7 +164,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcamp
 
 Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
 show_general_ranking <- function (data){
     top <- head(data, n=10)
     bottom <- tail(data, n=10)
@@ -193,17 +231,30 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data$side[data$angle %in% ids1] <- "Side 1"
   data$side[data$angle %in% ids2] <- "Side 2"
   
-  ggplot(data, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + 
-      geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) +
-      geom_line(position=pd) +
-      geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + facet_grid(~side, scales='free') #scale_colour_gradientn(colours=rainbow(4))
+  if(plotTitle == "Edésio Silva" || plotTitle == "Manoel Pereira"){
+    data1 <- arrange(filter(data, side == "Side 1"), num, -angle)
+    data2 <- arrange(filter(data, side == "Side 2"), num, angle)
+  }else if (plotTitle == "Inacio"  || plotTitle == "Maciel Pinheiro" ){
+    data1 <- arrange(filter(data, side == "Side 1"), num, angle)
+    data2 <- arrange(filter(data, side == "Side 2"), num, angle)
+  }
+  
+  
+  data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
+  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd) + geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4))
+
+  data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
+  g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd) + geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+  
+  multiplot(g1, g2, cols=1)
 }
 
-all_data$xlabel <- paste("Num.:", all_data$num, " Angle: ", all_data$angle)
-plot_ci_per_photo(arrange(filter(all_data, street == "R._Edésio_Silva"), num, angle), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
-plot_ci_per_photo(arrange(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), num, angle), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
-plot_ci_per_photo(arrange(filter(all_data, street == "R._Maciel_Pinheiro"), num, angle), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
-plot_ci_per_photo(arrange(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), num, angle), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
+all_data$xlabel <- paste("Num.:", all_data$num, " Angle: ", all_data$angle) 
+
+plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
+plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
+plot_ci_per_photo(filter(all_data, street == "R._Maciel_Pinheiro"), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
+plot_ci_per_photo(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 ```
 
 Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.
@@ -317,6 +368,16 @@ with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] ,
 value <- qscoresDFNotCampina$qscore
 
 with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(2, 7) ))
+
+#GINI COEFFICIENTS
+ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")
+sd(filter(all_data, street == "R._Edésio_Silva")$qscore)
+ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")
+sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)
+ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")
+sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)
+ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")
+sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)
 ```
 
 A partir da análise dos violin plots, alguns pontos podem ser destacados:
@@ -362,8 +423,14 @@ summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 
 summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
 ```
 
-```{r}
+```{r  fig.height=10, fig.width=12}
 summary_inacio
+inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")))
+for (value in unique(inacio$num)){
+  print(paste("Número", value, ineq(filter(inacio, num == value)$qscore, type="Gini")))
+}
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), num, angle), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 ```
@@ -380,9 +447,12 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 
 ```{r results='asis', echo=FALSE, out.extra=''}
 library("knitr")
-inacio <- filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
-show_street_data <- function (current_df){
+show_street_data <- function (current_df, all_data){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+    step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
+    thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
+    
     cat("<div class='row'>")
     angleData = c()
     for(i in 1:nrow(current_df)) {
@@ -394,9 +464,13 @@ show_street_data <- function (current_df){
       score <- row$qscore
       angleData <- append(angleData, score)
       
-      cat("<div class='col-xs-3' background-color='#FF0000'>")
+      color_index <- findInterval(score, thresholds)[1]
+      if (color_index > length(color_space)){
+         color_index <- length(color_space)
+      }
+      cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
       cat("<img src='", url,"' width='300px'>", sep = "")
-      cat("<div class='caption'>", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
+      cat("<div class='caption' style=\"color:white\">", street, " " , num , ", ", angle, " -> ", score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 4 == 0){
         cat("</div>")
@@ -407,7 +481,7 @@ show_street_data <- function (current_df){
     }
 }
 
-show_street_data(inacio)
+show_street_data(inacio, all_data)
 
 ```
 
@@ -425,8 +499,14 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Edesio Silva
 
-```{r}
+```{r  fig.height=10, fig.width=12}
 summary_edesio
+edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")))
+for (value in unique(edesio$num)){
+  print(paste("Número", value, ineq(filter(edesio, num == value)$qscore, type="Gini")))
+}
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Edésio_Silva"), num, angle), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 ```
@@ -442,8 +522,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 - no número 1546 temos uma maior homogeneidade, de forma positiva, com o ângulo 22 apresentando uma nota ainda melhor.
 
 ```{r results='asis', echo=FALSE, out.extra=''}
-edesio <- filter(qscoresDFGeral, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
-show_street_data(edesio)
+show_street_data(edesio, all_data)
 ```
 
 Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:
@@ -458,8 +537,14 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Maciel Pinheiro
 
-```{r }
+```{r  fig.height=10, fig.width=12}
 summary_maciel
+maciel <- filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")))
+for (value in unique(maciel$num)){
+  print(paste("Número", value, ineq(filter(maciel, num == value)$qscore, type="Gini")))
+}
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Maciel_Pinheiro"), num, angle), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 ```
@@ -475,8 +560,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 - No número 130, temos uma nota mais baixa para os ângulos 270 e 360
 
 ```{r results='asis', echo=FALSE, out.extra=''}
-maciel <- filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
-show_street_data(maciel)
+show_street_data(maciel, all_data)
 ```
 
 Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:
@@ -493,8 +577,14 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 
 ## Manoel Pereira
 
-```{r }
+```{r  fig.height=10, fig.width=12}
 summary_manoel
+manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")))
+for (value in unique(manoel$num)){
+  print(paste("Número", value, ineq(filter(manoel, num == value)$qscore, type="Gini")))
+}
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), num, angle), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 ```
@@ -509,8 +599,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que,
 - No número 222, ângulo 22 temos 0.6 a menos do angulo 315;
 
 ```{r results='asis', echo=FALSE, out.extra=''}
-manoel <- filter(qscoresDFGeral, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
-show_street_data(manoel)
+show_street_data(manoel, all_data)
 ```
 
 Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:

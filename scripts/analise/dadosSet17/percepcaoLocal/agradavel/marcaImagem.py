@@ -145,10 +145,17 @@ def save_image_rects(image, current_map, path):
 	# get an image
 	file = cStringIO.StringIO(urllib.urlopen(image).read())
 	base = Image.open(file)
-	draw = ImageDraw.Draw(base)
+	base = base.convert("RGBA")
+	#draw = ImageDraw.Draw(base)
 
 	#Black, brown, darkred, violet, darkblue, darkgreen, gold
 	colors_map = {1: "black", 2: "brown",  3: "darkred", 4: "violet", 5: "darkblue", 6: "darkgreen", 7: "gold"}
+
+	img_size = (640,480)
+	poly_size = (640,480)
+	poly_offset = (0,0)
+	poly = Image.new('RGBA', poly_size )
+	pdraw = ImageDraw.Draw(poly, 'RGBA')
 
 	#print str(image_data)
 	for level in current_map.keys():
@@ -158,39 +165,44 @@ def save_image_rects(image, current_map, path):
 			color = colors_map[level]
 			vertices = rect.getAllVertices()#[[self.x_left, self.y_left], [self.x_right, self.y_left], [self.x_right, self.y_right], [self.x_left, self.y_right]]
 	
-			init = vertices[0]
-			end = vertices[3]
-			for y in range(int(init[1]), int(end[1]), 3):
-				eX, eY = 5, 5 #Size of Bounding Box for ellipse
-				x = init[0]
-				bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
-				draw.ellipse(bbox, fill=color)
+			pdraw.rectangle([vertices[0][0], vertices[0][1], vertices[2][0], vertices[2][1]], fill=(255,255,255,127), outline=(170,170,170,170))
 
-			for index in range(0, len(vertices)-1):
+			#init = vertices[0]
+			#end = vertices[3]
+			#for y in range(int(init[1]), int(end[1]), 3):
+			#	eX, eY = 5, 5 #Size of Bounding Box for ellipse
+			#	x = init[0]
+				#bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
+				#draw.ellipse(bbox, fill=color)
+				
 
-				if index == 0 or index == 2:
-					init = vertices[index]
-					end = vertices[index+1]
-					if index == 2:
-						init = vertices[index+1]
-						end = vertices[index]
+			#for index in range(0, len(vertices)-1):
+#
+#				if index == 0 or index == 2:
+#					init = vertices[index]
+#					end = vertices[index+1]
+#					if index == 2:
+#						init = vertices[index+1]
+#						end = vertices[index]
+#
+#					for x in range(int(init[0]), int(end[0]), 3):
+#						eX, eY = 5, 5 #Size of Bounding Box for ellipse
+#						y = init[1]
+#						bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
+#						draw.ellipse(bbox, fill=color)#draw.rectangle([10,10, 200, 200]) top-left and bottom-right
+#				elif index == 1:
+#					init = vertices[index]
+#					end = vertices[index+1]
+#					for y in range(int(init[1]), int(end[1]), 3):
+#						eX, eY = 5, 5 #Size of Bounding Box for ellipse
+#						x = init[0]
+#						bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
+#						draw.ellipse(bbox, fill=color)
 
-					for x in range(int(init[0]), int(end[0]), 3):
-						eX, eY = 5, 5 #Size of Bounding Box for ellipse
-						y = init[1]
-						bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
-						draw.ellipse(bbox, fill=color)
-				elif index == 1:
-					init = vertices[index]
-					end = vertices[index+1]
-					for y in range(int(init[1]), int(end[1]), 3):
-						eX, eY = 5, 5 #Size of Bounding Box for ellipse
-						x = init[0]
-						bbox =  (x - eX/2, y - eY/2, x + eX/2, y + eY/2)			
-						draw.ellipse(bbox, fill=color)
-		
+	#base.paste(poly, poly_offset, mask=poly)
+	final = Image.blend(base, poly, 0.6)
 	image_name = urllib.unquote(image.split("/")[6]).decode('utf8')
-	base.save(path+image_name, "JPEG")
+	final.save(path+image_name, "JPEG")
 
 #Center of circle given 3 points: http://paulbourke.net/geometry/circlesphere/
 # Area and centroid of a polygon: http://paulbourke.net/geometry/polygonmesh/
@@ -253,7 +265,7 @@ def evaluate_intersections(images_map, folder):
 		current_marks = intersections
 		intersections = []
 		#end while
-		break
+		#break
 
 	for image in intersects_per_level.keys():
 		image_rects_level = intersects_per_level[image]
@@ -301,88 +313,88 @@ if __name__ == "__main__":
 	worst_map = {}
 	users_map = {}
 
-#	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
-#	response = urllib.urlopen(url)
-#	data = json.loads(response.read())
-#
-#	while len(data) > 0:
-#		for i in range(0, len(data)):
-#			current_run = data[i]
-#			task_id = current_run['id']
-#			info = current_run['info']
-#			best_image = info['theMost']
-#			worst_image = info['theLess']	
-#			user_id = current_run['user_id']
-#
-#			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
-#				best_points = eval(info['markMost'])
-#				worst_points = eval(info['markLess'])
-#
-#				best_image = urllib.quote(best_image.encode('utf8'), ':/')
-#				worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
-#
-#				if best_image in best_map:
-#					all_best_points = best_map[best_image]
-#				else:
-#					all_best_points = []
-#				all_best_points.append([task_id, best_points])
-#				best_map[best_image] = all_best_points
-#	
-#				if worst_image in worst_map:
-#					all_worst_points = worst_map[worst_image]
-#				else:
-#					all_worst_points = []
-#				all_worst_points.append([task_id, worst_points])
-#				worst_map[worst_image] = all_worst_points
-#
-#				#Persisting per user
-#				if user_id in users_map:
-#					users_marks = users_map[user_id]
-#				else:
-#					users_marks = {"best": {}, "worst":{}}
-#				if best_image in users_marks['best']:
-#					best_marks = users_marks['best'][best_image]
-#				else:
-#					best_marks = []
-#				best_marks.append([task_id, best_points.sort()])
-#				users_marks['best'][best_image] = best_marks
-#				users_map[user_id] = users_marks
-#
-#				if worst_image in users_marks['worst']:
-#					worst_marks = users_marks['worst'][worst_image]
-#				else:
-#					worst_marks = []
-#				worst_marks.extend([task_id, worst_points.sort()])
-#				users_marks['worst'][worst_image] = worst_marks
-#				users_map[user_id] = users_marks
+	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+	response = urllib.urlopen(url)
+	data = json.loads(response.read())
+
+	while len(data) > 0:
+		for i in range(0, len(data)):
+			current_run = data[i]
+			task_id = current_run['id']
+			info = current_run['info']
+			best_image = info['theMost']
+			worst_image = info['theLess']	
+			user_id = current_run['user_id']
+
+			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
+				best_points = eval(info['markMost'])
+				worst_points = eval(info['markLess'])
+
+				best_image = urllib.quote(best_image.encode('utf8'), ':/')
+				worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
+
+				if best_image in best_map:
+					all_best_points = best_map[best_image]
+				else:
+					all_best_points = []
+				all_best_points.append([task_id, best_points])
+				best_map[best_image] = all_best_points
+	
+				if worst_image in worst_map:
+					all_worst_points = worst_map[worst_image]
+				else:
+					all_worst_points = []
+				all_worst_points.append([task_id, worst_points])
+				worst_map[worst_image] = all_worst_points
+
+				#Persisting per user
+				if user_id in users_map:
+					users_marks = users_map[user_id]
+				else:
+					users_marks = {"best": {}, "worst":{}}
+				if best_image in users_marks['best']:
+					best_marks = users_marks['best'][best_image]
+				else:
+					best_marks = []
+				best_marks.append([task_id, best_points.sort()])
+				users_marks['best'][best_image] = best_marks
+				users_map[user_id] = users_marks
+
+				if worst_image in users_marks['worst']:
+					worst_marks = users_marks['worst'][worst_image]
+				else:
+					worst_marks = []
+				worst_marks.extend([task_id, worst_points.sort()])
+				users_marks['worst'][worst_image] = worst_marks
+				users_map[user_id] = users_marks
 			
 	
-#		#Requesting next window of data
-#		offset = offset + len(data)
-#		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
-#		response = urllib.urlopen(url)
-#		data = json.loads(response.read())
+		#Requesting next window of data
+		offset = offset + len(data)
+		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+		response = urllib.urlopen(url)
+		data = json.loads(response.read())
 
 	#Iterating through images to add marks and save images
-#	for image in best_map.keys():
-#		save_image_marks(image, best_map, "melhores/", 'green')
+	for image in best_map.keys():
+		save_image_marks(image, best_map, "melhores/", 'green')
 
 	#index = 0
-#	for image in worst_map.keys():
-#		save_image_marks(image, worst_map, "piores/", 'red')
+	for image in worst_map.keys():
+		save_image_marks(image, worst_map, "piores/", 'red')
 
 	#Reading all best and worst marked images filenames
-#	best_images = []
-#	for filename in listdir("./melhores/"):
-#	    if "jpg" in filename:
-#		    best_images.append(filename)
-#	best_images.sort()
+	best_images = []
+	for filename in listdir("./melhores/"):
+	    if "jpg" in filename:
+		    best_images.append(filename)
+	best_images.sort()
 
-#	worst_images = []
-#	for filename in listdir("./piores/"):
-#	    if "jpg" in filename:
-#	    	worst_images.append(filename)
-#	worst_images.sort()
+	worst_images = []
+	for filename in listdir("./piores/"):
+	    if "jpg" in filename:
+	    	worst_images.append(filename)
+	worst_images.sort()
 
 	#for user_id in users_map.keys():
 	#	user_data = users_map[user_id]
@@ -397,13 +409,13 @@ if __name__ == "__main__":
 	#		save_image_marks(image, user_worst, "piores/"+str(user_id), "red")
 
 	#Persisting points dictionaries
-	best_file = open("./best-dict.pkl", "rb")
-	#pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
-	best_map = pickle.load(best_file)
+	best_file = open("./best-dict.pkl", "wb")
+	pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
+	#best_map = pickle.load(best_file)
 	best_file.close()
-	worst_file = open("./worst-dict.pkl", "rb")
-	#pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
-	worst_map = pickle.load(worst_file)
+	worst_file = open("./worst-dict.pkl", "wb")
+	pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
+	#worst_map = pickle.load(worst_file)
 	worst_file.close()
 	#users_marks_file = open("./users-dict-marks.pkl", "rb")
 	#pickle.dump(users_map, users_marks_file, pickle.HIGHEST_PROTOCOL)

@@ -70,7 +70,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 128 pessoas e 44 pessoas que não são de Campina.
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 131 pessoas e 46 pessoas que não são de Campina.
 
 ```{r}
 #Checking sample size
@@ -144,7 +144,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 48 moradores e 44 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 49 moradores e 46 não moradores.
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -162,7 +162,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcamp
 
 ## Ranking Geral
 
-Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
+Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
 show_general_ranking <- function (data){
@@ -177,7 +177,7 @@ show_general_ranking <- function (data){
       score <- row$V3
       
       cat("<div class='col-xs-4'>")
-      cat("<img src='", "../percepcaoLocal/agradavel/melhores/",photo_name,"' width='400px'>", sep = "")
+      cat("<img src='", "../percepcaoLocal/agradavel/melhores/intersects/",photo_name,"' width='400px'>", sep = "")
       cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 3 == 0){
@@ -195,7 +195,7 @@ show_general_ranking <- function (data){
       score <- row$V3
       
       cat("<div class='col-xs-4'>")
-      cat("<img src='", "../percepcaoLocal/agradavel/piores/",photo_name,"' width='400px'>", sep = "")
+      cat("<img src='", "../percepcaoLocal/agradavel/piores/intersects/",photo_name,"' width='400px'>", sep = "")
       cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 3 == 0){
@@ -241,10 +241,10 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   
   
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
-  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd) + geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4))
+  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd, colour="#D55E00") + geom_point(position=pd, size=4, colour="#D55E00") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4)) + scale_colour_hue()
 
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
-  g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, colour=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd) + geom_point(position=pd, size=3) + ylim(c(2, 7)) + scale_colour_hue() + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+  g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd, colour="#56B4E9") + geom_point(position=pd, size=4, colour="#56B4E9") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))#+ scale_colour_hue()
   
   multiplot(g1, g2, cols=1)
 }
@@ -359,29 +359,20 @@ Três das ruas selecionadas parecem bem similares de acordo com a média, mas se
 ```{r }
 value <- qscoresDFGeral$qscore
 
-with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(2, 7) ))
+with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
 
 value <- qscoresDFCampina$qscore
 
-with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(2, 7) ))
+with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
 
 value <- qscoresDFNotCampina$qscore
 
-with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(2, 7) ))
+with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
 
 #GINI COEFFICIENTS
-ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")
-ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy")
-sd(filter(all_data, street == "R._Edésio_Silva")$qscore)
-ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")
-ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy")
-sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)
-ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")
-ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy")
-sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)
-ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")
-ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy")
-sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)
+inequalities <- data.frame(labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)))
+
+inequalities
 ```
 
 A partir da análise dos violin plots, alguns pontos podem ser destacados:
@@ -428,13 +419,13 @@ summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 
 ```
 
 ```{r  fig.height=10, fig.width=12}
-summary_inacio
 inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")))
 for (value in unique(inacio$num)){
   print(paste("Número", value, ineq(filter(inacio, num == value)$qscore, type="Gini")))
 }
+summary_inacio
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), num, angle), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 ```
@@ -504,13 +495,13 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 ## Edesio Silva
 
 ```{r  fig.height=10, fig.width=12}
-summary_edesio
 edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")))
 for (value in unique(edesio$num)){
   print(paste("Número", value, ineq(filter(edesio, num == value)$qscore, type="Gini")))
 }
+summary_edesio
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Edésio_Silva"), num, angle), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 ```
@@ -542,13 +533,13 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 ## Maciel Pinheiro
 
 ```{r  fig.height=10, fig.width=12}
-summary_maciel
 maciel <- filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")))
 for (value in unique(maciel$num)){
   print(paste("Número", value, ineq(filter(maciel, num == value)$qscore, type="Gini")))
 }
+summary_maciel
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Maciel_Pinheiro"), num, angle), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 ```
@@ -582,13 +573,13 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 ## Manoel Pereira
 
 ```{r  fig.height=10, fig.width=12}
-summary_manoel
 manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")))
 for (value in unique(manoel$num)){
   print(paste("Número", value, ineq(filter(manoel, num == value)$qscore, type="Gini")))
 }
+summary_manoel
 
 plot_ci_per_photo(arrange(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), num, angle), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 ```

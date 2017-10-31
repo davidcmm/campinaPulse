@@ -276,7 +276,7 @@ def evaluate_intersections(images_map, folder):
 		
 	
 #Creating webpage for marked images
-def create_page_for_marked_images(best_images, worst_images, best_map, worst_map, output_filename):
+def create_page_for_marked_images(best_images, worst_images, best_map, worst_map, output_filename, best_folder, worst_folder):
 	output_file = open(output_filename, "w")
 	output_file.write("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\">")
 	output_file.write("<body style=\"overflow:scroll\">\n")
@@ -287,7 +287,7 @@ def create_page_for_marked_images(best_images, worst_images, best_map, worst_map
 	output_file.write("<h2> Melhores </h2>")
 	output_file.write("<table>\n")
 	output_file.write("<tr>\n")
-	create_rows(best_images, best_map, "melhores/", output_file)
+	create_rows(best_images, best_map, best_folder, output_file)
 	output_file.write("</tr>\n")
 	output_file.write("</table>")
 
@@ -295,7 +295,7 @@ def create_page_for_marked_images(best_images, worst_images, best_map, worst_map
 	output_file.write("<h2> Piores </h2>")
 	output_file.write("<table>\n")
 	output_file.write("<tr>\n")
-	create_rows(worst_images, worst_map, "piores/", output_file)
+	create_rows(worst_images, worst_map, worst_folder, output_file)
 	output_file.write("</tr>\n")
 	output_file.write("</table>")
 
@@ -325,6 +325,9 @@ if __name__ == "__main__":
 			best_image = info['theMost']
 			worst_image = info['theLess']	
 			user_id = current_run['user_id']
+
+			if "Manoel" in best_image:
+				print ">>> " + str(user_id) + "\t" + str(best_image.encode("utf8"))
 
 			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
 				best_points = eval(info['markMost'])
@@ -423,7 +426,7 @@ if __name__ == "__main__":
 	#users_marks_file.close()
 
 	#Creating page for users marks
-	#create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html")
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html", "melhores/", "piores/")
 
 	#Compute intersections of users marks
 	evaluate_intersections(best_map, "melhores")
@@ -443,7 +446,7 @@ if __name__ == "__main__":
 	worst_images.sort()
 
 	#Create page for intersects
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect.html")
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect.html", "melhores/intersects/", "piores/intersects/")
 
 	#x, y =  base.size
 	#bbox =  (x/2 - eX/2, y/2 - eY/2, x/2 + eX/2, y/2 + eY/2)

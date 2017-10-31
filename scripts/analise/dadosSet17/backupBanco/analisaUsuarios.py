@@ -128,26 +128,27 @@ def plotCity():
 	sizes = []
 	campinaCounting = 0
 	joaoPessoaCounting = 0
-	for city in user_city.keys():
-		if city != None and len(city) > 0:
+	for city_data in user_city.keys():
+		if city_data != None and len(city_data) > 0:
+			city = city_data.split(",")[0].decode("utf8")
 			if 'campina' in city.lower():
-				campinaCounting += user_city[city]
+				campinaCounting += user_city[city_data]
 			elif 'pessoa' in city.lower():
-				joaoPessoaCounting += user_city[city]
+				joaoPessoaCounting += user_city[city_data]
 			else:
-				labels.append(city[0:5])
-				sizes.append(user_city[city])
+				labels.append(city)
+				sizes.append(user_city[city_data])
 	labels.append("Campina Grande")
 	labels.append("Joao Pessoa")
 	sizes.append(campinaCounting)
 	sizes.append(joaoPessoaCounting)
-	colors = ['yellowgreen', 'green', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red', 'black']
-	#plt.figure()
-	#plt.clf()
-	#plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
-	#plt.axis('equal')
-	#pp.savefig()
-	#pp.close()
+	colors = ['yellow', 'yellowgreen', 'green', 'gold', 'lightskyblue', 'blue', 'lightcoral', 'red', 'black']
+	plt.figure()
+	plt.clf()
+	plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True)
+	plt.axis('equal')
+	pp.savefig()
+	pp.close()
 
 def plotTime():
 	#Time levels

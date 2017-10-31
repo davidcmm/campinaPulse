@@ -70,7 +70,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 107 pessoas e 32 pessoas que não são de Campina.
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 128 pessoas e 44 pessoas que não são de Campina.
 
 ```{r}
 #Checking sample size
@@ -144,7 +144,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 39 moradores e 38 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 48 moradores e 44 não moradores.
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -371,12 +371,16 @@ with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"
 
 #GINI COEFFICIENTS
 ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")
+ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy")
 sd(filter(all_data, street == "R._Edésio_Silva")$qscore)
 ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")
+ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy")
 sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)
 ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")
+ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy")
 sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)
 ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")
+ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy")
 sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)
 ```
 

@@ -389,8 +389,8 @@
 							<div class="form-group">
 								<label for="knowcampina"><span id="i18n_know_campina">Do you know the city of Campina Grande, Paraíba</span>?</label>
 								<select class="form-control" id="knowcampina" name="knowcampina" ng-model="userProfile.knowcampina">
-									<option value="yes"> <span id="i18n_yes">Yes</span></option>  
-									<option value="no"> <span id="i18n_yes">No</span></option>  				
+									<option value="yes" id="i18n_yes2">Yes</span></option>  
+									<option value="no" id="i18n_no2">No</span></option>  				
 								</select>
 							</div>
 							<div class="form-group">
@@ -694,6 +694,8 @@ var messages = {"en": {
 			"i18n_info": "We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them? Our analysis will be completely performed with anonymized data, so we will not take a look specifically at your data and neither relate them to you.",
 			"i18n_yes": "Yes",
 			"i18n_no": "No",
+			"i18n_yes2": "Yes",
+			"i18n_no2": "No",
 			"i18n_more": "Tell us a bit more about you",
 			"i18n_age": "Age",
 			"i18n_sex": "Sex",
@@ -771,6 +773,8 @@ var messages = {"en": {
 			"i18n_info": "Gostaríamos de conhecer um pouco mais sobre você e para isso gostaríamos de lhe fazer algumas perguntas, você poderia respondê-las? Nossa análise irá trabalhar com dados anonimizados, então não iremos avaliar especificamente seus dados e nem relacioná-los a você.",
 			"i18n_yes": "Sim",
 			"i18n_no": "Não",
+			"i18n_yes2": "Sim",
+			"i18n_no2": "Não",
 			"i18n_more": "Conte-nos um pouco mais sobre você",
 			"i18n_age": "Idade",
 			"i18n_sex": "Sexo",
@@ -836,8 +840,8 @@ function i18n_translate() {
 
     var ids = Object.keys(messages[userLocale]);
     for (i=0; i<ids.length; i++) {
-       //console.log("Translating: " + ids[i] + " to " + userLocale);
-       // document.getElementById(ids[i]).innerHTML = messages[userLocale][ids[i]]; -> Error!
+        console.log("Translating: " + ids[i] + " to " + userLocale);
+        // document.getElementById(ids[i]).innerHTML = messages[userLocale][ids[i]]; -> Error!
 	document.getElementById(ids[i]).textContent = messages[userLocale][ids[i]];
     }
 }

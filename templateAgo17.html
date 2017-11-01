@@ -340,20 +340,20 @@
 	<!-- Profile -->
 	<div id="modalProfile" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
 		<div class="modal-dialog modal-sm">
-			<div class="modal-content active" ng-init="tab = 1">
-				<div id="tab1" ng-show="tab === 1">
+			<div class="modal-content active" ng-init="tabprof = 1">
+				<div id="tab1" ng-show="tabprof === 1">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 				        </div>
 					<div class="modal-body">
 						<p align="justify" style="font-size:120%;"> <span id="i18n_info">We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them? Our analysis will be completely performed with anonimized data, so we will not take a look specifically at your data and neither relate them to you.</span></p>
 						<div class="text-center">
-							<button class="btn btn-primary" ng-click="tab = 2"><span id="i18n_yes">Yes</span></button>
+							<button class="btn btn-primary" ng-click="tabprof = 2"><span id="i18n_yes">Yes</span></button>
 							<button type="button" class="btn btn-default" data-dismiss="modal"><span id="i18n_no">No</span></button>
 						</div>
 					</div>
 				</div>
-				 <div id="tab2" ng-show="tab === 2">
+				 <div id="tab2" ng-show="tabprof === 2">
 					<div class="modal-header">
 						<h4 class="modal-title"> <span id="i18n_more">Tell us a bit more about you </span></h4>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
@@ -417,21 +417,21 @@
 						</form>
 						<br>
 						<div class="text-center">
-							<button type="button" class="btn btn-primary" ng-click="tab = 3"><span id="i18n_continue">Continue</span></button>
+							<button type="button" class="btn btn-primary" ng-click="tabprof = 3"><span id="i18n_continue">Continue</span></button>
 						</div>
 					</div>
 					<!--<div class="modal-footer">
 						<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
 					</div>-->
 			</div>
-			<div id="tab3" ng-show="tab === 3">
+			<div id="tab3" ng-show="tabprof === 3">
 				<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
 					<p align="justify" style="font-size:120%;"><span id="i18n_form_thanks">Thanks for answering these questions! Now for us to save your data please answer the next photo comparison</span>.</p>
 					<div class="text-center">
-						<button type="button" class="btn btn-primary" data-dismiss="modal"><span id="i18n_continue">Continue</span></button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal"><span id="i18n_continue2">Continue</span></button>
 					</div>
 				</div>
 				
@@ -439,9 +439,9 @@
 
 			<div class="modal-footer">
 			      	<ol class="carousel-indicators">
-						<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
-						<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
-						<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
+						<li ng-click="tabprof = 1" ng-class="{active:tabprof === 1}"></li>
+						<li ng-click="tabprof = 2" ng-class="{active:tabprof === 2}"></li>
+						<li ng-click="tabprof = 3" ng-class="{active:tabprof === 3}"></li>
 				</ol>
 		      </div>
 		</div>
@@ -715,6 +715,7 @@ var messages = {"en": {
 			"i18n_never": "Never visited the city",
 			"i18n_neig": "Do you travel to or from any of these neighborhoods in Campina Grande, Paraíba",
 			"i18n_continue": "Continue",
+			"i18n_continue2": "Continue",
 			"i18n_form_thanks": "Thanks for answering these questions! Now for us to save your data please answer the next photo comparison",
 			"i18n_question1": "Which place looks",
 			"i18n_question2": "Which place looks",
@@ -791,6 +792,7 @@ var messages = {"en": {
 			"i18n_never": "Nunca visitei a cidade",
 			"i18n_neig": "Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba",
 			"i18n_continue": "Continuar",
+			"i18n_continue2": "Continuar",
 			"i18n_form_thanks": "Muito obrigado por responder a estas perguntas! Agora para que possamos salvar os seus dados por favor responda à próxima comparação de fotos",
 			"i18n_question1": "Qual lugar lhe parece",
 			"i18n_question2": "Qual lugar lhe parece",
@@ -847,6 +849,8 @@ function i18n_translate() {
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.height = window.innerHeight;
 		$scope.width = window.innerWidth;
+		$scope.tab = 1;
+		$scope.tabprof = 1;
 		$scope.userProgress = {
 			user_id: '',
 			total: 0,

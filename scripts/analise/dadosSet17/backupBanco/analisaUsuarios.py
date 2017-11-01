@@ -45,7 +45,7 @@ def plotAge():
 		if eval(age) != None and len(age) > 0:
 			intAge = int(age)
 
-			if intAge < 18:
+			if intAge < 18 and intAge > 0:
 				lev0 += 1 * user_age[age]
 			elif intAge >= 18 and intAge <= 24:
 				lev1 += 1 * user_age[age]
@@ -257,10 +257,11 @@ def countSummary(profileInfo):
 
 		#Saving occurrences of profiles
 		if len(age) > 0:
-			if age in user_age.keys():
-				user_age[age] = user_age[age] + 1
-			else:
-				user_age[age] = 1
+			if int(age) > 0:
+				if age in user_age.keys():
+					user_age[age] = user_age[age] + 1
+				else:
+					user_age[age] = 1
 		if len(sex) > 0:
 			if sex in user_sex.keys():
 				user_sex[sex] = user_sex[sex] + 1

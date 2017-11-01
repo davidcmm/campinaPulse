@@ -68,7 +68,7 @@ def parseUserData(lines):
 			#Separating by age
 			if len(profile[0]) > 0 and profile[0] != "None":
 				age = int(profile[0].lower())
-				if age <= 24:
+				if age <= 24 and age > 0:
 					young.add(userID)
 					tasks_young.update(tasksIDSeg)
 					tasks_young.update(tasksIDAgra)

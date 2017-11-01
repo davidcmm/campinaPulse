@@ -154,7 +154,7 @@ def save_image_rects(image, current_map, path):
 	img_size = (640,480)
 	poly_size = (640,480)
 	poly_offset = (0,0)
-	poly = Image.new('RGBA', poly_size )
+	poly = Image.new('RGB', poly_size )
 	pdraw = ImageDraw.Draw(poly, 'RGBA')
 
 	#print str(image_data)
@@ -200,7 +200,8 @@ def save_image_rects(image, current_map, path):
 #						draw.ellipse(bbox, fill=color)
 
 	#base.paste(poly, poly_offset, mask=poly)
-	final = Image.blend(base, poly, 0.6)
+	poly = poly.convert("RGBA")
+	final = Image.blend(base, poly, 0.7)
 	image_name = urllib.unquote(image.split("/")[6]).decode('utf8')
 	final.save(path+image_name, "JPEG")
 

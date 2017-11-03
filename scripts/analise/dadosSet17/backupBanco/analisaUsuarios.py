@@ -256,7 +256,7 @@ def countSummary(profileInfo):
 		neig = neig[0:len(neig)].strip(' \t\n\r"')
 
 		#Saving occurrences of profiles
-		if len(age) > 0:
+		if len(age) > 0 and eval(age) != None:
 			if int(age) > 0:
 				if age in user_age.keys():
 					user_age[age] = user_age[age] + 1

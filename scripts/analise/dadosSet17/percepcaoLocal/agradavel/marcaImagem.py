@@ -202,8 +202,8 @@ def save_image_rects(image, current_map, path):
 	#base.paste(poly, poly_offset, mask=poly)
 	poly = poly.convert("RGBA")
 	final = Image.blend(base, poly, 0.7)
-	image_name = urllib.unquote(image.split("/")[6]).decode('utf8')
-	final.save(path+image_name, "JPEG")
+	image_name = urllib.unquote(image.split("/")[6]).split(".jpg")[0].decode('utf8')
+	final.save(path+image_name, "PNG")
 
 #Center of circle given 3 points: http://paulbourke.net/geometry/circlesphere/
 # Area and centroid of a polygon: http://paulbourke.net/geometry/polygonmesh/
@@ -436,14 +436,14 @@ if __name__ == "__main__":
 	#Retrieving intersects files
 	best_images = []
 	for filename in listdir("./melhores/intersects/"):
-	    if "jpg" in filename:
-		    best_images.append(filename)
+	    #if "png" in filename:
+	    best_images.append(filename)
 	best_images.sort()
 
 	worst_images = []
 	for filename in listdir("./piores/intersects/"):
-	    if "jpg" in filename:
-	    	worst_images.append(filename)
+	    #if "png" in filename:
+	    worst_images.append(filename)
 	worst_images.sort()
 
 	#Create page for intersects

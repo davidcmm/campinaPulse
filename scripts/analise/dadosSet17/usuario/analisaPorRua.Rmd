@@ -3,6 +3,7 @@ title: "analisaPorRua"
 output:
   html_document:
     self_contained: no
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -70,7 +71,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 146 pessoas e 51 pessoas que não são de Campina.
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 154 pessoas (59 pessoas que não são de Campina e 60 que são daqui).
 
 ```{r}
 #Checking sample size
@@ -144,7 +145,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 49 moradores e 46 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 60 moradores e 59 não moradores.
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -207,6 +208,8 @@ show_general_ranking <- function (data){
 }
 
 novoV2 <- lapply(as.character(current_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
 photo <- unlist(lapply(novoV2, '[[', 1))
 current_data$photo_name <- photo
 show_general_ranking(current_data)
@@ -605,3 +608,91 @@ Com esse nível de detalhe conseguimos confrontar os scores com as imagens e per
 + No número 222, ângulo 22 temos prédios em pior estado de conservação combinados com itens na rua;
 
 De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3-4).  
+
+
+# Características de Usuários no Centro
+
+Algumas observações:
+
+- Para as ruas Maciel Pinheiro, Cardoso Vieira, Peregrino de Carvalho e Marquês de Herval apesar de terem características diferentes quanto á largura de rua, arborização e conservação de prédios, os usuários mostraram alta importância para Espaços Públicos, Arborização, Espaços para Circulação de Pedestres e Mobiliário Urbano;
+- A importância dada a espaço para circulação é geralmente de média a alta, com algumas variações entre estas ruas
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12}
+center_data <- read.csv("aida/usuarios-centro-historico.csv", header = TRUE)
+
+plot_street_summary <- function(data, street_name){
+  data$street_name <- street_name
+  
+  summ <- group_by(data, Sexo.) %>% count(Sexo.)
+  g1 <- ggplot(summ, aes(x=Sexo., y=n, fill=Sexo.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Trabalha.na.área.) %>% count(Trabalha.na.área.)
+  g2 <- ggplot(summ, aes(x=Trabalha.na.área., y=n, fill=Trabalha.na.área.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Quanto.gastou.em.compras.) %>% count(Quanto.gastou.em.compras.)
+  g3 <- ggplot(summ, aes(x=Quanto.gastou.em.compras., y=n, fill=Quanto.gastou.em.compras.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Meio.de.transporte.usado.para.chegar.ao.centro) %>% count(Meio.de.transporte.usado.para.chegar.ao.centro)
+  g4 <- ggplot(summ, aes(x=Meio.de.transporte.usado.para.chegar.ao.centro, y=n, fill=Meio.de.transporte.usado.para.chegar.ao.centro)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Se.veio.de.carro..onde.estacionou.o.carro.) %>% count(Se.veio.de.carro..onde.estacionou.o.carro.)
+  g5 <- ggplot(summ, aes(x=Se.veio.de.carro..onde.estacionou.o.carro., y=n, fill=Se.veio.de.carro..onde.estacionou.o.carro.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Pedestres) %>% count(Pedestres)
+  g6 <- ggplot(summ, aes(x=Pedestres, y=n, fill=Pedestres)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Faixa.de.circulação.de.veículos) %>% count(Faixa.de.circulação.de.veículos)
+  g7 <- ggplot(summ, aes(x=Faixa.de.circulação.de.veículos, y=n, fill=Faixa.de.circulação.de.veículos)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+   summ <- group_by(data, Estacionamento) %>% count(Estacionamento)
+  g8 <- ggplot(summ, aes(x=Estacionamento, y=n, fill=Estacionamento)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+    summ <- group_by(data, Espaços.Públicos) %>% count(Espaços.Públicos)
+  g9 <- ggplot(summ, aes(x=Espaços.Públicos, y=n, fill=Espaços.Públicos)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+   summ <- group_by(data, Arborização) %>% count(Arborização)
+  g10 <- ggplot(summ, aes(x=Arborização, y=n, fill=Arborização)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+   summ <- group_by(data, Mobiliário.Urbano) %>% count(Mobiliário.Urbano)
+  g11 <- ggplot(summ, aes(x=Mobiliário.Urbano, y=n, fill=Mobiliário.Urbano)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data, Em.que.ano.o.Sr..a.Sra.nasceu.) %>% count(Em.que.ano.o.Sr..a.Sra.nasceu.)
+  g12 <- ggplot(summ, aes(x=Em.que.ano.o.Sr..a.Sra.nasceu., y=n, fill=Em.que.ano.o.Sr..a.Sra.nasceu.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+   summ <- group_by(data,  Qual.sua.renda.familiar.) %>% count(Qual.sua.renda.familiar.)
+  g13 <- ggplot(summ, aes(x=Qual.sua.renda.familiar., y=n, fill=Qual.sua.renda.familiar.)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  summ <- group_by(data,  Cidade.de.origem) %>% count(Cidade.de.origem)
+  g14 <- ggplot(summ, aes(x=Cidade.de.origem, y=n, fill=Cidade.de.origem)) + 
+      geom_bar(position=position_dodge(), stat="identity")
+  
+  print(paste(">>>>> Rua ", street_name, nrow(data)))
+  multiplot(g1, g12, g13, g14, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, cols=2)
+}
+center_data <- arrange(center_data, Rua.pesquisada)
+street_names <- unique(center_data$Rua.pesquisada)
+
+plot_street_summary(filter(center_data, grepl("maciel", tolower(Rua.pesquisada))), "Maciel Pinheiro")
+plot_street_summary(filter(center_data, grepl("marquês", tolower(Rua.pesquisada))), "Marquês do herval")
+plot_street_summary(filter(center_data, grepl("cardoso", tolower(Rua.pesquisada))), "Cardoso Vieira")
+plot_street_summary(filter(center_data, grepl("peregrino", tolower(Rua.pesquisada))), "Peregrino de Carvalho")
+plot_street_summary(filter(center_data, grepl("eufro", tolower(Rua.pesquisada))), "Eufrosino")
+plot_street_summary(filter(center_data, grepl("irineu", tolower(Rua.pesquisada))), "Irineu Joffily")
+plot_street_summary(filter(center_data, grepl("manoel", tolower(Rua.pesquisada))), "Manoel Cavalcanti Belo")
+plot_street_summary(filter(center_data, grepl("sales", tolower(Rua.pesquisada))), "Monsenhor Sales")
+plot_street_summary(filter(center_data, grepl("leal", tolower(Rua.pesquisada))), "Semeão Leal")
+plot_street_summary(filter(center_data, grepl("neiva", tolower(Rua.pesquisada))), "Venâncio neiva")
+```

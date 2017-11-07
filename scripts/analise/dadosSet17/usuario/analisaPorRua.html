@@ -140,7 +140,7 @@ $(document).ready(function () {
 </ol>
 <div id="tamanho-das-amostras-e-comparacao-entre-rankings" class="section level1">
 <h1>Tamanho das amostras e comparação entre rankings</h1>
-<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 146 pessoas e 51 pessoas que não são de Campina.</p>
+<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 154 pessoas (59 pessoas que não são de Campina e 60 que são daqui).</p>
 <pre class="r"><code>#Checking sample size
 current_data &lt;- read.table(&quot;all100/all_ordenado.dat&quot;)
 current_data$sd &lt;- apply(current_data[,4:ncol(current_data)], 1, sd)
@@ -148,9 +148,9 @@ current_data$n &lt;- ( 1.96 * current_data$sd / 0.2) ** 2  #All QScores
 print(&quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;)</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;</code></pre>
 <pre class="r"><code>print(max(current_data$n))</code></pre>
-<pre><code>## [1] 0.3538928</code></pre>
+<pre><code>## [1] 0.4774176</code></pre>
 <pre class="r"><code>print(min(current_data$n))</code></pre>
-<pre><code>## [1] 0.006794369</code></pre>
+<pre><code>## [1] 0.0110516</code></pre>
 <pre class="r"><code>#Checking rankings similarity
 mergeSort &lt;- function(x){
   if(length(x) == 1){
@@ -203,25 +203,25 @@ print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;kendall&quot;))</code>
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  d29_cur$V3.x and d29_cur$V3.y
-## z = 9.5142, p-value &lt; 2.2e-16
+## z = 9.5059, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.7246835</code></pre>
+## 0.7240506</code></pre>
 <pre class="r"><code>print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  d29_cur$V3.x and d29_cur$V3.y
-## S = 7894, p-value &lt; 2.2e-16
+## S = 8058, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
 ##       rho 
-## 0.9074777</code></pre>
+## 0.9055556</code></pre>
 <pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d29_cur$V3.x, d29_cur$V3.y)))</code></pre>
-<pre><code>## [1] 1605
-## [1] 0.5079114
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.507911392405063&quot;</code></pre>
+<pre><code>## [1] 1626
+## [1] 0.514557
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.514556962025316&quot;</code></pre>
 <pre class="r"><code>data69 &lt;- read.table(&quot;69users/all_ordenado.dat&quot;)
 
 d69_cur &lt;- merge(select(data69, V2, V3), select(current_data, V2, V3), by = &quot;V2&quot;)
@@ -230,29 +230,29 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  d69_cur$V3.x and d69_cur$V3.y
-## z = 10.569, p-value &lt; 2.2e-16
+## z = 10.628, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.8050633</code></pre>
+## 0.8094937</code></pre>
 <pre class="r"><code>print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  d69_cur$V3.x and d69_cur$V3.y
-## S = 4188, p-value &lt; 2.2e-16
+## S = 4216, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
-##       rho 
-## 0.9509142</code></pre>
+##      rho 
+## 0.950586</code></pre>
 <pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))</code></pre>
-<pre><code>## [1] 1354
-## [1] 0.428481
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.428481012658228&quot;</code></pre>
+<pre><code>## [1] 1417
+## [1] 0.4484177
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.448417721518987&quot;</code></pre>
 </div>
 <div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level1">
 <h1>Comparação entre rankings de moradores e não moradores</h1>
-<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 49 moradores e 46 não moradores.</p>
+<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 60 moradores e 59 não moradores.</p>
 <pre class="r"><code>datacampina &lt;- read.table(&quot;all100/all_campina_ordenado.dat&quot;)
 datanotcampina &lt;- read.table(&quot;all100/all_notcampina_ordenado.dat&quot;)
 
@@ -262,25 +262,25 @@ print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = &quot;kendal
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
-## z = 9.1735, p-value &lt; 2.2e-16
+## z = 9.1486, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.6987342</code></pre>
+## 0.6968354</code></pre>
 <pre class="r"><code>print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = &quot;spearman&quot;))</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
-## S = 9750, p-value &lt; 2.2e-16
+## S = 9342, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
 ##       rho 
-## 0.8857243</code></pre>
+## 0.8905063</code></pre>
 <pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(camp_notcampina$V3.x, camp_notcampina$V3.y)))</code></pre>
-<pre><code>## [1] 1292
-## [1] 0.4088608
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.408860759493671&quot;</code></pre>
+<pre><code>## [1] 1585
+## [1] 0.5015823
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.501582278481013&quot;</code></pre>
 </div>
 <div id="impressao-geral-das-ruas" class="section level1">
 <h1>Impressão Geral das Ruas</h1>
@@ -292,69 +292,69 @@ Top
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_270.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_270' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_239_270.jpg 5.806422
+R._Inácio_Marquês_da_Silva_239_270 5.788263
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_293.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_120_293.jpg 5.736723
+R._Inácio_Marquês_da_Silva_239_90 5.691574
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_293' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_239_90.jpg 5.681042
+R._Inácio_Marquês_da_Silva_120_293 5.662679
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='400px'>
 <div class="caption">
-R._Maciel_Pinheiro_360_360.jpg 5.615639
+R._Maciel_Pinheiro_360_360 5.644789
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='400px'>
 <div class="caption">
-R._Maciel_Pinheiro_248_180.jpg 5.5814
+R._Maciel_Pinheiro_248_180 5.573167
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_315.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_22' width='400px'>
 <div class="caption">
-R._Edésio_Silva_602_315.jpg 5.526378
+R._Edésio_Silva_1546_22 5.495703
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_112' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_54_22.jpg 5.507411
+R._Inácio_Marquês_da_Silva_120_112 5.48407
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_315' width='400px'>
 <div class="caption">
-R._Edésio_Silva_1546_22.jpg 5.494889
+R._Edésio_Silva_602_315 5.475166
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_22' width='400px'>
 <div class="caption">
-R._Maciel_Pinheiro_284_180.jpg 5.458441
+R._Inácio_Marquês_da_Silva_54_22 5.45238
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_120_22.jpg 5.4558
+R._Inácio_Marquês_da_Silva_120_22 5.446668
 </div>
 </div>
 </div>
@@ -363,69 +363,69 @@ Bottom
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_135.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_188_135.jpg 3.891542
+R._Manoel_Pereira_de_Araújo_392_22 3.896189
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_135.jpg 3.864778
+R._Manoel_Pereira_de_Araújo_188_135 3.89132
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_22.jpg 3.848211
+R._Manoel_Pereira_de_Araújo_222_135 3.888068
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_392_225.jpg 3.748314
+R._Manoel_Pereira_de_Araújo_392_225 3.862764
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_315.jpg 3.740804
+R._Manoel_Pereira_de_Araújo_300_22 3.854741
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_392_22.jpg 3.678162
+R._Manoel_Pereira_de_Araújo_300_315 3.815885
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_22.jpg 3.654879
+R._Manoel_Pereira_de_Araújo_222_22 3.683866
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_22.jpg 3.599059
+R._Manoel_Pereira_de_Araújo_370_22 3.561383
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_135.jpg 3.519259
+R._Manoel_Pereira_de_Araújo_188_203 3.531467
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203.jpg' width='400px'>
+<img src='/local/david/pybossa_env/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_188_203.jpg 3.477787
+R._Manoel_Pereira_de_Araújo_300_135 3.51101
 </div>
 </div>
 </div>
@@ -456,23 +456,23 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ## \hline
 ##  &amp; Model 1 \\
 ## \hline
-## (Intercept)   &amp; $-19.944^{*}$    \\
-##               &amp; $(7.556)$        \\
-## street\_wid   &amp; $0.072$          \\
-##               &amp; $(0.216)$        \\
-## sidewalk\_wid &amp; $2.346^{*}$      \\
-##               &amp; $(1.020)$        \\
-## landscape     &amp; $13.938^{***}$   \\
-##               &amp; $(1.886)$        \\
-## trees         &amp; $2.123^{\cdot}$  \\
-##               &amp; $(1.126)$        \\
-## build\_ident  &amp; $-3.008^{\cdot}$ \\
-##               &amp; $(1.601)$        \\
+## (Intercept)   &amp; $-19.985^{*}$    \\
+##               &amp; $(7.670)$        \\
+## street\_wid   &amp; $0.069$          \\
+##               &amp; $(0.219)$        \\
+## sidewalk\_wid &amp; $2.534^{*}$      \\
+##               &amp; $(1.036)$        \\
+## landscape     &amp; $13.477^{***}$   \\
+##               &amp; $(1.914)$        \\
+## trees         &amp; $2.242^{\cdot}$  \\
+##               &amp; $(1.143)$        \\
+## build\_ident  &amp; $-2.797^{\cdot}$ \\
+##               &amp; $(1.625)$        \\
 ## \hline
-## R$^2$         &amp; 0.677            \\
-## Adj. R$^2$    &amp; 0.655            \\
+## R$^2$         &amp; 0.667            \\
+## Adj. R$^2$    &amp; 0.644            \\
 ## Num. obs.     &amp; 80               \\
-## RMSE          &amp; 13.656           \\
+## RMSE          &amp; 13.861           \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -495,22 +495,22 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ##  &amp; Model 1 \\
 ## \hline
 ## (Intercept)          &amp; $40.500^{***}$   \\
-##                      &amp; $(1.527)$        \\
-## scale(street\_wid)   &amp; $0.685$          \\
-##                      &amp; $(2.061)$        \\
-## scale(sidewalk\_wid) &amp; $4.235^{*}$      \\
-##                      &amp; $(1.842)$        \\
-## scale(landscape)     &amp; $14.559^{***}$   \\
-##                      &amp; $(1.970)$        \\
-## scale(trees)         &amp; $4.081^{\cdot}$  \\
-##                      &amp; $(2.165)$        \\
-## scale(build\_ident)  &amp; $-4.101^{\cdot}$ \\
-##                      &amp; $(2.183)$        \\
+##                      &amp; $(1.550)$        \\
+## scale(street\_wid)   &amp; $0.660$          \\
+##                      &amp; $(2.092)$        \\
+## scale(sidewalk\_wid) &amp; $4.575^{*}$      \\
+##                      &amp; $(1.870)$        \\
+## scale(landscape)     &amp; $14.078^{***}$   \\
+##                      &amp; $(2.000)$        \\
+## scale(trees)         &amp; $4.310^{\cdot}$  \\
+##                      &amp; $(2.197)$        \\
+## scale(build\_ident)  &amp; $-3.814^{\cdot}$ \\
+##                      &amp; $(2.216)$        \\
 ## \hline
-## R$^2$                &amp; 0.677            \\
-## Adj. R$^2$           &amp; 0.655            \\
+## R$^2$                &amp; 0.667            \\
+## Adj. R$^2$           &amp; 0.644            \\
 ## Num. obs.            &amp; 80               \\
-## RMSE                 &amp; 13.656           \\
+## RMSE                 &amp; 13.861           \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -531,23 +531,23 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ## \hline
 ##  &amp; Model 1 \\
 ## \hline
-## (Intercept)   &amp; $-21.458^{**}$  \\
-##               &amp; $(7.732)$       \\
-## street\_wid   &amp; $0.104$         \\
-##               &amp; $(0.221)$       \\
-## sidewalk\_wid &amp; $2.058^{\cdot}$ \\
-##               &amp; $(1.044)$       \\
-## landscape     &amp; $14.047^{***}$  \\
-##               &amp; $(1.930)$       \\
-## trees         &amp; $2.325^{*}$     \\
-##               &amp; $(1.152)$       \\
-## build\_ident  &amp; $-1.316$        \\
-##               &amp; $(1.638)$       \\
+## (Intercept)   &amp; $-21.232^{**}$  \\
+##               &amp; $(7.800)$       \\
+## street\_wid   &amp; $0.093$         \\
+##               &amp; $(0.223)$       \\
+## sidewalk\_wid &amp; $2.112^{*}$     \\
+##               &amp; $(1.053)$       \\
+## landscape     &amp; $14.133^{***}$  \\
+##               &amp; $(1.947)$       \\
+## trees         &amp; $2.114^{\cdot}$ \\
+##               &amp; $(1.162)$       \\
+## build\_ident  &amp; $-1.516$        \\
+##               &amp; $(1.652)$       \\
 ## \hline
-## R$^2$         &amp; 0.661           \\
-## Adj. R$^2$    &amp; 0.638           \\
+## R$^2$         &amp; 0.655           \\
+## Adj. R$^2$    &amp; 0.632           \\
 ## Num. obs.     &amp; 80              \\
-## RMSE          &amp; 13.973          \\
+## RMSE          &amp; 14.097          \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -567,22 +567,22 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ##  &amp; Model 1 \\
 ## \hline
 ## (Intercept)          &amp; $40.500^{***}$  \\
-##                      &amp; $(1.562)$       \\
-## scale(street\_wid)   &amp; $0.998$         \\
-##                      &amp; $(2.109)$       \\
-## scale(sidewalk\_wid) &amp; $3.716^{\cdot}$ \\
-##                      &amp; $(1.885)$       \\
-## scale(landscape)     &amp; $14.673^{***}$  \\
-##                      &amp; $(2.016)$       \\
-## scale(trees)         &amp; $4.470^{*}$     \\
-##                      &amp; $(2.215)$       \\
-## scale(build\_ident)  &amp; $-1.794$        \\
-##                      &amp; $(2.234)$       \\
+##                      &amp; $(1.576)$       \\
+## scale(street\_wid)   &amp; $0.891$         \\
+##                      &amp; $(2.127)$       \\
+## scale(sidewalk\_wid) &amp; $3.814^{*}$     \\
+##                      &amp; $(1.902)$       \\
+## scale(landscape)     &amp; $14.763^{***}$  \\
+##                      &amp; $(2.034)$       \\
+## scale(trees)         &amp; $4.064^{\cdot}$ \\
+##                      &amp; $(2.235)$       \\
+## scale(build\_ident)  &amp; $-2.067$        \\
+##                      &amp; $(2.253)$       \\
 ## \hline
-## R$^2$                &amp; 0.661           \\
-## Adj. R$^2$           &amp; 0.638           \\
+## R$^2$                &amp; 0.655           \\
+## Adj. R$^2$           &amp; 0.632           \\
 ## Num. obs.            &amp; 80              \\
-## RMSE                 &amp; 13.973          \\
+## RMSE                 &amp; 14.097          \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -602,23 +602,23 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ## \hline
 ##  &amp; Model 1 \\
 ## \hline
-## (Intercept)   &amp; $-13.298^{\cdot}$ \\
-##               &amp; $(7.758)$         \\
-## street\_wid   &amp; $0.106$           \\
-##               &amp; $(0.221)$         \\
-## sidewalk\_wid &amp; $1.677$           \\
-##               &amp; $(1.047)$         \\
-## landscape     &amp; $13.098^{***}$    \\
-##               &amp; $(1.936)$         \\
-## trees         &amp; $2.584^{*}$       \\
-##               &amp; $(1.156)$         \\
-## build\_ident  &amp; $-4.452^{**}$     \\
-##               &amp; $(1.643)$         \\
+## (Intercept)   &amp; $-14.912^{\cdot}$ \\
+##               &amp; $(8.113)$         \\
+## street\_wid   &amp; $0.149$           \\
+##               &amp; $(0.232)$         \\
+## sidewalk\_wid &amp; $1.919^{\cdot}$   \\
+##               &amp; $(1.095)$         \\
+## landscape     &amp; $12.898^{***}$    \\
+##               &amp; $(2.025)$         \\
+## trees         &amp; $2.111^{\cdot}$   \\
+##               &amp; $(1.209)$         \\
+## build\_ident  &amp; $-4.164^{*}$      \\
+##               &amp; $(1.719)$         \\
 ## \hline
-## R$^2$         &amp; 0.659             \\
-## Adj. R$^2$    &amp; 0.636             \\
+## R$^2$         &amp; 0.627             \\
+## Adj. R$^2$    &amp; 0.602             \\
 ## Num. obs.     &amp; 80                \\
-## RMSE          &amp; 14.019            \\
+## RMSE          &amp; 14.662            \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -637,23 +637,23 @@ texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 ## \hline
 ##  &amp; Model 1 \\
 ## \hline
-## (Intercept)          &amp; $40.500^{***}$ \\
-##                      &amp; $(1.567)$      \\
-## scale(street\_wid)   &amp; $1.012$        \\
-##                      &amp; $(2.116)$      \\
-## scale(sidewalk\_wid) &amp; $3.028$        \\
-##                      &amp; $(1.891)$      \\
-## scale(landscape)     &amp; $13.682^{***}$ \\
-##                      &amp; $(2.023)$      \\
-## scale(trees)         &amp; $4.968^{*}$    \\
-##                      &amp; $(2.223)$      \\
-## scale(build\_ident)  &amp; $-6.071^{**}$  \\
-##                      &amp; $(2.241)$      \\
+## (Intercept)          &amp; $40.500^{***}$  \\
+##                      &amp; $(1.639)$       \\
+## scale(street\_wid)   &amp; $1.428$         \\
+##                      &amp; $(2.213)$       \\
+## scale(sidewalk\_wid) &amp; $3.464^{\cdot}$ \\
+##                      &amp; $(1.978)$       \\
+## scale(landscape)     &amp; $13.472^{***}$  \\
+##                      &amp; $(2.115)$       \\
+## scale(trees)         &amp; $4.058^{\cdot}$ \\
+##                      &amp; $(2.324)$       \\
+## scale(build\_ident)  &amp; $-5.678^{*}$    \\
+##                      &amp; $(2.344)$       \\
 ## \hline
-## R$^2$                &amp; 0.659          \\
-## Adj. R$^2$           &amp; 0.636          \\
-## Num. obs.            &amp; 80             \\
-## RMSE                 &amp; 14.019         \\
+## R$^2$                &amp; 0.627           \\
+## Adj. R$^2$           &amp; 0.602           \\
+## Num. obs.            &amp; 80              \\
+## RMSE                 &amp; 14.662          \\
 ## \hline
 ## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -720,10 +720,10 @@ with(qscoresDFNotCampina , vioplot( value[street==&quot;R._Inácio_Marquês_da_S
 inequalities &lt;- data.frame(labels=c(&quot;Gini&quot;, &quot;Entropy&quot;, &quot;SD&quot;), edesio=c(ineq(filter(all_data, street == &quot;R._Edésio_Silva&quot;)$qscore, type=&quot;Gini&quot;), ineq(filter(all_data, street == &quot;R._Edésio_Silva&quot;)$qscore, type=&quot;entropy&quot;), sd(filter(all_data, street == &quot;R._Edésio_Silva&quot;)$qscore)), inacio=c(ineq(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore, type=&quot;Gini&quot;), ineq(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore, type=&quot;entropy&quot;), sd(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore)), maciel=c(ineq(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore, type=&quot;Gini&quot;), ineq(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore, type=&quot;entropy&quot;), sd(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore)), manoel=c(ineq(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore, type=&quot;Gini&quot;), ineq(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore, type=&quot;entropy&quot;), sd(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore)))
 
 inequalities</code></pre>
-<pre><code>##    labels      edesio      inacio     maciel      manoel
-## 1    Gini 0.045941145 0.058572240 0.03510745 0.037340056
-## 2 Entropy 0.003273489 0.005422626 0.00188918 0.002156332
-## 3      SD 0.410396774 0.534213919 0.31999535 0.263591861</code></pre>
+<pre><code>##    labels      edesio      inacio      maciel      manoel
+## 1    Gini 0.046605280 0.057749356 0.033525627 0.034350385
+## 2 Entropy 0.003368869 0.005309143 0.001725267 0.001876648
+## 3      SD 0.414000061 0.527003803 0.305681778 0.246698499</code></pre>
 <p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
 <ul>
 <li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
@@ -734,16 +734,16 @@ inequalities</code></pre>
 <p>Para complemento numérico dos violin plots, o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.</p>
 <pre class="r"><code>summary(filter(qscoresDFGeral, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.195   4.448   5.084   5.040   5.447   5.806</code></pre>
+##   4.200   4.501   5.198   5.038   5.448   5.788</code></pre>
 <pre class="r"><code>summary(filter(qscoresDFGeral, street == &quot;R._Edésio_Silva&quot;)$qscore)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.368   4.594   4.994   4.965   5.302   5.526</code></pre>
+##   4.338   4.608   5.009   4.940   5.296   5.496</code></pre>
 <pre class="r"><code>summary(filter(qscoresDFGeral, street == &quot;R._Maciel_Pinheiro&quot;)$qscore)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.593   4.864   5.064   5.077   5.323   5.616</code></pre>
+##   4.579   4.876   5.054   5.072   5.280   5.645</code></pre>
 <pre class="r"><code>summary(filter(qscoresDFGeral, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.478   3.725   3.932   3.929   4.184   4.272</code></pre>
+##   3.511   3.845   3.930   3.952   4.170   4.301</code></pre>
 </div>
 </div>
 <div id="analisando-em-detalhe-cada-rua" class="section level1">
@@ -773,24 +773,24 @@ summary_manoel$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96
 <pre class="r"><code>inacio &lt;- filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
 
 print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore, type=&quot;Gini&quot;)))</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0585722399603329&quot;</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.057749356085654&quot;</code></pre>
 <pre class="r"><code>for (value in unique(inacio$num)){
   print(paste(&quot;Número&quot;, value, ineq(filter(inacio, num == value)$qscore, type=&quot;Gini&quot;)))
 }</code></pre>
-<pre><code>## [1] &quot;Número 54 0.0533038182230243&quot;
-## [1] &quot;Número 120 0.0556492473421952&quot;
-## [1] &quot;Número 239 0.0163331457001352&quot;
-## [1] &quot;Número 360 0.0256537559042285&quot;
-## [1] &quot;Número 500 0.0229735993317024&quot;</code></pre>
+<pre><code>## [1] &quot;Número 54 0.0549991433990085&quot;
+## [1] &quot;Número 120 0.0532197481396957&quot;
+## [1] &quot;Número 239 0.0196656376488809&quot;
+## [1] &quot;Número 360 0.0225079513380746&quot;
+## [1] &quot;Número 500 0.0245163607168699&quot;</code></pre>
 <pre class="r"><code>summary_inacio</code></pre>
-<pre><code>## # A tibble: 5 x 5
+<pre><code>## # A tibble: 5 × 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1    54    4.820861 0.5445671 5.087699 4.554024
-## 2   120    5.207952 0.6888325 5.545480 4.870424
-## 3   239    5.581905 0.1943892 5.677156 5.486654
-## 4   360    5.072941 0.2701724 5.205326 4.940557
-## 5   500    4.515780 0.2541040 4.640291 4.391269</code></pre>
+## 1    54    4.831452 0.5586160 5.105174 4.557730
+## 2   120    5.198273 0.6723713 5.527735 4.868811
+## 3   239    5.542784 0.2328026 5.656858 5.428711
+## 4   360    5.115069 0.2441819 5.234718 4.995420
+## 5   500    4.501681 0.2422939 4.620405 4.382957</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;), num, angle), &quot;Inacio&quot;, c(203, 112, 90), c(293, 270, 22))#Street 2</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-1.png" width="1152" /></p>
 <p>Para a Inacio Marques percebemos uma <strong>variação de aproximadamente 1.2</strong> nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.</p>
@@ -806,137 +806,137 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 54, 22 -&gt; 5.507411
+R._Inácio_Marquês_da_Silva 54, 22 -&gt; 5.45238
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_112.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 54, 112 -&gt; 5.001873
+R._Inácio_Marquês_da_Silva 54, 112 -&gt; 5.138797
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 54, 203 -&gt; 4.454951
+R._Inácio_Marquês_da_Silva 54, 203 -&gt; 4.479786
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_54_293.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 54, 293 -&gt; 4.31921
+R._Inácio_Marquês_da_Silva 54, 293 -&gt; 4.254846
 </div>
 </div>
 </div>
-####### Sumário do Número 54 : Max. 5.507411 Min: 4.31921 Diff: 1.188201
+####### Sumário do Número 54 : Max. 5.45238 Min: 4.254846 Diff: 1.197534
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 120, 22 -&gt; 5.4558
+R._Inácio_Marquês_da_Silva 120, 22 -&gt; 5.446668
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_112.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 120, 112 -&gt; 5.444493
+R._Inácio_Marquês_da_Silva 120, 112 -&gt; 5.48407
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 120, 203 -&gt; 4.194793
+R._Inácio_Marquês_da_Silva 120, 203 -&gt; 4.199676
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_293.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 120, 293 -&gt; 5.736723
+R._Inácio_Marquês_da_Silva 120, 293 -&gt; 5.662679
 </div>
 </div>
 </div>
-####### Sumário do Número 120 : Max. 5.736723 Min: 4.194793 Diff: 1.54193
+####### Sumário do Número 120 : Max. 5.662679 Min: 4.199676 Diff: 1.463004
 <div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
+<div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 239, 22 -&gt; 5.400715
+R._Inácio_Marquês_da_Silva 239, 22 -&gt; 5.310512
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 239, 90 -&gt; 5.681042
+R._Inácio_Marquês_da_Silva 239, 90 -&gt; 5.691574
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 239, 203 -&gt; 5.439442
+R._Inácio_Marquês_da_Silva 239, 203 -&gt; 5.380789
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_239_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 239, 270 -&gt; 5.806422
+R._Inácio_Marquês_da_Silva 239, 270 -&gt; 5.788263
 </div>
 </div>
 </div>
-####### Sumário do Número 239 : Max. 5.806422 Min: 5.400715 Diff: 0.4057071
+####### Sumário do Número 239 : Max. 5.788263 Min: 5.310512 Diff: 0.477751
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 360, 22 -&gt; 5.403098
+R._Inácio_Marquês_da_Silva 360, 22 -&gt; 5.383036
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 360, 90 -&gt; 4.786237
+R._Inácio_Marquês_da_Silva 360, 90 -&gt; 4.871882
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 360, 203 -&gt; 4.935387
+R._Inácio_Marquês_da_Silva 360, 203 -&gt; 4.948372
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#00b200">
+<div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 360, 270 -&gt; 5.167045
+R._Inácio_Marquês_da_Silva 360, 270 -&gt; 5.256985
 </div>
 </div>
 </div>
-####### Sumário do Número 360 : Max. 5.403098 Min: 4.786237 Diff: 0.6168607
+####### Sumário do Número 360 : Max. 5.383036 Min: 4.871882 Diff: 0.5111541
 <div class="row">
 <div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 500, 22 -&gt; 4.386288
+R._Inácio_Marquês_da_Silva 500, 22 -&gt; 4.353803
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 500, 90 -&gt; 4.427729
+R._Inácio_Marquês_da_Silva 500, 90 -&gt; 4.508349
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#006600">
+<div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 500, 203 -&gt; 4.354809
+R._Inácio_Marquês_da_Silva 500, 203 -&gt; 4.303737
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.894295
+R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.840834
 </div>
 </div>
 </div>
-####### Sumário do Número 500 : Max. 4.894295 Min: 4.354809 Diff: 0.5394863
+####### Sumário do Número 500 : Max. 4.840834 Min: 4.303737 Diff: 0.5370971
 <div class='row'>
 
 
@@ -956,24 +956,24 @@ R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.894295
 <pre class="r"><code>edesio &lt;- filter(all_data, street == &quot;R._Edésio_Silva&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
 
 print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street == &quot;R._Edésio_Silva&quot;)$qscore, type=&quot;Gini&quot;)))</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0459411449864614&quot;</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0466052799127748&quot;</code></pre>
 <pre class="r"><code>for (value in unique(edesio$num)){
   print(paste(&quot;Número&quot;, value, ineq(filter(edesio, num == value)$qscore, type=&quot;Gini&quot;)))
 }</code></pre>
-<pre><code>## [1] &quot;Número 70 0.0430491756343661&quot;
-## [1] &quot;Número 306 0.0275028761256824&quot;
-## [1] &quot;Número 602 0.0479114792857191&quot;
-## [1] &quot;Número 1136 0.026782768883046&quot;
-## [1] &quot;Número 1546 0.0122463065778879&quot;</code></pre>
+<pre><code>## [1] &quot;Número 70 0.0466234587474867&quot;
+## [1] &quot;Número 306 0.027745785249921&quot;
+## [1] &quot;Número 602 0.0482282412578376&quot;
+## [1] &quot;Número 1136 0.0303178321207884&quot;
+## [1] &quot;Número 1546 0.0138599780627997&quot;</code></pre>
 <pre class="r"><code>summary_edesio</code></pre>
-<pre><code>## # A tibble: 5 x 5
+<pre><code>## # A tibble: 5 × 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1    70    4.748987 0.4794668 4.983925 4.514048
-## 2   306    5.115838 0.3007285 5.263195 4.968481
-## 3   602    4.974117 0.4942682 5.216309 4.731926
-## 4  1136    4.653221 0.2819966 4.791399 4.515042
-## 5  1546    5.333462 0.1387635 5.401456 5.265468</code></pre>
+## 1    70    4.724821 0.4985109 4.969091 4.480550
+## 2   306    5.105693 0.3013171 5.253338 4.958047
+## 3   602    4.925766 0.4938271 5.167741 4.683791
+## 4  1136    4.645446 0.3005586 4.792719 4.498172
+## 5  1546    5.300067 0.1576210 5.377301 5.222832</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Edésio_Silva&quot;), num, angle), &quot;Edésio Silva&quot;, c(22, 135), c(315, 203))#Street 1</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-1.png" width="1152" /></p>
 <p>Para a Edesio percebemos <strong>uma variação de aproximadamente 0.9</strong> nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.</p>
@@ -989,137 +989,137 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 70, 22 -&gt; 5.451017
+R._Edésio_Silva 70, 22 -&gt; 5.445849
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#006600">
+<div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 70, 135 -&gt; 4.368292
+R._Edésio_Silva 70, 135 -&gt; 4.33781
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 70, 203 -&gt; 4.59975
+R._Edésio_Silva 70, 203 -&gt; 4.658054
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#007f00">
+<div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_70_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 70, 315 -&gt; 4.576887
+R._Edésio_Silva 70, 315 -&gt; 4.457569
 </div>
 </div>
 </div>
-####### Sumário do Número 70 : Max. 5.451017 Min: 4.368292 Diff: 1.082725
+####### Sumário do Número 70 : Max. 5.445849 Min: 4.33781 Diff: 1.108038
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 306, 22 -&gt; 5.270388
+R._Edésio_Silva 306, 22 -&gt; 5.274874
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 306, 135 -&gt; 4.705831
+R._Edésio_Silva 306, 135 -&gt; 4.701539
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 306, 203 -&gt; 5.396361
+R._Edésio_Silva 306, 203 -&gt; 5.385671
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 306, 315 -&gt; 5.090774
+R._Edésio_Silva 306, 315 -&gt; 5.060688
 </div>
 </div>
 </div>
-####### Sumário do Número 306 : Max. 5.396361 Min: 4.705831 Diff: 0.6905301
+####### Sumário do Número 306 : Max. 5.385671 Min: 4.701539 Diff: 0.6841324
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 602, 22 -&gt; 5.218823
+R._Edésio_Silva 602, 22 -&gt; 5.179509
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 602, 135 -&gt; 4.734462
+R._Edésio_Silva 602, 135 -&gt; 4.670568
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 602, 203 -&gt; 4.416805
+R._Edésio_Silva 602, 203 -&gt; 4.37782
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_602_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 602, 315 -&gt; 5.526378
+R._Edésio_Silva 602, 315 -&gt; 5.475166
 </div>
 </div>
 </div>
-####### Sumário do Número 602 : Max. 5.526378 Min: 4.416805 Diff: 1.109572
+####### Sumário do Número 602 : Max. 5.475166 Min: 4.37782 Diff: 1.097345
 <div class="row">
 <div class="col-xs-3" style="background-color:#006600">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1136, 22 -&gt; 4.430282
+R._Edésio_Silva 1136, 22 -&gt; 4.442855
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1136, 135 -&gt; 4.895895
+R._Edésio_Silva 1136, 135 -&gt; 4.956461
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#006600">
+<div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1136, 203 -&gt; 4.388619
+R._Edésio_Silva 1136, 203 -&gt; 4.338889
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1136_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1136, 315 -&gt; 4.898087
+R._Edésio_Silva 1136, 315 -&gt; 4.843578
 </div>
 </div>
 </div>
-####### Sumário do Número 1136 : Max. 4.898087 Min: 4.388619 Diff: 0.5094684
+####### Sumário do Número 1136 : Max. 4.956461 Min: 4.338889 Diff: 0.6175717
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1546, 22 -&gt; 5.494889
+R._Edésio_Silva 1546, 22 -&gt; 5.495703
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
+<div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1546, 135 -&gt; 5.402171
+R._Edésio_Silva 1546, 135 -&gt; 5.35956
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1546, 203 -&gt; 5.234285
+R._Edésio_Silva 1546, 203 -&gt; 5.181841
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#00cc00">
+<div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_1546_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Edésio_Silva 1546, 315 -&gt; 5.202504
+R._Edésio_Silva 1546, 315 -&gt; 5.163162
 </div>
 </div>
 </div>
-####### Sumário do Número 1546 : Max. 5.494889 Min: 5.202504 Diff: 0.2923857
+####### Sumário do Número 1546 : Max. 5.495703 Min: 5.163162 Diff: 0.3325406
 <div class='row'>
 
 <p>Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:</p>
@@ -1137,24 +1137,24 @@ R._Edésio_Silva 1546, 315 -&gt; 5.202504
 <pre class="r"><code>maciel &lt;- filter(qscoresDFGeral, street == &quot;R._Maciel_Pinheiro&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
 
 print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;)$qscore, type=&quot;Gini&quot;)))</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0351074512869786&quot;</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0335256268904839&quot;</code></pre>
 <pre class="r"><code>for (value in unique(maciel$num)){
   print(paste(&quot;Número&quot;, value, ineq(filter(maciel, num == value)$qscore, type=&quot;Gini&quot;)))
 }</code></pre>
-<pre><code>## [1] &quot;Número 130 0.0304968392224652&quot;
-## [1] &quot;Número 190 0.0287048914037698&quot;
-## [1] &quot;Número 248 0.0385489356171582&quot;
-## [1] &quot;Número 284 0.0313903701521494&quot;
-## [1] &quot;Número 360 0.0290842366039561&quot;</code></pre>
+<pre><code>## [1] &quot;Número 130 0.0251738004044277&quot;
+## [1] &quot;Número 190 0.0293348227970354&quot;
+## [1] &quot;Número 248 0.0352362822189898&quot;
+## [1] &quot;Número 284 0.0302193550646006&quot;
+## [1] &quot;Número 360 0.0305406320083981&quot;</code></pre>
 <pre class="r"><code>summary_maciel</code></pre>
-<pre><code>## # A tibble: 5 x 5
+<pre><code>## # A tibble: 5 × 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1   130    5.022476 0.3260137 5.182222 4.862729
-## 2   190    5.106362 0.3482478 5.277003 4.935720
-## 3   248    5.122168 0.4106035 5.323364 4.920972
-## 4   284    5.056977 0.3355978 5.221420 4.892534
-## 5   360    5.076834 0.3624414 5.254430 4.899238</code></pre>
+## 1   130    5.008611 0.2671907 5.139534 4.877687
+## 2   190    5.112593 0.3502600 5.284220 4.940966
+## 3   248    5.119500 0.3776291 5.304539 4.934462
+## 4   284    5.009293 0.3239074 5.168008 4.850579
+## 5   360    5.109897 0.3639805 5.288247 4.931547</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;), num, angle), &quot;Maciel Pinheiro&quot;, c(360, 90), c(270, 180))#Street 3</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-1.png" width="1152" /></p>
 <p>Para a Maciel percebemos <strong>uma variação de aproximadamente 0.2</strong> nas médias do QScore do número 248 e dos números 130 e 248. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. A análise dos intervalos acaba revelando um similaridade ao longo de toda a rua. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias na faixa dos números 190 e 248.</p>
@@ -1170,137 +1170,137 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 130, 90 -&gt; 5.257556
+R._Maciel_Pinheiro 130, 90 -&gt; 5.256075
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_180.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 130, 180 -&gt; 5.320039
+R._Maciel_Pinheiro 130, 180 -&gt; 5.192557
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 130, 270 -&gt; 4.884981
+R._Maciel_Pinheiro 130, 270 -&gt; 4.907013
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 130, 360 -&gt; 4.627327
+R._Maciel_Pinheiro 130, 360 -&gt; 4.678799
 </div>
 </div>
 </div>
-####### Sumário do Número 130 : Max. 5.320039 Min: 4.627327 Diff: 0.692713
+####### Sumário do Número 130 : Max. 5.256075 Min: 4.678799 Diff: 0.5772762
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 190, 90 -&gt; 5.310486
+R._Maciel_Pinheiro 190, 90 -&gt; 5.291858
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_180.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 190, 180 -&gt; 4.592841
+R._Maciel_Pinheiro 190, 180 -&gt; 4.597683
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 190, 270 -&gt; 5.33385
+R._Maciel_Pinheiro 190, 270 -&gt; 5.365414
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_190_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 190, 360 -&gt; 5.18827
+R._Maciel_Pinheiro 190, 360 -&gt; 5.195417
 </div>
 </div>
 </div>
-####### Sumário do Número 190 : Max. 5.33385 Min: 4.592841 Diff: 0.7410082
+####### Sumário do Número 190 : Max. 5.365414 Min: 4.597683 Diff: 0.7677304
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 248, 90 -&gt; 5.331354
+R._Maciel_Pinheiro 248, 90 -&gt; 5.276698
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_180.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 248, 180 -&gt; 5.5814
+R._Maciel_Pinheiro 248, 180 -&gt; 5.573167
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 248, 270 -&gt; 4.905732
+R._Maciel_Pinheiro 248, 270 -&gt; 4.887242
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_248_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 248, 360 -&gt; 4.670185
+R._Maciel_Pinheiro 248, 360 -&gt; 4.740895
 </div>
 </div>
 </div>
-####### Sumário do Número 248 : Max. 5.5814 Min: 4.670185 Diff: 0.9112146
+####### Sumário do Número 248 : Max. 5.573167 Min: 4.740895 Diff: 0.8322727
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 284, 90 -&gt; 5.019549
+R._Maciel_Pinheiro 284, 90 -&gt; 5.010363
 </div>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
+<div class="col-xs-3" style="background-color:#00cc00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_180.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 284, 180 -&gt; 5.458441
+R._Maciel_Pinheiro 284, 180 -&gt; 5.360771
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 284, 270 -&gt; 4.641461
+R._Maciel_Pinheiro 284, 270 -&gt; 4.578987
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 284, 360 -&gt; 5.108455
+R._Maciel_Pinheiro 284, 360 -&gt; 5.087052
 </div>
 </div>
 </div>
-####### Sumário do Número 284 : Max. 5.458441 Min: 4.641461 Diff: 0.8169798
+####### Sumário do Número 284 : Max. 5.360771 Min: 4.578987 Diff: 0.7817843
 <div class="row">
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 360, 90 -&gt; 4.864166
+R._Maciel_Pinheiro 360, 90 -&gt; 4.842527
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_180.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 360, 180 -&gt; 4.965585
+R._Maciel_Pinheiro 360, 180 -&gt; 5.021219
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 360, 270 -&gt; 4.861948
+R._Maciel_Pinheiro 360, 270 -&gt; 4.931053
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
 <img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Maciel_Pinheiro 360, 360 -&gt; 5.615639
+R._Maciel_Pinheiro 360, 360 -&gt; 5.644789
 </div>
 </div>
 </div>
-####### Sumário do Número 360 : Max. 5.615639 Min: 4.861948 Diff: 0.7536915
+####### Sumário do Número 360 : Max. 5.644789 Min: 4.842527 Diff: 0.802262
 <div class='row'>
 
 <p>Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:</p>
@@ -1320,24 +1320,24 @@ R._Maciel_Pinheiro 360, 360 -&gt; 5.615639
 <pre class="r"><code>manoel &lt;- filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
 
 print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;)$qscore, type=&quot;Gini&quot;)))</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0373400560251786&quot;</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0343503853106784&quot;</code></pre>
 <pre class="r"><code>for (value in unique(manoel$num)){
   print(paste(&quot;Número&quot;, value, ineq(filter(manoel, num == value)$qscore, type=&quot;Gini&quot;)))
 }</code></pre>
-<pre><code>## [1] &quot;Número 188 0.0416397968578421&quot;
-## [1] &quot;Número 222 0.0310585220141899&quot;
-## [1] &quot;Número 300 0.034253094518347&quot;
-## [1] &quot;Número 370 0.0305844419752175&quot;
-## [1] &quot;Número 392 0.0324407246131506&quot;</code></pre>
+<pre><code>## [1] &quot;Número 188 0.0414091472664315&quot;
+## [1] &quot;Número 222 0.0278938765844376&quot;
+## [1] &quot;Número 300 0.0356672356945589&quot;
+## [1] &quot;Número 370 0.0314009299006883&quot;
+## [1] &quot;Número 392 0.0182070377955483&quot;</code></pre>
 <pre class="r"><code>summary_manoel</code></pre>
-<pre><code>## # A tibble: 5 x 5
+<pre><code>## # A tibble: 5 × 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1   188    3.958941 0.3591401 4.134919 3.782962
-## 2   222    3.940817 0.2570440 4.066769 3.814865
-## 3   300    3.822510 0.2758996 3.957701 3.687319
-## 4   370    3.985658 0.2730814 4.119468 3.851848
-## 5   392    3.938424 0.2709194 4.071174 3.805673</code></pre>
+## 1   188    3.987091 0.3519881 4.159565 3.814617
+## 2   222    3.950069 0.2300737 4.062805 3.837333
+## 3   300    3.853166 0.2950947 3.997762 3.708570
+## 4   370    3.957824 0.2791124 4.094589 3.821059
+## 5   392    4.010592 0.1560135 4.087039 3.934146</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;), num, angle), &quot;Manoel Pereira&quot;, c(22, 135, 293), c(315, 112, 203, 225))#Street 4</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-1.png" width="1152" /></p>
 <p>Para a Manoel percebemos <strong>uma variação de aproximadamente 0.14</strong> nas médias do QScore do número 392 e do número 370. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo.</p>
@@ -1351,137 +1351,137 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 188, 22 -&gt; 4.218403
+R._Manoel_Pereira_de_Araújo 188, 22 -&gt; 4.300888
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 188, 135 -&gt; 3.891542
+R._Manoel_Pereira_de_Araújo 188, 135 -&gt; 3.89132
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#000000">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 188, 203 -&gt; 3.477787
+R._Manoel_Pereira_de_Araújo 188, 203 -&gt; 3.531467
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_188_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 188, 315 -&gt; 4.248031
+R._Manoel_Pereira_de_Araújo 188, 315 -&gt; 4.224689
 </div>
 </div>
 </div>
-####### Sumário do Número 188 : Max. 4.248031 Min: 3.477787 Diff: 0.7702436
+####### Sumário do Número 188 : Max. 4.300888 Min: 3.531467 Diff: 0.7694212
 <div class="row">
 <div class="col-xs-3" style="background-color:#000000">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 222, 22 -&gt; 3.654879
+R._Manoel_Pereira_de_Araújo 222, 22 -&gt; 3.683866
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 222, 135 -&gt; 3.864778
+R._Manoel_Pereira_de_Araújo 222, 135 -&gt; 3.888068
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 222, 203 -&gt; 4.27207
+R._Manoel_Pereira_de_Araújo 222, 203 -&gt; 4.237123
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_222_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 222, 315 -&gt; 3.971541
+R._Manoel_Pereira_de_Araújo 222, 315 -&gt; 3.99122
 </div>
 </div>
 </div>
-####### Sumário do Número 222 : Max. 4.27207 Min: 3.654879 Diff: 0.6171909
+####### Sumário do Número 222 : Max. 4.237123 Min: 3.683866 Diff: 0.5532574
 <div class="row">
 <div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 300, 22 -&gt; 3.848211
+R._Manoel_Pereira_de_Araújo 300, 22 -&gt; 3.854741
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#000000">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 300, 135 -&gt; 3.519259
+R._Manoel_Pereira_de_Araújo 300, 135 -&gt; 3.51101
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 300, 203 -&gt; 4.181765
+R._Manoel_Pereira_de_Araújo 300, 203 -&gt; 4.231028
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 300, 315 -&gt; 3.740804
+R._Manoel_Pereira_de_Araújo 300, 315 -&gt; 3.815885
 </div>
 </div>
 </div>
-####### Sumário do Número 300 : Max. 4.181765 Min: 3.519259 Diff: 0.6625059
+####### Sumário do Número 300 : Max. 4.231028 Min: 3.51101 Diff: 0.7200177
 <div class="row">
 <div class="col-xs-3" style="background-color:#000000">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 370, 22 -&gt; 3.599059
+R._Manoel_Pereira_de_Araújo 370, 22 -&gt; 3.561383
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_135.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 370, 135 -&gt; 3.987574
+R._Manoel_Pereira_de_Araújo 370, 135 -&gt; 3.963848
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_203.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 370, 203 -&gt; 4.166429
+R._Manoel_Pereira_de_Araújo 370, 203 -&gt; 4.1652
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_370_315.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 370, 315 -&gt; 4.189569
+R._Manoel_Pereira_de_Araújo 370, 315 -&gt; 4.140866
 </div>
 </div>
 </div>
-####### Sumário do Número 370 : Max. 4.189569 Min: 3.599059 Diff: 0.5905101
+####### Sumário do Número 370 : Max. 4.1652 Min: 3.561383 Diff: 0.6038172
 <div class="row">
-<div class="col-xs-3" style="background-color:#000000">
+<div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 392, 22 -&gt; 3.678162
+R._Manoel_Pereira_de_Araújo 392, 22 -&gt; 3.896189
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_112.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 392, 112 -&gt; 4.077307
+R._Manoel_Pereira_de_Araújo 392, 112 -&gt; 4.098716
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_225.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 392, 225 -&gt; 3.748314
+R._Manoel_Pereira_de_Araújo 392, 225 -&gt; 3.862764
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
 <img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_392_293.jpg' width='300px'>
 <div class="caption" style="color:white">
-R._Manoel_Pereira_de_Araújo 392, 293 -&gt; 4.249913
+R._Manoel_Pereira_de_Araújo 392, 293 -&gt; 4.1847
 </div>
 </div>
 </div>
-####### Sumário do Número 392 : Max. 4.249913 Min: 3.678162 Diff: 0.5717507
+####### Sumário do Número 392 : Max. 4.1847 Min: 3.862764 Diff: 0.3219365
 <div class='row'>
 
 <p>Com esse nível de detalhe conseguimos confrontar os scores com as imagens e perceber que:</p>
@@ -1493,6 +1493,19 @@ R._Manoel_Pereira_de_Araújo 392, 293 -&gt; 4.249913
 </ul>
 <p>De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3-4).</p>
 </div>
+</div>
+<div id="caracteristicas-de-usuarios-no-centro" class="section level1">
+<h1>Características de Usuários no Centro</h1>
+<p>Algumas observações:</p>
+<ul>
+<li>Para as ruas Maciel Pinheiro, Cardoso Vieira, Peregrino de Carvalho e Marquês de Herval apesar de terem características diferentes quanto á largura de rua, arborização e conservação de prédios, os usuários mostraram alta importância para Espaços Públicos, Arborização, Espaços para Circulação de Pedestres e Mobiliário Urbano;</li>
+<li>A importância dada a espaço para circulação é geralmente de média a alta, com algumas variações entre estas ruas</li>
+</ul>
+<p>[1] “&gt;&gt;&gt;&gt;&gt; Rua Maciel Pinheiro 60”</p>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-18-1.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Marquês do herval 42” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-2.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Cardoso Vieira 44”</p>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-18-3.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Peregrino de Carvalho 61” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-4.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Eufrosino 11” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-5.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Irineu Joffily 21” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-6.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Manoel Cavalcanti Belo 10” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-7.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Monsenhor Sales 22” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-8.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Semeão Leal 24” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-9.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Venâncio neiva 46” <img src="analisaPorRua_files/figure-html/unnamed-chunk-18-10.png" width="1152"  /></p>
 </div>
 
 

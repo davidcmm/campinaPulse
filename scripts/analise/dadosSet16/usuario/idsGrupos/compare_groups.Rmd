@@ -432,8 +432,8 @@ groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_
 
 ## Comparing original groups x randomized groups and both randomized groups!
 ```{r cars}
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/" 
+for (folder in c("hom60_mul40/")){
     
     if(grepl("jovem", folder)){
         g1_files <- list.files(path = folder, pattern = "alljovemOrdInter*")
@@ -452,7 +452,7 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
         g1 <- "Media"
         g2 <- "Baixa"
     }else{
-        if (folder == "hom60_mul15/" || folder == "hom60_mul60/") {
+        if (folder == "hom60_mul15/" || folder == "hom60_mul60/" || folder == "hom60_mul40/") {
             g1_files <- list.files(path = folder, pattern = "allmasculinoOrdInter*")
             g2_files <- list.files(path = folder, pattern = "allfemininoOrdInter*")
         }else {
@@ -491,17 +491,17 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
        seg_g1 <- filter(data_g1, V1 == "seguro?")
        ag_g1 <- filter(data_g1, V1 != "seguro?")
        
-#        merged_g1 <- merge(ag_orig_g1, ag_g1, by.x="V2", by.y="V2")
-#        merged_seg_g1 <- merge(seg_orig_g1, seg_g1, by.x="V2", by.y="V2")
-#        
-#        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g1, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
-#        res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
-#        print(res)
-#        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g1, res$estimate))
-#        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g1, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
-#        res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
-#        print(res)
-#        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g1, res$estimate))
+        merged_g1 <- merge(ag_orig_g1, ag_g1, by.x="V2", by.y="V2")
+        merged_seg_g1 <- merge(seg_orig_g1, seg_g1, by.x="V2", by.y="V2")
+        
+        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g1, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+        res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g1, res$estimate))
+        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g1, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
+        res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g1, res$estimate))
        
        #Looking for corresponding data from women - UNUSED
        #current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
@@ -514,18 +514,18 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
        data_g2 <- read.table(g2_file)
        seg_g2 <- filter(data_g2, V1 == "seguro?")
        ag_g2 <- filter(data_g2, V1 != "seguro?")
-#        
-#        merged_g2 <- merge(ag_orig_g2, ag_g2, by.x="V2", by.y="V2")
-#        merged_seg_g2 <- merge(seg_orig_g2, seg_g2, by.x="V2", by.y="V2")
-#       
-#        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g2, normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
-#        res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
-#        print(res)
-#        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g2, res$estimate))
-#        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g2, normalizedKendallTauDistance2(merged_seg_g2$V3.y, merged_seg_g2$V3.x)))
-#        res <- cor.test(merged_seg_g2$V3.y, merged_seg_g2$V3.x, method="kendall")
-#        print(res)
-#        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g2, res$estimate))
+        
+        merged_g2 <- merge(ag_orig_g2, ag_g2, by.x="V2", by.y="V2")
+        merged_seg_g2 <- merge(seg_orig_g2, seg_g2, by.x="V2", by.y="V2")
+       
+        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g2, normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+        res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g2, res$estimate))
+        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g2, normalizedKendallTauDistance2(merged_seg_g2$V3.y, merged_seg_g2$V3.x)))
+        res <- cor.test(merged_seg_g2$V3.y, merged_seg_g2$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g2, res$estimate))
        
        #Comparing women random x men random
 #        merged <- merge(ag_g1, ag_g2, by.x="V2", by.y="V2")
@@ -623,19 +623,19 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
   #combineFeaturesAndTestRegression(all_means_seg)
 }
 
-#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
+for (folder in c("hom60_mul40/")){
     data <- readLines(paste(folder, "rank_comparisons.dat", sep=""))
 
-    # index <- grep( ">>>>>>>> Correlation Agrad: Random",  data)
-    # sink(paste(folder, "tau_agrad.dat", sep=""))
-    # print(data[index], row.names = FALSE, quote = FALSE)
-    # sink()
-    # 
-    # index <- grep( ">>>>>>>> Correlation Seg: Random",  data)
-    # sink(paste(folder, "tau_seg.dat", sep=""))
-    # print(data[index], row.names = FALSE, quote = FALSE)
-    # sink()
+     index <- grep( ">>>>>>>> Correlation Agrad: Random",  data)
+     sink(paste(folder, "tau_agrad.dat", sep=""))
+     print(data[index], row.names = FALSE, quote = FALSE)
+     sink()
+     
+     index <- grep( ">>>>>>>> Correlation Seg: Random",  data)
+     sink(paste(folder, "tau_seg.dat", sep=""))
+     print(data[index], row.names = FALSE, quote = FALSE)
+     sink()
     
     index <- grep( ">>>>>>>> Correlation Top10_Agrad: Random",  data)
     write(data[index], file=paste(folder, "taut10_agrad.dat", sep=""))
@@ -659,8 +659,8 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
 }
 
 #Evaluating confidence intervals for computed kendall correlations
-#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
+for (folder in c("hom60_mul40/")){
   for (file in c(paste(folder, "tau_agrad.dat", sep=""), paste(folder, "tau_seg.dat", sep=""))){
     ag_cor <- read.table(file, sep="")
     ag_cor$V3 <- as.factor(ag_cor$V3)
@@ -766,7 +766,7 @@ combineFeaturesAndTestRegression <- function(dataset){
 }
 
 #Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
-for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+for (folder in c("hom60_mul40/")){
 
   if(grepl("jovem", folder)){
         g1 <- "Jovem"
@@ -794,7 +794,7 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
   all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
   all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
   
-#   sink(paste(folder, "rank_comparisons_general.dat", sep=""))
+  sink(paste(folder, "rank_comparisons_general.dat", sep=""))
   for (i in seq(1,100)){
   #for (current_file in all_diff_m){
      #id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
@@ -806,17 +806,17 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
      seg_g1 <- filter(data, V1 == "seguro?") 
      ag_g1 <- filter(data, V1 != "seguro?") 
      
-#      merged_g1 <- merge(ag_orig, ag_g1, by.x="V2", by.y="V2")
-#      merged_seg_g1 <- merge(seg_orig, seg_g1, by.x="V2", by.y="V2")
-#      
-#      print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
-#      res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
-#      print(res)
-#      print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Random", g1, g2, res$estimate))
-#      print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
-#      res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
-#      print(res)
-#      print(paste(">>>>>>>> Correlation Seg: General Old x Removing Random", g1, g2, res$estimate))
+      merged_g1 <- merge(ag_orig, ag_g1, by.x="V2", by.y="V2")
+      merged_seg_g1 <- merge(seg_orig, seg_g1, by.x="V2", by.y="V2")
+      
+      print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+      res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+      print(res)
+      print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Random", g1, g2, res$estimate))
+      print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
+      res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
+      print(res)
+      print(paste(">>>>>>>> Correlation Seg: General Old x Removing Random", g1, g2, res$estimate))
      
      #Storing all Q-Scores/rank means
 #      if(length(all_means_ag_g1) == 0){
@@ -866,8 +866,8 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
     sink()
 }
 
-#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
+for (folder in c( "hom60_mul40/" )){
     data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
     index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing Random",  data)
     sink(paste(folder, "taug_agrad.dat", sep=""))
@@ -880,8 +880,8 @@ for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
     sink()
 }
 
-#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
+for (folder in c(  "hom60_mul40/" )){
     #Evaluating sample sizes
     for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
         ag_cor <- read.table(file, sep="")

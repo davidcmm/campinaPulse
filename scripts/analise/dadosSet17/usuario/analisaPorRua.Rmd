@@ -7,6 +7,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+#TO DO: ADicionar Floriano Peixoto e Cristina Procópio nas análises!
 library("vioplot")
 library("ggplot2")
 library("dplyr")
@@ -334,8 +335,12 @@ plot_street_means <- function(data){
   manoel_sd = sd(manoel_scores)
   maciel_scores = filter(data, street == "R._Maciel_Pinheiro")$qscore
   maciel_sd = sd(maciel_scores)
+  floriano_scores = filter(data, street == "Av._Mal._Floriano_Peixoto")$qscore
+  floriano_sd = sd(maciel_scores)
+  cristina_scores = filter(data, street == "R._Cristina_Procópio_Silva")$qscore
+  cristina_sd = sd(maciel_scores)
   
-  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores)))
+  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores), floriano_sd * 1.96 / length(floriano_scores), cristina_sd * 1.96 / length(cristina_scores)))
   
   ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
       geom_bar(position=position_dodge(), stat="identity") +

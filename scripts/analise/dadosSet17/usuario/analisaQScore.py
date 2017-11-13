@@ -355,7 +355,6 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 				if not allQScores[question].has_key(photo):
 					allQScores[question][photo] = []
 				allQScores[question][photo].append(qscore)
-
 	#Output file
 	output = open(outputFileName, 'w')
 	for question, qDic in allQScores.iteritems():
@@ -609,7 +608,6 @@ def readTasksDefinitions(linesTasks):
 		currentDef = json.loads(data[7].strip(' \t\n\r\"'))
 
 		tasksDef[taskID] = currentDef
-	
 	return tasksDef
 
 if __name__ == "__main__":

@@ -866,27 +866,34 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
     sink()
 }
 
-#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/")){
     data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
-    index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing Random",  data)
+    index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing",  data)
     sink(paste(folder, "taug_agrad.dat", sep=""))
     print(data[index], row.names = FALSE, quote = FALSE)
     sink()
     
-    index <- grep(">>>>>>>> Correlation Seg: General Old x Removing Random",  data)
+    index <- grep(">>>>>>>> Correlation Seg: General Old x Removing",  data)
     sink(paste(folder, "taug_seg.dat", sep=""))
     print(data[index], row.names = FALSE, quote = FALSE)
     sink()
 }
 
-#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
-for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/")){
     #Evaluating sample sizes
     for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
         ag_cor <- read.table(file, sep="")
         ag_cor$V3 <- as.factor(ag_cor$V3)
-        values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][11]))
+        
+        if(grepl("hom95_mul95", folder)){
+          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][10]))
+        }else if(grepl("hom40_mul60", folder) || grepl("hom15_mul60", folder)){
+          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][12]))       
+        }else{
+          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][11]))
+        }
         new_values <- unlist(lapply(values, '[[', 1))
         ag_cor$value <- new_values
         

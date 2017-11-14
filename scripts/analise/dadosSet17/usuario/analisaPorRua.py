@@ -35,6 +35,7 @@ if __name__ == "__main__":
 	df['numero'] = df[1].apply(get_street_num)
 	df['angulo'] = df[1].apply(get_street_angle)
 
+	#TO DO: Lidar com numero / Floriano Peixoto!
 	#Group by street and then street, number to see summaries: http://pandas.pydata.org/pandas-docs/stable/groupby.html#applying-multiple-functions-at-once
 	out_summary = open("qscores-df-summary.dat", "w")
 	grouped = df.groupby('rua')

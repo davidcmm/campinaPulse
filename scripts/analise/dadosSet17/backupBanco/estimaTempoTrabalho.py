@@ -69,6 +69,7 @@ def readUserData(lines1, lines2, outputFileName):
 		users_tasks_diff[user_id] = user_worktimes_diff
 
 	#Computing average worktime per user
+	print "id" + "\t" + "mean_time" + "\t" + "median_time" + "\t" + "sum_time" + "\t" + "mean_diff" + "\t" + "median_diff" + "\t" + "sum_diff"
 	for user_id in users_tasks.keys():
 		user_worktimes = users_tasks[user_id]
 		user_worktimes_diff = users_tasks_diff[user_id]

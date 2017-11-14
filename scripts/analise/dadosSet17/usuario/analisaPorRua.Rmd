@@ -72,7 +72,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 154 pessoas (59 pessoas que não são de Campina e 60 que são daqui).
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 164 pessoas (69 pessoas que não são de Campina e 60 que são daqui).
 
 ```{r}
 #Checking sample size
@@ -234,11 +234,15 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data$side <- ""
   data$side[data$angle %in% ids1] <- "Side 1"
   data$side[data$angle %in% ids2] <- "Side 2"
+  if(plotTitle == "Cristina Procopio"){
+    data$side[data$num == 436 & (data$angle == 22 | data$angle == 135)] <- "Side 1"
+    data$side[data$num == 436 & (data$angle == 203 | data$angle == 315)] <- "Side 2"
+  }
   
   if(plotTitle == "Edésio Silva" || plotTitle == "Manoel Pereira"){
     data1 <- arrange(filter(data, side == "Side 1"), num, -angle)
     data2 <- arrange(filter(data, side == "Side 2"), num, angle)
-  }else if (plotTitle == "Inacio"  || plotTitle == "Maciel Pinheiro" ){
+  }else if (plotTitle == "Inacio"  || plotTitle == "Maciel Pinheiro" || plotTitle == "Cristina Procopio" || plotTitle == "Floriano Peixoto"){
     data1 <- arrange(filter(data, side == "Side 1"), num, angle)
     data2 <- arrange(filter(data, side == "Side 2"), num, angle)
   }
@@ -259,6 +263,8 @@ plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva
 plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 plot_ci_per_photo(filter(all_data, street == "R._Maciel_Pinheiro"), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 plot_ci_per_photo(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
+plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Floriano Peixoto", c(22,293), c(112,203))#Street 5
+plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
 ```
 
 Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.
@@ -367,18 +373,18 @@ Três das ruas selecionadas parecem bem similares de acordo com a média, mas se
 ```{r }
 value <- qscoresDFGeral$qscore
 
-with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
+with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7), names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(3, 7) ))
 
 value <- qscoresDFCampina$qscore
 
-with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
+with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 7) ))#,  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"]
 
 value <- qscoresDFNotCampina$qscore
 
-with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 6.5) ))
+with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(3, 7) ))
 
 #GINI COEFFICIENTS
-inequalities <- data.frame(labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)))
+inequalities <- data.frame( labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)), floriano=c(ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini"), ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="entropy"), sd(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore)), cristina= c(ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore)) )
 
 inequalities
 ```
@@ -396,6 +402,8 @@ summary(filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva")$qscore)
 summary(filter(qscoresDFGeral, street == "R._Edésio_Silva")$qscore)
 summary(filter(qscoresDFGeral, street == "R._Maciel_Pinheiro")$qscore)
 summary(filter(qscoresDFGeral, street == "R._Manoel_Pereira_de_Araújo")$qscore)
+summary(filter(qscoresDFGeral, street == "Av._Mal._Floriano_Peixoto")$qscore)
+summary(filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva")$qscore)
 ```
 
 
@@ -424,6 +432,14 @@ summary_maciel$lower <- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / 
 summary_manoel = filter(qscoresDFGeral, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
 summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
 summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+
+summary_floriano = filter(qscoresDFGeral, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_floriano$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
+summary_floriano$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+
+summary_cristina = filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
+summary_cristina$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
+summary_cristina$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
 ```
 
 ```{r  fig.height=10, fig.width=12}
@@ -612,8 +628,44 @@ Com esse nível de detalhe conseguimos confrontar os scores com as imagens e per
 + No número 300, ângulo 315 temos alguns prédios mais antigos e pouco cuidados combinados com itens na rua;
 + No número 222, ângulo 22 temos prédios em pior estado de conservação combinados com itens na rua;
 
-De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3-4).  
+De forma geral as fotos percebemos que, conforme esperado, em geral os locais possuem um nível ruim de manutenção o que condiz com as notas mais baixas de percepção (em torno de 3-4).  ]
 
+
+## Floriano Peixoto
+
+```{r  fig.height=10, fig.width=12}
+floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini")))
+for (value in unique(floriano$num)){
+  print(paste("Número", value, ineq(filter(floriano, num == value)$qscore, type="Gini")))
+}
+summary_floriano
+
+plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Floriano Peixoto", c(22,293), c(112,203))#Street 5
+``` 
+
+```{r results='asis', echo=FALSE, out.extra=''}
+show_street_data(floriano, all_data)
+```
+
+## Cristina Procópio
+
+```{r  fig.height=10, fig.width=12}
+cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
+
+print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini")))
+for (value in unique(cristina$num)){
+  print(paste("Número", value, ineq(filter(cristina, num == value)$qscore, type="Gini")))
+}
+summary_cristina
+
+plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
+``` 
+
+```{r results='asis', echo=FALSE, out.extra=''}
+show_street_data(cristina, all_data)
+```
 
 # Características de Usuários no Centro
 

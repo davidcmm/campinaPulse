@@ -35,6 +35,13 @@ if __name__ == "__main__":
 	df['numero'] = df[1].apply(get_street_num)
 	df['angulo'] = df[1].apply(get_street_angle)
 
+	#Updating numbers at Floriano street
+	df.loc[(df['rua'] == "Av._Mal._Floriano_Peixoto") & (df['numero'] == "912"), 'numero'] = "913"
+	df.loc[(df['rua'] == "Av._Mal._Floriano_Peixoto") & (df['numero'] == "826"), 'numero'] = "813"
+	df.loc[(df['rua'] == "Av._Mal._Floriano_Peixoto") & (df['numero'] == "660"), 'numero'] = "691"
+	df.loc[(df['rua'] == "Av._Mal._Floriano_Peixoto") & (df['numero'] == "580"), 'numero'] = "549"
+	df.loc[(df['rua'] == "Av._Mal._Floriano_Peixoto") & (df['numero'] == "480"), 'numero'] = "445"
+
 	#TO DO: Lidar com numero / Floriano Peixoto!
 	#Group by street and then street, number to see summaries: http://pandas.pydata.org/pandas-docs/stable/groupby.html#applying-multiple-functions-at-once
 	out_summary = open("qscores-df-summary.dat", "w")

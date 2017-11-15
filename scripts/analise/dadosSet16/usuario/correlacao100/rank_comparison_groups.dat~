@@ -1,5 +1,29 @@
 #### Men x Women - Pleas
 
+Spearman's rank correlation rho
+
+data:  agrad.l$rank and agrad.l$index
+S = 21190, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.8990635 
+
+> cor.test(agrad.l$rank, agrad.l$index, method="kendall")
+
+	Kendall's rank correlation tau
+
+data:  agrad.l$rank and agrad.l$index
+z = 11.102, p-value < 2.2e-16
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.7237799 
+
+[1] 798
+[1] 0.1381101
+[1] ">>>> Kendall Distance  0.138110072689512"
+
 > t.test(agrad.l$rank, agrad.l$index, paired = TRUE)
 
 	Paired t-test
@@ -8,7 +32,7 @@ data:  agrad.l$rank and agrad.l$index
 t = 0, df = 107, p-value = 1
 alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
- -2.923462  2.923462
+ -2.684413  2.684413
 sample estimates:
 mean of the differences 
                       0 
@@ -18,85 +42,36 @@ mean of the differences
 	Wilcoxon signed rank test with continuity correction
 
 data:  agrad.l$rank and agrad.l$index
-V = 2638.5, p-value = 0.8979
+V = 2676.5, p-value = 0.8635
 alternative hypothesis: true location shift is not equal to 0
 
-> t.test(agrad.l$V3.Masculino, agrad.l$V3.Feminino, paired = TRUE)
-
-	Paired t-test
-
-data:  agrad.l$V3.Masculino and agrad.l$V3.Feminino
-t = 1.923, df = 107, p-value = 0.05713
-alternative hypothesis: true difference in means is not equal to 0
-95 percent confidence interval:
- -0.001957997  0.128874117
-sample estimates:
-mean of the differences 
-             0.06345806 
-
-> wilcox.test(agrad.l$V3.Masculino, agrad.l$V3.Feminino, paired = TRUE)
-
-	Wilcoxon signed rank test with continuity correction
-
-data:  agrad.l$V3.Masculino and agrad.l$V3.Feminino
-V = 3562, p-value = 0.05799
-alternative hypothesis: true location shift is not equal to 0
-
-> cor.test(agrad.l$rank, agrad.l$index, method="spearman")
-
-	Spearman's rank correlation rho
-
-data:  agrad.l$rank and agrad.l$index
-S = 25132, p-value < 2.2e-16
-alternative hypothesis: true rho is not equal to 0
-sample estimates:
-      rho 
-0.8802862 
-
-> cor.test(agrad.l$rank, agrad.l$index, method="kendall")
-
-	Kendall's rank correlation tau
-
-data:  agrad.l$rank and agrad.l$index
-z = 10.726, p-value < 2.2e-16
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-      tau 
-0.6992039 
-
-> print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.Masculino, agrad.l$V3.Feminino)))
-[1] 869
-[1] 0.1503981
-[1] ">>>> Kendall Distance  0.150398061613015"
-
-> head(arrange(select(agrad.l, rank, index, diff, image_url, V3.Masculino, V3.Feminino), desc(abs(diff))), n=20)
    rank index diff                                                   image_url V3.Masculino V3.Feminino
-1    66    20   46                 catole/Rua_Doutor_Antonio_Telha__68__90.jpg     4.947892    3.998170
-2    89    43   46          centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg     5.404066    4.468688
-3    35    80  -45            catole/Rua_Deputado_Ascendino_Moura__101__90.jpg     4.336138    5.066942
-4    22    61  -39                   liberdade/Rua_Santa_Catarina__1231__0.jpg     4.159853    4.723530
-5    60    95  -35 catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg     4.857779    5.596516
-6    76    46   30                    catole/Rua_Olegario_Mariano__139_180.jpg     5.151559    4.562491
-7    82    53   29                       liberdade/Rua_Riachuelo__847__180.jpg     5.213156    4.649935
-8    68    97  -29         centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg     4.969493    5.644970
-9    87    59   28               liberdade/Rua_Severino_Pimentel__439__180.jpg     5.294912    4.701666
-10   50    24   26                 catole/Rua_Aluisio_Cunha_Linha__50__270.jpg     4.684918    4.100994
-11   55    81  -26                      catole/Rua_Olegario_Mariano__139_0.jpg     4.714266    5.071696
-12   47    23   24                          centro/Rua_Elias_Aforas__67__0.jpg     4.636211    4.098545
-13   65    41   24                      catole/Rua_Vigario_Calixto__1201_0.jpg     4.913621    4.447011
-14   38    62  -24                     liberdade/Rua_Odon_Bezerra__306_270.jpg     4.394443    4.723781
-15   40    17   23                         centro/Rua_Felix_Araujo__48__90.jpg     4.485447    3.876286
-16   49    72  -23                         centro/Rua_Joao_da_Mata__490_90.jpg     4.643598    4.870287
-17   67    89  -22                         liberdade/Rua_Riachuelo__847__0.jpg     4.955341    5.298366
-18   39    60  -21                 liberdade/Rua_Espirito_Santo__1288__180.jpg     4.426768    4.708604
-19   15    33  -18                    centro/Rua_Capitao_Joao_de_Sa__45__0.jpg     3.946297    4.343027
-20   18    36  -18                 centro/Rua_Pedro_Alvares_Cabral__129_90.jpg     3.987887    4.384834
+1    87    45   42          centro/Rua_Coronel_Salvino_Figueiredo__251_270.jpg     5.347277    4.598581
+2    59    18   41                 catole/Rua_Doutor_Antonio_Telha__68__90.jpg     4.851071    4.044905
+3    41    81  -40            catole/Rua_Deputado_Ascendino_Moura__101__90.jpg     4.514669    5.172416
+4    89    53   36                       liberdade/Rua_Riachuelo__847__180.jpg     5.411835    4.713140
+5    52    82  -30                      catole/Rua_Olegario_Mariano__139_0.jpg     4.769805    5.177974
+6    67    97  -30 catole/Avenida_Prefeito_Severino_Bezerra_Cabral__218_90.jpg     5.016985    5.683788
+7    22    51  -29                   liberdade/Rua_Santa_Catarina__1231__0.jpg     4.188317    4.694368
+8    86    59   27               liberdade/Rua_Severino_Pimentel__439__180.jpg     5.301931    4.764659
+9    37    63  -26                 liberdade/Rua_Espirito_Santo__1288__180.jpg     4.449302    4.807186
+10   49    24   25                          centro/Rua_Elias_Aforas__67__0.jpg     4.714480    4.265888
+11   71    96  -25         centro/Avenida_Presidente_Joao_Pessoa__128__180.jpg     5.100319    5.646887
+12   64    41   23                      catole/Rua_Vigario_Calixto__1201_0.jpg     4.936752    4.558085
+13   15    36  -21                 centro/Rua_Pedro_Alvares_Cabral__129_90.jpg     3.985973    4.496173
+14   66    87  -21                         liberdade/Rua_Riachuelo__847__0.jpg     4.987810    5.275694
+15   46    26   20                 catole/Rua_Aluisio_Cunha_Linha__50__270.jpg     4.641027    4.283463
+16   77    57   20                 centro/Avenida_Barao_Rio_Branco__141_90.jpg     5.190349    4.731445
+17   47    67  -20                 liberdade/Rua_Severino_Pimentel__511_90.jpg     4.661902    4.851595
+18   42    23   19      centro/Avenida_Presidente_Getulio_Vargas__210__180.jpg     4.537656    4.256230
+19   58    39   19                    centro/Avenida_Dom_Pedro_II__119_270.jpg     4.839987    4.513416
+20   92    74   18               liberdade/Rua_Severino_Pimentel__321__180.jpg     5.485529    5.036126
 
 centro - 7
 catole - 6
 liberdade - 7
 
-#### Young x Adult - Pleas - TO DO: FROM HERE!
+#### Young x Adult - Pleas
 
 Spearman's rank correlation rho
 
@@ -546,16 +521,7 @@ sample estimates:
       rho 
 0.7985367
 
-> cor.test(seg.l$rank, seg.l$index, method="kendall")
 
-	Kendall's rank correlation tau
-
-data:  seg.l$rank and seg.l$index
-z = 9.2813, p-value < 2.2e-16
-alternative hypothesis: true tau is not equal to 0
-sample estimates:
-      tau 
-0.6050537 
 
 [1] 1141
 [1] 0.1974732

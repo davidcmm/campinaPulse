@@ -242,10 +242,11 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 
 			photo1 = data['theMost'].strip(' \t\n\r"')
 			photo2 = data['theLess'].strip(' \t\n\r"')
+			is_tie = photo1
 
 			taskDef = tasksDefinitions[taskID]
 			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
-			if photo1 != completeTie:
+			if is_tie != completeTie:#Review this!
 				photos.remove(photo1)
 				photos.remove(photo2)
 			else:
@@ -303,27 +304,27 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 				counter3_app = 0
 			if current_counters.has_key(photo4):
 				counter4_win = current_counters[photo4][0]
-				counter4_win = current_counters[photo4][1]
+				counter4_loss = current_counters[photo4][1]
 				counter4_app = current_counters[photo4][2]
 			else:
 				counter4_win = 0
 				counter4_loss = 0
 				counter4_app = 0
 
-			current_counters[photo1] = [counter1_win+1, counter1_loss, counter1_app+1]
-			current_counters[photo2] = [counter2_win, counter2_loss+1, counter2_app+1]
-			current_counters[photo3] = [counter3_win, counter3_loss, counter3_app+1]
-			current_counters[photo4] = [counter4_win, counter4_loss, counter4_app+1]
-			allCounts[question] = current_counters
 
 			#Saving votes from task-run
-			if photo1 != completeTie:
+			if is_tie != completeTie:
 				votes[question][photo1][photo2].add(left)
 				votes[question][photo1][photo3].add(left)
 				votes[question][photo1][photo4].add(left)
 				votes[question][photo2][photo3].add(right)
 				votes[question][photo2][photo4].add(right)
 				votes[question][photo3][photo4].add(notKnown)
+
+				current_counters[photo1] = [counter1_win+1, counter1_loss, counter1_app+1]
+				current_counters[photo2] = [counter2_win, counter2_loss+1, counter2_app+1]
+				current_counters[photo3] = [counter3_win, counter3_loss, counter3_app+1]
+				current_counters[photo4] = [counter4_win, counter4_loss, counter4_app+1]
 			else:
 				votes[question][photo1][photo2].add(notKnown)
 				votes[question][photo1][photo3].add(notKnown)
@@ -331,6 +332,13 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 				votes[question][photo2][photo3].add(notKnown)
 				votes[question][photo2][photo4].add(notKnown)
 				votes[question][photo3][photo4].add(notKnown)
+				
+				current_counters[photo1] = [counter1_win, counter1_loss, counter1_app+1]
+				current_counters[photo2] = [counter2_win, counter2_loss, counter2_app+1]
+				current_counters[photo3] = [counter3_win, counter3_loss, counter3_app+1]
+				current_counters[photo4] = [counter4_win, counter4_loss, counter4_app+1]
+
+			allCounts[question] = current_counters
 
 			allPhotos.add(photo1)
 			allPhotos.add(photo2)
@@ -351,6 +359,25 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 			answer = userAnswer[6].strip(' \t\n\r"')
 			photo1 = userAnswer[7].strip(' \t\n\r"')
 			photo2 = userAnswer[8].strip(' \t\n\r"')
+
+			#MaxDiff counters
+			current_counters = allCounts[question]
+			if current_counters.has_key(photo1):
+				counter1_win = current_counters[photo1][0]
+				counter1_loss = current_counters[photo1][1]
+				counter1_app = current_counters[photo1][2]
+			else:
+				counter1_win = 0
+				counter1_loss = 0
+				counter1_app = 0
+			if current_counters.has_key(photo2):
+				counter2_win = current_counters[photo2][0]
+				counter2_loss = current_counters[photo2][1]
+				counter2_app = current_counters[photo2][2]
+			else:
+				counter2_win = 0
+				counter2_loss = 0
+				counter2_app = 0
 		
 			#Creating votes dictionary
 			if not votes[question].has_key(photo1):
@@ -360,6 +387,18 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 
 			#Saving votes from task-run
 			votes[question][photo1][photo2].add(answer)
+			
+			#Computing maxdiff counters
+			if answer == left:
+				current_counters[photo1] = [counter1_win+1, counter1_loss, counter1_app+1]
+				current_counters[photo2] = [counter2_win, counter2_loss+1, counter2_app+1]
+			elif answer == right:
+				current_counters[photo1] = [counter1_win, counter1_loss+1, counter1_app+1]
+				current_counters[photo2] = [counter2_win+1, counter2_loss, counter2_app+1]
+			else:
+				current_counters[photo1] = [counter1_win, counter1_loss, counter1_app+1]
+				current_counters[photo2] = [counter2_win, counter2_loss, counter2_app+1]
+			allCounts[question] = current_counters
 
 			allPhotos.add(photo1)
 			allPhotos.add(photo2)

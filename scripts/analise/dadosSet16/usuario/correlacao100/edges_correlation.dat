@@ -1,0 +1,212 @@
+[1] "agrad%C3%A1vel? Geral ehdVert"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = -0.99147, p-value = 0.3215
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+        tau 
+-0.06549533 
+
+[1] "agrad%C3%A1vel? Geral ehdHor"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = 0.62155, p-value = 0.5342
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+0.04106816 
+
+[1] "agrad%C3%A1vel? Geral ehd45"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = -0.17043, p-value = 0.8647
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+        tau 
+-0.01123368 
+
+[1] "agrad%C3%A1vel? Geral ehd135"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = -2.304, p-value = 0.02122
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+-0.1515415 
+
+[1] "agrad%C3%A1vel? Geral ehdNon"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = 1.6726, p-value = 0.0944
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.1101372 
+
+[1] "seguro? Geral ehdVert"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = 0.61901, p-value = 0.5359
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+0.04089127 
+
+[1] "seguro? Geral ehdHor"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = 1.7807, p-value = 0.07495
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+      tau 
+0.1176594 
+
+[1] "seguro? Geral ehd45"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = -0.39067, p-value = 0.696
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+        tau 
+-0.02575106 
+
+[1] "seguro? Geral ehd135"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = -2.5818, p-value = 0.009829
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+-0.1698161 
+
+[1] "seguro? Geral ehdNon"
+
+	Kendall's rank correlation tau
+
+data:  dadosAtuais[[colunaQScore]] and dadosAtuais[[colunaCor]]
+z = 0.89661, p-value = 0.3699
+alternative hypothesis: true tau is not equal to 0
+sample estimates:
+       tau 
+0.05903904 
+
+
+> regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
+> summary(regAgrad)
+
+Call:
+lm(formula = V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, 
+    data = filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.31016 -0.35039  0.04694  0.40285  1.28025 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.8238353  0.5873297   8.213 6.65e-13 ***
+ehdVert     -0.0095710  0.0071562  -1.337 0.184024    
+ehdHor       0.0002058  0.0075129   0.027 0.978204    
+ehd45       -0.0076282  0.0069899  -1.091 0.277678    
+ehd135      -0.0196232  0.0065179  -3.011 0.003279 ** 
+ehdNon       0.0259569  0.0075763   3.426 0.000881 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5346 on 103 degrees of freedom
+Multiple R-squared:  0.1643,	Adjusted R-squared:  0.1237 
+F-statistic: 4.049 on 5 and 103 DF,  p-value: 0.002141
+
+> regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#One value for diagonals
+> summary(regAgrad)
+
+Call:
+lm(formula = V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data = filter(allUsersData, 
+    V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.34310 -0.34580  0.05086  0.41078  1.24531 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.708316   0.579792   8.121    1e-12 ***
+ehdVert     -0.009833   0.007164  -1.373 0.172855    
+ehdHor       0.001887   0.007384   0.256 0.798820    
+ehdDiag     -0.013983   0.004350  -3.215 0.001739 ** 
+ehdNon       0.027146   0.007519   3.610 0.000472 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5355 on 104 degrees of freedom
+Multiple R-squared:  0.1534,	Adjusted R-squared:  0.1208 
+F-statistic: 4.709 on 4 and 104 DF,  p-value: 0.001561
+
+> regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
+> summary(regSeg)
+
+Call:
+lm(formula = V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, 
+    data = filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0742 -0.3298  0.0811  0.3024  0.8974 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.112405   0.535084   7.686  9.3e-12 ***
+ehdVert      0.010380   0.006520   1.592  0.11442    
+ehdHor       0.015627   0.006845   2.283  0.02447 *  
+ehd45       -0.010665   0.006368  -1.675  0.09703 .  
+ehd135      -0.017778   0.005938  -2.994  0.00345 ** 
+ehdNon       0.017407   0.006902   2.522  0.01320 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4871 on 103 degrees of freedom
+Multiple R-squared:  0.1489,	Adjusted R-squared:  0.1076 
+F-statistic: 3.604 on 5 and 103 DF,  p-value: 0.004805
+
+> regSeg <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
+> summary(regSeg)
+
+Call:
+lm(formula = V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data = filter(allUsersData, 
+    V1.x == "seguro?"), na.action = na.exclude)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.12109 -0.29630  0.04563  0.30936  0.89674 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  4.043903   0.526250   7.684 8.93e-12 ***
+ehdVert      0.010225   0.006503   1.572 0.118917    
+ehdHor       0.016624   0.006702   2.480 0.014727 *  
+ehdDiag     -0.014433   0.003948  -3.656 0.000404 ***
+ehdNon       0.018112   0.006825   2.654 0.009205 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4861 on 104 degrees of freedom
+Multiple R-squared:  0.1442,	Adjusted R-squared:  0.1113 
+F-statistic: 4.381 on 4 and 104 DF,  p-value: 0.002588

@@ -1,6 +1,8 @@
 ---
 title: "RoyalSociety"
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 
@@ -36,6 +38,7 @@ merge_agrad <- merge(select(dataMaio15, V1, V2, rank), select(dataJulho15, V1, V
 cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall")
 normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
 ```
+
 
 #Reading data
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
@@ -515,6 +518,7 @@ groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_co
 groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
 
 #Combining QScores with each feature separetely
+colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 temp <- merge(groupedData1, novosDados, by.x="image_url", by.y="image_url")
 temp2 <- merge(novosDados, groupedData2, by.x="image_url", by.y="image_url")
 temp3 <- merge(novosDados, groupedData3, by.x="image_url", by.y="image_url")
@@ -528,7 +532,6 @@ temp10 <- merge(novosDados, groupedData10, by.x="image_url", by.y="image_url")
 temp11 <- merge(novosDados, groupedData11, by.x="image_url", by.y="image_url")
 temp12 <- merge(novosDados, groupedData12, by.x="image_url", by.y="image_url")
 temp13 <- merge(novosDados, groupedData13, by.x="image_url", by.y="image_url")
-colnames(novosDados)[colnames(novosDados) == "V2"] <- "image_url"
 # allData <- Reduce(function(x, y) merge(x, y, all=TRUE), list(novosDados, groupedData1, groupedData2, groupedData3, groupedData3, groupedData4, groupedData5, groupedData6, groupedData7,groupedData8, groupedData9, groupedData10, groupedData11, groupedData12, groupedData13))
 
 #Correlation functions for RGB bins and QScore
@@ -557,26 +560,26 @@ allUsersData <- filter(rgbBinsData, grupo == "Geral")
 allUsersData <- merge(allUsersData, agrad, by.x = "V2", by.y = "image_url")#Merging rgb with urban features
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
    for (edge in c("ehdVert", "ehdHor", "ehd45", "ehd135", "ehdNon")){
-     res <- calcCorrelForBins(allUsersData, "V3", edge, quest, "V1")
+     res <- calcCorrelForBins(allUsersData, "V3", edge, quest, "V1.x")
      print(paste(quest, "Geral", edge))
      print(res)
   }
 }
 
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#Separate diagonals
 summary(regAgrad)
-regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)#One value for diagonals
+regAgrad <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)#One value for diagonals
 summary(regAgrad)
-regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
 summary(regSeg)
-regSeg <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ ehdVert + ehdHor + ehdDiag + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
 #Correlation and regression of rgb bins with Qscores
-sink("rgbBins_correlation.dat")
+sink("correlacao100/rgbBins_correlation.dat")
 for (quest in c("agrad%C3%A1vel?", "seguro?")){
   for (i in seq(104, 167)){
-     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest, "V1")
+     res <- calcCorrelForBins(allUsersData, "V3", paste("V",i,sep=""), quest, "V1.x")
      print(paste(quest, "Geral", paste("V",i,sep="")))
      print(res)
   }
@@ -609,22 +612,22 @@ summary(regLandscape)
 sink()
 
 
-regAgrad <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ red.x + green.x + blue.x, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad)
-regAgrad <- lm(V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1 == "agrad%C3%A1vel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ V108 + V120 + V128 + V140 + V141 + V144 + V149 + V150 + V162 + V167, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 texreg(regAgrad, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "agradavel?"), na.action = na.exclude)
+regAgrad <- lm(V3 ~ V108 + V110 + V114 + V120 + V121 + V128 + V141 + V144 + V149 + V150 + V162 + V167 + ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "agrad%C3%A1vel?"), na.action = na.exclude)
 summary(regAgrad)
 
-regSeg <- lm(V3 ~ red + green + blue, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ red.x + green.x + blue.x, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 texreg(list(regAgrad, regSeg), stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167, data=filter(allUsersData, V1.x== "seguro?"), na.action = na.exclude)
 summary(regSeg)
 texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
-regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1 == "seguro?"), na.action = na.exclude)
+regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
 dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
@@ -3332,7 +3335,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(agrad.l$V3.C
 agrad.l <- agrad %>% do(arrange(., V3.Masculino)) %>% 
     mutate(rank = 1:n()) %>% do(arrange(., V3.Feminino)) %>% mutate(index = 1:n())
 agrad.l$diff <- agrad.l$rank - agrad.l$index
-head(select(arrange(agrad.l, desc(abs(diff))), rank, index, diff, image_url, V3.Masculino, V3.Feminino), n=20)
+head(arrange(select(agrad.l, rank, index, diff, image_url, V3.Masculino, V3.Feminino), desc(abs(diff))), n=20)
 
 agrad.l <- calcDanieleCoeff(agrad.l)
 agrad.l2 <- simulateCoefShuffle(agrad.l, iterations)

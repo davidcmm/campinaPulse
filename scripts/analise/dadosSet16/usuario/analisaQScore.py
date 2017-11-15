@@ -221,6 +221,7 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 	""" Considering all votes for each pair of photos and performing a simulation (bootstrap based)"""
 	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
 	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	allCounts = {possibleQuestions[0]:{}, possibleQuestions[1]:{}} #Computing best-worst scores for maxDiff
 	
 	#Reading from pybossa task-run CSV
 	for line in lines:
@@ -273,6 +274,47 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 				votes[question][photo3] = {}
 			if not votes[question][photo3].has_key(photo4):
 				votes[question][photo3][photo4] = set([])
+
+			#MaxDiff counters
+			current_counters = allCounts[question]
+			if current_counters.has_key(photo1):
+				counter1_win = current_counters[photo1][0]
+				counter1_loss = current_counters[photo1][1]
+				counter1_app = current_counters[photo1][2]
+			else:
+				counter1_win = 0
+				counter1_loss = 0
+				counter1_app = 0
+			if current_counters.has_key(photo2):
+				counter2_win = current_counters[photo2][0]
+				counter2_loss = current_counters[photo2][1]
+				counter2_app = current_counters[photo2][2]
+			else:
+				counter2_win = 0
+				counter2_loss = 0
+				counter2_app = 0
+			if current_counters.has_key(photo3):
+				counter3_win = current_counters[photo3][0]
+				counter3_loss = current_counters[photo3][1]
+				counter3_app = current_counters[photo3][2]
+			else:
+				counter3_win = 0
+				counter3_loss = 0
+				counter3_app = 0
+			if current_counters.has_key(photo4):
+				counter4_win = current_counters[photo4][0]
+				counter4_win = current_counters[photo4][1]
+				counter4_app = current_counters[photo4][2]
+			else:
+				counter4_win = 0
+				counter4_loss = 0
+				counter4_app = 0
+
+			current_counters[photo1] = [counter1_win+1, counter1_loss, counter1_app+1]
+			current_counters[photo2] = [counter2_win, counter2_loss+1, counter2_app+1]
+			current_counters[photo3] = [counter3_win, counter3_loss, counter3_app+1]
+			current_counters[photo4] = [counter4_win, counter4_loss, counter4_app+1]
+			allCounts[question] = current_counters
 
 			#Saving votes from task-run
 			if photo1 != completeTie:
@@ -358,6 +400,17 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 		for photo, qscoreList in qDic.iteritems():
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
 	output.close()
+
+	#Computing best-worst scores for maxDiff
+	output = open(outputFileName+"-maxdiff", 'w')
+	for question, qDic in allCounts.iteritems():
+		for photo, photo_counters in qDic.iteritems():
+			win_counter = photo_counters[0]
+			loss_counter = photo_counters[1]
+			app_counter = photo_counters[2]
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r')+ "\t" + str((win_counter - loss_counter)*1.0/app_counter) +'\n')
+	output.close()
+
 
 def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName, amountOfSamples):
 	""" Considering all predicted (classifiers) votes from wodraw and 3 classes files for each pair of photos and performing a simulation (bootstrap based)"""

@@ -630,10 +630,10 @@ texreg(regSeg, stars = c(0.1, 0.05, 0.01, 0.001), digits = 6)
 regSeg <- lm(V3 ~ V105 + V109 + V110 + V114 + V115 + V121 + V128 + V136 + V137 + V140 + V141 + V142 + V144 + V146 + V157 + V161 + V162 + V167+ ehdVert + ehdHor + ehd45 + ehd135 + ehdNon, data=filter(allUsersData, V1.x == "seguro?"), na.action = na.exclude)
 summary(regSeg)
 
-dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?"), red, green, blue))#All city
+dataToPlot <- melt(select(filter(allUsersData, V1.x == "agrad%C3%A1vel?"), red.x, green.x, blue.x))#All city
 ggplot(dataToPlot, aes(x=value, fill=variable)) + geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + theme_bw() + ylab("Absolute Frequency") + theme(axis.text=element_text(size=20), axis.title=element_text(size=20), legend.text = element_text(size=18), legend.title = element_text(size=20)) + labs(fill="") 
 
-dataToPlot <- melt(select(filter(allUsersData, V1 == "agradavel?" & bairro == "centro"), red, green, blue))#Centro
+dataToPlot <- melt(select(filter(allUsersData, V1.x == "agrad%C3%A1vel?" & bairro == "centro"), red, green, blue))#Centro
 ggplot(dataToPlot, aes(x=value, fill=variable)) +
      geom_histogram(alpha=.5, position="identity") + xlab("RGB values") + ylab("Absolute Frequency") + ylim(0,6)+ xlim(90,150)
 
@@ -5063,7 +5063,7 @@ plot(regsubsetsSeg.out, scale = "adjr2", main = "Adjusted R^2")
 
 regGroup1 <- lm(rank ~ scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti - 1, na.action = na.exclude, data = agradGeral)#Features with agreement over 40%
 regGroup1 <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = agradGeral)#Not normalized values
-regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti + 0, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
+regGroup2 <- lm(rank ~  scale(street_wid) + scale(mov_cars) + scale(park_cars) + scale(mov_ciclyst) + scale(landscape) + scale(build_ident) + scale(diff_build) + scale(trees) + scale(build_height) + scale(people) + centro + catole + liberdade + graffiti - 1, na.action = na.exclude, data = segGeral)#Features with agreement over 40%
 regGroup2 <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = segGeral)#Not normalized values
 
 texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
@@ -5165,9 +5165,9 @@ novosDados <- rename(novosDados, c("V3.agrad%C3%A1vel?"="Pleasant", "V3.seguro?"
 w = 6
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
-lb1 <- paste("R^2 == ", 0.55)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                        
-dev.off()
+lb1 <- paste("R^2 == ", 0.54)
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                      
+dev.off(which = 2)
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")

@@ -75,7 +75,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 164 pessoas (69 pessoas que não são de Campina e 60 que são daqui).
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 183 pessoas (76 pessoas que não são de Campina e 72 que são daqui).
 
 ```{r}
 #Checking sample size
@@ -149,7 +149,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 60 moradores e 59 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 72 moradores e 76 não moradores.
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -349,13 +349,14 @@ plot_street_means <- function(data){
   cristina_scores = filter(data, street == "R._Cristina_Procópio_Silva")$qscore
   cristina_sd = sd(maciel_scores)
   
-  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores), floriano_sd * 1.96 / length(floriano_scores), cristina_sd * 1.96 / length(cristina_scores)))
+  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores), floriano_sd * 1.96 / length(floriano_scores), cristina_sd * 1.96 / length(cristina_scores)))
   
-  ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
+  p <- ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
       geom_bar(position=position_dodge(), stat="identity") +
       geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
                     width=.2,                    # Width of the error bars
                     position=position_dodge(.9))
+  p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
 }
 
 
@@ -380,7 +381,7 @@ with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , v
 
 value <- qscoresDFCampina$qscore
 
-with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel"), ylim = c(3, 7) ))#,  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"]
+with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2, 7) ))#,  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"]
 
 value <- qscoresDFNotCampina$qscore
 

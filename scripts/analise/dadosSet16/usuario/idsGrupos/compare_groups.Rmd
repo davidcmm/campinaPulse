@@ -766,7 +766,7 @@ combineFeaturesAndTestRegression <- function(dataset){
 }
 
 #Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
-for (folder in c("hom60_mul40/")){
+for (folder in c("hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/") ){
 
   if(grepl("jovem", folder)){
         g1 <- "Jovem"
@@ -867,7 +867,7 @@ all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars
 }
 
 #, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
-for (folder in c( "hom60_mul40/" )){
+for (folder in c( "hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/" )){
     data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
     index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing",  data)
     sink(paste(folder, "taug_agrad.dat", sep=""))
@@ -881,7 +881,8 @@ for (folder in c( "hom60_mul40/" )){
 }
 
 #, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
-for (folder in c(  "hom60_mul40/" )){
+sink("correlations.dat")
+for (folder in c(  "hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/" )){
     #Evaluating sample sizes
     for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
         ag_cor <- read.table(file, sep="")
@@ -889,9 +890,7 @@ for (folder in c(  "hom60_mul40/" )){
         
         if(grepl("hom95_mul95", folder)){
           values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][10]))
-        }else if(grepl("hom40_mul60", folder) || grepl("hom15_mul60", folder)){
-          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][12]))       
-        }else{
+        }else {
           values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][11]))
         }
         new_values <- unlist(lapply(values, '[[', 1))
@@ -903,6 +902,7 @@ for (folder in c(  "hom60_mul40/" )){
         print(sample_size(ag_cor$value))
       }
 }
+sink()
 ```
 
 ## Evaluating pairwise comparisons and logit models
@@ -1146,8 +1146,11 @@ for (file in c("../all100/all_ordenado.dat-maxdiff")){
   #Pleasantness
   merged_g1 <- merge(ag_orig, agrad_maxdiff, by.x="V2", by.y="V2")
   merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  
   print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
   res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Agrad: Q-Score x Maxdiff", res$estimate))
   
@@ -1157,8 +1160,11 @@ for (file in c("../all100/all_ordenado.dat-maxdiff")){
   #Safety
   merged_g2 <- merge(seg_orig, seg_maxdiff, by.x="V2", by.y="V2")
   merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
-  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g2$rank, merged_g2$index)))
+
+    print(paste(">>>>>>> Kendall distance Seg: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g2$rank, merged_g2$index)))
   res <- cor.test(merged_g2$rank, merged_g2$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+  res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Seg: Q-Score x Maxdiff", res$estimate))
   

@@ -1130,6 +1130,127 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
 }    
 ```
 
+## Comparing original Como e Campina with all users rankings x maxdiff rankings
+```{r read}
+for (file in c("../all100/all_ordenado.dat-maxdiff")){
+  print(paste(">>>>> Folder ", file))
+  
+  maxDiffData <- read.table(file)
+  agrad_maxdiff <- arrange(filter(maxDiffData, V1 != "seguro?"), -V3)
+  seg_maxdiff <- arrange(filter(maxDiffData, V1 == "seguro?"), -V3)
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  seg_orig <- filter(all_original, V1 == "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_maxdiff, by.x="V2", by.y="V2")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Maxdiff", res$estimate))
+  
+  sum_agrad <- combineFeaturesAndTestRegression(select(agrad_maxdiff, V1, V2, V3))
+  print(sum_agrad)
+  
+  #Safety
+  merged_g2 <- merge(seg_orig, seg_maxdiff, by.x="V2", by.y="V2")
+  merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g2$rank, merged_g2$index)))
+  res <- cor.test(merged_g2$rank, merged_g2$index, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Seg: Q-Score x Maxdiff", res$estimate))
+  
+  sum_seg <- combineFeaturesAndTestRegression(select(seg_maxdiff, V1, V2, V3))
+  print(sum_seg)
+}  
+
+#Rank-Ordered Logit Model with Ties - Assuming that images not selected are equal
+library(BiasedUrn)
+library(foreign)
+library(mlogit)
+
+setup.flat.data = function(x, number.alternatives){
+   n = nrow(x)
+   number.sets = ncol(x) / number.alternatives
+   data = vector("list",n)
+   for (i in 1:n)
+   {
+       temp.respondent.data = matrix(x[i,],byrow=TRUE,ncol = number.alternatives)
+       respondent.data = vector("list",number.sets)
+       for (s in 1:number.sets)
+          respondent.data[[s]] = as.numeric(temp.respondent.data[s,])
+       data[[i]] = respondent.data
+		}
+compress.data(data)}
+
+compress.data = function(x){#Creates a vector for each set where the first entry was best and the last worst
+  compress = function(x){
+     x.valid = !is.na(x)
+     x.position = (1:length(x))[x.valid]
+     x.position[order(x[x.valid], decreasing = TRUE)]
+  }
+  n = length(x)
+  number.sets = length(x[[1]])
+  number.alternatives = length(x[[1]][[1]])
+  data = vector("list",n)
+  for (i in 1:n)
+   {
+       respondent.data = vector("list",number.sets)
+       for (s in 1:number.sets)
+          respondent.data[[s]] = compress(x[[i]][[s]])
+       data[[i]] = respondent.data
+		}
+class(data) = "maxdiffData"
+data}
+
+d.marley = function(b,x){
+  b.vector = b[x]
+  k = length(b.vector)
+  ediffs = exp(matrix(b.vector,k,k,byrow=FALSE) - matrix(b.vector,k,k,byrow=TRUE))
+ediffs[1,k] / (sum(ediffs) - sum(diag(ediffs)))}
+
+d.rlogit = function(b,x){
+  eb = exp(b[x])
+  k = length(eb)
+  d.best = eb[1]/sum(eb)
+  d.not.worst = dMWNCHypergeo(c(rep(1,k-2),0), rep(1,k-1),k-2,eb[-1], precision = 1E-7)
+d.best * d.not.worst}
+
+d.repeated.maxdiff = function(b,x, method){
+  prod(as.numeric(lapply(x,b = b,switch(method,marley=d.marley, rlogit = d.rlogit))))}
+
+ll.max.diff = function(b,x, maxdiff.method = c("marley","rlogit")[1]){
+   b[b > 100] = 100
+   b[b < -100] = -100
+   sum(log(as.numeric(lapply(x,b = c(0,b),method=maxdiff.method, d.repeated.maxdiff))))
+}
+
+max.diff.rank.ordered.logit.with.ties = function(stacked.data){
+  flat.data = setup.flat.data(stacked.data, ncol(stacked.data))
+  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data, method =  "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
+  pars = c(0, solution$par)
+  names(pars) = dimnames(stacked.data)[[2]]
+  list(log.likelihood = solution$value, coef = pars)}
+
+itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input_woties.dat")
+old_names <- colnames(itMaxDiffData2)
+for (i in seq(1, length(old_names))){
+  colnames(itMaxDiffData2)[i] <- paste("foto", i, sep="")
+}
+
+rankModel = max.diff.rank.ordered.logit.with.ties(itMaxDiffData)
+ranks = nAlternatives + 1 - rank(rankModel$coef)
+cbind(Parameters = rankModel$coef, Ranks = ranks)
+
+#Solution 2
+library(mlogit)
+nAltsPerSet = 4
+mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:nAltsPerSet), shape = "long")
+
+```
+
 ## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
 ```{r read}
 for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat")){
@@ -1145,8 +1266,9 @@ for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwi
   
   #Pleasantness
   merged_g1 <- merge(ag_orig, agrad_gavel, by.x="V2", by.y="V2")
-  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
-  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Agrad: Q-Score x Gavel", res$estimate))
   
@@ -1171,8 +1293,9 @@ for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwi
   
   #Safety
   merged_g2 <- merge(seg_orig, seg_gavel, by.x="V2", by.y="V2")
-  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
-  res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+  merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g2$rank, merged_g2$index)))
+  res <- cor.test(merged_g2$rank, merged_g2$index, method="kendall")
   print(res)
   print(paste(">>>>>>>> Correlation Seg: Q-Score x Gavel", res$estimate))
   

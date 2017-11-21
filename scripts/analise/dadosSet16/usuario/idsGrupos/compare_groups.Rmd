@@ -1235,22 +1235,78 @@ ll.max.diff = function(b,x, maxdiff.method = c("marley","rlogit")[1]){
 
 max.diff.rank.ordered.logit.with.ties = function(stacked.data){
   flat.data = setup.flat.data(stacked.data, ncol(stacked.data))
+  print(ncol(stacked.data))
   solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data, method =  "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
   pars = c(0, solution$par)
   names(pars) = dimnames(stacked.data)[[2]]
   list(log.likelihood = solution$value, coef = pars)}
 
-itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input_woties.dat")
+itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input.dat")
 old_names <- colnames(itMaxDiffData2)
 for (i in seq(1, length(old_names))){
   colnames(itMaxDiffData2)[i] <- paste("foto", i, sep="")
 }
 
-rankModel = max.diff.rank.ordered.logit.with.ties(itMaxDiffData)
+#Example
+#itData = read.spss("http://surveyanalysis.org/images/0/06/ItMaxDiff.sav", use.value.labels = FALSE, to.data.frame = TRUE)
+# Selecting the variables containing the max-diff data
+#z = itData[,-1:-5]
+# stacking the data (one set per row)
+#alternativeNames = c("Apple","Microsoft","IBM","Google","Intel","HewlettPackard","Sony","Dell","Yahoo","Nokia")
+#nAlternatives = length(alternativeNames)
+#nBlocks = ncol(z) / nAlternatives
+#nAltsPerSet = 5
+#n = nrow(z)
+#nObservations = n * nBlocks 
+#itMaxDiffData = matrix(as.numeric(t(z)),ncol = nAlternatives,byrow = TRUE, dimnames = list(1:nObservations, alternativeNames))
+
+
+rankModel = max.diff.rank.ordered.logit.with.ties(itMaxDiffData2)
 ranks = nAlternatives + 1 - rank(rankModel$coef)
 cbind(Parameters = rankModel$coef, Ranks = ranks)
 
 #Solution 2
+nRows = sum(!is.na(itMaxDiffData)) * 2
+longData = matrix(0, nRows,nAlternatives + 3)
+counter = 0
+setCounter = 0
+for (rr in 1:nObservations){
+  nAlts = 0
+  alternatives = NULL
+  respondent = floor(rr/nBlocks) + 1
+  for (cc in 1:nAlternatives){
+    v = itMaxDiffData[rr,cc]
+    if (!is.na(v)){
+        nAlts = nAlts + 1
+        alternatives[nAlts] = cc
+        if (v == 1)
+           best = cc
+        if (v == -1)
+           worst = cc
+    }
+  }
+  setCounter = setCounter + 1
+  for (a in 1:nAlts){
+	counter = counter + 1
+        this_a = alternatives[a]
+        if (this_a == best)
+	   longData[counter,3] = 1
+        else if (this_a == worst)
+	   longData[counter + nAlts,3] = 1
+	longData[counter, 1] = respondent 
+	longData[counter + nAlts,1] = respondent 
+	longData[counter, 2] = setCounter 
+	longData[counter + nAlts, 2] = setCounter + 1
+	longData[counter,3 + this_a] = 1
+	longData[counter + nAlts,3 + this_a] = -1
+  }
+  setCounter = setCounter + 1
+  counter = counter + nAlts
+}
+longData[1:20,]
+longData = as.data.frame(longData)
+names(longData) = c("ID","Set","Choice",alternativeNames)
+
 library(mlogit)
 nAltsPerSet = 4
 mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:nAltsPerSet), shape = "long")

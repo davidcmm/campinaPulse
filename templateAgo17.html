@@ -232,6 +232,10 @@
 		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
 		<li class="fa fa-2x fa-check pull-left"></li> <strong id="i18n_welldone_text"> Your answer has been saved!</strong>
 	</div>
+	<div id="stop_option" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
+		<li class="fa fa-2x fa-check pull-left"></li> <strong id="i18n_stop_text"> Your profile form has been saved! You're not requested to answer all comparisons, feel comfortable to stop when you want</strong>
+	</div>
 	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
 		<span id="i18n_loading_next_task">Loading next task...</span>
 	</div>
@@ -303,7 +307,7 @@
 		      <div class="modal-body">
 		      	<p align="justify"> <span id="i18n_place">For</span> <span class="up" id="i18n_most_pleasant2">the most pleasant</span>, <span id="i18n_mark_image">you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element</span>!</p>
 		      	<div class="text-center">
-		      		<button class="btn btn-default" ng-click="tab = 4"><span id="i18n_next2">Next</span></button>
+		      		<button class="btn btn-default" ng-click="tab = 4"><span id="i18n_next3">Next</span></button>
 		      	</div>
 		      </div>
 	      </div>
@@ -671,6 +675,7 @@ var userLocale = "pt_br";
 // Translations
 var messages = {"en": {
                         "i18n_welldone_text": "Your answer has been saved!",
+                        "i18n_stop_text": "Your profile form has been saved! You're not requested to answer all comparisons, feel comfortable to stop when you want",
                         "i18n_loading_next_task": "Loading next task...",
                         "i18n_action_missed": "Circle at least one element in the picture that helps explaining why you choose it!",
                         "i18n_error": "Ops! Something wrong.",
@@ -687,6 +692,7 @@ var messages = {"en": {
 			"i18n_tutorial2" : "Depending on the amount of answers already given by other contributors a lot of comparisons may be available for being answered, but you're not requested to answer them all! The amount of comparisons that you feel comfortable to answer is a great help to us",
                         "i18n_confirm": "confirming then",
                         "i18n_next2": "Next",
+			"i18n_next3": "Next", 
 			"i18n_place": "For the",
 			"i18n_mark_image": "you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element",
 			"i18n_same": "Do the same for the",
@@ -750,6 +756,7 @@ var messages = {"en": {
                       },
         "pt_br": {
                         "i18n_welldone_text": "Sua resposta foi salva!",
+                        "i18n_stop_text": "Seu questionário foi salvo! Lembre-se que você não é obrigado a responder todas as comparações, você pode parar assim que desejar",
                         "i18n_loading_next_task": "Carregando próxima tarefa...",
                         "i18n_action_missed": "Circule ao menos um elemento na imagem que ajude a explicar o porquê você a escolheu!",
                         "i18n_error": "Ops! Algo errado.",
@@ -766,6 +773,7 @@ var messages = {"en": {
 			"i18n_tutorial2" : "Dependendo da quantidade de respostas já fornecidas pelos outros contribuidores uma grande quantidade de comparações podem estar disponíveis para serem respondidas. Você não é obrigado a responder todas! A quantidade de respostas que você se sentir confortável de nos fornecer é uma grande ajuda para nós",
                         "i18n_confirm": "confirmando em seguida",
                         "i18n_next2": "Próximo",
+			"i18n_next3": "Próximo",
 			"i18n_place": "Para o local",
 			"i18n_mark_image": "você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para circular cada elemento",
 			"i18n_same": "Faça o mesmo para o local",
@@ -1238,10 +1246,12 @@ function i18n_translate() {
 							}
 
 							//Checking if user profile should be persisted
+							var show_stop_option = false;
 							if ($scope.shouldSaveProfile === true) {
 								$scope.userProfile.city = document.getElementById("usercity").value;
 								$scope.answer.userProfile = $scope.userProfile;
 								$scope.shouldSaveProfile = false;
+								show_stop_option = true;
 							}
 
 							//Retrieving and formatting marked points on best and worst image for output
@@ -1318,7 +1328,11 @@ function i18n_translate() {
 							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
 								// console.log('Saved!');
 								$("#skeleton").fadeOut(0);
-								$("#success").fadeIn();
+								if (show_stop_option){
+									$("#stop_option").fadeIn();
+								}else{
+									$("#success").fadeIn();
+								}
 								// After save, calls a new task again
 								newTask();
 								$("#skeleton").fadeIn(1000);

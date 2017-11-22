@@ -257,6 +257,397 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 		output.write(possibleQuestions[1]+ "\t" + item_name+ "\t" + str(item.mu) + "\t" + str(item.sigma_sq)+'\n')
 	output.close()
 
+def extract_all_items(tasks_def):
+	items_map = {}
+	for definition in tasks_def:
+		photo1_name = taskDef['url_a'].strip(' \t\n\r"')
+		photo2_name = taskDef['url_b'].strip(' \t\n\r"')
+		photo3_name = taskDef['url_c'].strip(' \t\n\r"')
+		photo4_name = taskDef['url_d'].strip(' \t\n\r"')
+		
+		if photo1_name in items_map.keys():
+			photo1 = items_map[photo1_name]
+		else:
+			photo1 = Item(photo1_name, "campina grande", photo1_name)				
+			items_map[photo1_name] = photo1
+		if photo2_name in items_map.keys():
+			photo2 = items_map[photo2_name]
+		else:
+			photo2 = Item(photo2_name, "campina grande", photo2_name)				
+			items_map[photo2_name] = photo2
+		if photo3_name in items_map.keys():
+			photo3 = items_map[photo3_name]
+		else:
+			photo3 = Item(photo3_name, "campina grande", photo3_name)				
+			items_map[photo3_name] = photo3
+		if photo4_name in items_map.keys():
+			photo4 = items_map[photo4_name]
+		else:
+			photo4 = Item(photo4_name, "campina grande", photo4_name)				
+			items_map[photo4_name] = photo4
+	return items_map
+
+def preferred_items(annotator):
+    '''
+    Return a list of preferred items for the given annotator to look at next.
+
+    This method uses a variety of strategies to try to select good candidate
+    projects.
+    '''
+    items = []
+    ignored_ids = {i.id for i in annotator.ignore}
+
+    if ignored_ids:
+        available_items = Item.query.filter(
+            (Item.active == True) & (~Item.id.in_(ignored_ids))
+        ).all()
+    else:
+        available_items = Item.query.filter(Item.active == True).all()
+
+    prioritized_items = [i for i in available_items if i.prioritized]
+
+    items = prioritized_items if prioritized_items else available_items
+
+    annotators = Annotator.query.filter(
+        (Annotator.active == True) & (Annotator.next != None) & (Annotator.updated != None)
+    ).all()
+    busy = {i.next.id for i in annotators if \
+        (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
+    nonbusy = [i for i in items if i.id not in busy]
+    preferred = nonbusy if nonbusy else items
+
+    less_seen = [i for i in preferred if len(i.viewed) < settings.MIN_VIEWS]
+
+    return less_seen if less_seen else preferred
+
+
+def simulateCrowdBT(lines, output_filename, tasks_def):
+	items_map = extract_all_items(tasks_def)
+	
+	#Create items dict
+	items_agrad = items_map.copy()
+	items_seg = items_map.copy()
+
+	#Create annotators dict
+	annotators = {}
+	annotators_exec = {}
+	annotators_already_started = set([])
+
+	#Building a dict, for each annotator, of photos compared and their answers
+	for line in lines:
+		lineData = line.split("+")
+
+		executionID = lineData[0].strip(' \t\n\r"')
+		taskID = lineData[3].strip(' \t\n\r"')
+		annotatorID = lineData[4].strip(' \t\n\r"')
+		userAnswer = lineData[9].strip(' \t\n\r"')
+
+		#Checking and retrieving annotator
+		if annotatorID in annotators.keys():
+			annotator = annotators[annotatorID]
+		else:
+			annotator = Annotator(annotatorID, "testmail@gmail.com", annotatorID)
+			annotators[annotatorID] = annotator
+
+		#It is a new Como e Campina vote, read tasks definition from JSON!
+		if executionID[0].lower() == 'n':
+			data = json.loads(userAnswer)
+			
+			if "agrad" in data['question'].strip(' \t\n\r"'):
+				question = possibleQuestions[0]
+			else:
+				question = possibleQuestions[1]
+
+			photo1_name = data['theMost'].strip(' \t\n\r"')
+			photo2_name = data['theLess'].strip(' \t\n\r"')
+			is_tie = photo1_name
+
+			taskDef = tasksDefinitions[taskID]
+			photos = set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
+			if photo1_name != completeTie:
+				photos.remove(photo1_name)
+				photos.remove(photo2_name)
+			else:
+				photo1_name = photos.pop()
+				photo2_name = photos.pop()
+			
+			photo3_name = photos.pop()
+			photo4_name = photos.pop()
+
+			if annotatorID not in annotators_already_started:#Suppose annotator start with photo1 and photo2
+				#Simulating that these first two photos were recommended
+				annotator.update_next(photo1)
+				annotator.prev = annotator.next
+				annotator.update_next(photo2)
+
+				annotators_already_started.add(annotatorID)
+	
+			if annotators_exec.has_key(annotatorID):
+				annotator_data = annotators_exec[annotatorID]
+			else:
+				annotator_data = {}
+
+			#Saving votes from task-run
+			if is_tie != completeTie:
+				#Vote 1
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo1_name] = photo_votes
+				
+				#Vote 2
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo3_name):
+					votes = photo_votes[photo3_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo3_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+				#Vote 3
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo4_name):
+					votes = photo_votes[photo4_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo4_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+				#Vote 4
+				if annotator_data.has_key(photo3_name):
+					photo_votes = annotator_data[photo3_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo3_name] = photo_votes
+
+				#Vote 5
+				if annotator_data.has_key(photo4_name):
+					photo_votes = annotator_data[photo4_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo4_name] = photo_votes
+
+				#Vote 6
+				if annotator_data.has_key(photo4_name):
+					photo_votes = annotator_data[photo4_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo3_name):
+					votes = photo_votes[photo3_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo3_name] = votes
+				annotator_data[photo4_name] = photo_votes
+
+			else:
+				#Vote 1
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+				#Vote 2
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo3_name):
+					votes = photo_votes[photo3_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo3_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+				#Vote 3
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo4_name):
+					votes = photo_votes[photo4_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo4_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+				#Vote 4
+				if annotator_data.has_key(photo2_name):
+					photo_votes = annotator_data[photo2_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo3_name):
+					votes = photo_votes[photo3_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo3_name] = votes
+				annotator_data[photo2_name] = photo_votes
+
+				#Vote 5
+				if annotator_data.has_key(photo2_name):
+					photo_votes = annotator_data[photo2_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo4_name):
+					votes = photo_votes[photo4_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo4_name] = votes
+				annotator_data[photo2_name] = photo_votes
+
+				#Vote 6
+				if annotator_data.has_key(photo3_name):
+					photo_votes = annotator_data[photo3_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo4_name):
+					votes = photo_votes[photo4_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo3_name] = votes
+				annotator_data[photo4_name] = photo_votes
+
+			annotators_exec[annotatorID] = 	annotator_data
+
+		else:#Old-fashioned way of capturing votes
+			#In user answers that contain profile information, jump to comparison
+			if userAnswer[0] == '{':
+				index = userAnswer.find("Qual")
+				if index == -1:
+					raise Exception("Line with profile does not contain question: " + userAnswer)
+				userAnswer = userAnswer[index:].split(" ")
+			else:
+				userAnswer = userAnswer.split(" ")
+
+			question = userAnswer[5].strip(' \t\n\r"')
+			answer = userAnswer[6].strip(' \t\n\r"')
+			photo1_name = userAnswer[7].strip(' \t\n\r"')
+			photo2_name = userAnswer[8].strip(' \t\n\r"')
+
+			if annotators_exec.has_key(annotatorID):
+				annotator_data = annotators_exec[annotatorID]
+			else:
+				annotator_data = {}
+
+			#Saving votes from task-run
+			if answer == left:
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo1_name] = photo_votes	
+			elif answer == right:
+				if annotator_data.has_key(photo2_name):
+					photo_votes = annotator_data[photo2_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo1_name):
+					votes = photo_votes[photo1_name]
+				else:
+					votes = []
+				votes.append(left)
+				photo_votes[photo1_name] = votes
+				annotator_data[photo2_name] = photo_votes
+			elif answer == notKnown:
+				if annotator_data.has_key(photo1_name):
+					photo_votes = annotator_data[photo1_name]
+				else:
+					photo_votes = {}
+				if photo_votes.has_key(photo2_name):
+					votes = photo_votes[photo2_name]
+				else:
+					votes = []
+				votes.append(completeTie)
+				photo_votes[photo2_name] = votes
+				annotator_data[photo1_name] = photo_votes
+
+			annotators_exec[annotatorID] = 	annotator_data
+
+	#For each annotator simulate execution and recommendation of tasks
+	for annotatorID in annotators.keys():
+		annotator = annotators[annotatorID]
+		photo1 = annotator.prev
+		photo2 = annotator.next
+	
+		exec_data = annotators_exec[annotatorID]
+		winner = None
+		looser = None
+		tie = False
+		if photo1.name in exec_data.keys():
+			photo_data = exec_data[photo1.name]
+			if photo2.name in photo_data.keys():
+				photo_vote = random.choice(photo_data[photo2.name])
+				if photo_vote == left:
+					winner = photo1
+					looser = photo2
+				elif photo_vote == right:
+					winner = photo2
+					looser = photo1
+				else:
+					tie = True
+		elif photo2.name in exec_data.keys():
+			photo_data = exec_data[photo2.name]
+			if photo2.name in photo_data.keys():
+				photo_vote = random.choice(photo_data[photo2.name])
+				if photo_vote == left:
+					winner = photo2
+					looser = photo1
+				elif photo_vote == right:
+					winner = photo1
+					looser = photo2
+				else:
+					tie = True	
+		#Check if comparison occurred - account for comparisons that did not occurred
+		#Compute vote
+		#Select new next photo and iterate until n comparisons for annotator
+		#Output ranking
+
+
 if __name__ == '__main__':
 
 	if len(sys.argv) < 2:
@@ -268,8 +659,10 @@ if __name__ == '__main__':
 
 	lines = dataFile.readlines()
 	linesTasks = tasksFile.readlines()
+	tasks_def = readTasksDefinitions(linesTasks)
 
-	evaluateAllVotes(lines, "allPairwiseComparison.dat", readTasksDefinitions(linesTasks))
+	evaluateAllVotes(lines, "allPairwiseComparison.dat", tasks_def)
+	simulateCrowdBT(lines, "allPairwiseComparison-simulated.dat", tasks_def)
 
 	#Create items
 	#items = {}

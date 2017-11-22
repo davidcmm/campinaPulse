@@ -94,11 +94,11 @@ def buildMaxDiffInput(lines, output_filename, tasks_def):
 				answer_list[index2] = "-1"
 				answer_list[index3] = "0"
 				answer_list[index4] = "0"
-			#else:
-			#	answer_list[index1] = "0"
-			#	answer_list[index2] = "0"
-			#	answer_list[index3] = "0"
-			#	answer_list[index4] = "0"
+			else:
+				answer_list[index1] = "0"
+				answer_list[index2] = "0"
+				answer_list[index3] = "0"
+				answer_list[index4] = "0"
 			#print ">>> Linha atual " + ','.join(answer)
 			output.write(','.join(answer_list)+"\n")
 
@@ -129,9 +129,9 @@ def buildMaxDiffInput(lines, output_filename, tasks_def):
 			elif answer == right:
 				answer_list[index1] = "-1"
 				answer_list[index2] = "1"
-			#elif answer == notKnown:
-			#	answer_list[index1] = "0"
-			#	answer_list[index2] = "0"
+			elif answer == notKnown:
+				answer_list[index1] = "0"
+				answer_list[index2] = "0"
 			#print ">>> Linha atual " + ','.join(answer)
 			output.write(','.join(answer_list)+"\n")	
 
@@ -148,6 +148,6 @@ if __name__ == "__main__":
 	lines = dataFile.readlines()
 	linesTasks = tasksFile.readlines()
 
-	buildMaxDiffInput(lines, "maxdiff_rank_input_woties.dat", readTasksDefinitions(linesTasks))
+	buildMaxDiffInput(lines, "maxdiff_rank_input.dat", readTasksDefinitions(linesTasks))
 
 

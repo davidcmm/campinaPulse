@@ -350,7 +350,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 					annotators_already_started.add(annotatorID)
 	
-				if annotators_exec.has_key(annotatorID):
+				if annotatorID in annotators_exec:
 					annotator_data = annotators_exec[annotatorID]
 				else:
 					annotator_data = {}
@@ -358,11 +358,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 				#Saving votes from task-run
 				if is_tie != completeTie:
 					#Vote 1
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []
@@ -371,11 +371,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 				
 					#Vote 2
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo3_name):
+					if photo3_name in photo_votes:
 						votes = photo_votes[photo3_name]
 					else:
 						votes = []
@@ -384,11 +384,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 					#Vote 3
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo4_name):
+					if photo4_name in photo_votes:
 						votes = photo_votes[photo4_name]
 					else:
 						votes = []
@@ -397,11 +397,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 					#Vote 4
-					if annotator_data.has_key(photo3_name):
+					if photo3_name in annotator_data:
 						photo_votes = annotator_data[photo3_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []
@@ -410,11 +410,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo3_name] = photo_votes
 
 					#Vote 5
-					if annotator_data.has_key(photo4_name):
+					if photo4_name in annotator_data:
 						photo_votes = annotator_data[photo4_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []
@@ -423,11 +423,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo4_name] = photo_votes
 
 					#Vote 6
-					if annotator_data.has_key(photo4_name):
+					if photo4_name in annotator_data:
 						photo_votes = annotator_data[photo4_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo3_name):
+					if photo3_name in photo_votes:
 						votes = photo_votes[photo3_name]
 					else:
 						votes = []
@@ -437,11 +437,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 				else:
 					#Vote 1
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []
@@ -450,11 +450,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 					#Vote 2
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo3_name):
+					if photo3_name in photo_votes:
 						votes = photo_votes[photo3_name]
 					else:
 						votes = []
@@ -463,11 +463,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 					#Vote 3
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo4_name):
+					if photo4_name in photo_votes:
 						votes = photo_votes[photo4_name]
 					else:
 						votes = []
@@ -476,11 +476,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 					#Vote 4
-					if annotator_data.has_key(photo2_name):
+					if photo2_name in annotator_data:
 						photo_votes = annotator_data[photo2_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo3_name):
+					if photo3_name in photo_votes:
 						votes = photo_votes[photo3_name]
 					else:
 						votes = []
@@ -489,11 +489,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo2_name] = photo_votes
 
 					#Vote 5
-					if annotator_data.has_key(photo2_name):
+					if photo2_name in annotator_data:
 						photo_votes = annotator_data[photo2_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo4_name):
+					if photo4_name in photo_votes:
 						votes = photo_votes[photo4_name]
 					else:
 						votes = []
@@ -502,11 +502,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo2_name] = photo_votes
 
 					#Vote 6
-					if annotator_data.has_key(photo3_name):
+					if photo3_name in annotator_data:
 						photo_votes = annotator_data[photo3_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo4_name):
+					if photo4_name in photo_votes:
 						votes = photo_votes[photo4_name]
 					else:
 						votes = []
@@ -547,18 +547,18 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 					annotators_already_started.add(annotatorID)
 
-				if annotators_exec.has_key(annotatorID):
+				if annotatorID in annotators_exec:
 					annotator_data = annotators_exec[annotatorID]
 				else:
 					annotator_data = {}
 
 				#Saving votes from task-run
 				if answer == left:
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []
@@ -566,11 +566,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					photo_votes[photo2_name] = votes
 					annotator_data[photo1_name] = photo_votes	
 				elif answer == right:
-					if annotator_data.has_key(photo2_name):
+					if photo2_name in annotator_data:
 						photo_votes = annotator_data[photo2_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo1_name):
+					if photo1_name in photo_votes:
 						votes = photo_votes[photo1_name]
 					else:
 						votes = []
@@ -578,11 +578,11 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					photo_votes[photo1_name] = votes
 					annotator_data[photo2_name] = photo_votes
 				elif answer == notKnown:
-					if annotator_data.has_key(photo1_name):
+					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
 						photo_votes = {}
-					if photo_votes.has_key(photo2_name):
+					if photo2_name in photo_votes:
 						votes = photo_votes[photo2_name]
 					else:
 						votes = []

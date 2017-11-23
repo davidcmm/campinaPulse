@@ -259,7 +259,8 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 
 def extract_all_items(tasks_def):
 	items_map = {}
-	for definition in tasks_def:
+	for task_id in tasks_def.keys():
+		taskDef = tasks_def[task_id]
 		photo1_name = taskDef['url_a'].strip(' \t\n\r"')
 		photo2_name = taskDef['url_b'].strip(' \t\n\r"')
 		photo3_name = taskDef['url_c'].strip(' \t\n\r"')
@@ -327,7 +328,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 				photo2_name = data['theLess'].strip(' \t\n\r"')
 				is_tie = photo1_name
 
-				taskDef = tasksDefinitions[taskID]
+				taskDef = tasks_def[taskID]
 				photos = set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
 				if photo1_name != completeTie:
 					photos.remove(photo1_name)
@@ -536,6 +537,16 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 				question = possibleQuestions[1]
 
 			if current_question == question:
+				if annotatorID not in annotators_already_started:#Suppose annotator start with photo1 and photo2
+					#Simulating that these first two photos were recommended
+					photo1 = items_map[photo1_name]
+					photo2 = items_map[photo2_name]
+					annotator.update_next(photo1)
+					annotator.prev = annotator.next
+					annotator.update_next(photo2)
+
+					annotators_already_started.add(annotatorID)
+
 				if annotators_exec.has_key(annotatorID):
 					annotator_data = annotators_exec[annotatorID]
 				else:

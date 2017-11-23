@@ -666,7 +666,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 	#Output file
 	output = open(output_filename, 'w')
-	output.write(success_comp+"\t"+failed_comp+"\t"+(success_comp+failed_comp)+"\t"+success_comp/(success_comp+failed_comp)+"\n")
+	output.write(str(success_comp)+"\t"+str(failed_comp)+"\t"+str(success_comp+failed_comp)+"\t"+str(success_comp/(success_comp+failed_comp))+"\n")
 	for item_name, item in items_map.items():
 		output.write(current_question+ "\t" + item_name+ "\t" + str(item.mu) + "\t" + str(item.sigma_sq)+'\n')
 	output.close()
@@ -691,9 +691,9 @@ def preferred_items(annotator, items_map, annotators):
 	ignored_ids = {i.name for i in annotator.ignore}
 
 	if ignored_ids:
-		available_items = {item for item in items_map.values if item.name not in ignored_ids}
+		available_items = {item for item in items_map.values() if item.name not in ignored_ids}
 	else:
-		available_items = {item for item in items_map.values}
+		available_items = {item for item in items_map.values()}
 
 	prioritized_items = [i for i in available_items if i.prioritized]
 

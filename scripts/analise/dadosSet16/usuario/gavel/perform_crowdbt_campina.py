@@ -670,53 +670,53 @@ def count_comparisons(annotator_data):
 	return counter
 
 def preferred_items(annotator, items_map, annotators):
-    '''
-    Return a list of preferred items for the given annotator to look at next.
+	'''
+	Return a list of preferred items for the given annotator to look at next.
 
-    This method uses a variety of strategies to try to select good candidate
-    projects.
-    '''
-    items = []
-    ignored_ids = {i.name for i in annotator.ignore}
+	This method uses a variety of strategies to try to select good candidate
+	projects.
+	'''
+	items = []
+	ignored_ids = {i.name for i in annotator.ignore}
 
-    if ignored_ids:
-	available_items = {item for item in items_map.values if item.name not in ignored_ids}
-    else:
-        available_items = {item for item in items_map.values}
+	if ignored_ids:
+		available_items = {item for item in items_map.values if item.name not in ignored_ids}
+	else:
+		available_items = {item for item in items_map.values}
 
-    prioritized_items = [i for i in available_items if i.prioritized]
+	prioritized_items = [i for i in available_items if i.prioritized]
 
-    items = prioritized_items if prioritized_items else available_items
+	items = prioritized_items if prioritized_items else available_items
 
-    #annotators = Annotator.query.filter(
-    #    (Annotator.active == True) & (Annotator.next != None) & (Annotator.updated != None)
-    #).all()
-    busy = {i.next.id for i in annotators.values() if \
-        (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
-    nonbusy = [i for i in items if i.id not in busy]
-    preferred = nonbusy if nonbusy else items
+	#annotators = Annotator.query.filter(
+	#    (Annotator.active == True) & (Annotator.next != None) & (Annotator.updated != None)
+	#).all()
+	busy = {i.next.id for i in annotators.values() if \
+	(datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
+	nonbusy = [i for i in items if i.id not in busy]
+	preferred = nonbusy if nonbusy else items
 
-    less_seen = [i for i in preferred if len(i.viewed) < settings.MIN_VIEWS]
+	less_seen = [i for i in preferred if len(i.viewed) < settings.MIN_VIEWS]
 
-    return less_seen if less_seen else preferred
+	return less_seen if less_seen else preferred
 
 def choose_image(annotator, items_map):
-    pref_items = preferred_items(annotator, items_map)
+	pref_items = preferred_items(annotator, items_map)
 
-    shuffle(pref_items) # useful for argmax case as well in the case of ties
-    if pref_items:
-        if random() < crowd_bt.EPSILON:
-            return pref_items[0]
-        else:
-            return crowd_bt.argmax(lambda i: crowd_bt.expected_information_gain(
-                annotator.alpha,
-                annotator.beta,
-                annotator.prev.mu,
-                annotator.prev.sigma_sq,
-                i.mu,
-                i.sigma_sq), pref_items)
-    else:
-        return None
+	shuffle(pref_items) # useful for argmax case as well in the case of ties
+	if pref_items:
+		if random() < crowd_bt.EPSILON:
+		    return pref_items[0]
+		else:
+		    return crowd_bt.argmax(lambda i: crowd_bt.expected_information_gain(
+			annotator.alpha,
+			annotator.beta,
+			annotator.prev.mu,
+			annotator.prev.sigma_sq,
+			i.mu,
+			i.sigma_sq), pref_items)
+	else:
+		return None
 
 
 

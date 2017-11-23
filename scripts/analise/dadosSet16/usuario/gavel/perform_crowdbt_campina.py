@@ -628,7 +628,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			#Check if comparison occurred - account for comparisons that did not occurred
 			if winner == None and looser == None and tie == False:
 				failed_comp = failed_comp + 1
-				print ">>> Failed\t"+photo1.name+"\t"+photo2.name			
+				print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
 			else:
 				#Compute vote
 				decision = Decision(annotator, winner=winner, loser=looser)

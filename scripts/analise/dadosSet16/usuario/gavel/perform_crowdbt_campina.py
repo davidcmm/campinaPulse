@@ -700,9 +700,9 @@ def preferred_items(annotator, items_map, annotators):
 	ignored_ids = {i.name for i in annotator.ignore}
 
 	if ignored_ids:
-		available_items = {item for item in items_map.values() if item.name not in ignored_ids}
+		available_items = [item for item in items_map.values() if item.name not in ignored_ids]
 	else:
-		available_items = {item for item in items_map.values()}
+		available_items = [item for item in items_map.values()]
 
 	prioritized_items = [i for i in available_items if i.prioritized]
 
@@ -711,8 +711,8 @@ def preferred_items(annotator, items_map, annotators):
 	#annotators = Annotator.query.filter(
 	#    (Annotator.active == True) & (Annotator.next != None) & (Annotator.updated != None)
 	#).all()
-	for i in annotators.values():
-		print(">>>> "+str(i.name)+"\t"+str(i.next)+"\t"+str(i.prev)+"\t"+str(i.updated))
+	#for i in annotators.values():
+	#	print(">>>> "+str(i.name)+"\t"+str(i.next)+"\t"+str(i.prev)+"\t"+str(i.updated))
 	busy = {i.next.id for i in annotators.values() if (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
 	nonbusy = [i for i in items if i.id not in busy]
 	preferred = nonbusy if nonbusy else items

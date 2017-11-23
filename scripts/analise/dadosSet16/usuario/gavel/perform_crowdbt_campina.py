@@ -258,6 +258,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 	output.close()
 
 def extract_all_items(tasks_def):
+	''' Read all tasks definitions to build Items that represent each image '''
 	items_map = {}
 	for task_id in tasks_def.keys():
 		taskDef = tasks_def[task_id]
@@ -290,6 +291,7 @@ def extract_all_items(tasks_def):
 
 
 def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
+	''' Perform simulation of CrowdBT task recommendation for each user/annotator '''
 	items_map = extract_all_items(tasks_def)
 	
 	#Create annotators dict
@@ -648,7 +650,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			#Check if comparison occurred - account for comparisons that did not occurred
 			if winner == None and looser == None and tie == False:
 				failed_comp = failed_comp + 1
-				#print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
+				print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
 			else:
 				#Compute vote
 				decision = Decision(annotator, winner=winner, loser=looser)
@@ -661,6 +663,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator.ignore.append(annotator.next)
 				success_comp = success_comp + 1
 
+
 			annotator.next.viewed.append(annotator)
 			annotator.prev = annotator.next
 			annotator.ignore.append(annotator.prev)
@@ -672,6 +675,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			else:
 				annotator.update_next(next_image)
 			current_counter = current_counter + 1
+		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes))
 				
 
 	#Output file
@@ -714,8 +718,8 @@ def preferred_items(annotator, items_map, annotators):
 	#).all()
 	#for i in annotators.values():
 	#	print(">>>> "+str(i.name)+"\t"+str(i.next)+"\t"+str(i.prev)+"\t"+str(i.updated))
-	busy = {i.next.id for i in annotators.values() if (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
-	nonbusy = [i for i in items if i.id not in busy]
+	busy = {i.next.name for i in annotators.values() if (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
+	nonbusy = [i for i in items if i.name not in busy]
 	preferred = nonbusy if nonbusy else items
 
 	less_seen = [i for i in preferred if len(i.viewed) < settings.MIN_VIEWS]

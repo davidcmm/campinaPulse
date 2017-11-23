@@ -541,7 +541,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator = annotators[annotatorID]
 				else:
 					annotator = Annotator(annotatorID, "testmail@gmail.com", annotatorID)
-					annotators[annotatorID] = annotato
+					annotators[annotatorID] = annotator
 
 				if annotatorID not in annotators_already_started:#Suppose annotator start with photo1 and photo2
 					#Simulating that these first two photos were recommended

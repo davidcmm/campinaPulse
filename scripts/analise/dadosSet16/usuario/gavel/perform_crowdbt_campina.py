@@ -711,8 +711,8 @@ def preferred_items(annotator, items_map, annotators):
 
 	return less_seen if less_seen else preferred
 
-def choose_image(annotator, items_map):
-	pref_items = preferred_items(annotator, items_map)
+def choose_image(annotator, items_map, annotators):
+	pref_items = preferred_items(annotator, items_map, annotators)
 
 	shuffle(pref_items) # useful for argmax case as well in the case of ties
 	if pref_items:

@@ -592,6 +592,8 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 				annotators_exec[annotatorID] = 	annotator_data
 
+		annotators[annotatorID] = annotator
+
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
 	failed_comp = 0

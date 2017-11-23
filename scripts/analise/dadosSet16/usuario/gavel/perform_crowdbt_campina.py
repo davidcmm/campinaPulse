@@ -658,18 +658,18 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 				else:
 					annotator.ignore.append(annotator.prev)
 					annotator.ignore.append(annotator.next)
-
-				annotator.next.viewed.append(annotator)
-				annotator.prev = annotator.next
-				annotator.ignore.append(annotator.prev)
 				success_comp = success_comp + 1
 
-				#Select new next photo and iterate until n comparisons for annotator
-				next_image = choose_image(annotator, items_map, annotators)
-				if next_image == None or next_image == "":
-					continue_votes = False
-				else:
-					annotator.update_next(next_image)
+			annotator.next.viewed.append(annotator)
+			annotator.prev = annotator.next
+			annotator.ignore.append(annotator.prev)
+
+			#Select new next photo and iterate until n comparisons for annotator
+			next_image = choose_image(annotator, items_map, annotators)
+			if next_image == None or next_image == "":
+				continue_votes = False
+			else:
+				annotator.update_next(next_image)
 				
 
 	#Output file

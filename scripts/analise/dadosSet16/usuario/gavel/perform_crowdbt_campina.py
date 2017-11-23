@@ -514,6 +514,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo4_name] = photo_votes
 
 				annotators_exec[annotatorID] = 	annotator_data
+				annotators[annotatorID] = annotator
 
 		else:#Old-fashioned way of capturing votes
 			#In user answers that contain profile information, jump to comparison
@@ -597,8 +598,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator_data[photo1_name] = photo_votes
 
 				annotators_exec[annotatorID] = 	annotator_data
-
-		annotators[annotatorID] = annotator
+				annotators[annotatorID] = annotator
 
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
@@ -648,7 +648,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			#Check if comparison occurred - account for comparisons that did not occurred
 			if winner == None and looser == None and tie == False:
 				failed_comp = failed_comp + 1
-				print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
+				#print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
 			else:
 				#Compute vote
 				decision = Decision(annotator, winner=winner, loser=looser)

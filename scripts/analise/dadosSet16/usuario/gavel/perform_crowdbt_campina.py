@@ -671,6 +671,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 				continue_votes = False
 			else:
 				annotator.update_next(next_image)
+			current_counter = current_counter + 1
 				
 
 	#Output file

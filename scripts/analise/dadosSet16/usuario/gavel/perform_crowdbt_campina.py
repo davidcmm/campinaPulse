@@ -705,7 +705,7 @@ def preferred_items(annotator, items_map, annotators):
 	#    (Annotator.active == True) & (Annotator.next != None) & (Annotator.updated != None)
 	#).all()
 	for i in annotators.values():
-		print(">>>> "+str(i.id)+"\t"+str(i.next)+"\t"+str(i.prev)+"\t"+str(i.updated))
+		print(">>>> "+str(i.name)+"\t"+str(i.next)+"\t"+str(i.prev)+"\t"+str(i.updated))
 	busy = {i.next.id for i in annotators.values() if (datetime.utcnow() - i.updated).total_seconds() < settings.TIMEOUT * 60}
 	nonbusy = [i for i in items if i.id not in busy]
 	preferred = nonbusy if nonbusy else items

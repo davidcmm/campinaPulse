@@ -603,6 +603,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
 	failed_comp = 0
+	print(">>>> Iniciando sim " + current_question)
 	for annotatorID in annotators.keys():
 
 		#Computing amount of comparisons performed by annotator

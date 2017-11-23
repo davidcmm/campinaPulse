@@ -615,7 +615,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			if photo1.name in exec_data.keys():
 				photo_data = exec_data[photo1.name]
 				if photo2.name in photo_data.keys():
-					photo_vote = random.choice(photo_data[photo2.name])
+					photo_vote = choice(photo_data[photo2.name])
 					if photo_vote == left:
 						winner = photo1
 						looser = photo2
@@ -627,7 +627,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			elif photo2.name in exec_data.keys():
 				photo_data = exec_data[photo2.name]
 				if photo1.name in photo_data.keys():
-					photo_vote = random.choice(photo_data[photo1.name])
+					photo_vote = choice(photo_data[photo1.name])
 					if photo_vote == left:
 						winner = photo2
 						looser = photo1

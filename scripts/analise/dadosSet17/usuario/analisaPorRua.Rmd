@@ -75,7 +75,13 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 236 pessoas (95 pessoas que não são de Campina e 106 que são daqui).
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 251 pessoas (80 pessoas que não são de Campina e 136 que são daqui).
+
+O processo de separação de quem é ou não de Campina se deu:
+
+1. O usuário informando se é morador ou não ou através do IP;
+2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores;
+3. Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.
 
 ```{r}
 #Checking sample size
@@ -149,7 +155,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 106 moradores e 95 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 136 moradores e 80 não moradores.
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")

@@ -306,6 +306,22 @@ def create_page_for_marked_images(best_images, worst_images, best_map, worst_map
 
 if __name__ == "__main__": 
 
+	if len(sys.argv) > 3:
+		print "Uso: <sem nada, para executar para todos os usuários> ou <arquivo com ids de usuario a filtrar> <tag para pasta de destino>"
+		sys.exit(1)
+
+	ids = []
+	tag = ""
+	if len(sys.argv) == 3:
+		ids_file = open(sys.argv[1], "r")
+		ids_data = ids_file.readlines()
+		ids_file.close()
+
+		for id in ids_data:
+			ids.append(id.strip(' \t\n\r"'))
+
+		tag = sys.argv[2]
+
 	#Reading task-run from Contribua
 	apiUrl = 'https://contribua.org/api/'
 	projectId = '583'
@@ -326,51 +342,52 @@ if __name__ == "__main__":
 			best_image = info['theMost']
 			worst_image = info['theLess']	
 			user_id = current_run['user_id']
+		
+			if len(ids) == 0 or (len(ids) > 0 and user_id in ids):
+				if "Manoel" in best_image:
+					print ">>> " + str(user_id) + "\t" + str(best_image.encode("utf8"))
 
-			if "Manoel" in best_image:
-				print ">>> " + str(user_id) + "\t" + str(best_image.encode("utf8"))
+				if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
+					best_points = eval(info['markMost'])
+					worst_points = eval(info['markLess'])
 
-			if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
-				best_points = eval(info['markMost'])
-				worst_points = eval(info['markLess'])
+					best_image = urllib.quote(best_image.encode('utf8'), ':/')
+					worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
 
-				best_image = urllib.quote(best_image.encode('utf8'), ':/')
-				worst_image = urllib.quote(worst_image.encode('utf8'), ':/')
-
-				if best_image in best_map:
-					all_best_points = best_map[best_image]
-				else:
-					all_best_points = []
-				all_best_points.append([task_id, best_points])
-				best_map[best_image] = all_best_points
+					if best_image in best_map:
+						all_best_points = best_map[best_image]
+					else:
+						all_best_points = []
+					all_best_points.append([task_id, best_points])
+					best_map[best_image] = all_best_points
 	
-				if worst_image in worst_map:
-					all_worst_points = worst_map[worst_image]
-				else:
-					all_worst_points = []
-				all_worst_points.append([task_id, worst_points])
-				worst_map[worst_image] = all_worst_points
+					if worst_image in worst_map:
+						all_worst_points = worst_map[worst_image]
+					else:
+						all_worst_points = []
+					all_worst_points.append([task_id, worst_points])
+					worst_map[worst_image] = all_worst_points
 
-				#Persisting per user
-				if user_id in users_map:
-					users_marks = users_map[user_id]
-				else:
-					users_marks = {"best": {}, "worst":{}}
-				if best_image in users_marks['best']:
-					best_marks = users_marks['best'][best_image]
-				else:
-					best_marks = []
-				best_marks.append([task_id, best_points.sort()])
-				users_marks['best'][best_image] = best_marks
-				users_map[user_id] = users_marks
+					#Persisting per user
+					if user_id in users_map:
+						users_marks = users_map[user_id]
+					else:
+						users_marks = {"best": {}, "worst":{}}
+					if best_image in users_marks['best']:
+						best_marks = users_marks['best'][best_image]
+					else:
+						best_marks = []
+					best_marks.append([task_id, best_points.sort()])
+					users_marks['best'][best_image] = best_marks
+					users_map[user_id] = users_marks
 
-				if worst_image in users_marks['worst']:
-					worst_marks = users_marks['worst'][worst_image]
-				else:
-					worst_marks = []
-				worst_marks.extend([task_id, worst_points.sort()])
-				users_marks['worst'][worst_image] = worst_marks
-				users_map[user_id] = users_marks
+					if worst_image in users_marks['worst']:
+						worst_marks = users_marks['worst'][worst_image]
+					else:
+						worst_marks = []
+					worst_marks.extend([task_id, worst_points.sort()])
+					users_marks['worst'][worst_image] = worst_marks
+					users_map[user_id] = users_marks
 			
 	
 		#Requesting next window of data
@@ -380,22 +397,33 @@ if __name__ == "__main__":
 		data = json.loads(response.read())
 
 	#Iterating through images to add marks and save images
+	best_folder = "./melhores"
+	worst_folder = "./piores"
+	if len(tag) > 0:
+		best_folder = best_folder + tag
+		worst_folder = worst_folder + tag
+		mkdir(best_folder)
+		mkdir(worst_folder)		
+
+	best_folder = best_folder + "/"
+	worst_folder = worst_folder + "/"
+
 	for image in best_map.keys():
-		save_image_marks(image, best_map, "melhores/", 'green')
+		save_image_marks(image, best_map, best_folder, 'green')
 
 	#index = 0
 	for image in worst_map.keys():
-		save_image_marks(image, worst_map, "piores/", 'red')
+		save_image_marks(image, worst_map, worst_folder, 'red')
 
 	#Reading all best and worst marked images filenames
 	best_images = []
-	for filename in listdir("./melhores/"):
+	for filename in listdir(best_folder):
 	    if "jpg" in filename:
 		    best_images.append(filename)
 	best_images.sort()
 
 	worst_images = []
-	for filename in listdir("./piores/"):
+	for filename in listdir(worst_folder):
 	    if "jpg" in filename:
 	    	worst_images.append(filename)
 	worst_images.sort()
@@ -427,27 +455,27 @@ if __name__ == "__main__":
 	#users_marks_file.close()
 
 	#Creating page for users marks
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html", "melhores/", "piores/")
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html", best_folder, worst_folder)
 
 	#Compute intersections of users marks
-	evaluate_intersections(best_map, "melhores")
-	evaluate_intersections(worst_map, "piores")
+	evaluate_intersections(best_map, best_dir)
+	evaluate_intersections(worst_map, worst_dir)
 
 	#Retrieving intersects files
 	best_images = []
-	for filename in listdir("./melhores/intersects/"):
+	for filename in listdir(best_dir+"intersects/"):
 	    #if "png" in filename:
 	    best_images.append(filename)
 	best_images.sort()
 
 	worst_images = []
-	for filename in listdir("./piores/intersects/"):
+	for filename in listdir(worst_dir+"intersects/"):
 	    #if "png" in filename:
 	    worst_images.append(filename)
 	worst_images.sort()
 
 	#Create page for intersects
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect.html", "melhores/intersects/", "piores/intersects/")
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect.html", best_folder+"intersects/", worst_folder+"intersects/")
 
 	#x, y =  base.size
 	#bbox =  (x/2 - eX/2, y/2 - eY/2, x/2 + eX/2, y/2 + eY/2)

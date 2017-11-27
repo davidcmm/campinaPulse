@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 from sets import Set
 import re
@@ -5,7 +6,7 @@ import re
 possibleIncomesOld = ["Baixa (at\u00e9 R$ 1.449,99)", "M\u00e9dia Baixa (R$ 1.450 a R$ 2.899,99)", "M\u00e9dia (R$ 2.900 a R$ 7.249,99)", "M\u00e9dia Alta (R$ 7.250 a R$ 14.499,99)", "Alta (R$ 14.500 ou mais)"]
 possibleIncomesNew = ["baixa", "media baixa", "media", "media alta", "alta"]
 
-def parseUserData(lines):
+def parseUserData(lines, ids_to_convert):
 	""" Reading user data """
 	feminine = Set([])
 	tasks_fem = Set([])
@@ -119,14 +120,21 @@ def parseUserData(lines):
 			if len(profile[4]) > 0 and profile[4] != "None":
 				city = profile[4]
 				city = re.sub(r'\s{2,}', " ", city)#Replacing 2 or more spaces that are together with a single space
-				if city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1:#City is exactly Campina Grande and not Campina Grande do Sul - PR
+				knowcampina = profile[8]
+				howknowcampina = profile[9]
+				if (city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1) or (str(userID) in ids_to_convert):#City is exactly Campina Grande and not Campina Grande do Sul - PR
 					campina.add(userID)
 					tasks_campina.update(tasksIDSeg)
 					tasks_campina.update(tasksIDAgra)
 				else:
-					notCampina.add(userID)
-					tasks_notcampina.update(tasksIDSeg)
-					tasks_notcampina.update(tasksIDAgra)
+					if len(knowcampina) > 0 and len(howknowcampina) > 0 and "yes" in knowcampina.lower() and ("live" in howknowcampina or "study" in howknowcampina or "work" in howknowcampina):
+						campina.add(userID)
+						tasks_campina.update(tasksIDSeg)
+						tasks_campina.update(tasksIDAgra)
+					else:
+						notCampina.add(userID)
+						tasks_notcampina.update(tasksIDSeg)
+						tasks_notcampina.update(tasksIDAgra)
 
 			#Separating by relationship
 			if len(profile[6]) > 0 and profile[6] != "None":
@@ -298,15 +306,23 @@ def createOneFileWithAllProfiledUsers(inputFiles):
 
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		print "Uso: <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios> ou <serie de arquivos com ids de usuarios>"
+	if len(sys.argv) < 4:
+		print "Uso: separa <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios> <lista de usuários marcados como não locais sendo locais> ou mix <serie de arquivos com ids de usuarios>"
 		sys.exit(1)
+
+	mode = sys.argv[1]
 	
-	if len(sys.argv) == 2:	#Parse input file with ids, tasks and profiles to separte per group!
-		dataFile = open(sys.argv[1], 'r')
+	if mode.lower() == "separa":	#Parse input file with ids, tasks and profiles to separte per group!
+		dataFile = open(sys.argv[2], 'r')
 		lines = dataFile.readlines()
 		dataFile.close()
 
-		usersTasks = parseUserData(lines)
+		ids_file = open(sys.argv[3], 'r')
+		ids = []
+		for id in ids_file.readlines():
+			ids.append(id.strip(" \n"))
+		ids_file.close()
+
+		usersTasks = parseUserData(lines, ids)
 	else: #Mix files with users ids into only one file
-		createOneFileWithAllProfiledUsers(sys.argv[1:])
+		createOneFileWithAllProfiledUsers(sys.argv[2:])

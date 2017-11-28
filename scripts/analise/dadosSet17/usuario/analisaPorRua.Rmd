@@ -176,11 +176,11 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcamp
 Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
-show_general_ranking <- function (data){
+show_general_ranking <- function (data, best_folder, worst_folder){
     top <- head(data, n=10)
     bottom <- tail(data, n=10)
     
-    cat("<h3>Top</h3>")
+    cat("<h3>Top", best_folder, "</h3>")
     cat("<div class='row'>")
     for(i in 1:nrow(top)) {
       row <- top[i,]
@@ -188,7 +188,7 @@ show_general_ranking <- function (data){
       score <- row$V3
       
       cat("<div class='col-xs-4'>")
-      cat("<img src='", "../percepcaoLocal/agradavel/melhores/intersects/",photo_name,"' width='400px'>", sep = "")
+      cat("<img src='", best_folder, photo_name,"' width='400px'>", sep = "")
       cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 3 == 0){
@@ -198,7 +198,7 @@ show_general_ranking <- function (data){
     }
     cat("</div>")
     
-    cat("<h3>Bottom</h3>")
+    cat("<h3>Bottom", worst_folder, "</h3>")
     cat("<div class='row'>")
     for(i in 1:nrow(bottom)) {
       row <- bottom[i,]
@@ -206,7 +206,7 @@ show_general_ranking <- function (data){
       score <- row$V3
       
       cat("<div class='col-xs-4'>")
-      cat("<img src='", "../percepcaoLocal/agradavel/piores/intersects/",photo_name,"' width='400px'>", sep = "")
+      cat("<img src='", worst_folder, photo_name,"' width='400px'>", sep = "")
       cat("<div class='caption'>", photo_name, " " , score,  "</div>", sep="")
       cat("</div>")
       if (i > 1 && i %% 3 == 0){
@@ -217,12 +217,28 @@ show_general_ranking <- function (data){
     cat("</div>")
 }
 
+#All users top and bottom 10
 novoV2 <- lapply(as.character(current_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
 novoV2 <- unlist(lapply(novoV2, '[[', 1))
 novoV2 <- strsplit(novoV2, split="\\.jpg")
 photo <- unlist(lapply(novoV2, '[[', 1))
 current_data$photo_name <- photo
-show_general_ranking(current_data)
+show_general_ranking(current_data, "../percepcaoLocal/agradavel/melhores/intersects/", "../percepcaoLocal/agradavel/piores/intersects/")
+
+#Campina and not Campina top and bottom 10
+novoV2 <- lapply(as.character(datacampina$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+datacampina$photo_name <- photo
+show_general_ranking(datacampina, "../percepcaoLocal/agradavel/melhorescampina/intersects/", "../percepcaoLocal/agradavel/piorescampina/intersects/")
+
+novoV2 <- lapply(as.character(datanotcampina$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+datanotcampina$photo_name <- photo
+show_general_ranking(datanotcampina, "../percepcaoLocal/agradavel/melhoresnotcampina/intersects/", "../percepcaoLocal/agradavel/pioresnotcampina/intersects/")
 
 #Calculating CI for each photo
 current_data$ci <- current_data$sd * 1.96 / 100
@@ -233,7 +249,7 @@ qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
 qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 
 #Plotting Q-Scores through the street
-all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")
+all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
 

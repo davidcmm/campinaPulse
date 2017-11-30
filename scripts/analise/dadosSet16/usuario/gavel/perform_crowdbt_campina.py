@@ -663,17 +663,28 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 					annotator.ignore.append(annotator.next)
 				success_comp = success_comp + 1
 
+			#Gavel way of dealing with prev and next
+			#annotator.next.viewed.append(annotator)
+			#annotator.prev = annotator.next
+			#annotator.ignore.append(annotator.prev)
 
+			#Choosing a new pair!
 			annotator.next.viewed.append(annotator)
-			annotator.prev = annotator.next
-			annotator.ignore.append(annotator.prev)
+			annotator.prev.viewed.append(annotator)
 
 			#Select new next photo and iterate until n comparisons for annotator
-			next_image = choose_image(annotator, items_map, annotators)
-			if next_image == None or next_image == "":
+			#next_image = choose_image(annotator, items_map, annotators)
+			one_image = choose_image(annotator, items_map, annotators)
+			if one_image == None or one_image == "":
 				continue_votes = False
 			else:
-				annotator.update_next(next_image)
+				annotator.prev = one_image
+			annotator.ignore = [one_image]#Avoiding same image to be selected again
+			other_image = choose_image(annotator, items_map, annotators)
+			if other_image == None or other_image == "":
+				continue_votes = False
+			else:
+				annotator.update_next(other_image)
 			current_counter = current_counter + 1
 		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes))
 				

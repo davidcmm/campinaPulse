@@ -1236,7 +1236,7 @@ ll.max.diff = function(b,x, maxdiff.method = c("marley","rlogit")[1]){
 max.diff.rank.ordered.logit.with.ties = function(stacked.data){
   flat.data = setup.flat.data(stacked.data, ncol(stacked.data))
   print(ncol(stacked.data))
-  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data, method =  "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
+  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data,lmethod =  "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
   pars = c(0, solution$par)
   names(pars) = dimnames(stacked.data)[[2]]
   list(log.likelihood = solution$value, coef = pars)}
@@ -1315,7 +1315,7 @@ mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:
 
 ## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
 ```{r read}
-for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat")){
+for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat", "../gavel/allPairwiseComparison-lam01gam01.dat", "../gavel/allPairwiseComparison-sim.dat")){
   print(paste(">>>>> Folder ", file))
   
   gavelData <- read.table(file)

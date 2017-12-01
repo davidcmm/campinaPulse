@@ -1132,12 +1132,19 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
 
 ## Comparing original Como e Campina with all users rankings x maxdiff rankings
 ```{r read}
-for (file in c("../all100/all_ordenado.dat-maxdiff")){
+for (file in c("../all100/all_ordenado_maxdiff_new.dat")){
   print(paste(">>>>> Folder ", file))
   
   maxDiffData <- read.table(file)
   agrad_maxdiff <- arrange(filter(maxDiffData, V1 != "seguro?"), -V3)
   seg_maxdiff <- arrange(filter(maxDiffData, V1 == "seguro?"), -V3)
+  
+  #Pleasantness x Safety in Gavel
+  new_maxdiff_data <- reshape(select(maxDiffData, V1, V2, V3), timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_maxdiff_data)[colnames(new_maxdiff_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  colnames(new_maxdiff_data)[colnames(new_maxdiff_data) == "V3.seguro?"] <- "V3.seguro"
+  reg <- lm(V3.agradavel ~ V3.seguro, data=new_maxdiff_data)
+  print(summary(reg))
   
   all_original <- read.table("../all100/all_ordenado.dat")
   ag_orig <- filter(all_original, V1 != "seguro?")
@@ -1236,12 +1243,12 @@ ll.max.diff = function(b,x, maxdiff.method = c("marley","rlogit")[1]){
 max.diff.rank.ordered.logit.with.ties = function(stacked.data){
   flat.data = setup.flat.data(stacked.data, ncol(stacked.data))
   print(ncol(stacked.data))
-  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data,lmethod =  "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
+  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data,lmethod   "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
   pars = c(0, solution$par)
   names(pars) = dimnames(stacked.data)[[2]]
   list(log.likelihood = solution$value, coef = pars)}
 
-itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input.dat")
+itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input_new.dat")
 old_names <- colnames(itMaxDiffData2)
 for (i in seq(1, length(old_names))){
   colnames(itMaxDiffData2)[i] <- paste("foto", i, sep="")
@@ -1315,12 +1322,19 @@ mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:
 
 ## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
 ```{r read}
-for (file in c("../gavel/allPairwiseComparison-gamma01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat", "../gavel/allPairwiseComparison-lam01gam01.dat", "../gavel/allPairwiseComparison-sim.dat")){
-  print(paste(">>>>> Folder ", file))
+for (file in c("../gavel/allPairwiseComparison-lam01-gam01.dat", "../gavel/allPairwiseComparison-lam1-gam01.dat", "../gavel/allPairwiseComparison-gamma5.dat", "../gavel/allPairwiseComparison-gamma20.dat", "../gavel/allPairwiseComparison-sim-lam01-gam01.dat", "../gavel/allPairwiseComparison-sim-lam01-gam20.dat")){
+	  print(paste(">>>>> Folder ", file))
   
   gavelData <- read.table(file)
   agrad_gavel <- arrange(filter(gavelData, V1 != "seguro?"), -V3)
   seg_gavel <- arrange(filter(gavelData, V1 == "seguro?"), -V3)
+  
+  #Pleasantness x Safety in Gavel
+  new_gavel_data <- reshape(gavelData, timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_gavel_data)[colnames(new_gavel_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  colnames(new_gavel_data)[colnames(new_gavel_data) == "V3.seguro?"] <- "V3.seguro"
+  reg <- lm(V3.agradavel ~ V3.seguro, data=new_gavel_data)
+  print(summary(reg))
   
   all_original <- read.table("../all100/all_ordenado.dat")
   ag_orig <- filter(all_original, V1 != "seguro?")

@@ -326,7 +326,7 @@ def writeOutput(users_tasks):
 	#Writing users profile and tasks executed
 	for user_id in users_tasks.keys():
 		user_data = users_tasks[user_id]
-		user_profile = str(user_data[0]['age']) + "+" + str(user_data[0]['sex']) + "+" + str(user_data[0]['clas']) + "+" + str(user_data[0]['edu']) + "+" + str(user_data[0]['cit']) + "+" + str(user_data[0]['time']) + "+" + str(user_data[0]['rel']) + "+" + str(user_data[0]['nei'])
+		user_profile = str(user_data[0]['age']) + "+" + str(user_data[0]['sex']) + "+" + str(user_data[0]['clas']) + "+" + str(user_data[0]['edu']) + "+" + str(user_data[0]['cit']) + "+" + str(user_data[0]['time']) + "+" + str(user_data[0]['rel']) + "+" + str(user_data[0]['nei']) + "+" + str(user_data[0]['knowcampina']) + "+" + str(user_data[0]['howknowcampina'])
 		
 		output_file.write(user_id+"|" + user_profile + "|" + str(user_data[1]) + "|" + str(user_data[2]) + "|" + str(user_data[3]) + "|" + str(user_data[4]) + "\n")
 		countSummary(user_profile)
@@ -426,7 +426,7 @@ def readUserData(lines1, lines2, outputFileName):
 		if user_id in users_tasks.keys():
 			user_executions = users_tasks[user_id]
 		else:
-			user_executions = [{'age': -1, 'sex': "", 'clas': "", 'edu': "", 'cit': "", "time": "", 'rel': "", 'nei': ""}, [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
+			user_executions = [{'age': -1, 'sex': "", 'clas': "", 'edu': "", 'cit': "", "time": "", 'rel': "", 'nei': "", 'knowcampina': "", 'howknowcampina': ""}, [], [], [], [], firstDate]#Tasks for Agradavel e Seguro and their respective answers
 
 		#In user answers that contain profile information extract profile: {"userProfile": {"city": "Campina Grande - State of Para\u00edba, Brazil", "age": 33, "sex": "M", "rel": "casado", "educ": "doutorado", "neig": ["cen"], "clas": "media alta"}, "question": "agradavel", "theLess": "https://contribua.org/bairros/oeste/liberdade/Rua_Edesio_Silva__602__180.jpg", "theMost": "https://contribua.org/bairros/norte/centro/Avenida_Presidente_Getulio_Vargas__395__270.jpg"}
 		user_answer_data = json.loads(user_answer)
@@ -442,7 +442,9 @@ def readUserData(lines1, lines2, outputFileName):
 			city = user_profile_data['city'].encode('utf-8').strip(' \t\n\r"')
 			#time = userProfileData['time'].strip(' \t\n\r"')
 			rel = user_profile_data['rel'].encode('utf-8').strip(' \t\n\r"')
-			neig = user_profile_data['neig'] 
+			neig = user_profile_data['neig']
+			know =  user_profile_data['knowcampina'].strip(' \t\n\r"')
+			howknow =  user_profile_data['howknowcampina'].strip(' \t\n\r"')
 
 			if len(city) == 0:
 				if len(user_ip) > 0:
@@ -464,6 +466,10 @@ def readUserData(lines1, lines2, outputFileName):
 				user_executions[0]['rel'] = rel
 			if len(user_executions[0]['nei'].strip(' \t\n\r"')) == 0:
 				user_executions[0]['nei'] = str(neig)
+			if len(user_executions[0]['knowcampina'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['knowcampina'] = know
+			if len(user_executions[0]['howknowcampina'].strip(' \t\n\r"')) == 0:
+				user_executions[0]['howknowcampina'] = howknow
 		else:
 			if len(user_ip) > 0:
 				if len(user_executions[0]['cit'].strip(' \t\n\r"')) == 0:

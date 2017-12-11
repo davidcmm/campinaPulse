@@ -241,7 +241,7 @@ datanotcampina$photo_name <- photo
 show_general_ranking(datanotcampina, "../percepcaoLocal/agradavel/melhoresnotcampina/intersects/", "../percepcaoLocal/agradavel/pioresnotcampina/intersects/")
 
 #Calculating CI for each photo
-current_data$ci <- current_data$sd * 1.96 / 100
+current_data$ci <- current_data$sd * 1.96 / sqrt(100)
 current_data <- arrange(current_data, photo_name)
 
 qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
@@ -371,7 +371,7 @@ plot_street_means <- function(data){
   cristina_scores = filter(data, street == "R._Cristina_Procópio_Silva")$qscore
   cristina_sd = sd(maciel_scores)
   
-  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores), floriano_sd * 1.96 / length(floriano_scores), cristina_sd * 1.96 / length(cristina_scores)))
+  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / sqrt(length(maciel_scores)),  manoel_sd * 1.96 / sqrt(length(manoel_scores)), edesio_sd * 1.96 / sqrt(length(edesio_scores)), inacio_sd * 1.96 / sqrt(length(inacio_scores)), floriano_sd * 1.96 / sqrt(length(floriano_scores)), cristina_sd * 1.96 / sqrt(length(cristina_scores))))
   
   p <- ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
       geom_bar(position=position_dodge(), stat="identity") +
@@ -444,28 +444,28 @@ Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao 
 
 ```{r }
 summary_inacio = filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_inacio$upper <- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / 4
-summary_inacio$lower <- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / 4
+summary_inacio$upper <- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / sqrt(4)
+summary_inacio$lower <- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / sqrt(4)
 
 summary_edesio = filter(qscoresDFGeral, street == "R._Edésio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_edesio$upper <- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / 4
-summary_edesio$lower <- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / 4
+summary_edesio$upper <- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / sqrt(4)
+summary_edesio$lower <- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / sqrt(4)
 
 summary_maciel = filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_maciel$upper <- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / 4
-summary_maciel$lower <- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / 4
+summary_maciel$upper <- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / sqrt(4)
+summary_maciel$lower <- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / sqrt(4)
 
 summary_manoel = filter(qscoresDFGeral, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+summary_manoel$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_manoel$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 
 summary_floriano = filter(qscoresDFGeral, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_floriano$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_floriano$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+summary_floriano$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_floriano$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 
 summary_cristina = filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_cristina$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_cristina$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+summary_cristina$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_cristina$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 ```
 
 ```{r  fig.height=10, fig.width=12}

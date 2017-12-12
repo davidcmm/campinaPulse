@@ -798,7 +798,7 @@ if __name__ == '__main__':
 				all_pleas[item_name] = item_data
 			all_success["pleas"] = all_success["pleas"] + pleas_data[0]
 			all_failed["pleas"] = all_failed["pleas"] + pleas_data[1]
-			print(str(all_success["pleas"])+"\t"+str(all_failed["pleas"]))
+			#print(str(all_success["pleas"])+"\t"+str(all_failed["pleas"]))
 
 			saf_data = simulateCrowdBT(lines, tasks_def, possibleQuestions[1])
 			for item_name, item in saf_data[2].items():
@@ -810,7 +810,7 @@ if __name__ == '__main__':
 				all_saf[item_name] = item_data
 			all_success["saf"] = all_success["saf"] + saf_data[0]
 			all_failed["saf"] = all_failed["saf"] + saf_data[1]
-			print(str(all_success["saf"])+"\t"+str(all_failed["saf"]))
+			#print(str(all_success["saf"])+"\t"+str(all_failed["saf"]))
 
 		#Output file
 		output = open("allPairwiseComparison-sim-agrad.dat", 'w')

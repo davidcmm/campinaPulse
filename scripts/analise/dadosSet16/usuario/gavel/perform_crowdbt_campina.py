@@ -12,6 +12,7 @@ import sys
 import json
 import csv
 import pandas as pd
+import numpy
 
 #possible questions
 possibleQuestions = ["agrad%C3%A1vel?", "seguro?"]
@@ -290,7 +291,7 @@ def extract_all_items(tasks_def):
 	return items_map
 
 
-def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
+def simulateCrowdBT(lines, tasks_def, current_question):
 	''' Perform simulation of CrowdBT task recommendation for each user/annotator '''
 	items_map = extract_all_items(tasks_def)
 	
@@ -305,7 +306,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 
 		executionID = lineData[0].strip(' \t\n\r"')
 		taskID = lineData[3].strip(' \t\n\r"')
-		annotatorID = lineData[4].strip(' \t\n\r"')
+		annotatorID = "10"#lineData[4].strip(' \t\n\r"') #Simulating a unique annotator!
 		userAnswer = lineData[9].strip(' \t\n\r"')
 
 		#It is a new Como e Campina vote, read tasks definition from JSON!
@@ -605,7 +606,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
 	failed_comp = 0
-	print(">>>> Iniciando sim " + current_question)
+	print(">>>> Iniciando quest " + current_question)
 	for annotatorID in annotators.keys():
 
 		#Computing amount of comparisons performed by annotator
@@ -614,6 +615,7 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 		continue_votes = True
 
 		annotator = annotators[annotatorID]
+		pairs_evaluated = []
 	
 		while current_counter < total_counter and continue_votes:
 			photo1 = annotator.prev
@@ -623,78 +625,79 @@ def simulateCrowdBT(lines, output_filename, tasks_def, current_question):
 			winner = None
 			looser = None
 			tie = False
-			if photo1.name in exec_data.keys():
-				photo_data = exec_data[photo1.name]
-				if photo2.name in photo_data.keys():
-					photo_vote = choice(photo_data[photo2.name])
-					if photo_vote == left:
-						winner = photo1
-						looser = photo2
-					elif photo_vote == right:
-						winner = photo2
-						looser = photo1
-					else:
-						tie = True
-			elif photo2.name in exec_data.keys():
-				photo_data = exec_data[photo2.name]
-				if photo1.name in photo_data.keys():
-					photo_vote = choice(photo_data[photo1.name])
-					if photo_vote == left:
-						winner = photo2
-						looser = photo1
-					elif photo_vote == right:
-						winner = photo1
-						looser = photo2
-					else:
-						tie = True	
-			#Check if comparison occurred - account for comparisons that did not occurred
-			if winner == None and looser == None and tie == False:
-				failed_comp = failed_comp + 1
-				print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
-			else:
-				#Compute vote
-				decision = Decision(annotator, winner=winner, loser=looser)
-				if winner != None and winner.name == annotator.next.name:
-					perform_vote(annotator, next_won=True)
-				elif winner != None and winner.name == annotator.prev.name:
-					perform_vote(annotator, next_won=False)
+		
+			if [photo1.name, photo2.name] not in pairs_evaluated and [photo2.name, photo1.name] not in pairs_evaluated:#According to definition, the same annotator does not evaluate the same pair differently!
+
+				pairs_evaluated.append([photo1.name, photo2.name])
+
+				if photo1.name in exec_data.keys():
+					photo_data = exec_data[photo1.name]
+					if photo2.name in photo_data.keys():
+						photo_vote = choice(photo_data[photo2.name])
+						if photo_vote == left:
+							winner = photo1
+							looser = photo2
+						elif photo_vote == right:
+							winner = photo2
+							looser = photo1
+						else:
+							tie = True
+				elif photo2.name in exec_data.keys():
+					photo_data = exec_data[photo2.name]
+					if photo1.name in photo_data.keys():
+						photo_vote = choice(photo_data[photo1.name])
+						if photo_vote == left:
+							winner = photo2
+							looser = photo1
+						elif photo_vote == right:
+							winner = photo1
+							looser = photo2
+						else:
+							tie = True	
+				#Check if comparison occurred - account for comparisons that did not occurred
+				if winner == None and looser == None and tie == False:
+					failed_comp = failed_comp + 1
+					#print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
 				else:
-					annotator.ignore.append(annotator.prev)
-					annotator.ignore.append(annotator.next)
-				success_comp = success_comp + 1
+					#Compute vote
+					decision = Decision(annotator, winner=winner, loser=looser)
+					if winner != None and winner.name == annotator.next.name:
+						perform_vote(annotator, next_won=True)
+					elif winner != None and winner.name == annotator.prev.name:
+						perform_vote(annotator, next_won=False)
+					else:
+						annotator.ignore.append(annotator.prev)
+						annotator.ignore.append(annotator.next)
+					success_comp = success_comp + 1
 
-			#Gavel way of dealing with prev and next
-			#annotator.next.viewed.append(annotator)
-			#annotator.prev = annotator.next
-			#annotator.ignore.append(annotator.prev)
+				#Gavel way of dealing with prev and next
+				#annotator.next.viewed.append(annotator)
+				#annotator.prev = annotator.next
+				#annotator.ignore.append(annotator.prev)
 
-			#Choosing a new pair!
-			annotator.next.viewed.append(annotator)
-			annotator.prev.viewed.append(annotator)
+				#Choosing a new pair!
+				annotator.next.viewed.append(annotator)
+				annotator.prev.viewed.append(annotator)
 
-			#Select new next photo and iterate until n comparisons for annotator
-			#next_image = choose_image(annotator, items_map, annotators)
-			one_image = choose_image(annotator, items_map, annotators)
-			if one_image == None or one_image == "":
-				continue_votes = False
-			else:
-				annotator.prev = one_image
-			annotator.ignore = [one_image]#Avoiding same image to be selected again
-			other_image = choose_image(annotator, items_map, annotators)
-			if other_image == None or other_image == "":
-				continue_votes = False
-			else:
-				annotator.update_next(other_image)
+				#Select new next photo and iterate until n comparisons for annotator
+				#next_image = choose_image(annotator, items_map, annotators)
+				one_image = choose_image(annotator, items_map, annotators)
+				if one_image == None or one_image == "":
+					continue_votes = False
+				else:
+					annotator.prev = one_image
+				annotator.ignore = [one_image]#Avoiding same image to be selected again
+				other_image = choose_image(annotator, items_map, annotators)
+				if other_image == None or other_image == "":
+					continue_votes = False
+				else:
+					annotator.update_next(other_image)
 			current_counter = current_counter + 1
+
 		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes))
 				
 
-	#Output file
-	output = open(output_filename, 'w')
-	output.write(str(success_comp)+"\t"+str(failed_comp)+"\t"+str(success_comp+failed_comp)+"\t"+str(success_comp/(success_comp+failed_comp))+"\n")
-	for item_name, item in items_map.items():
-		output.write(current_question+ "\t" + item_name+ "\t" + str(item.mu) + "\t" + str(item.sigma_sq)+'\n')
-	output.close()
+	return [success_comp, failed_comp, items_map]
 
 def count_comparisons(annotator_data):
 	counter = 0
@@ -760,12 +763,13 @@ def choose_image(annotator, items_map, annotators):
 if __name__ == '__main__':
 
 	if len(sys.argv) < 4:
-		print("Uso: <arquivo com execuções das tarefas> <tasks definition -V2> <simulation or ranking>")
+		print("Uso: <arquivo com execuções das tarefas> <tasks definition -V2> <simulation or ranking> <number of sims>")
 		sys.exit(1)
 
 	dataFile = open(sys.argv[1], 'r')
 	tasksFile = open(sys.argv[2], 'r')
 	mode = sys.argv[3]
+	num_of_sims = int(sys.argv[4])
 
 	lines = dataFile.readlines()
 	linesTasks = tasksFile.readlines()
@@ -774,8 +778,60 @@ if __name__ == '__main__':
 	if mode.lower() == "ranking":
 		evaluateAllVotes(lines, "allPairwiseComparison.dat", tasks_def)
 	elif mode.lower() == "simulation":
-		simulateCrowdBT(lines, "allPairwiseComparison-sim-agrad.dat", tasks_def, possibleQuestions[0])
-		simulateCrowdBT(lines, "allPairwiseComparison-sim-seg.dat", tasks_def, possibleQuestions[1])
+
+		all_pleas = {}
+		all_saf = {}
+
+		all_success = {"pleas": 0, "saf":0}
+		all_failed = {"pleas": 0, "saf":0}
+
+		for i in range(0, num_of_sims):
+			print(">>>> Iniciando sim " + str(i))
+
+			pleas_data = simulateCrowdBT(lines, tasks_def, possibleQuestions[0])
+			for item_name, item in pleas_data[2].items():
+				if item_name in all_pleas:
+					item_data = all_pleas[item_name]
+				else:
+					item_data = []
+				item_data.append([item.mu, item.sigma_sq])
+				all_pleas[item_name] = item_data
+			all_success["pleas"] = all_success["pleas"] + pleas_data[0]
+			all_failed["pleas"] = all_failed["pleas"] + pleas_data[1]
+
+			saf_data = simulateCrowdBT(lines, tasks_def, possibleQuestions[1])
+			for item_name, item in saf_data[2].items():
+				if item_name in all_saf:
+					item_data = all_saf[item_name]
+				else:
+					item_data = []
+				item_data.append([item.mu, item.sigma_sq])
+				all_saf[item_name] = item_data
+			all_success["saf"] = all_success["saf"] + saf_data[0]
+			all_failed["saf"] = all_failed["saf"] + saf_data[1]
+
+		#Output file
+		output = open("allPairwiseComparison-sim-agrad.dat", 'w')
+		output.write(str(all_success["pleas"])+"\t"+str(all_failed["pleas"])+"\t"+str(all_success["pleas"]+all_failed["pleas"])+"\t"+str(all_success["pleas"]/(all_success["pleas"]+all_failed["pleas"]))+"\n")
+		for item_name, item_data in all_pleas.items():
+			mu = []
+			sigma = []
+			for data in item_data:
+				 mu.append(data[0])
+				 sigma.append(data[1])
+			output.write(possibleQuestions[0]+ "\t" + item_name + "\t" + str(numpy.mean(mu)) + "\t" + str(numpy.std(mu)) + "\t" + str(numpy.mean(sigma)) + "\t" + str(numpy.std(sigma)) +'\n')
+		output.close()
+
+		output = open("allPairwiseComparison-sim-seg.dat", 'w')
+		output.write(str(all_success["saf"])+"\t"+str(all_failed["saf"])+"\t"+str(all_success["saf"]+all_failed["saf"])+"\t"+str(all_success["saf"]/(all_success["saf"]+all_failed["saf"]))+"\n")
+		for item_name, item_data in all_saf.items():
+			mu = []
+			sigma = []
+			for data in item_data:
+				 mu.append(data[0])
+				 sigma.append(data[1])
+			output.write(possibleQuestions[1]+ "\t" + item_name + "\t" + str(numpy.mean(mu)) + "\t" + str(numpy.std(mu)) + "\t" + str(numpy.mean(sigma)) + "\t" + str(numpy.std(sigma)) +'\n')
+		output.close()
 
 	#Create items
 	#items = {}

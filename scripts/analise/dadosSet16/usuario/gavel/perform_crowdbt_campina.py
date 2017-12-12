@@ -675,23 +675,23 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 				#annotator.prev = annotator.next
 				#annotator.ignore.append(annotator.prev)
 
-				#Choosing a new pair!
-				annotator.next.viewed.append(annotator)
-				annotator.prev.viewed.append(annotator)
+			#Choosing a new pair!
+			annotator.next.viewed.append(annotator)
+			annotator.prev.viewed.append(annotator)
 
-				#Select new next photo and iterate until n comparisons for annotator
-				#next_image = choose_image(annotator, items_map, annotators)
-				one_image = choose_image(annotator, items_map, annotators)
-				if one_image == None or one_image == "":
-					continue_votes = False
-				else:
-					annotator.prev = one_image
-				annotator.ignore = [one_image]#Avoiding same image to be selected again
-				other_image = choose_image(annotator, items_map, annotators)
-				if other_image == None or other_image == "":
-					continue_votes = False
-				else:
-					annotator.update_next(other_image)
+			#Select new next photo and iterate until n comparisons for annotator
+			#next_image = choose_image(annotator, items_map, annotators)
+			one_image = choose_image(annotator, items_map, annotators)
+			if one_image == None or one_image == "":
+				continue_votes = False
+			else:
+				annotator.prev = one_image
+			annotator.ignore = [one_image]#Avoiding same image to be selected again
+			other_image = choose_image(annotator, items_map, annotators)
+			if other_image == None or other_image == "":
+				continue_votes = False
+			else:
+				annotator.update_next(other_image)
 			current_counter = current_counter + 1
 
 		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes))

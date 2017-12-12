@@ -23,6 +23,7 @@ right = 'Right'
 notKnown = 'NotKnown'
 completeTie = 'equal'
 
+debug_file = open("debug.txt", "w")
 
 def readTasksDefinitions(linesTasks):
 	""" Reading tasks definition for newer version (V2) of Como é Campina App"""
@@ -606,7 +607,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
 	failed_comp = 0
-	print(">>>> Iniciando quest " + current_question)
+	debug_file.write(">>>> Iniciando quest " + current_question+"\n")
 	for annotatorID in annotators.keys():
 
 		#Computing amount of comparisons performed by annotator
@@ -694,7 +695,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 				annotator.update_next(other_image)
 			current_counter = current_counter + 1
 
-		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes))
+		debug_file.write(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes)+"\n")
 				
 
 	return [success_comp, failed_comp, items_map]
@@ -786,7 +787,7 @@ if __name__ == '__main__':
 		all_failed = {"pleas": 0, "saf":0}
 
 		for i in range(0, num_of_sims):
-			print(">>>> Iniciando sim " + str(i))
+			debug_file.write(">>>> Iniciando sim " + str(i)+"\n")
 
 			pleas_data = simulateCrowdBT(lines, tasks_def, possibleQuestions[0])
 			for item_name, item in pleas_data[2].items():
@@ -834,6 +835,8 @@ if __name__ == '__main__':
 				 sigma.append(data[1])
 			output.write(possibleQuestions[1]+ "\t" + item_name + "\t" + str(numpy.mean(mu)) + "\t" + str(numpy.std(mu)) + "\t" + str(numpy.mean(sigma)) + "\t" + str(numpy.std(sigma)) +'\n')
 		output.close()
+
+		debug_file.close()
 
 	#Create items
 	#items = {}

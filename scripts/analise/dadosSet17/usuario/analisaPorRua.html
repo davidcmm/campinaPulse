@@ -140,11 +140,11 @@ $(document).ready(function () {
 </ol>
 <div id="tamanho-das-amostras-e-comparacao-entre-rankings" class="section level1">
 <h1>Tamanho das amostras e comparação entre rankings</h1>
-<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 286 pessoas (113 pessoas que não são de Campina e 140 que são daqui).</p>
-<p>O processo de separação de quem é ou não de Campina se deu:</p>
+<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 286 pessoas (113 pessoas que não são de Campina e 140 que são daqui), com a amostra de 29 usuários (primeira amostra analisada) e com a amostra de 69 pessoas (sendo todos moradores de Campina).</p>
+<p>O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:</p>
 <ol style="list-style-type: decimal">
 <li>O usuário informando se é morador ou não ou através do IP;</li>
-<li>Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores;</li>
+<li>Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);</li>
 <li>Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.</li>
 </ol>
 <pre class="r"><code>#Checking sample size
@@ -258,7 +258,7 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 </div>
 <div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level1">
 <h1>Comparação entre rankings de moradores e não moradores</h1>
-<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 140 moradores e 113 não moradores.</p>
+<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 140 moradores e 113 não moradores. <strong>Quão parecido é o ranking geral de moradores e não moradores?</strong></p>
 <pre class="r"><code>datacampina &lt;- read.table(&quot;all100/all_campina_ordenado.dat&quot;)
 datanotcampina &lt;- read.table(&quot;all100/all_notcampina_ordenado.dat&quot;)
 
@@ -719,8 +719,8 @@ R._Cristina_Procópio_Silva_305_135 2.857414
 </div>
 </div>
 </div>
-<p>Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.</p>
-<p>Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 5 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.</p>
+<p>Qualitativamente analisando estas imagens, conforme esperado, percebe-se que <strong>vegetação, melhor estado de manutenção e a rua mais larga</strong> conduziram a melhores avaliações das imagens. O <strong>céu</strong> também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 3 locais e a Edésio e Inácio Marques 1 local cada (tipicamente residenciais).</p>
+<p>Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.</p>
 <p>Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores</p>
 <pre class="r"><code>input_regressao &lt;- read.csv(&quot;input_regressao/regressao-input.csv&quot;)
 plotRegAndLinear &lt;- function(reg, test){
@@ -971,7 +971,7 @@ plot_street_means &lt;- function(data){
   cristina_scores = filter(data, street == &quot;R._Cristina_Procópio_Silva&quot;)$qscore
   cristina_sd = sd(maciel_scores)
   
-  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c(&quot;Maciel&quot;, &quot;Manoel&quot;, &quot;Edesio&quot;, &quot;Inacio&quot;, &quot;Floriano&quot;, &quot;Cristina&quot;), ci = c(maciel_sd * 1.96 / length(maciel_scores),  manoel_sd * 1.96 / length(manoel_scores), edesio_sd * 1.96 / length(edesio_scores), inacio_sd * 1.96 / length(inacio_scores), floriano_sd * 1.96 / length(floriano_scores), cristina_sd * 1.96 / length(cristina_scores)))
+  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c(&quot;Maciel&quot;, &quot;Manoel&quot;, &quot;Edesio&quot;, &quot;Inacio&quot;, &quot;Floriano&quot;, &quot;Cristina&quot;), ci = c(maciel_sd * 1.96 / sqrt(length(maciel_scores)),  manoel_sd * 1.96 / sqrt(length(manoel_scores)), edesio_sd * 1.96 / sqrt(length(edesio_scores)), inacio_sd * 1.96 / sqrt(length(inacio_scores)), floriano_sd * 1.96 / sqrt(length(floriano_scores)), cristina_sd * 1.96 / sqrt(length(cristina_scores))))
   
   p &lt;- ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
       geom_bar(position=position_dodge(), stat=&quot;identity&quot;) +
@@ -1064,7 +1064,7 @@ inequalities</code></pre>
 </blockquote>
 </blockquote>
 <pre class="r"><code>#Calculating CI for each photo - all users together
-current_data$ci &lt;- current_data$sd * 1.96 / 100
+current_data$ci &lt;- current_data$sd * 1.96 / sqrt(100)
 current_data &lt;- arrange(current_data, photo_name)
 
 qscoresDFGeral &lt;- read.csv(&quot;qscores-df-geral.csv&quot;, header = TRUE)
@@ -1127,368 +1127,22 @@ plot_ci_per_photo(filter(all_data, street == &quot;R._Edésio_Silva&quot;), &quo
 </blockquote>
 </blockquote>
 <pre class="r"><code>#Calculating CI for each photo - CAmpina residents
-datacampina$sd &lt;- apply(datacampina[,4:ncol(datacampina)], 1, sd)</code></pre>
-<pre><code>## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção</code></pre>
-<pre class="r"><code>datacampina$n &lt;- ( 1.96 * datacampina$sd / 0.2) ** 2  #All QScores
-datacampina$ci &lt;- datacampina$sd * 1.96 / 100
+datacampina &lt;- read.table(&quot;all100/all_campina_ordenado.dat&quot;)
+datanotcampina &lt;- read.table(&quot;all100/all_notcampina_ordenado.dat&quot;)
+novoV2 &lt;- lapply(as.character(datacampina$V2), function (x) strsplit(x, split=&quot;/&quot;, fixed=TRUE)[[1]][7])
+novoV2 &lt;- unlist(lapply(novoV2, &#39;[[&#39;, 1))
+novoV2 &lt;- strsplit(novoV2, split=&quot;\\.jpg&quot;)
+photo &lt;- unlist(lapply(novoV2, &#39;[[&#39;, 1))
+datacampina$photo_name &lt;- photo
+novoV2 &lt;- lapply(as.character(datanotcampina$V2), function (x) strsplit(x, split=&quot;/&quot;, fixed=TRUE)[[1]][7])
+novoV2 &lt;- unlist(lapply(novoV2, &#39;[[&#39;, 1))
+novoV2 &lt;- strsplit(novoV2, split=&quot;\\.jpg&quot;)
+photo &lt;- unlist(lapply(novoV2, &#39;[[&#39;, 1))
+datanotcampina$photo_name &lt;- photo
+
+datacampina$sd &lt;- apply(datacampina[,4:103], 1, sd)
+datacampina$n &lt;- ( 1.96 * datacampina$sd / 0.2) ** 2  #All QScores
+datacampina$ci &lt;- datacampina$sd * 1.96 / sqrt(100)
 datacampina &lt;- arrange(datacampina, photo_name)
 
 all_data_camp &lt;- merge(qscoresDFCampina, datacampina, by.x = &quot;url&quot;, by.y=&quot;V2&quot;)#qscoresDFGeral
@@ -1498,33 +1152,16 @@ all_data_camp$street &lt;- factor(all_data_camp$street, levels=unique(all_data_c
 all_data_camp$xlabel &lt;- paste(&quot;Num.:&quot;, all_data_camp$num, &quot; Angle: &quot;, all_data_camp$angle) 
 
 plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Edésio_Silva&quot;), &quot;Edésio Silva&quot;, c(22, 135), c(315, 203))#Street 1</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-1.png" width="1152" /></p>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Inácio_Marquês_da_Silva&quot;), &quot;Inacio&quot;, c(203, 112, 90), c(293, 270, 22))#Street 2</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-2.png" width="1152" /></p>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Maciel_Pinheiro&quot;), &quot;Maciel Pinheiro&quot;, c(360, 90), c(270, 180))#Street 3</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-3.png" width="1152" /></p>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Manoel_Pereira_de_Araújo&quot;), &quot;Manoel Pereira&quot;, c(22, 135, 293), c(315, 112, 203, 225))#Street 4</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-4.png" width="1152" /></p>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data_camp, street == &quot;Av._Mal._Floriano_Peixoto&quot;), &quot;Floriano Peixoto&quot;, c(22,293), c(112,203))#Street 5</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-5.png" width="1152" /></p>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Cristina_Procópio_Silva&quot;), &quot;Cristina Procopio&quot;, c(22, 45, 293, 315), c(135, 225))#Street 6 -&gt; At number 436, 22 x 315 and 135 x 203</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-6.png" width="1152" /></p>
 <blockquote>
 <blockquote>
@@ -1533,389 +1170,7 @@ plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Edésio_Silva&quot;),
 </blockquote>
 </blockquote>
 </blockquote>
-<pre><code>## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção
-
-## Warning in var(if (is.vector(x) || is.factor(x)) x else as.double(x), na.rm
-## = na.rm): NAs introduzidos por coerção</code></pre>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="1152"  /></p>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="1152"  /></p>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-3.png" width="1152"  /></p>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-4.png" width="1152"  /></p>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-5.png" width="1152"  /></p>
-<pre><code>## Warning: Removed 10 rows containing missing values (geom_errorbar).
-
-## Warning: Removed 10 rows containing missing values (geom_errorbar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-6.png" width="1152"  /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-3.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-4.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-5.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-6.png" width="1152"  /></p>
 </div>
 <div id="analisando-em-detalhe-cada-rua" class="section level1">
 <h1>Analisando em detalhe cada rua</h1>
@@ -1927,28 +1182,28 @@ plot_ci_per_photo(filter(all_data_camp, street == &quot;R._Edésio_Silva&quot;),
 <div id="inacio-marques" class="section level2">
 <h2>Inacio Marques</h2>
 <pre class="r"><code>summary_inacio = filter(qscoresDFGeral, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_inacio$upper &lt;- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / 4
-summary_inacio$lower &lt;- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / 4
+summary_inacio$upper &lt;- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / sqrt(4)
+summary_inacio$lower &lt;- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / sqrt(4)
 
 summary_edesio = filter(qscoresDFGeral, street == &quot;R._Edésio_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_edesio$upper &lt;- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / 4
-summary_edesio$lower &lt;- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / 4
+summary_edesio$upper &lt;- summary_edesio$media_ponto + summary_edesio$sd * 1.96 / sqrt(4)
+summary_edesio$lower &lt;- summary_edesio$media_ponto - summary_edesio$sd * 1.96 / sqrt(4)
 
 summary_maciel = filter(qscoresDFGeral, street == &quot;R._Maciel_Pinheiro&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_maciel$upper &lt;- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / 4
-summary_maciel$lower &lt;- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / 4
+summary_maciel$upper &lt;- summary_maciel$media_ponto + summary_maciel$sd * 1.96 / sqrt(4)
+summary_maciel$lower &lt;- summary_maciel$media_ponto - summary_maciel$sd * 1.96 / sqrt(4)
 
 summary_manoel = filter(qscoresDFGeral, street == &quot;R._Manoel_Pereira_de_Araújo&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_manoel$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_manoel$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+summary_manoel$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_manoel$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 
 summary_floriano = filter(qscoresDFGeral, street == &quot;Av._Mal._Floriano_Peixoto&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_floriano$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_floriano$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4
+summary_floriano$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_floriano$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 
 summary_cristina = filter(qscoresDFGeral, street == &quot;R._Cristina_Procópio_Silva&quot;) %&gt;% group_by(num) %&gt;% summarise(media_ponto = mean(qscore), sd = sd(qscore))
-summary_cristina$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / 4
-summary_cristina$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / 4</code></pre>
+summary_cristina$upper &lt;- summary_manoel$media_ponto + summary_manoel$sd * 1.96 / sqrt(4)
+summary_cristina$lower &lt;- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)</code></pre>
 <pre class="r"><code>inacio &lt;- filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;) %&gt;% group_by(num) %&gt;% arrange(street, num, angle) %&gt;% select(url, street, num, angle, qscore)
 
 print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;)$qscore, type=&quot;Gini&quot;)))</code></pre>
@@ -1965,11 +1220,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto         sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1    54    4.635358 0.56294495 4.911201 4.359515
-## 2   120    5.021674 0.71582459 5.372428 4.670920
-## 3   239    5.343583 0.09484178 5.390055 5.297110
-## 4   360    4.834244 0.29768633 4.980111 4.688378
-## 5   500    4.314798 0.10578802 4.366634 4.262962</code></pre>
+## 1    54    4.635358 0.56294495 5.187044 4.083672
+## 2   120    5.021674 0.71582459 5.723182 4.320166
+## 3   239    5.343583 0.09484178 5.436528 5.250638
+## 4   360    4.834244 0.29768633 5.125977 4.542512
+## 5   500    4.314798 0.10578802 4.418470 4.211126</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Inácio_Marquês_da_Silva&quot;), num, angle), &quot;Inacio&quot;, c(203, 112, 90), c(293, 270, 22))#Street 2</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-1.png" width="1152" /></p>
 <p>Para a Inacio Marques percebemos uma <strong>variação de aproximadamente 1.2</strong> nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.</p>
@@ -2148,11 +1403,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1    70    4.488024 0.7632805 4.862032 4.114017
-## 2   306    4.955986 0.2844886 5.095385 4.816587
-## 3   602    4.795030 0.5953039 5.086729 4.503331
-## 4  1136    4.355514 0.4115766 4.557186 4.153841
-## 5  1546    5.214159 0.1382922 5.281922 5.146396</code></pre>
+## 1    70    4.488024 0.7632805 5.236039 3.740009
+## 2   306    4.955986 0.2844886 5.234785 4.677187
+## 3   602    4.795030 0.5953039 5.378428 4.211632
+## 4  1136    4.355514 0.4115766 4.758859 3.952169
+## 5  1546    5.214159 0.1382922 5.349685 5.078633</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Edésio_Silva&quot;), num, angle), &quot;Edésio Silva&quot;, c(22, 135), c(315, 203))#Street 1</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-1.png" width="1152" /></p>
 <p>Para a Edesio percebemos <strong>uma variação de aproximadamente 0.9</strong> nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.</p>
@@ -2329,11 +1584,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1   130    4.833490 0.2623815 4.962057 4.704923
-## 2   190    4.904771 0.4572464 5.128822 4.680721
-## 3   248    4.817506 0.4648804 5.045298 4.589715
-## 4   284    4.754553 0.2666677 4.885220 4.623885
-## 5   360    4.629734 0.2411248 4.747885 4.511583</code></pre>
+## 1   130    4.833490 0.2623815 5.090624 4.576356
+## 2   190    4.904771 0.4572464 5.352873 4.456670
+## 3   248    4.817506 0.4648804 5.273089 4.361924
+## 4   284    4.754553 0.2666677 5.015887 4.493218
+## 5   360    4.629734 0.2411248 4.866037 4.393432</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Maciel_Pinheiro&quot;), num, angle), &quot;Maciel Pinheiro&quot;, c(360, 90), c(270, 180))#Street 3</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-17-1.png" width="1152" /></p>
 <p>Para a Maciel percebemos <strong>uma variação de aproximadamente 0.2</strong> nas médias do QScore do número 248 e dos números 130 e 248. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. A análise dos intervalos acaba revelando um similaridade ao longo de toda a rua. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias na faixa dos números 190 e 248.</p>
@@ -2512,11 +1767,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1   188    3.505631 0.2965754 3.650953 3.360309
-## 2   222    3.688408 0.2113499 3.791970 3.584847
-## 3   300    3.525249 0.1641497 3.605683 3.444816
-## 4   370    3.627047 0.2577565 3.753348 3.500746
-## 5   392    3.685625 0.1530940 3.760641 3.610609</code></pre>
+## 1   188    3.505631 0.2965754 3.796275 3.214987
+## 2   222    3.688408 0.2113499 3.895531 3.481285
+## 3   300    3.525249 0.1641497 3.686116 3.364383
+## 4   370    3.627047 0.2577565 3.879648 3.374446
+## 5   392    3.685625 0.1530940 3.835657 3.535593</code></pre>
 <pre class="r"><code>plot_ci_per_photo(arrange(filter(all_data, street == &quot;R._Manoel_Pereira_de_Araújo&quot;), num, angle), &quot;Manoel Pereira&quot;, c(22, 135, 293), c(315, 112, 203, 225))#Street 4</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-19-1.png" width="1152" /></p>
 <p>Para a Manoel percebemos <strong>uma variação de aproximadamente 0.14</strong> nas médias do QScore do número 392 e do número 370. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo.</p>
@@ -2690,11 +1945,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1   445    5.182410 0.2534360 3.650953 3.360309
-## 2   549    4.981890 0.5558820 3.791970 3.584847
-## 3   691    5.455449 0.2152820 3.605683 3.444816
-## 4   813    4.963688 0.1959667 3.753348 3.500746
-## 5   913    4.708475 0.5388824 3.760641 3.610609</code></pre>
+## 1   445    5.182410 0.2534360 3.796275 3.214987
+## 2   549    4.981890 0.5558820 3.895531 3.481285
+## 3   691    5.455449 0.2152820 3.686116 3.364383
+## 4   813    4.963688 0.1959667 3.879648 3.374446
+## 5   913    4.708475 0.5388824 3.835657 3.535593</code></pre>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data, street == &quot;Av._Mal._Floriano_Peixoto&quot;), &quot;Floriano Peixoto&quot;, c(22,293), c(112,203))#Street 5</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-21-1.png" width="1152" /></p>
 <div class="row">
@@ -2853,11 +2108,11 @@ print(paste(&quot;&gt;&gt;&gt; GINI da rua: &quot;, ineq(filter(all_data, street
 <pre><code>## # A tibble: 5 x 5
 ##     num media_ponto        sd    upper    lower
 ##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1     2    4.943826 0.2095274 3.650953 3.360309
-## 2    66    5.480879 0.5090987 3.791970 3.584847
-## 3   261    5.376963 0.2457137 3.605683 3.444816
-## 4   305    4.085371 0.8563182 3.753348 3.500746
-## 5   436    5.059822 0.7955436 3.760641 3.610609</code></pre>
+## 1     2    4.943826 0.2095274 3.796275 3.214987
+## 2    66    5.480879 0.5090987 3.895531 3.481285
+## 3   261    5.376963 0.2457137 3.686116 3.364383
+## 4   305    4.085371 0.8563182 3.879648 3.374446
+## 5   436    5.059822 0.7955436 3.835657 3.535593</code></pre>
 <pre class="r"><code>plot_ci_per_photo(filter(all_data, street == &quot;R._Cristina_Procópio_Silva&quot;), &quot;Cristina Procopio&quot;, c(22, 45, 293, 315), c(135, 225))#Street 6 -&gt; At number 436, 22 x 315 and 135 x 203</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-23-1.png" width="1152" /></p>
 <div class="row">

@@ -75,12 +75,12 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral com 29 usuários (primeira amostra analisada), com a amostra com 69 pessoas e todas como moradores de Campina e com a amostra atual contendo 286 pessoas (113 pessoas que não são de Campina e 140 que são daqui).
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 286 pessoas (113 pessoas que não são de Campina e 140 que são daqui), com a amostra de 29 usuários (primeira amostra analisada) e com a amostra de 69 pessoas (sendo todos moradores de Campina).
 
-O processo de separação de quem é ou não de Campina se deu:
+O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:
 
 1. O usuário informando se é morador ou não ou através do IP;
-2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores;
+2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);
 3. Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.
 
 ```{r}
@@ -155,7 +155,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x
 
 # Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 140 moradores e 113 não moradores.
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 140 moradores e 113 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -249,9 +249,9 @@ qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 
 ```
 
-Qualitativamente analisando estas imagens, conforme esperado, percebe-se que vegetação, melhor estado de manutenção e a rua mais larga conduziram a melhores avaliações das imagens. O céu também foi um fator apontado em 2 das 5 fotos e que não foi computado em nossas avaliações anteriores.  É importante destacar que a Inácio Marques teve 4 dos 5 melhores, e o outro local foi na Edésio Silva, sendo ambas as ruas tipicamente residenciais.
+Qualitativamente analisando estas imagens, conforme esperado, percebe-se que **vegetação, melhor estado de manutenção e a rua mais larga** conduziram a melhores avaliações das imagens. O **céu** também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 3 locais e a Edésio e Inácio Marques 1 local cada (tipicamente residenciais).
 
-Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 5 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
+Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
 
 Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
 
@@ -399,7 +399,7 @@ Após a análise das médias por rua e de suas desigualdades, vamos dar uma olha
 >>> Considerando todos os respondentes
 ```{r  fig.height=10, fig.width=12}
 #Calculating CI for each photo - all users together
-current_data$ci <- current_data$sd * 1.96 / 100
+current_data$ci <- current_data$sd * 1.96 / sqrt(100)
 current_data <- arrange(current_data, photo_name)
 
 qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
@@ -455,10 +455,20 @@ plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cr
 #Calculating CI for each photo - CAmpina residents
 datacampina <- read.table("all100/all_campina_ordenado.dat")
 datanotcampina <- read.table("all100/all_notcampina_ordenado.dat")
+novoV2 <- lapply(as.character(datacampina$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+datacampina$photo_name <- photo
+novoV2 <- lapply(as.character(datanotcampina$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+datanotcampina$photo_name <- photo
 
-datacampina$sd <- apply(datacampina[,4:ncol(datacampina)], 1, sd)
+datacampina$sd <- apply(datacampina[,4:103], 1, sd)
 datacampina$n <- ( 1.96 * datacampina$sd / 0.2) ** 2  #All QScores
-datacampina$ci <- datacampina$sd * 1.96 / 100
+datacampina$ci <- datacampina$sd * 1.96 / sqrt(100)
 datacampina <- arrange(datacampina, photo_name)
 
 all_data_camp <- merge(qscoresDFCampina, datacampina, by.x = "url", by.y="V2")#qscoresDFGeral
@@ -479,9 +489,9 @@ plot_ci_per_photo(filter(all_data_camp, street == "R._Cristina_Procópio_Silva")
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
 #Calculating CI for each photo - CAmpina residents
-datanotcampina$sd <- apply(datanotcampina[,4:ncol(datanotcampina)], 1, sd)
+datanotcampina$sd <- apply(datanotcampina[,4:103], 1, sd)
 datanotcampina$n <- ( 1.96 * datanotcampina$sd / 0.2) ** 2  #All QScores
-datanotcampina$ci <- datanotcampina$sd * 1.96 / 100
+datanotcampina$ci <- datanotcampina$sd * 1.96 / sqrt(100)
 datanotcampina <- arrange(datanotcampina, photo_name)
 
 all_data_ncamp <- merge(qscoresDFNotCampina, datanotcampina, by.x = "url", by.y="V2")#qscoresDFGeral

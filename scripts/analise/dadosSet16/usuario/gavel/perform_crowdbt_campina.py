@@ -122,7 +122,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 				annotator.prev = photo1
 				annotator.next = photo2
 				perform_vote(annotator, next_won=False)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 
@@ -130,7 +130,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 				annotator.prev = photo1
 				annotator.next = photo3
 				perform_vote(annotator, next_won=False)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 
@@ -138,7 +138,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 				annotator.prev = photo1
 				annotator.next = photo4
 				perform_vote(annotator, next_won=False)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 
@@ -146,7 +146,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 				annotator.prev = photo2
 				annotator.next = photo3
 				perform_vote(annotator, next_won=True)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 
@@ -154,7 +154,7 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 				annotator.prev = photo2
 				annotator.next = photo4
 				perform_vote(annotator, next_won=True)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 
@@ -239,12 +239,12 @@ def evaluateAllVotes(lines, outputFileName, tasksDefinitions):
 			annotator.next = photo2
 			if answer == left:
 				perform_vote(annotator, next_won=False)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 			elif answer == right:
 				perform_vote(annotator, next_won=True)
-				decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
+				#decision = Decision(annotator, winner=annotator.next, loser=annotator.prev)
 				annotator.next.viewed.append(annotator)
 				annotator.ignore.append(annotator.prev)
 			elif answer == notKnown:
@@ -301,8 +301,15 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 	annotators_exec = {}
 	annotators_already_started = set([])
 
+	#linhas = 0
+	#lines_counter = 0
+	#votes_entered = 0
+#	prev_ann_size = 0
+#	ann_size = 0
+
 	#Building a dict, for each annotator, of photos compared and their answers
 	for line in lines:
+		#ann_size = 0
 		lineData = line.split("+")
 
 		executionID = lineData[0].strip(' \t\n\r"')
@@ -320,6 +327,8 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 				question = possibleQuestions[1]
 
 			if current_question == question:
+				#lines_counter = lines_counter + 1
+
 				#Checking and retrieving annotator
 				if annotatorID in annotators.keys():
 					annotator = annotators[annotatorID]
@@ -360,6 +369,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 
 				#Saving votes from task-run
 				if is_tie != completeTie:
+					#votes_entered = votes_entered + 1
 					#Vote 1
 					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
@@ -438,7 +448,14 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 					photo_votes[photo3_name] = votes
 					annotator_data[photo4_name] = photo_votes
 
+					#Counting map size
+					#for image in annotator_data.keys():
+					#	data = annotator_data[image]
+					#	ann_size = ann_size + len(data.keys())
+					#if prev_ann_size > ann_size:
+					#	print("ERRO! " + str(linhas))
 				else:
+					#votes_entered = votes_entered + 1
 					#Vote 1
 					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
@@ -514,12 +531,21 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 					else:
 						votes = []
 					votes.append(completeTie)
-					photo_votes[photo3_name] = votes
-					annotator_data[photo4_name] = photo_votes
+					photo_votes[photo4_name] = votes
+					annotator_data[photo3_name] = photo_votes
 
-				annotators_exec[annotatorID] = 	annotator_data
+					#Counting map size
+					#for image in annotator_data.keys():
+					#	data = annotator_data[image]
+					#	ann_size = ann_size + len(data.keys())
+					#if prev_ann_size > ann_size:
+					#	print("ERRO! " + str(linhas))
+				#print(">>> ANN_size " + str(linhas) + " " + str(prev_ann_size) + " " + str(ann_size))
+				#prev_ann_size = ann_size
+				annotators_exec[annotatorID] = annotator_data
 				annotators[annotatorID] = annotator
-
+			#else:
+			#	print(">> Nao escolhi linha " + str(line))
 		else:#Old-fashioned way of capturing votes
 			#In user answers that contain profile information, jump to comparison
 			if userAnswer[0] == '{':
@@ -541,6 +567,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 				question = possibleQuestions[1]
 
 			if current_question == question:
+				#lines_counter = lines_counter + 1
 				#Checking and retrieving annotator
 				if annotatorID in annotators.keys():
 					annotator = annotators[annotatorID]
@@ -565,6 +592,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 
 				#Saving votes from task-run
 				if answer == left:
+					#votes_entered = votes_entered + 1
 					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
@@ -577,6 +605,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 					photo_votes[photo2_name] = votes
 					annotator_data[photo1_name] = photo_votes	
 				elif answer == right:
+					#votes_entered = votes_entered + 1
 					if photo2_name in annotator_data:
 						photo_votes = annotator_data[photo2_name]
 					else:
@@ -589,6 +618,7 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 					photo_votes[photo1_name] = votes
 					annotator_data[photo2_name] = photo_votes
 				elif answer == notKnown:
+					#votes_entered = votes_entered + 1
 					if photo1_name in annotator_data:
 						photo_votes = annotator_data[photo1_name]
 					else:
@@ -601,13 +631,25 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 					photo_votes[photo2_name] = votes
 					annotator_data[photo1_name] = photo_votes
 
-				annotators_exec[annotatorID] = 	annotator_data
+				#Counting map size
+				#for image in annotator_data.keys():
+				#	data = annotator_data[image]
+				#	ann_size = ann_size + len(data.keys())
+				#if prev_ann_size > ann_size:
+				#		print("ERRO! " + str(linhas))
+				#print(">>> ANN_size " + str(linhas) + " " + str(prev_ann_size) + " " + str(ann_size))
+				#prev_ann_size = ann_size
+				annotators_exec[annotatorID] = annotator_data
 				annotators[annotatorID] = annotator
+			#else:
+			#	print(">> Nao escolhi linha " + str(line))
+		#linhas = linhas + 1
+	#print("LINES " + str(lines_counter) + " " + str(votes_entered) + " " + str(ann_size))
 
 	#For each annotator simulate execution and recommendation of tasks
 	success_comp = 0
 	failed_comp = 0
-	debug_file.write(">>>> Iniciando quest " + current_question+"\n")
+	print(">>>> Iniciando quest " + current_question+"\n")
 	for annotatorID in annotators.keys():
 
 		#Computing amount of comparisons performed by annotator
@@ -617,18 +659,21 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 
 		annotator = annotators[annotatorID]
 		pairs_evaluated = []
+		exec_data = annotators_exec[annotatorID]
+
 	
 		while current_counter < total_counter and continue_votes:
+			print("Iteração " + str(current_counter))# + " " + str(datetime.utcnow())+ " " + str(len(pairs_evaluated)))
 			photo1 = annotator.prev
 			photo2 = annotator.next
 
-			exec_data = annotators_exec[annotatorID]
 			winner = None
 			looser = None
 			tie = False
 		
 			if [photo1.name, photo2.name] not in pairs_evaluated and [photo2.name, photo1.name] not in pairs_evaluated:#According to definition, the same annotator does not evaluate the same pair differently!
-
+			
+				#print("Definindo winner "+ str(datetime.utcnow()))
 				pairs_evaluated.append([photo1.name, photo2.name])
 
 				if photo1.name in exec_data.keys():
@@ -638,9 +683,9 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 						if photo_vote == left:
 							winner = photo1
 							looser = photo2
-						elif photo_vote == right:
-							winner = photo2
-							looser = photo1
+						#elif photo_vote == right:
+						#	winner = photo2
+						#	looser = photo1
 						else:
 							tie = True
 				elif photo2.name in exec_data.keys():
@@ -650,18 +695,19 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 						if photo_vote == left:
 							winner = photo2
 							looser = photo1
-						elif photo_vote == right:
-							winner = photo1
-							looser = photo2
+						#elif photo_vote == right:
+						#	winner = photo1
+						#	looser = photo2
 						else:
 							tie = True	
 				#Check if comparison occurred - account for comparisons that did not occurred
+				#print("Voto "+ str(datetime.utcnow()))
 				if winner == None and looser == None and tie == False:
 					failed_comp = failed_comp + 1
 					#print (">>> Failed\t"+photo1.name+"\t"+photo2.name)
 				else:
 					#Compute vote
-					decision = Decision(annotator, winner=winner, loser=looser)
+					#decision = Decision(annotator, winner=winner, loser=looser)
 					if winner != None and winner.name == annotator.next.name:
 						perform_vote(annotator, next_won=True)
 					elif winner != None and winner.name == annotator.prev.name:
@@ -677,36 +723,50 @@ def simulateCrowdBT(lines, tasks_def, current_question):
 				#annotator.ignore.append(annotator.prev)
 
 			#Choosing a new pair!
+			#print("Choose image "+ str(datetime.utcnow()))
 			annotator.next.viewed.append(annotator)
 			annotator.prev.viewed.append(annotator)
 
 			#Select new next photo and iterate until n comparisons for annotator
-			#next_image = choose_image(annotator, items_map, annotators)
 			one_image = choose_image(annotator, items_map, annotators)
 			if one_image == None or one_image == "":
 				continue_votes = False
+				break
 			else:
 				annotator.prev = one_image
 			annotator.ignore = [one_image]#Avoiding same image to be selected again
 			other_image = choose_image(annotator, items_map, annotators)
 			if other_image == None or other_image == "":
 				continue_votes = False
+				break
 			else:
 				annotator.update_next(other_image)
-			current_counter = current_counter + 1
+			#images =  choose_image(annotator, items_map, annotators)
+			#if images[0] == None or images[1] == None:
+		#		continue_votes = False
+		#	else:
+		#		annotator.prev = images[0]
+		#		annotator.update_next(images[1])
 
-		debug_file.write(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes)+"\n")
+			current_counter = current_counter + 1
+		print(">>> Terminei\t" + annotator.name+"\t"+str(current_counter)+"\t"+str(total_counter)+"\t"+str(continue_votes)+"\n")
 				
 
 	return [success_comp, failed_comp, items_map]
 
 def count_comparisons(annotator_data):
 	counter = 0
+	#pairs_evaluated = []
 	for image in annotator_data.keys():
 		image_data = annotator_data[image]
 		for other_image in image_data.keys():
 			votes = image_data[other_image]
 			counter += len(votes)
+			#if not [image, other_image] in pairs_evaluated and not [other_image, image] in pairs_evaluated:
+			#	pairs_evaluated.append([image, other_image])
+
+	#print(">>> TOTAL DE PARES " + str(len(pairs_evaluated)) + " " + str(pairs_evaluated[0]))
+	#sys.exit(1)
 	return counter
 
 def preferred_items(annotator, items_map, annotators):
@@ -747,15 +807,15 @@ def choose_image(annotator, items_map, annotators):
 	shuffle(pref_items) # useful for argmax case as well in the case of ties
 	if pref_items:
 		if random() < crowd_bt.EPSILON:
-		    return pref_items[0]
+			return pref_items[0]
 		else:
-		    return crowd_bt.argmax(lambda i: crowd_bt.expected_information_gain(
-			annotator.alpha,
-			annotator.beta,
-			annotator.prev.mu,
-			annotator.prev.sigma_sq,
-			i.mu,
-			i.sigma_sq), pref_items)
+			return crowd_bt.argmax(lambda i: crowd_bt.expected_information_gain(
+				annotator.alpha,
+				annotator.beta,
+				annotator.prev.mu,
+				annotator.prev.sigma_sq,
+				i.mu,
+				i.sigma_sq), pref_items)
 	else:
 		return None
 
@@ -787,7 +847,7 @@ if __name__ == '__main__':
 		all_failed = {"pleas": 0, "saf":0}
 
 		for i in range(0, num_of_sims):
-			debug_file.write(">>>> Iniciando sim " + str(i)+"\n")
+			print(">>>> Iniciando sim " + str(i)+"\n")
 
 			pleas_data = simulateCrowdBT(lines, tasks_def, possibleQuestions[0])
 			for item_name, item in pleas_data[2].items():

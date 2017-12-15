@@ -54,13 +54,24 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
 
-1. Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?
+1. A coleta nos artigos gera uma pergunta, e o detalhamento da rua? Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes?
++ No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz
+++ Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;
++ No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local
++ No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.
+++ Pela análise do Como é Campina?, focando em divergências, nós encontramos 11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança.
+
+2. Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?
 + Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais
 + Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar
 + E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
 ++ Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
 +++ as grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
 +++ Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
+
+**Exemplo**: Alguns casos interessantes
++ Amostra anterior: A imagem https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!
++ Amostra Atual: A imagem https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg  (posição 51) tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e compara a um terreno baldio da https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg (posição 73). As imagens https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg (posição 58) e https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg (posição 46), são locais bem mantidos no centro e que tiveram notas na faixa de 4.7, medianas.
 
 
 Para isso, foram escolhidas 4 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 2 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva e Inácio Marques), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e a outra rua é uma rua importante do centro da cidade (Maciel Pinheiro), que tem uma tendência de homogeneidade, com notas boas. 

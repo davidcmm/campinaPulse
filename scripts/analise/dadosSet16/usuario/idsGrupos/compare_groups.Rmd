@@ -1361,10 +1361,22 @@ mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:
 #Analyzing simulations CI
 for (file in c("../gavel/allPairwiseComparison-sim-gam01-lam01.dat", "../gavel/allPairwiseComparison-sim-gam20-lam01.dat")){
    gavelData <- read.table(file)
-   gavelData$ci_mu <- gavelData$V4 * 1.96 / sqrt(7500)
-   gavelData$ci_sigma <- gavelData$V6 * 1.96 / sqrt(7500)
-   g1 <- ggplot(filter(gavelData, V1!="seguro?"), aes(x=seq(1,108), y=V3)) + geom_errorbar(aes(ymin=V3-ci_mu, ymax=V3+ci_mu), colour="black", width=.1) + ylim(c(0,0.5)) + labs(x = "Images", title = "Testing variance of mu", y = "Gavel mu") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
-   g2 <- ggplot(filter(gavelData, V1=="seguro?"), aes(x=seq(1,108), y=V3)) + geom_errorbar(aes(ymin=V3-ci_mu, ymax=V3+ci_mu), colour="black", width=.1) + ylim(c(0,0.5)) + labs(x = "Images", title = "Testing variance of mu", y = "Gavel mu") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   
+   merged <- merge(gavelData, gavelData2, by.x="V2", by.y="V2")
+   merged_sub <- subset(merged, select = c(1:302,605:903))
+   
+   merged_sub$sd_mu <- apply(merged_sub[,c(3:602)], 1, sd)
+   #merged_sub$sd_sigma <- apply(gavelData[,c(303:602)], 1, sd)
+   merged_sub$mean_mu <- apply(merged_sub[,c(3:602)], 1, mean)
+   #merged_sub$mean_sigma <- apply(gavelData[,c(303:602)], 1, mean)
+   merged_sub$ci_mu <- merged_sub$sd_mu * 1.96 / sqrt(600)
+   #merged_sub$ci_sigma <- gavelData$sd_sigma * 1.96 / sqrt(300)
+   
+   merged_sub$n_mu <- ( 1.96 * merged_sub$sd_mu/ 0.01) ** 2
+   #merged_sub$n_sigma <- ( 1.96 * merged_sub$sd_sigma/ 0.01) ** 2
+   
+   g1 <- ggplot(filter(merged_sub, V1.x!="seguro?"), aes(x=seq(1,108), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(0,0.5)) + labs(x = "Images", title = "Testing variance of mu", y = "Gavel mu") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   g2 <- ggplot(filter(merged_sub, V1=="seguro?"), aes(x=seq(1,108), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(0,0.5)) + labs(x = "Images", title = "Testing variance of mu", y = "Gavel mu") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
    
    multiplot(g1, g2, cols=1)
 }

@@ -54,45 +54,36 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
 
-1. A coleta nos artigos gera uma pergunta, e o detalhamento da rua? Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes?
-+ No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz
-++ Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;
-+ No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local
-+ No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.
-++ Pela análise do Como é Campina?, focando em divergências, nós encontramos 11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança.
+1. A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?
+* No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz
++ Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;
+* No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local
+* No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.
++ Pela análise do Como é Campina?, focando em divergências, nós encontramos 11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança.
 
 2. Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?
-+ Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais
-+ Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar
-+ E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
-++ Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
-+++ as grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
-+++ Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
+* Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais
+* Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar
+* E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
++ Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
++ as grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
++ Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
 
 **Exemplo**: Alguns casos interessantes
 + Amostra anterior: A imagem https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!
 + Amostra Atual: A imagem https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg  (posição 51) tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e compara a um terreno baldio da https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg (posição 73). As imagens https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg (posição 58) e https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg (posição 46), são locais bem mantidos no centro e que tiveram notas na faixa de 4.7, medianas.
 
-
-Para isso, foram escolhidas 4 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 2 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva e Inácio Marques), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e a outra rua é uma rua importante do centro da cidade (Maciel Pinheiro), que tem uma tendência de homogeneidade, com notas boas. 
+Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas. 
 
 Alguns questionamentos foram inicialmente levantados:
 
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 2. Será que ruas que são parecidas na média, são de fato similares?
-3. Olhando a dispersão da rua como um todo, posso tentar dizer algo sobre a rua?
-4. Olhando as variações dos QScores por número/ponto na rua, consigo perceber variações que podem indicar problemas?
-5. Confrontando as variações no QScores com as fotos, podemos apontar problemas/virtudes das ruas?
+3. Podemos descrever cada rua? Problemas/virtudes (pontos notáveis)?
 
-# Tamanho das amostras e comparação entre rankings
+# Caracterização Geral - Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 286 pessoas (113 pessoas que não são de Campina e 140 que são daqui), com a amostra de 29 usuários (primeira amostra analisada) e com a amostra de 69 pessoas (sendo todos moradores de Campina).
-
-O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:
-
-1. O usuário informando se é morador ou não ou através do IP;
-2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);
-3. Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 292 pessoas (116 pessoas que não são de Campina e 143 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).
 
 ```{r}
 #Checking sample size
@@ -164,9 +155,15 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = "spearman"))
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))
 ```
 
-# Comparação entre rankings de moradores e não moradores
+## Comparação entre rankings de moradores e não moradores
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 140 moradores e 113 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
+O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:
+
+1. O usuário informando se é morador ou não ou através do IP;
+2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);
+3. Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.
+
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 143 moradores e 116 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -179,11 +176,11 @@ print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = "spearman"))
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcampina$V3.x, camp_notcampina$V3.y)))
 ```
 
-# Impressão Geral das Ruas
+# Caracterização Geral - Impressão Geral das Ruas
 
 ## Ranking Geral
 
-Computados os QScores as cinco melhores e cinco piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
+Computados os QScores as 10 melhores e 10 piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
 show_general_ranking <- function (data, best_folder, worst_folder){
@@ -260,9 +257,9 @@ qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 
 ```
 
-Qualitativamente analisando estas imagens, conforme esperado, percebe-se que **vegetação, melhor estado de manutenção e a rua mais larga** conduziram a melhores avaliações das imagens. O **céu** também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 3 locais e a Edésio e Inácio Marques 1 local cada (tipicamente residenciais).
+Qualitativamente analisando estas imagens, conforme esperado, percebe-se que **vegetação, melhor estado de manutenção e a rua mais larga** conduziram a melhores avaliações das imagens. O **céu** também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 4 locais e a Edésio Silva 1 local (tipicamente residencial).
 
-Para as imagens com pior avaliação, a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
+Para as imagens com pior avaliação, **a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto**. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.
 
 Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
 
@@ -292,7 +289,7 @@ reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + sc
 texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
 
-Realizando a mesma regressão acima para moradores e não moradores de forma separada
+Realizando a mesma regressão acima para moradores e não moradores de forma separada, **percebe-se uma presença da importância da quantidade de árvores mais significativa para os não-moradores**.
 
 ```{r}
 #CAmpina residents
@@ -354,14 +351,12 @@ plot_street_means(qscoresDFCampina)
 plot_street_means(qscoresDFNotCampina)
 ```
 
-- Os ICs com 95% de confiança das 20 fotos foi razoavelmente curto, permitindo uma comparação das médias;
 - A Manoel P. de Araújo realmente está bem abaixo das demais ruas;
-- As outras três ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Inácio Marques e a Maciel Pinheiro parecerem ter uma tendência de melhores scores que a Edesio;
+- As outras 5 ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Cristina e a Floriano parecerem ter uma tendência de melhores scores;
 
 2. Será que ruas que são parecidas na média, são de fato similares?
-3. Olhando a dispersão da rua como um todo, posso tentar dizer algo sobre a rua?
 
-Três das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.
+5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.
 
 ```{r }
 value <- qscoresDFGeral$qscore
@@ -376,6 +371,18 @@ value <- qscoresDFNotCampina$qscore
 
 with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))
 
+```
+
+A partir da análise dos violin plots, alguns pontos podem ser destacados:
+
+- A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);
+- A Inacio Marques, Edesio silva e Cristina tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados). Existem concentrações de medianos para bons, porém a Inácio tem uma concentração de scores ruins e a Cristina tem algunas notas muito baixas;
+- A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua. Isso a torna mais homogênea que as outras 4, porém mais heterogênea que a Manoel P. de Araujo;
+- A Floriano também tem uma maior concentração de valores com notas parecidas, porém um pouco mais heterogêneas que a Maciel Pinheiro;
+- A Inacio, Edesio, Floriano e Cristina possuem QScores que variam em 1.5 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!
+
+Para complemento numérico dos violin plots, temos os coeficientes de dispersão/heterogeneidade e o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
+```{r }
 #GINI COEFFICIENTS
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
@@ -383,17 +390,7 @@ all_data$street <- factor(all_data$street, levels=unique(all_data$street))
 inequalities <- data.frame( labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)), floriano=c(ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini"), ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="entropy"), sd(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore)), cristina= c(ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore)) )
 
 inequalities
-```
 
-A partir da análise dos violin plots, alguns pontos podem ser destacados:
-
-- A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);
-- A Inacio Marques e a Edesio silva tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados). A Edesio tem uma maior concentração de valores medianos, e medianos para bom e para ruim, já a Inácio tem uma maior concentração de valores para medianos bons e ruins;
-- A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua. Isso a torna mais homogênea que a Inacio e a Edesio, porém mais heterogênea que a Manoel P. de Araujo;
-- A Inacio, Edesio e Maciel possuem QScores que variam em 2 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!
-
-Para complemento numérico dos violin plots, o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
-```{r }
 summary(filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva")$qscore)
 summary(filter(qscoresDFGeral, street == "R._Edésio_Silva")$qscore)
 summary(filter(qscoresDFGeral, street == "R._Maciel_Pinheiro")$qscore)
@@ -405,7 +402,7 @@ summary(filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva")$qscore)
 
 # Uma impressão geral ao longo da rua
 
-Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores
+Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores. Com isso podemos perceber diferenças e semelhanças entre as ruas, com a presença de locais melhor/pior avaliados ao longo das mesmas.
 
 >>> Considerando todos os respondentes
 ```{r  fig.height=10, fig.width=12}
@@ -521,10 +518,9 @@ plot_ci_per_photo(filter(all_data_ncamp, street == "R._Cristina_Procópio_Silva"
 
 # Analisando em detalhe cada rua
 
-Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua e confrontá-los com as imagens para tentar responder as duas questões:
+Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua e confrontá-los com as imagens para tentar responder a questão abaixo:
 
-4. Olhando as variações dos QScores por número/ponto na rua, consigo perceber variações que podem indicar problemas?
-5. Confrontando as variações no QScores com as fotos, podemos apontar problemas/virtudes das ruas?
+3. Podemos descrever cada rua? Apontar pontos notáveis, problemas? Esses pontos seriam identificados pela regressão ou comportamento médio?
 
 ## Inacio Marques
 

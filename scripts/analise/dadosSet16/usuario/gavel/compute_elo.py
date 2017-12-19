@@ -22,7 +22,7 @@ notKnown = 'NotKnown'
 completeTie = 'equal'
 
 initial_rating = 1500#Elo initial rating
-K = 24
+K = 24#10, 20, 40?
 
 
 def readTasksDefinitions(linesTasks):

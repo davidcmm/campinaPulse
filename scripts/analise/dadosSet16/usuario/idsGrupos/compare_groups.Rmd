@@ -1166,6 +1166,68 @@ for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/",
 }    
 ```
 
+## Comparing original Como e Campina with all users rankings x elo rankings
+```{r read}
+for (file in c("../all100/all_elo_24.dat", "../all100/all_elo_10.dat", "../all100/all_elo_40.dat", "../all100/all_elo_20.dat")){
+  print(paste(">>>>> Folder ", file))
+  
+  eloData <- read.table(file)
+  eloData$sd_mu <- apply(eloData[,c(4:10003)], 1, sd)
+  eloData$mean_mu <- apply(eloData[,c(4:10003)], 1, mean)
+   eloData$ci_mu <- eloData$sd_mu * 1.96 / sqrt(10000)
+   eloData$n_mu <- ( 1.96 * eloData$sd_mu/ 1) ** 2
+   
+  agrad_elo <- arrange(filter(eloData, V1 != "seguro?"), -V3)
+  seg_elo <- arrange(filter(eloData, V1 == "seguro?"), -V3)
+   
+  #Analyzing CI
+   g1 <- ggplot(agrad_elo, aes(x=seq(1,108), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(1000, 2000)) + labs(x = "Images", title = "Testing variance of ratings", y = "Elo rating") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   g2 <- ggplot(seg_elo, aes(x=seq(1,108), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(1000, 2000)) + labs(x = "Images", title = "Testing variance of ratings", y = "Elo ratings") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   
+   multiplot(g1, g2, cols=1)
+  
+  #Pleasantness x Safety in Gavel
+  new_elo_data <- reshape(select(eloData, V1, V2, V3), timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_elo_data)[colnames(new_elo_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  colnames(new_elo_data)[colnames(new_elo_data) == "V3.seguro?"] <- "V3.seguro"
+  reg <- lm(V3.agradavel ~ V3.seguro, data=new_elo_data)
+  print(summary(reg))
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  seg_orig <- filter(all_original, V1 == "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_elo, by.x="V2", by.y="V2")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Elo", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Elo", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Elo", res$estimate))
+  
+  sum_agrad <- combineFeaturesAndTestRegression(select(agrad_elo, V1, V2, V3))
+  print(sum_agrad)
+  
+  #Safety
+  merged_g2 <- merge(seg_orig, seg_elo, by.x="V2", by.y="V2")
+  merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+
+    print(paste(">>>>>>> Kendall distance Seg: Q-Score x Elo", normalizedKendallTauDistance2(merged_g2$rank, merged_g2$index)))
+  res <- cor.test(merged_g2$rank, merged_g2$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Seg: Q-Score x Elo", normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+  res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Seg: Q-Score x Elo", res$estimate))
+  
+  sum_seg <- combineFeaturesAndTestRegression(select(seg_elo, V1, V2, V3))
+  print(sum_seg)
+}  
+
+```
+
 ## Comparing original Como e Campina with all users rankings x maxdiff rankings
 ```{r read}
 for (file in c("../all100/all_ordenado_maxdiff_new.dat")){

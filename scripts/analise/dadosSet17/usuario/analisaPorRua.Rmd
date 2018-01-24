@@ -13,6 +13,7 @@ library("dplyr")
 library("knitr")
 library("texreg")
 library("ineq")
+library(R.utils)
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -174,6 +175,49 @@ print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = "kendall"))
 print(cor.test(camp_notcampina$V3.x, camp_notcampina$V3.y, method = "spearman"))
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcampina$V3.x, camp_notcampina$V3.y)))
+```
+
+Composição social de todos os usuários
+
+```{r, echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+count_profile <- function(listOfFiles) {
+  listOfValues <- c()
+  for (file in listOfFiles){
+     listOfValues <- append(listOfValues, nrow(read.table(file))-1)
+  }
+  counters = data.frame(key=listOfFiles, value=listOfValues)
+  
+  gender_data <-filter(counters, grepl("masculino", key) | grepl("feminino", key)) %>% mutate(type="gender") %>% mutate(percent=value/sum(value))
+  age_data <-filter(counters, grepl("jovem", key) | grepl("adulto", key)) %>% mutate(type="age") %>% mutate(percent=value/sum(value))
+  income_data <-filter(counters, grepl("baixa", key) | grepl("media", key)) %>% mutate(type="income") %>% mutate(percent=value/sum(value))
+  counters <- rbind(gender_data, income_data, age_data)
+  
+  ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y")
+}
+
+folder <- "../backupBanco/idsGerais/"
+files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
+listOfFiles <- paste(folder, files, sep="")
+count_profile(listOfFiles)
+```
+
+
+Composição social de moradores de Campina
+
+```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+folder <- "../backupBanco/idsCampina//"
+files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
+listOfFiles <- paste(folder, files, sep="")
+count_profile(listOfFiles)
+```
+
+Composição social de não moradores de Campina
+
+```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+folder <- "../backupBanco/idsNotCampina//"
+files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
+listOfFiles <- paste(folder, files, sep="")
+count_profile(listOfFiles)
 ```
 
 # Caracterização Geral - Impressão Geral das Ruas

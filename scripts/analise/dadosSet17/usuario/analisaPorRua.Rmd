@@ -321,42 +321,48 @@ plotRegAndLinear <- function(reg, test){
 }
 
 reg_input <- merge(current_data, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_geral <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#texreg(list(reg_geral), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
-plotRegAndLinear(reg, reg_input)
+plotRegAndLinear(reg_geral, reg_input)
 
 #Standardized regression
-reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
 
-Realizando a mesma regressão acima para moradores e não moradores de forma separada, **percebe-se uma presença da importância da quantidade de árvores mais significativa para os não-moradores**.
+Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se: 
+
+1. Sidewalk width mais significativo e influente no Geral, influência parecida nos 2 grupos;
+2. Landscape igualmente significativo nos 3, mais influente para moradores;
+3. Trees mais significativo para não moradores e mais influente para eles;
+4. Builds ids igualmente significativo nos 3, mais influente para não moradores;
+5. R2 parecidos
 
 ```{r}
 #CAmpina residents
 reg_input <- merge(datacampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_campina <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Standardized regression
-reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Campina non-residents
 reg_input <- merge(datanotcampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_not_campina <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
 #Standardized regression
-reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
 
 ## Análise das Ruas

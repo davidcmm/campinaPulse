@@ -753,221 +753,75 @@ plotRegAndLinear &lt;- function(reg, test){
 }
 
 reg_input &lt;- merge(current_data, input_regressao, by.x=&quot;V2&quot;, by.y=&quot;image&quot;) %&gt;% do(arrange(., V3)) %&gt;% mutate(rank = 1:n())
-reg &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_geral &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
-<pre><code>## 
-## \begin{table}
-## \begin{center}
-## \begin{tabular}{l c }
-## \hline
-##  &amp; Model 1 \\
-## \hline
-## (Intercept)   &amp; $-20.555^{*}$  \\
-##               &amp; $(8.653)$      \\
-## street\_wid   &amp; $-0.254$       \\
-##               &amp; $(0.223)$      \\
-## sidewalk\_wid &amp; $3.314^{**}$   \\
-##               &amp; $(1.101)$      \\
-## landscape     &amp; $19.192^{***}$ \\
-##               &amp; $(2.424)$      \\
-## trees         &amp; $3.319^{**}$   \\
-##               &amp; $(1.056)$      \\
-## build\_ident  &amp; $-7.212^{***}$ \\
-##               &amp; $(1.733)$      \\
-## \hline
-## R$^2$         &amp; 0.662          \\
-## Adj. R$^2$    &amp; 0.647          \\
-## Num. obs.     &amp; 120            \\
-## RMSE          &amp; 20.671         \\
-## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
-## \end{tabular}
-## \caption{Statistical models}
-## \label{table:coefficients}
-## \end{center}
-## \end{table}</code></pre>
-<pre class="r"><code>#Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
-plotRegAndLinear(reg, reg_input)</code></pre>
+#texreg(list(reg_geral), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+#Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
+plotRegAndLinear(reg_geral, reg_input)</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-9.png" width="672" /></p>
 <pre class="r"><code>#Standardized regression
-reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
-<pre><code>## 
-## \begin{table}
-## \begin{center}
-## \begin{tabular}{l c }
-## \hline
-##  &amp; Model 1 \\
-## \hline
-## (Intercept)          &amp; $60.500^{***}$ \\
-##                      &amp; $(1.887)$      \\
-## scale(street\_wid)   &amp; $-2.727$       \\
-##                      &amp; $(2.395)$      \\
-## scale(sidewalk\_wid) &amp; $6.505^{**}$   \\
-##                      &amp; $(2.160)$      \\
-## scale(landscape)     &amp; $20.365^{***}$ \\
-##                      &amp; $(2.573)$      \\
-## scale(trees)         &amp; $8.732^{**}$   \\
-##                      &amp; $(2.779)$      \\
-## scale(build\_ident)  &amp; $-9.301^{***}$ \\
-##                      &amp; $(2.236)$      \\
-## \hline
-## R$^2$                &amp; 0.662          \\
-## Adj. R$^2$           &amp; 0.647          \\
-## Num. obs.            &amp; 120            \\
-## RMSE                 &amp; 20.671         \\
-## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
-## \end{tabular}
-## \caption{Statistical models}
-## \label{table:coefficients}
-## \end{center}
-## \end{table}</code></pre>
-<p>Realizando a mesma regressão acima para moradores e não moradores de forma separada, <strong>percebe-se uma presença da importância da quantidade de árvores mais significativa para os não-moradores</strong>.</p>
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
+<p>Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se:</p>
+<ol style="list-style-type: decimal">
+<li>Sidewalk width mais significativo e influente no Geral, influência parecida nos 2 grupos;</li>
+<li>Landscape igualmente significativo nos 3, mais influente para moradores;</li>
+<li>Trees mais significativo para não moradores e mais influente para eles;</li>
+<li>Builds ids igualmente significativo nos 3, mais influente para não moradores;</li>
+<li>R2 parecidos</li>
+</ol>
 <pre class="r"><code>#CAmpina residents
 reg_input &lt;- merge(datacampina, input_regressao, by.x=&quot;V2&quot;, by.y=&quot;image&quot;) %&gt;% do(arrange(., V3)) %&gt;% mutate(rank = 1:n())
-reg &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_campina &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
-<pre><code>## 
-## \begin{table}
-## \begin{center}
-## \begin{tabular}{l c }
-## \hline
-##  &amp; Model 1 \\
-## \hline
-## (Intercept)   &amp; $-24.156^{**}$ \\
-##               &amp; $(8.421)$      \\
-## street\_wid   &amp; $-0.355$       \\
-##               &amp; $(0.217)$      \\
-## sidewalk\_wid &amp; $2.785^{*}$    \\
-##               &amp; $(1.071)$      \\
-## landscape     &amp; $23.031^{***}$ \\
-##               &amp; $(2.359)$      \\
-## trees         &amp; $2.059^{*}$    \\
-##               &amp; $(1.028)$      \\
-## build\_ident  &amp; $-7.333^{***}$ \\
-##               &amp; $(1.687)$      \\
-## \hline
-## R$^2$         &amp; 0.680          \\
-## Adj. R$^2$    &amp; 0.666          \\
-## Num. obs.     &amp; 120            \\
-## RMSE          &amp; 20.116         \\
-## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
-## \end{tabular}
-## \caption{Statistical models}
-## \label{table:coefficients}
-## \end{center}
-## \end{table}</code></pre>
-<pre class="r"><code>#Standardized regression
-reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
-<pre><code>## 
-## \begin{table}
-## \begin{center}
-## \begin{tabular}{l c }
-## \hline
-##  &amp; Model 1 \\
-## \hline
-## (Intercept)          &amp; $60.500^{***}$ \\
-##                      &amp; $(1.836)$      \\
-## scale(street\_wid)   &amp; $-3.815$       \\
-##                      &amp; $(2.331)$      \\
-## scale(sidewalk\_wid) &amp; $5.466^{*}$    \\
-##                      &amp; $(2.102)$      \\
-## scale(landscape)     &amp; $24.439^{***}$ \\
-##                      &amp; $(2.504)$      \\
-## scale(trees)         &amp; $5.417^{*}$    \\
-##                      &amp; $(2.704)$      \\
-## scale(build\_ident)  &amp; $-9.458^{***}$ \\
-##                      &amp; $(2.175)$      \\
-## \hline
-## R$^2$                &amp; 0.680          \\
-## Adj. R$^2$           &amp; 0.666          \\
-## Num. obs.            &amp; 120            \\
-## RMSE                 &amp; 20.116         \\
-## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
-## \end{tabular}
-## \caption{Statistical models}
-## \label{table:coefficients}
-## \end{center}
-## \end{table}</code></pre>
-<pre class="r"><code>#Campina non-residents
+#Standardized regression
+#reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+#Campina non-residents
 reg_input &lt;- merge(datanotcampina, input_regressao, by.x=&quot;V2&quot;, by.y=&quot;image&quot;) %&gt;% do(arrange(., V3)) %&gt;% mutate(rank = 1:n())
-reg &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+reg_not_campina &lt;- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
+texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 <pre><code>## 
 ## \begin{table}
 ## \begin{center}
-## \begin{tabular}{l c }
+## \begin{tabular}{l c c c }
 ## \hline
-##  &amp; Model 1 \\
+##  &amp; Model 1 &amp; Model 2 &amp; Model 3 \\
 ## \hline
-## (Intercept)   &amp; $-11.044$      \\
-##               &amp; $(9.015)$      \\
-## street\_wid   &amp; $-0.188$       \\
-##               &amp; $(0.232)$      \\
-## sidewalk\_wid &amp; $2.850^{*}$    \\
-##               &amp; $(1.147)$      \\
-## landscape     &amp; $16.908^{***}$ \\
-##               &amp; $(2.526)$      \\
-## trees         &amp; $3.743^{***}$  \\
-##               &amp; $(1.100)$      \\
-## build\_ident  &amp; $-9.018^{***}$ \\
-##               &amp; $(1.806)$      \\
+## (Intercept)   &amp; $-20.555^{*}$  &amp; $-24.156^{**}$ &amp; $-11.044$      \\
+##               &amp; $(8.653)$      &amp; $(8.421)$      &amp; $(9.015)$      \\
+## street\_wid   &amp; $-0.254$       &amp; $-0.355$       &amp; $-0.188$       \\
+##               &amp; $(0.223)$      &amp; $(0.217)$      &amp; $(0.232)$      \\
+## sidewalk\_wid &amp; $3.314^{**}$   &amp; $2.785^{*}$    &amp; $2.850^{*}$    \\
+##               &amp; $(1.101)$      &amp; $(1.071)$      &amp; $(1.147)$      \\
+## landscape     &amp; $19.192^{***}$ &amp; $23.031^{***}$ &amp; $16.908^{***}$ \\
+##               &amp; $(2.424)$      &amp; $(2.359)$      &amp; $(2.526)$      \\
+## trees         &amp; $3.319^{**}$   &amp; $2.059^{*}$    &amp; $3.743^{***}$  \\
+##               &amp; $(1.056)$      &amp; $(1.028)$      &amp; $(1.100)$      \\
+## build\_ident  &amp; $-7.212^{***}$ &amp; $-7.333^{***}$ &amp; $-9.018^{***}$ \\
+##               &amp; $(1.733)$      &amp; $(1.687)$      &amp; $(1.806)$      \\
 ## \hline
-## R$^2$         &amp; 0.633          \\
-## Adj. R$^2$    &amp; 0.617          \\
-## Num. obs.     &amp; 120            \\
-## RMSE          &amp; 21.535         \\
+## R$^2$         &amp; 0.662          &amp; 0.680          &amp; 0.633          \\
+## Adj. R$^2$    &amp; 0.647          &amp; 0.666          &amp; 0.617          \\
+## Num. obs.     &amp; 120            &amp; 120            &amp; 120            \\
+## RMSE          &amp; 20.671         &amp; 20.116         &amp; 21.535         \\
 ## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
+## \multicolumn{4}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
 ## \caption{Statistical models}
 ## \label{table:coefficients}
 ## \end{center}
 ## \end{table}</code></pre>
 <pre class="r"><code>#Standardized regression
-reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#reg &lt;- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
-texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
-<pre><code>## 
-## \begin{table}
-## \begin{center}
-## \begin{tabular}{l c }
-## \hline
-##  &amp; Model 1 \\
-## \hline
-## (Intercept)          &amp; $60.500^{***}$  \\
-##                      &amp; $(1.966)$       \\
-## scale(street\_wid)   &amp; $-2.025$        \\
-##                      &amp; $(2.496)$       \\
-## scale(sidewalk\_wid) &amp; $5.594^{*}$     \\
-##                      &amp; $(2.250)$       \\
-## scale(landscape)     &amp; $17.941^{***}$  \\
-##                      &amp; $(2.680)$       \\
-## scale(trees)         &amp; $9.847^{***}$   \\
-##                      &amp; $(2.895)$       \\
-## scale(build\_ident)  &amp; $-11.632^{***}$ \\
-##                      &amp; $(2.329)$       \\
-## \hline
-## R$^2$                &amp; 0.633           \\
-## Adj. R$^2$           &amp; 0.617           \\
-## Num. obs.            &amp; 120             \\
-## RMSE                 &amp; 21.535          \\
-## \hline
-## \multicolumn{2}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
-## \end{tabular}
-## \caption{Statistical models}
-## \label{table:coefficients}
-## \end{center}
-## \end{table}</code></pre>
+#texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)</code></pre>
 </div>
 <div id="analise-das-ruas" class="section level2">
 <h2>Análise das Ruas</h2>

@@ -321,6 +321,7 @@ if __name__ == "__main__":
 			ids.append(id.strip(' \t\n\r"'))
 
 		tag = sys.argv[2]
+		print ">>> IDS" + str(ids) + " " + str(len(ids))
 
 	#Reading task-run from Contribua
 	apiUrl = 'https://contribua.org/api/'
@@ -330,11 +331,12 @@ if __name__ == "__main__":
 	worst_map = {}
 	users_map = {}
 
-	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+	url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)+'&limit=100'
 	response = urllib.urlopen(url)
 	data = json.loads(response.read())
 
 	while len(data) > 0:
+		print ">>>>OFFSET:\t" + str(offset) #+ str(user_id) + "\t" + str(user_id in ids)
 		for i in range(0, len(data)):
 			current_run = data[i]
 			task_id = current_run['id']
@@ -342,10 +344,12 @@ if __name__ == "__main__":
 			best_image = info['theMost']
 			worst_image = info['theLess']	
 			user_id = current_run['user_id']
+
+			#print ">>>>USER:\t" + str(user_id) + " " + str( str(user_id) in ids)
 		
-			if len(ids) == 0 or (len(ids) > 0 and user_id in ids):
-				if "Manoel" in best_image:
-					print ">>> " + str(user_id) + "\t" + str(best_image.encode("utf8"))
+			if len(ids) == 0 or (len(ids) > 0 and str(user_id) in ids):
+				#if "Manoel" in best_image:
+				#	print ">>> " + str(user_id) + "\t" + str(best_image.encode("utf8"))
 
 				if len(best_image) > 0 and len(worst_image) > 0 and (best_image != 'equal' or worst_image != 'equal'):
 					best_points = eval(info['markMost'])
@@ -392,7 +396,7 @@ if __name__ == "__main__":
 	
 		#Requesting next window of data
 		offset = offset + len(data)
-		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)
+		url = apiUrl+'taskrun?project_id='+str(projectId)+'&offset='+str(offset)+'&limit=100'
 		response = urllib.urlopen(url)
 		data = json.loads(response.read())
 
@@ -402,8 +406,24 @@ if __name__ == "__main__":
 	if len(tag) > 0:
 		best_folder = best_folder + tag
 		worst_folder = worst_folder + tag
-		mkdir(best_folder)
-		mkdir(worst_folder)		
+	mkdir(best_folder)
+	mkdir(worst_folder)
+	mkdir(best_folder+"/intersects")
+	mkdir(worst_folder+"/intersects")	
+
+	#Persisting points dictionaries
+	#best_file = open("./best-dict.pkl", "wb")
+	#pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
+	#best_map = pickle.load(best_file)
+	#best_file.close()
+	#worst_file = open("./worst-dict.pkl", "wb")
+	#pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
+	#worst_map = pickle.load(worst_file)
+	#worst_file.close()
+	#users_marks_file = open("./users-dict-marks.pkl", "wb")
+	#pickle.dump(users_map, users_marks_file, pickle.HIGHEST_PROTOCOL)
+	#users_map = pickle.load(users_marks_file)
+	#users_marks_file.close()	
 
 	best_folder = best_folder + "/"
 	worst_folder = worst_folder + "/"
@@ -411,7 +431,7 @@ if __name__ == "__main__":
 	for image in best_map.keys():
 		save_image_marks(image, best_map, best_folder, 'green')
 
-	#index = 0
+	index = 0
 	for image in worst_map.keys():
 		save_image_marks(image, worst_map, worst_folder, 'red')
 
@@ -440,42 +460,28 @@ if __name__ == "__main__":
 	#		mkdir('piores/'+str(user_id))
 	#		save_image_marks(image, user_worst, "piores/"+str(user_id), "red")
 
-	#Persisting points dictionaries
-	best_file = open("./best-dict.pkl", "wb")
-	pickle.dump(best_map, best_file, pickle.HIGHEST_PROTOCOL)
-	#best_map = pickle.load(best_file)
-	best_file.close()
-	worst_file = open("./worst-dict.pkl", "wb")
-	pickle.dump(worst_map, worst_file, pickle.HIGHEST_PROTOCOL)
-	#worst_map = pickle.load(worst_file)
-	worst_file.close()
-	#users_marks_file = open("./users-dict-marks.pkl", "rb")
-	#pickle.dump(users_map, users_marks_file, pickle.HIGHEST_PROTOCOL)
-	#users_map = pickle.load(users_marks_file)
-	#users_marks_file.close()
-
 	#Creating page for users marks
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages.html", best_folder, worst_folder)
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages"+tag+".html", best_folder, worst_folder)
 
 	#Compute intersections of users marks
-	evaluate_intersections(best_map, best_dir)
-	evaluate_intersections(worst_map, worst_dir)
+	evaluate_intersections(best_map, best_folder)
+	evaluate_intersections(worst_map, worst_folder)
 
 	#Retrieving intersects files
 	best_images = []
-	for filename in listdir(best_dir+"intersects/"):
+	for filename in listdir(best_folder+"intersects/"):
 	    #if "png" in filename:
 	    best_images.append(filename)
 	best_images.sort()
 
 	worst_images = []
-	for filename in listdir(worst_dir+"intersects/"):
+	for filename in listdir(worst_folder+"intersects/"):
 	    #if "png" in filename:
 	    worst_images.append(filename)
 	worst_images.sort()
 
 	#Create page for intersects
-	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect.html", best_folder+"intersects/", worst_folder+"intersects/")
+	create_page_for_marked_images(best_images, worst_images, best_map, worst_map, "markedImages-intersect"+tag+".html", best_folder+"intersects/", worst_folder+"intersects/")
 
 	#x, y =  base.size
 	#bbox =  (x/2 - eX/2, y/2 - eY/2, x/2 + eX/2, y/2 + eY/2)

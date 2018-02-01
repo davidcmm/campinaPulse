@@ -17,7 +17,7 @@ python analisaUsuarios.py run.csv run.csv
 python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
-mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* idsGerais/
+mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsGerais/
 
 #Must run in percepcaoLocal/agradavel folder
 python marcaImagem.py #All users
@@ -25,17 +25,17 @@ python marcaImagem.py ../../usuario/idsGrupos/notcampina.dat notcampina > debug.
 python marcaImagem.py ../../usuario/idsGrupos/campina.dat campina > debug.dat #Only users of campina group
 
 #Split users
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/notcampina.dat > run100/runnotCampina.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/campina.dat > run100/runCampina.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/notcampina.dat > run100/runnotCampina.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/campina.dat > run100/runCampina.csv
 
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/masculino.dat > run100/runMasculino.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/feminino.dat > run100/runFeminino.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/jovem.dat > run100/runJovem.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/adulto.dat > run100/runAdulto.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/media.dat > run100/runMedia.csv
-python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/baixa.dat > run100/runBaixa.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/masculino.dat > run100/runMasculino.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/feminino.dat > run100/runFeminino.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/jovem.dat > run100/runJovem.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/adulto.dat > run100/runAdulto.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/media.dat > run100/runMedia.csv
+python selectRunPerUsers.py ../backupBanco/run.csv ../backupBanco/idsGerais/baixa.dat > run100/runBaixa.csv
 
-cp ../backupBanco/media.dat ../backupBanco/baixa.dat ../backupBanco/adulto.dat ../backupBanco/jovem.dat ../backupBanco/feminino.dat ../backupBanco/masculino.dat ../backupBanco/campina.dat ../backupBanco/notcampina.dat idsGrupos 
+cp ../backupBanco/idsGerais/media.dat ../backupBanco/idsGerais/baixa.dat ../backupBanco/idsGerais/adulto.dat ../backupBanco/idsGerais/jovem.dat ../backupBanco/idsGerais/feminino.dat ../backupBanco/idsGerais/masculino.dat ../backupBanco/idsGerais/campina.dat ../backupBanco/idsGerais/notcampina.dat idsGrupos 
 
 #Separating subgroups - Run in backupBanco folder
 python analisaUsuarios.py ../usuario/run100/runCampina.csv ../usuario/run100/runCampina.csv
@@ -43,14 +43,14 @@ python analisaUsuarios.py ../usuario/run100/runCampina.csv ../usuario/run100/run
 python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
-mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* idsCampina/
+mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsCampina/
 
 python analisaUsuarios.py ../usuario/run100/runnotCampina.csv ../usuario/run100/runnotCampina.csv
 
 python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
-mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* idsNotCampina/
+mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsNotCampina/
 
 #Analyze Q-Score
 python analisaQScore.py ../backupBanco/run.csv 100 ../backupBanco/tasksDef.csv campina

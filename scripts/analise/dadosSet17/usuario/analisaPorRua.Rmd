@@ -51,9 +51,15 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+#Merge users not from campina with places and info
+users_not_campina <- read.table("../backupBanco/idsGerais/notcampina.dat", skip=1)
+users_info <- read.table("../backupBanco/idsGerais/usersInfo.dat", sep="|")
+users_profile <- read.csv("../backupBanco/users.csv", header=FALSE)
+
+not_camp_info <- merge(merge(users_not_campina, select(users_info, V1, V2), by.x = "V1", by.y = "V1"), users_profile, by.x = "V1", by.y = "V1")
 ```
 
-Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter as QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
+Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
 
 1. A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?
 * No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz

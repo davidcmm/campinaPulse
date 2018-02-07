@@ -90,7 +90,7 @@ Alguns questionamentos foram inicialmente levantados:
 
 # Caracterização Geral - Tamanho das amostras e comparação entre rankings
 
-Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 292 pessoas (116 pessoas que não são de Campina e 143 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).
+Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 330 pessoas (138 pessoas que não são de Campina e 157 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).
 
 ```{r}
 #Checking sample size
@@ -170,7 +170,7 @@ O processo de separação de quem é ou não de Campina obedeceu as seguintes re
 2. Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);
 3. Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.
 
-Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 143 moradores e 116 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
+Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 157 moradores e 138 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
 
 ```{r}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
@@ -297,13 +297,12 @@ photo <- unlist(lapply(novoV2, '[[', 1))
 datanotcampina$photo_name <- photo
 show_general_ranking(datanotcampina, "../percepcaoLocal/agradavel/melhoresnotcampina/intersects/", "../percepcaoLocal/agradavel/pioresnotcampina/intersects/")
 
-#Calculating CI for each photo
-current_data$ci <- current_data$sd * 1.96 / sqrt(100)
-current_data <- arrange(current_data, photo_name)
+top_size <- 10
+diff1 <- length(setdiff(head(datacampina, n=top_size)$V2, head(datanotcampina, n=top_size)$V2))
+diff2 <- length(setdiff(tail(datacampina, n=top_size)$V2, tail(datanotcampina, n=top_size)$V2))
 
-qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
-qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
-qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
+cat("Top diff", diff1, "\n")
+cat("Tail diff", diff2, "\n")
 
 ```
 
@@ -381,6 +380,14 @@ texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01,
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 
 ```{r}
+#Calculating CI for each photo
+current_data$ci <- current_data$sd * 1.96 / sqrt(100)
+current_data <- arrange(current_data, photo_name)
+
+qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
+qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
+qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
+
 #Getting data for each street to plot means and ICs for each street
 plot_street_means <- function(data){
   edesio_scores = filter(data, street == "R._Edésio_Silva")$qscore
@@ -414,6 +421,63 @@ plot_street_means(qscoresDFNotCampina)
 
 - A Manoel P. de Araújo realmente está bem abaixo das demais ruas;
 - As outras 5 ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Cristina e a Floriano parecerem ter uma tendência de melhores scores;
+
+Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua?
+
+```{r}
+#Comparing current mean with mean obtained in Como e Campina - V1
+v1_data <- filter(read.table("../../dadosSet16/usuario/all100/allGeralNew.dat"), V1 != "seguro?")
+novoV2 <- lapply(as.character(v1_data$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
+local <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- lapply(local, function (x) paste(strsplit(x, split="__", fixed=TRUE)[[1]][1], sep=""))
+local <- unlist(lapply(novoV2, '[[', 1))
+v1_data$street <- local
+
+compare_street_means <- function(old_data, new_data){
+  manoel_old <- filter(old_data, grepl("Manoel", street))$V3
+  manoel_new = filter(new_data, street == "R._Manoel_Pereira_de_Araújo")$qscore
+  
+  inacio_old <- filter(old_data, grepl("Inacio_Marques", street))$V3
+  inacio_new = filter(new_data, street == "R._Inácio_Marquês_da_Silva")$qscore
+  
+  edesio_old <- filter(old_data, grepl("Edesio_Silva", street))$V3
+  edesio_new = filter(new_data, street == "R._Edésio_Silva")$qscore
+  
+  cristina_old <- filter(old_data, grepl("Cristina", street))$V3
+  cristina_new = filter(new_data, street == "R._Cristina_Procópio_Silva")$qscore
+  
+  print(">>> Summary Manoel (Old x New)")
+  print(length(manoel_old))
+  print(summary(manoel_old))
+  print(summary(manoel_new))
+  
+  print(">>> Summary Inacio")
+  print(length(inacio_old))
+  print(summary(inacio_old))
+  print(summary(inacio_new))
+  
+  print(">>> Summary Edesio")
+  print(length(edesio_old))
+  print(summary(edesio_old))
+  print(summary(edesio_new))
+  
+  print(">>> Summary Cristina")
+  print(length(cristina_old))
+  print(summary(cristina_old))
+  print(summary(cristina_new))
+  
+  new_frame = data.frame(mean_scores = c(mean(manoel_old), mean(inacio_old), mean(edesio_old), mean(cristina_old), mean(manoel_new), mean(inacio_new), mean(edesio_new), mean(cristina_new)), medians = c(median(manoel_old), median(inacio_old), median(edesio_old), median(cristina_old), median(manoel_new), median(inacio_new), median(edesio_new), median(cristina_new)), street = c("Manoel", "Inacio", "Edesio", "Cristina", "Manoel_New", "Inacio_new", "Edesio_new", "Cristina_new"), ci = c(sd(manoel_old) * 1.96 / sqrt(length(manoel_old)),  sd(inacio_old) * 1.96 / sqrt(length(inacio_old)), sd(edesio_old) * 1.96 / sqrt(length(edesio_old)), sd(cristina_old) * 1.96 / sqrt(length(cristina_old)), sd(manoel_new) * 1.96 / sqrt(length(manoel_new)),  sd(inacio_new) * 1.96 / sqrt(length(inacio_new)), sd(edesio_new) * 1.96 / sqrt(length(edesio_new)), sd(cristina_new) * 1.96 / sqrt(length(cristina_new))))
+  
+  p <- ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
+      geom_bar(position=position_dodge(), stat="identity") +
+      geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
+                    width=.2,                    # Width of the error bars
+                    position=position_dodge(.9))
+  p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
+}
+
+compare_street_means(v1_data, qscoresDFGeral)
+```
 
 2. Será que ruas que são parecidas na média, são de fato similares?
 
@@ -467,14 +531,6 @@ Após a análise das médias por rua e de suas desigualdades, vamos dar uma olha
 
 >>> Considerando todos os respondentes
 ```{r  fig.height=10, fig.width=12}
-#Calculating CI for each photo - all users together
-current_data$ci <- current_data$sd * 1.96 / sqrt(100)
-current_data <- arrange(current_data, photo_name)
-
-qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
-qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
-qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
-
 #Plotting Q-Scores through the street
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)

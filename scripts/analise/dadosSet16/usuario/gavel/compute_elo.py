@@ -22,7 +22,7 @@ notKnown = 'NotKnown'
 completeTie = 'equal'
 
 initial_rating = 1500#Elo initial rating
-K = 20#10, 20, 40?
+K = 40#10, 20, 40?
 
 
 def readTasksDefinitions(linesTasks):
@@ -67,6 +67,7 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 
 			photo1 = data['theMost'].strip(' \t\n\r"')
 			photo2 = data['theLess'].strip(' \t\n\r"')
+			is_tie = photo1
 
 			if len(photo1) == 0 or len(photo2) == 0:#Error in persisting photos!
 				print "Foto zerada! " + line
@@ -74,7 +75,7 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 
 			taskDef = tasksDefinitions[taskID]
 			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
-			if photo1 != completeTie:
+			if is_tie != completeTie:
 				photos.remove(photo1)
 				photos.remove(photo2)
 			else:
@@ -105,7 +106,7 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 				votes[question][photo3][photo4] = set([])
 
 			#Saving votes from task-run
-			if photo1 != completeTie:
+			if is_tie != completeTie:
 				votes[question][photo1][photo2].add(left)
 				votes[question][photo1][photo3].add(left)
 				votes[question][photo1][photo4].add(left)
@@ -176,6 +177,13 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 
 					expected_1 = 1 / ( 1+10**( (photos_ratings[question][photo2] - photos_ratings[question][photo1])/400 ) )
 					expected_2 = 1 / ( 1+10**( (photos_ratings[question][photo1] - photos_ratings[question][photo2])/400 ) )
+
+					#rounded_elo_prob = round(expected_1, 2)
+					#elo_brier = (rounded_elo_prob - points_1) * (rounded_elo_prob - points_1)
+					#elo_points = 25 - (100 * elo_brier)
+					#elo_points = round(elo_points + 0.001 if elo_points < 0 else elo_points, 1) # Round half up
+					#print ">>>>>> Brier points " + str(elo_brier) + " " + str(points_1) + " " + str(photos_ratings[question][photo1]) + " " + str(photos_ratings[question][photo2])
+					#print ">>>>>> Elo points " + str(K * (points_1 - expected_1)) + " " + str(points_1) + " " + str(photos_ratings[question][photo1]) + " " + str(photos_ratings[question][photo2])
 
 					photos_ratings[question][photo1] = photos_ratings[question][photo1] + K * (points_1 - expected_1)
 					photos_ratings[question][photo2] = photos_ratings[question][photo2] + K * (points_2 - expected_2)

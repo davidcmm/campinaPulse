@@ -1211,6 +1211,11 @@ for (file in c("../all100/all_elo_24.dat", "../all100/all_elo_10.dat", "../all10
   sum_agrad <- combineFeaturesAndTestRegression(select(agrad_elo, V1, V2, V3))
   print(sum_agrad)
   
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
+    
   #Safety
   merged_g2 <- merge(seg_orig, seg_elo, by.x="V2", by.y="V2")
   merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
@@ -1224,6 +1229,11 @@ for (file in c("../all100/all_elo_24.dat", "../all100/all_elo_10.dat", "../all10
   
   sum_seg <- combineFeaturesAndTestRegression(select(seg_elo, V1, V2, V3))
   print(sum_seg)
+  
+  diff1 <- length(setdiff(head(seg_orig, n=top_size)$V2, head(seg_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Seg: ", diff1))
+  diff1 <- length(setdiff(tail(seg_orig, n=top_size)$V2, tail(seg_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Seg: ", diff1))
 }  
 
 ```
@@ -1262,6 +1272,11 @@ for (file in c("../all100/all_ordenado_maxdiff_new.dat")){
   sum_agrad <- combineFeaturesAndTestRegression(select(agrad_maxdiff, V1, V2, V3))
   print(sum_agrad)
   
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
+  
   #Safety
   merged_g2 <- merge(seg_orig, seg_maxdiff, by.x="V2", by.y="V2")
   merged_g2 <- merged_g2 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
@@ -1275,6 +1290,11 @@ for (file in c("../all100/all_ordenado_maxdiff_new.dat")){
   
   sum_seg <- combineFeaturesAndTestRegression(select(seg_maxdiff, V1, V2, V3))
   print(sum_seg)
+  
+  diff1 <- length(setdiff(head(seg_orig, n=top_size)$V2, head(seg_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Seg: ", diff1))
+  diff1 <- length(setdiff(tail(seg_orig, n=top_size)$V2, tail(seg_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Seg: ", diff1))
 }  
 
 #Rank-Ordered Logit Model with Ties - Assuming that images not selected are equal
@@ -1472,21 +1492,13 @@ for (file in c("../gavel/allPairwiseComparison-lam01-gam01.dat", "../gavel/allPa
   sum_agrad <- combineFeaturesAndTestRegression(select(agrad_gavel, V1, V2, V3))
   print(sum_agrad)
   
-  #Comparing top 10 of original x gavel
   top_size <- 10
   diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_gavel, n=top_size)$V2))
-  diff2 <- length(setdiff(head(agrad_gavel, n=top_size)$V2, head(ag_orig, n=top_size)$V2))
-  print(paste(">>>>>>> Set diff Top10_Agrad: Q-Score - Gavel", diff1))
-  print(head(select(ag_orig, V1, V2, V3), n=10))
-  print(paste(">>>>>>> Set diff Top10_Agrad: Gavel - Q-Score",  diff2))
-  print(head(agrad_gavel, n=10))
-  
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  #print(head(select(ag_orig, V1, V2, V3), n=10))
+  #print(head(agrad_gavel, n=10))
   diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_gavel, n=top_size)$V2))
-  diff2 <- length(setdiff(tail(agrad_gavel, n=top_size)$V2, tail(ag_orig, n=top_size)$V2))
-  print(paste(">>>>>>> Set diff Bot10_Agrad: Q-Score - Gavel", diff1))
-  print(tail(select(ag_orig, V1, V2, V3), n=10))
-  print(paste(">>>>>>> Set diff Bot10_Agrad: Gavel - Q-Score",  diff2))
-  print(tail(agrad_gavel, n=10))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
   
   #Safety
   merged_g2 <- merge(seg_orig, seg_gavel, by.x="V2", by.y="V2")
@@ -1498,20 +1510,12 @@ for (file in c("../gavel/allPairwiseComparison-lam01-gam01.dat", "../gavel/allPa
   
   sum_seg <- combineFeaturesAndTestRegression(select(seg_gavel, V1, V2, V3))
   print(sum_seg)
-  
-  #Comparing top and bottom 10
+
   diff1 <- length(setdiff(head(seg_orig, n=top_size)$V2, head(seg_gavel, n=top_size)$V2))
-  diff2 <- length(setdiff(head(seg_gavel, n=top_size)$V2, head(seg_orig, n=top_size)$V2))
-  print(paste(">>>>>>> Set diff Top10_Seg: Q-Score - Gavel", diff1))
-  print(head(select(seg_orig, V1, V2, V3), n=10))
-  print(paste(">>>>>>> Set diff Top10_Seg: Gavel - Q-Score",  diff2))
-  print(head(seg_gavel, n=10))
-  
+  print(paste(">>>>>>> Set diff Top10_Seg: ", diff1))
+  #print(head(select(ag_orig, V1, V2, V3), n=10))
+  #print(head(agrad_gavel, n=10))
   diff1 <- length(setdiff(tail(seg_orig, n=top_size)$V2, tail(seg_gavel, n=top_size)$V2))
-  diff2 <- length(setdiff(tail(seg_gavel, n=top_size)$V2, tail(seg_orig, n=top_size)$V2))
-  print(paste(">>>>>>> Set diff Bot10_Seg: Q-Score - Gavel", diff1))
-  print(tail(select(seg_orig, V1, V2, V3), n=10))
-  print(paste(">>>>>>> Set diff Bot10_Seg: Gavel - Q-Score",  diff2))
-  print(tail(seg_gavel, n=10))
+  print(paste(">>>>>>> Set diff Bottom10_Seg: ", diff1))
 }  
 ```

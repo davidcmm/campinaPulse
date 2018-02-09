@@ -6,7 +6,7 @@ import re
 possibleIncomesOld = ["Baixa (at\u00e9 R$ 1.449,99)", "M\u00e9dia Baixa (R$ 1.450 a R$ 2.899,99)", "M\u00e9dia (R$ 2.900 a R$ 7.249,99)", "M\u00e9dia Alta (R$ 7.250 a R$ 14.499,99)", "Alta (R$ 14.500 ou mais)"]
 possibleIncomesNew = ["baixa", "media baixa", "media", "media alta", "alta"]
 
-def parseUserData(lines, ids_to_convert):
+def parseUserData(lines, not_local_ids, manual_gender_ids):
 	""" Reading user data """
 	feminine = Set([])
 	tasks_fem = Set([])
@@ -85,14 +85,18 @@ def parseUserData(lines, ids_to_convert):
 			#print str(profile)+"\t"+str(len(data[1]))
 			if len(profile[1]) > 0 and profile[1] != "None":
 				sex = profile[1].lower()
-				if sex[0] == 'f':
-					feminine.add(userID)
-					tasks_fem.update(tasksIDSeg)
-					tasks_fem.update(tasksIDAgra)
-				else:
-					masculine.add(userID)
-					tasks_masc.update(tasksIDSeg)
-					tasks_masc.update(tasksIDAgra)
+			else:
+				sex = manual_gender_ids[str(userID)]
+
+			if sex[0] == 'f':
+				feminine.add(userID)
+				tasks_fem.update(tasksIDSeg)
+				tasks_fem.update(tasksIDAgra)
+			else:
+				masculine.add(userID)
+				tasks_masc.update(tasksIDSeg)
+				tasks_masc.update(tasksIDAgra)
+				
 		
 			#Separating by income
 			if len(profile[2]) > 0 and profile[2] != "None":
@@ -122,10 +126,12 @@ def parseUserData(lines, ids_to_convert):
 			if len(profile[4]) > 0 and profile[4] != "None":
 				city = profile[4]
 				city = re.sub(r'\s{2,}', " ", city)#Replacing 2 or more spaces that are together with a single space
+
 				cities.append(city.strip(" \n"))
 				knowcampina = profile[8].lower()
 				howknowcampina = profile[9].lower()
-				if (city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1) or (str(userID) in ids_to_convert):#City is exactly Campina Grande and not Campina Grande do Sul - PR
+				
+				if (city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1) or (str(userID) in not_local_ids):#City is exactly Campina Grande and not Campina Grande do Sul - PR
 					campina.add(userID)
 					tasks_campina.update(tasksIDSeg)
 					tasks_campina.update(tasksIDAgra)
@@ -315,7 +321,7 @@ def createOneFileWithAllProfiledUsers(inputFiles):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:
-		print "Uso: separa <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios> <lista de usuários marcados como não locais sendo locais> ou mix <serie de arquivos com ids de usuarios>"
+		print "Uso: separa <arquivo com ids dos usuarios, das tarefas e perfis dos usuarios> <lista de usuários marcados como não locais sendo locais> <lista de usuários com sexo> ou mix <serie de arquivos com ids de usuarios>"
 		sys.exit(1)
 
 	mode = sys.argv[1]
@@ -325,12 +331,19 @@ if __name__ == "__main__":
 		lines = dataFile.readlines()
 		dataFile.close()
 
-		ids_file = open(sys.argv[3], 'r')
-		ids = []
-		for id in ids_file.readlines():
-			ids.append(id.strip(" \n"))
-		ids_file.close()
+		not_local_ids_file = open(sys.argv[3], 'r')
+		not_local_ids = []
+		for id in not_local_ids_file.readlines():
+			not_local_ids.append(id.strip(" \n"))
+		not_local_ids_file.close()
 
-		usersTasks = parseUserData(lines, ids)
+		manual_gender_ids_file = open(sys.argv[4], 'r')
+		manual_gender_ids = {}
+		for id in manual_gender_ids_file.readlines():
+			data = id.strip(" \n").split(":")
+			manual_gender_ids[data[0]] = data[1].lower()
+		manual_gender_ids_file.close() 
+
+		usersTasks = parseUserData(lines, not_local_ids, manual_gender_ids)
 	else: #Mix files with users ids into only one file
 		createOneFileWithAllProfiledUsers(sys.argv[2:])

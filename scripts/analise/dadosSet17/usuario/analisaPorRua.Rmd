@@ -329,13 +329,46 @@ plotRegAndLinear <- function(reg, test){
   plot(test$trees, reg$resid)
   plot(test$build_ident, reg$resid)
 }
+getLatLong <- function(data, fileWithCoord) {
+  coord <- read.table(fileWithCoord, sep="+", header=F)#V4 and V5 -> lat and long; V2 street
+  data$lat <- 0
+  data$long <- 0
+  
+  for (i in 1:nrow(coord)){
+    row <- coord[i,]
+    for (j in 1:nrow(data)){
+      if(length(grep(row$V2, data[j,]$V2)) > 0){
+        data[j,]$lat <- row$V4
+        data[j,]$long <- row$V5
+      }  
+    }
+  }
+  return (data)
+}
 
 reg_input <- merge(current_data, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
-reg_geral <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
+#Getting latitude and longitude data
+library(spdep)
+library(texreg)
+res <- getLatLong(reg_input, "streetsQScoresLatLong.dat")
+crd <- cbind(res$long, res$lat)
+k2 <- knn2nb(knearneigh(unique(crd)))
+maxDist <- max(unlist(nbdists(k2, unique(crd))))
+neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
+neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
 
+
+reg_geral <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = res)#rank ~ .*.
+residuals <- resid(reg_geral)
 #texreg(list(reg_geral), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
 plotRegAndLinear(reg_geral, reg_input)
+
+#test for spatial autocorrelation using residuals
+moran <- lm.morantest(reg_geral, neigh2, alternative="two.sided")
+moran.test(residuals,neigh2, alternative="two.sided")
+summary(moran)
+moran
 
 #Standardized regression
 #reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.

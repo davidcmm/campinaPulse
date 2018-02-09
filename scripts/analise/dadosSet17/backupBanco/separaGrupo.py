@@ -57,6 +57,8 @@ def parseUserData(lines, ids_to_convert):
 	notCampina = Set([])
 	tasks_notcampina = Set([])
 
+	cities = []
+
 	for line in lines:
 		data = line.split("|")
 		userID = int(data[0])
@@ -120,14 +122,15 @@ def parseUserData(lines, ids_to_convert):
 			if len(profile[4]) > 0 and profile[4] != "None":
 				city = profile[4]
 				city = re.sub(r'\s{2,}', " ", city)#Replacing 2 or more spaces that are together with a single space
-				knowcampina = profile[8]
-				howknowcampina = profile[9]
+				cities.append(city.strip(" \n"))
+				knowcampina = profile[8].lower()
+				howknowcampina = profile[9].lower()
 				if (city.lower().find("campina grande") > -1 and city.lower().find("sul") == -1) or (str(userID) in ids_to_convert):#City is exactly Campina Grande and not Campina Grande do Sul - PR
 					campina.add(userID)
 					tasks_campina.update(tasksIDSeg)
 					tasks_campina.update(tasksIDAgra)
 				else:
-					if len(knowcampina) > 0 and len(howknowcampina) > 0 and "yes" in knowcampina.lower() and ("live" in howknowcampina or "study" in howknowcampina or "work" in howknowcampina):
+					if len(knowcampina) > 0 and len(howknowcampina) > 0 and "yes" in knowcampina and ("live" in howknowcampina or "study" in howknowcampina or "work" in howknowcampina):
 						campina.add(userID)
 						tasks_campina.update(tasksIDSeg)
 						tasks_campina.update(tasksIDAgra)
@@ -178,6 +181,11 @@ def parseUserData(lines, ids_to_convert):
 						notCatole.add(userID)
 						tasks_notcatole.update(tasksIDSeg)
 						tasks_notcatole.update(tasksIDAgra)
+
+	cities_file = open("cities.dat", "w")
+	for city in cities:
+		cities_file.write(str(city)+"\n")
+	cities_file.close()
 
 	single_file = open("solteiro.dat", "w")
 	#single_file.write(str(list(tasks_single.intersection(tasks_married)))+"\n")

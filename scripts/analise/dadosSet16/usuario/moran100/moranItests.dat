@@ -1,5 +1,29 @@
 [1] agrad%C3%A1vel?
 Levels: agrad%C3%A1vel? seguro?
+> summary(moran)
+            Length Class  Mode     
+statistic   1      -none- numeric  
+p.value     1      -none- numeric  
+estimate    3      -none- numeric  
+method      1      -none- character
+alternative 1      -none- character
+data.name   1      -none- character
+> moran
+
+	Global Moran I for regression residuals
+
+data:  
+model: lm(formula = rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape +
+build_ident + trees + log2(build_height + 1) + people + centro + catole + liberdade + diff_build +
+graffiti, data = filter(res, V1 != "seguro?"), na.action = na.exclude)
+weights: neigh2
+
+Moran I statistic standard deviate = -1.6746, p-value = 0.09401
+alternative hypothesis: two.sided
+sample estimates:
+Observed Moran I      Expectation         Variance 
+   -1.110451e-02    -8.865156e-03     1.788254e-06 
+
 [1] ">>> Geral"
 [1] ">> Observed expected p.value z-score"
 [1] "-0.00925619130643613   -0.00934579439252336   0.35153457606891   0.931616841952355"
@@ -29,6 +53,68 @@ Levels: agrad%C3%A1vel? seguro?
 [1] "-0.00910910981046315   -0.00934579439252336   0.0139293154714868   2.45908108202776"
 [1] seguro?
 Levels: agrad%C3%A1vel? seguro?
+> summary(moran)
+            Length Class  Mode     
+statistic   1      -none- numeric  
+p.value     1      -none- numeric  
+estimate    3      -none- numeric  
+method      1      -none- character
+alternative 1      -none- character
+data.name   1      -none- character
+> moran
+
+	Global Moran I for regression residuals
+
+data:  
+model: lm(formula = rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape +
+build_ident + trees + log2(build_height + 1) + people + centro + catole + liberdade + diff_build +
+graffiti, data = filter(res, V1 == "seguro?"), na.action = na.exclude)
+weights: neigh2
+
+Moran I statistic standard deviate = -2.6706, p-value = 0.007571
+alternative hypothesis: two.sided
+sample estimates:
+Observed Moran I      Expectation         Variance 
+   -1.243648e-02    -8.865156e-03     1.788254e-06 
+
+
+Call: spautolm(formula = rank ~ street_wid + mov_cars + park_cars + 
+    mov_ciclyst + landscape + build_ident + trees + log2(build_height + 
+    1) + people + centro + catole + liberdade + diff_build + 
+    graffiti, data = filter(res, V1 == "seguro?"), listw = neigh2)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-32.40009 -14.77130  -0.48119  11.78781  44.21766 
+
+Coefficients: 
+    (1 not defined because of singularities)
+                        Estimate Std. Error z value  Pr(>|z|)
+(Intercept)            -37.26295   17.75019 -2.0993   0.03579
+street_wid               0.20126    0.36159  0.5566   0.57781
+mov_cars                 2.46565    1.69844  1.4517   0.14658
+park_cars                1.00947    0.71757  1.4068   0.15949
+mov_ciclyst             -0.54680    3.70931 -0.1474   0.88281
+landscape               16.72401    3.17925  5.2604 1.438e-07
+build_ident             -0.17005    0.88116 -0.1930   0.84697
+trees                    1.52289    1.08490  1.4037   0.16040
+log2(build_height + 1)   1.11442    2.91239  0.3826   0.70198
+people                   2.24264    1.05374  2.1283   0.03331
+centro                  12.53427    7.82716  1.6014   0.10929
+catole                   5.46942    7.16448  0.7634   0.44522
+liberdade                     NA         NA      NA        NA
+diff_build               1.48758    1.39077  1.0696   0.28480
+graffitiYes            -11.32138    7.86451 -1.4396   0.14999
+
+Lambda: -0.17601 LR test value: 13.864 p-value: 0.00019651 
+Numerical Hessian standard error of lambda: 0.039359 
+
+Log likelihood: -481.4773 
+ML residual variance (sigma squared): 299.45, (sigma: 17.305)
+Number of observations: 108 
+Number of parameters estimated: 16 
+AIC: 994.95
+
 [1] ">>> Geral"
 [1] ">> Observed expected p.value z-score"
 [1] "-0.0089603219797452   -0.00934579439252336   6.20051806059507e-05   4.00504688912817"

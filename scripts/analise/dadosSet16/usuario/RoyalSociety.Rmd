@@ -3432,25 +3432,13 @@ texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression!
 plotRegAndLinear(reg, test)
 
-#Spatial regression - consider spatial dependency and correlation!
-library(spdep)
-library(texreg)
-sink("spatialRegression.dat")
-
-res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
-crd <- cbind(res$long, res$lat)
-k2 <- knn2nb(knearneigh(unique(crd)))
-maxDist <- max(unlist(nbdists(k2, unique(crd))))
-neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
-neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
-
 #Moran computations
 source("krippMoran.R")
 moranI2(res, "V3.Geral")
 moranI2(res, "V3.Masculino")
 moranI2(res, "V3.Feminino")
 
-reg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))#OLS regression - minimize squared distances of line and points! red + green + blue + hor + vert + diag
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + diff_build + people, na.action = na.exclude, data = filter(res, V1 != "seguro?"))#OLS regression - minimize squared distances of line and points! red + green + blue + hor + vert + diag
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -5081,7 +5069,7 @@ colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"]
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
-res <- getLatLong(agrad, "moran100/streetsQScoresLatLongAgraAll2.dat")
+res <- getLatLong(agradGeral, "../../dadosNov15//usuarios/moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 k2 <- knn2nb(knearneigh(unique(crd)))
 maxDist <- max(unlist(nbdists(k2, unique(crd))))
@@ -5090,7 +5078,7 @@ neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbo
 
 reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
 summary(reg)
-reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = filter(res, V1 != "seguro?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -5106,15 +5094,15 @@ reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = filter(r
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-res <- getLatLong(seg, "moran100/streetsQScoresLatLongAgraAll2.dat")
+res <- getLatLong(segGeral, "../../dadosNov15/usuarios/moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 k2 <- knn2nb(knearneigh(unique(crd)))
 maxDist <- max(unlist(nbdists(k2, unique(crd))))
 neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
-reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
-reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 

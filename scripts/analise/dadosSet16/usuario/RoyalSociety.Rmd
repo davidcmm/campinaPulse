@@ -10,7 +10,7 @@ output:
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
 #Relacionar marco com maio, maio com julho, julho com nov, nov com set16
 file1 <- "../../dadosMar15/usuarios/all_ordenado.dat"
-for (file2 in c("../../dadosMaio15/usuarios/all100/all_ordenado.dat", "../../dadosJulho15/usuarios/all_ordenado.dat", "../../dadosNov15/usuarios/all100/all_ordenado.dat", "../../dadosSet16/usuario/all100/all_ordenado.dat")){
+for (file2 in c("../../dadosMaio15/usuarios/all100/all_ordenado.dat", "../../dadosJulho15/usuarios/all_ordenado.dat", "../../dadosNov15/usuarios/all100/all_ordenado.dat", "../../dadosSet16/usuario/all100/allGeralNew.dat")){
 
     dados <- read.table(file1)
     dados2 <- read.table(file2)
@@ -42,6 +42,7 @@ for (file2 in c("../../dadosMaio15/usuarios/all100/all_ordenado.dat", "../../dad
     print("##### Pleasantness")    
     merge_agrad <- merge(select(data_pleas_1, V1, V2, rank), select(data_pleas_2, V1, V2, rank), by="V2")
     print(cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall"))
+    
     normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
     
     data_saf_1 <- filter(novosDados, V1 == "seguro?") %>% do(arrange(., V3)) %>%
@@ -5174,12 +5175,36 @@ w = 6
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.54)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                      
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)
 dev.off(which = 2)
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+
+#Users x users scores
+agradGeral <- rename(agradGeral, c("V3.Masculino"="Men", "V3.Feminino"="Women", "V3.Adulto"="Adults", "V3.Jovem"="Young", "V3.Baixa"="Low", "V3.Media"="High"))
+pdf("images/menXwomen_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Men, x=Women)) + geom_point(alpha = 0.7, size=3, stroke = 1) + scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() + theme(axis.text = element_text(size=15), axis.title = element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+
+pdf("images/adultXyoung_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Adults, x=Young)) + geom_point(alpha = 0.7, size=3, stroke = 1) + scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() + theme(axis.text = element_text(size=15), axis.title = element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/lowXhigh_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Low, x=High)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score High") + ylab("Q-Score Low") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+
+segGeral <- rename(segGeral, c("V3.Masculino"="Men", "V3.Feminino"="Women", "V3.Adulto"="Adults", "V3.Jovem"="Young", "V3.Baixa"="Low", "V3.Media"="High"))
+pdf("images/menXwomen_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Men, x=Women)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/adultXyoung_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Adults, x=Young)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Young") + ylab("Q-Score Adults") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/lowXhigh_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Low, x=High)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score High") + ylab("Q-Score Low") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
 
 #Comparing pleasantness and safety from users with predicted output of classifiers
 predicted <- read.table("all100/all_predicted_remove_photo_ordenado.dat")#all_pred_ordenado.dat

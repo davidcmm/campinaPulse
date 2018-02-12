@@ -8,35 +8,55 @@ output:
 
 #Evaluting evolution with pairwise and 4-images
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-dados <- read.table("../../dadosNov15/usuarios/geralSetoresAJ.dat", header=TRUE)
-dados2 <- read.table("../../dadosJulho15/usuarios/geralRankAJ.dat", header=TRUE)
+#Relacionar marco com maio, maio com julho, julho com nov, nov com set16
+file1 <- "../../dadosMar15/usuarios/all_ordenado.dat"
+for (file2 in c("../../dadosMaio15/usuarios/all100/all_ordenado.dat", "../../dadosJulho15/usuarios/all_ordenado.dat", "../../dadosNov15/usuarios/all100/all_ordenado.dat", "../../dadosSet16/usuario/all100/all_ordenado.dat")){
 
-temp <- dados
-qscoreSim <- temp [ c(4:103) ]
-icData <- apply(qscoreSim, 1, ic)
-temp$distance <- icData
+    dados <- read.table(file1)
+    dados2 <- read.table(file2)
+    
+    print(paste(">>>>>> ", file1, " ", file2))
+    
+    temp <- dados
+    qscoreSim <- temp [ c(4:103) ]
+    icData <- apply(qscoreSim, 1, ic)
+    temp$distance <- icData
+    
+    temp2 <- dados2
+    qscoreSim2 <- temp2 [ c(4:103) ]
+    icData2 <- apply(qscoreSim2, 1, ic)
+    temp2$distance <- icData2
+    
+    dadosSub <- temp[, c("V2", "V1", "V3")]#, "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+    dadosSub2 <- temp2[, c("V2", "V1", "V3")]#, "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+    
+    novosDados <- dadosSub#reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+    novosDados2 <- dadosSub2#reshape(dadosSub2, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+    
+    data_pleas_1 <- filter(novosDados, V1 != "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
+    
+    data_pleas_2 <- filter(novosDados2, V1 != "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
 
-temp2 <- dados2
-qscoreSim2 <- temp2 [ c(4:103) ]
-icData2 <- apply(qscoreSim2, 1, ic)
-temp2$distance <- icData2
+    print("##### Pleasantness")    
+    merge_agrad <- merge(select(data_pleas_1, V1, V2, rank), select(data_pleas_2, V1, V2, rank), by="V2")
+    print(cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall"))
+    normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    
+    data_saf_1 <- filter(novosDados, V1 == "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
+    
+    data_saf_2 <- filter(novosDados2, V1 == "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
 
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-dadosSub2 <- temp2[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-novosDados2 <- reshape(dadosSub2, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-dataMaio15 <- filter(novosDados, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
-mutate(rank = 1:n())
-
-dataJulho15 <- filter(novosDados2, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
-mutate(rank = 1:n())
-
-merge_agrad <- merge(select(dataMaio15, V1, V2, rank), select(dataJulho15, V1, V2, rank), by="V2")
-
-cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall")
-normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    print("##### Safety")    
+    merge_agrad <- merge(select(data_saf_1, V1, V2, rank), select(data_saf_2, V1, V2, rank), by="V2")
+    print(cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall"))
+    normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    
+    file1 <- file2
+}
 ```
 
 

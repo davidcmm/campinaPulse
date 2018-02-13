@@ -120,29 +120,107 @@ $(document).ready(function () {
 </div>
 
 
-<p>Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:</p>
+<p>Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas (<strong>visão macro</strong>). Com isso surgem alguns pontos a serem considerados:</p>
 <ol style="list-style-type: decimal">
 <li>A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?</li>
 </ol>
 <ul>
 <li>No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz</li>
 <li>Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;</li>
+<li>Na segunda versão do Place Pulse temos 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua <strong>foram cobertos 6,1% das ruas (pouca cobertura!)</strong>.</li>
+</ul>
+<pre class="r"><code>  teste &lt;- read.csv(&quot;~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv&quot;, header=TRUE)
+  lat_min &lt;- -23.401371#Sao Paulo
+  lat_max &lt;- -24.006227
+  lon_min &lt;- -46.334217
+  lon_max &lt;- -46.821569
+  left_ids &lt;- filter(teste, (teste$left_lat &gt;= lat_max &amp; teste$left_lat &lt;= lat_min)  &amp;  (teste$left_long &gt;= lon_max &amp; teste$left_long &lt;= lon_min))$left_id
+  right_ids &lt;- filter(teste, (teste$right_lat &gt;= lat_max &amp; teste$right_lat &lt;= lat_min)  &amp;  (teste$right_long &gt;= lon_max &amp; teste$right_long &lt;= lon_min))$right_id
+  length(unique(append(left_ids, right_ids)))</code></pre>
+<pre><code>## [1] 2984</code></pre>
+<pre class="r"><code>  #https://super.abril.com.br/cultura/quantas-ruas-existem-em-sao-paulo/</code></pre>
+<ul>
 <li>No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local</li>
 <li>No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.</li>
-<li>Pela análise do Como é Campina?, focando em divergências, nós encontramos 11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança.</li>
+<li>Pela análise do Como é Campina?, focando em divergências, nós encontramos <strong>11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança</strong>.</li>
+<li>Podemos considerar a variação nas médias e ICs quando temos mais imagens e quando só temos 2 ou 3 imagens por rua</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li>Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?</li>
+<li>Os <strong>modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias</strong>, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?</li>
 </ol>
 <ul>
-<li>Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais</li>
-<li>Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar</li>
-<li>E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.</li>
+<li>Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais, diferentes culturas</li>
+<li><p>Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar</p></li>
+<li><strong>Exemplos</strong>:</li>
+<li>Alguns casos interessantes.</li>
+<li><p>Amostra anterior: A imagem abaixo teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!</p></li>
+</ul>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.30 (posicao 28)
+</div>
+</div>
+</div>
+<ul>
+<li>Amostra Atual: A imagem primeira imagem tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e comparável a um terreno baldio da segunda imagem. As imagens 1, 2, 4 e 5, apesar de bem distintos quanto a árvores, manutenção tiveram notas parecidas!</li>
+</ul>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.74 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.68 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_602_22.jpg' width='400px'>
+<div class="caption">
+Q-Score = 5.12 (posicao ??)
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.75 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.69 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/Av._Mal._Floriano_Peixoto_913_293.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.24 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/catole/R._Cristina_Proc%C3%B3pio_Silva_66_45.jpg' width='400px'>
+<div class="caption">
+Q-Score = 5.49 (posicao ??)
+</div>
+</div>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li><p>O grande ponto positivo destas análises é aprender melhor sobre características médias presentes nos locais que favorecem ou não as preferências e aprender um pouco sobre o as preferências típicas dos votantes em relação a essas características. <strong>Por não termos visão completa, cheiro, etc. tipicamente justifica-se como limitação para gerar a percepção do local!</strong></p></li>
+<li>E o panorama detalhado da rua (<strong>visão micro</strong>)? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando <strong>descrever, encontrar problemas/virtudes, avaliar as particularidades</strong>, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.</li>
+</ol>
+<ul>
 <li>Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas:</li>
-<li>as grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;</li>
+<li>As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;</li>
 <li>Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país</li>
 </ul>
-<p><strong>Exemplo</strong>: Alguns casos interessantes + Amostra anterior: A imagem <a href="https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg" class="uri">https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg</a> teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno! + Amostra Atual: A imagem <a href="https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg" class="uri">https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg</a> (posição 51) tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e compara a um terreno baldio da <a href="https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg" class="uri">https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg</a> (posição 73). As imagens <a href="https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg" class="uri">https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg</a> (posição 58) e <a href="https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg" class="uri">https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg</a> (posição 46), são locais bem mantidos no centro e que tiveram notas na faixa de 4.7, medianas.</p>
 <p>Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas.</p>
 <p>Alguns questionamentos foram inicialmente levantados:</p>
 <ol style="list-style-type: decimal">
@@ -150,8 +228,10 @@ $(document).ready(function () {
 <li>Será que ruas que são parecidas na média, são de fato similares?</li>
 <li>Podemos descrever cada rua? Problemas/virtudes (pontos notáveis)?</li>
 </ol>
-<div id="caracterizacao-geral---tamanho-das-amostras-e-comparacao-entre-rankings" class="section level1">
-<h1>Caracterização Geral - Tamanho das amostras e comparação entre rankings</h1>
+<div id="caracterizacao-geral" class="section level1">
+<h1>Caracterização Geral</h1>
+<div id="tamanho-das-amostras" class="section level2">
+<h2>Tamanho das amostras</h2>
 <p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 330 pessoas (138 pessoas que não são de Campina e 157 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).</p>
 <pre class="r"><code>#Checking sample size
 current_data &lt;- read.table(&quot;all100/all_ordenado.dat&quot;)
@@ -261,6 +341,7 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 <pre><code>## [1] 1393
 ## [1] 0.4408228
 ## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.440822784810127&quot;</code></pre>
+</div>
 <div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level2">
 <h2>Comparação entre rankings de moradores e não moradores</h2>
 <p>O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:</p>
@@ -292,15 +373,12 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 ## [1] 0.4533613
 ## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.453361344537815&quot;</code></pre>
 <p>Composição social de todos os usuários</p>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-3-1.png" width="1152"  /></p>
-<p>Composição social de moradores de Campina</p>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-4-1.png" width="1152"  /></p>
-<p>Composição social de não moradores de Campina</p>
+<p>Composição social de moradores de Campina</p>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-5-1.png" width="1152"  /></p>
+<p>Composição social de não moradores de Campina</p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-6-1.png" width="1152"  /></p>
 </div>
-</div>
-<div id="caracterizacao-geral---impressao-geral-das-ruas" class="section level1">
-<h1>Caracterização Geral - Impressão Geral das Ruas</h1>
 <div id="ranking-geral" class="section level2">
 <h2>Ranking Geral</h2>
 <p>Computados os QScores as 10 melhores e 10 piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.</p>
@@ -742,7 +820,7 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 <pre><code>## Loading required package: sp</code></pre>
 <pre><code>## Loading required package: Matrix</code></pre>
 <pre><code>## Warning: replacing previous import by &#39;expm::expm&#39; when loading &#39;spdep&#39;</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-3.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-4.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-5.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-6.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-7.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-8.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-7-9.png" width="672" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-3.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-4.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-5.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-6.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-7.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-8.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-9.png" width="672" /></p>
 <pre><code>## 
 ##  Moran I test under randomisation
 ## 
@@ -814,17 +892,24 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 ## \end{center}
 ## \end{table}</code></pre>
 </div>
-<div id="analise-das-ruas" class="section level2">
-<h2>Análise das Ruas</h2>
+</div>
+<div id="analise-geral-das-ruas---media-e-dispersao" class="section level1">
+<h1>Análise Geral das Ruas - Média e Dispersão</h1>
 <ol style="list-style-type: decimal">
 <li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
 </ol>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-9-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-9-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-9-3.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Geral&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Não Moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
 <ul>
 <li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas;</li>
 <li>As outras 5 ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Cristina e a Floriano parecerem ter uma tendência de melhores scores;</li>
 </ul>
 <p>Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua ou ainda com pontos aleatórios dos novos dados?</p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Médias V1 x Dados Atuais&quot;</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt; Summary Manoel (Old x New)&quot;
 ## [1] 4
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -849,12 +934,14 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 ##   3.500   3.927   4.354   4.354   4.781   5.208 
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.043   4.784   5.120   4.924   5.400   5.598</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Médias Simulando 3 pontos por rua&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 <ol start="2" style="list-style-type: decimal">
 <li>Será que ruas que são parecidas na média, são de fato similares?</li>
 </ol>
 <p>5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.</p>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
 <p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
 <ul>
 <li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
@@ -885,24 +972,25 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.043   4.784   5.120   4.924   5.400   5.598</code></pre>
 </div>
-</div>
 <div id="uma-impressao-geral-ao-longo-da-rua" class="section level1">
 <h1>Uma impressão geral ao longo da rua</h1>
 <p>Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores. Com isso podemos perceber diferenças e semelhanças entre as ruas, com a presença de locais melhor/pior avaliados ao longo das mesmas.</p>
 <blockquote>
 <blockquote>
 <blockquote>
-<p>Considerando todos os respondentes <img src="analisaPorRua_files/figure-html/unnamed-chunk-13-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-13-6.png" width="1152" /></p>
+<p>Considerando todos os respondentes</p>
 </blockquote>
 </blockquote>
 </blockquote>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-6.png" width="1152" /></p>
 <blockquote>
 <blockquote>
 <blockquote>
-<p>Considerando só os moradores de Campina <img src="analisaPorRua_files/figure-html/unnamed-chunk-14-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-6.png" width="1152" /></p>
+<p>Considerando só os moradores de Campina</p>
 </blockquote>
 </blockquote>
 </blockquote>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-6.png" width="1152" /></p>
 <blockquote>
 <blockquote>
 <blockquote>
@@ -910,7 +998,7 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 </blockquote>
 </blockquote>
 </blockquote>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-1.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-2.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-3.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-4.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-5.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-6.png" width="1152"  /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-1.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-2.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-3.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-4.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-5.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-6.png" width="1152"  /></p>
 </div>
 <div id="analisando-em-detalhe-cada-rua" class="section level1">
 <h1>Analisando em detalhe cada rua</h1>
@@ -934,7 +1022,7 @@ R._Manoel_Pereira_de_Araújo_188_203 2.829862
 ## 3   239    5.284899 0.10565052 5.388437 5.181362
 ## 4   360    4.864789 0.32184535 5.180197 4.549380
 ## 5   500    4.383747 0.04835545 4.431136 4.336359</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-17-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-18-1.png" width="1152" /></p>
 <p>Para a Inacio Marques percebemos uma <strong>variação de aproximadamente 1.2</strong> nas médias do QScore do número 500 (região de muros logo após o museu) e do número 239 (regiao residencial no quarteirão seguinte ao museu). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua e que a faixa do número 100-300 tem melhores avaliações, enquanto o início (54) e o final da rua (500) parecem ser regiões mais problemáticas.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças variam de 0.54 a 1.79 entre ângulos do mesmo número</strong>. Essas diferenças podem ser indicativos de variações de manutenção/qualidade de locais muito próximos. Por exemplo:</p>
 <ul>
@@ -1109,7 +1197,7 @@ R._Inácio_Marquês_da_Silva 500, 270 -&gt; 4.425348
 ## 3   602    4.845027 0.53287215 5.367242 4.322813
 ## 4  1136    4.373332 0.31929701 4.686243 4.060421
 ## 5  1546    5.178925 0.05797554 5.235741 5.122109</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-19-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-20-1.png" width="1152" /></p>
 <p>Para a Edesio percebemos <strong>uma variação de aproximadamente 0.9</strong> nas médias do QScore do número 1136 (terreno, pouco cuidada) e do número 1546 (casas mais novas, bem cuidadas). Esta diferença parece um indicativo de variação entre tipos, ou qualidades, de locais na rua. É importante perceber que, ao contrário da Inacio, a Edesio parece ter uma alternância maior entre locais bem e mal avaliados ao longo da rua.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças variam de 0.45 a 1.25 no QScore entre ângulos do mesmo número</strong>. Por exemplo:</p>
 <ul>
@@ -1282,7 +1370,7 @@ R._Edésio_Silva 1546, 315 -&gt; 5.247739
 ## 3   248    4.883615 0.3783599 5.254408 4.512822
 ## 4   284    4.828367 0.2118397 5.035970 4.620764
 ## 5   360    4.693636 0.2212728 4.910484 4.476789</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-21-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-22-1.png" width="1152" /></p>
 <p>Para a Maciel percebemos <strong>uma variação de aproximadamente 0.2</strong> nas médias do QScore do número 248 e dos números 130 e 248. Esta diferença parece um indicativo de variações sutis de preferências dos usuários por fachadas de lojas, quantidade de carros, dentre outros. A análise dos intervalos acaba revelando um similaridade ao longo de toda a rua. Outro ponto importante é a presença típica de QScores medianos, ou medianos para alto, e ligeiras melhorias na faixa dos números 190 e 248.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar <strong>que as maiores diferenças por ângulo variam de 0.69 a 0.94 entre angulos do mesmo número</strong>. Esta variação, ao contrário da Edesio e Inacio, sugere que em cada número existe ao menos 1 angulo que desperta um sentimento mais positivo ou negativo. Por exemplo:</p>
 <ul>
@@ -1457,7 +1545,7 @@ R._Maciel_Pinheiro 360, 360 -&gt; 5.001745
 ## 3   300    3.591718 0.1982618 3.786015 3.397422
 ## 4   370    3.662473 0.2503516 3.907817 3.417128
 ## 5   392    3.743478 0.1516742 3.892119 3.594838</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-23-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-24-1.png" width="1152" /></p>
 <p>Para a Manoel percebemos <strong>uma variação de aproximadamente 0.14</strong> nas médias do QScore do número 392 e do número 370. Esta diferença parece um indicativo de variações sutis de preferências dos usuários de acordo com as condições de manutenção na rua, lixo.</p>
 <p>Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que, apesar das notas tipicamente baixas, <strong>as maiores diferenças variam de 0.41 a 0.83 entre ângulos do mesmo número</strong>. Por exemplo:</p>
 <ul>
@@ -1627,7 +1715,7 @@ R._Manoel_Pereira_de_Araújo 392, 293 -&gt; 3.873702
 ## 3   691    5.329832 0.1433310 3.786015 3.397422
 ## 4   813    4.993587 0.1547239 3.907817 3.417128
 ## 5   913    4.704064 0.4129110 3.892119 3.594838</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-25-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-26-1.png" width="1152" /></p>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00ff00">
 <img src='https://contribua.org/bairros/norte/centro/Av._Mal._Floriano_Peixoto_445_22.jpg' width='300px'>
@@ -1782,7 +1870,7 @@ Av._Mal._Floriano_Peixoto 913, 293 -&gt; 4.246906
 ## 3   261    5.160346 0.2598359 3.786015 3.397422
 ## 4   305    4.230393 0.9868122 3.907817 3.417128
 ## 5   436    5.033687 0.6164730 3.892119 3.594838</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-27-1.png" width="1152" /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-28-1.png" width="1152" /></p>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
 <img src='https://contribua.org/bairros/oeste/catole/R._Cristina_Procópio_Silva_2_45.jpg' width='300px'>
@@ -1931,9 +2019,9 @@ R._Cristina_Procópio_Silva 436, 315 -&gt; 5.427303
 </ul>
 <p>[1] “&gt;&gt;&gt;&gt;&gt; Rua Maciel Pinheiro 60”</p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-29-1.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Marquês do herval 42” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-2.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Cardoso Vieira 44”</p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-30-1.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Marquês do herval 42” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-2.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Cardoso Vieira 44”</p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_bar).</code></pre>
-<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-29-3.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Peregrino de Carvalho 61” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-4.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Eufrosino 11” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-5.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Irineu Joffily 21” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-6.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Manoel Cavalcanti Belo 10” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-7.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Monsenhor Sales 22” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-8.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Semeão Leal 24” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-9.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Venâncio neiva 46” <img src="analisaPorRua_files/figure-html/unnamed-chunk-29-10.png" width="1152"  /></p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-30-3.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Peregrino de Carvalho 61” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-4.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Eufrosino 11” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-5.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Irineu Joffily 21” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-6.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Manoel Cavalcanti Belo 10” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-7.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Monsenhor Sales 22” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-8.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Semeão Leal 24” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-9.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Venâncio neiva 46” <img src="analisaPorRua_files/figure-html/unnamed-chunk-30-10.png" width="1152"  /></p>
 </div>
 
 

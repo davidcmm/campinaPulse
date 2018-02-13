@@ -60,26 +60,87 @@ not_camp_info <- merge(merge(users_not_campina, select(users_info, V1, V2), by.x
 #View(select(not_camp_info, V1, V2.x, V4, V5))
 ```
 
-Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
+Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas (**visão macro**). Com isso surgem alguns pontos a serem considerados:
 
 1. A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?
 * No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz
 + Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;
+* Na segunda versão do Place Pulse temos 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
+
+```{r}
+  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)
+  lat_min <- -23.401371#Sao Paulo
+  lat_max <- -24.006227
+  lon_min <- -46.334217
+  lon_max <- -46.821569
+  left_ids <- filter(teste, (teste$left_lat >= lat_max & teste$left_lat <= lat_min)  &  (teste$left_long >= lon_max & teste$left_long <= lon_min))$left_id
+  right_ids <- filter(teste, (teste$right_lat >= lat_max & teste$right_lat <= lat_min)  &  (teste$right_long >= lon_max & teste$right_long <= lon_min))$right_id
+  length(unique(append(left_ids, right_ids)))
+  #https://super.abril.com.br/cultura/quantas-ruas-existem-em-sao-paulo/
+```
+
+
 * No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local
 * No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.
-+ Pela análise do Como é Campina?, focando em divergências, nós encontramos 11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança.
++ Pela análise do Como é Campina?, focando em divergências, nós encontramos **11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança**.
++ Podemos considerar a variação nas médias e ICs quando temos mais imagens e quando só temos 2 ou 3 imagens por rua
 
-2. Os modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?
-* Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais
+2. Os **modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias**, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?
+* Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais, diferentes culturas
 * Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar
-* E o panorama detalhado da rua? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando avaliar as particularidades, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
-+ Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
-+ as grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
-+ Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
 
-**Exemplo**: Alguns casos interessantes
-+ Amostra anterior: A imagem https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!
-+ Amostra Atual: A imagem https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg  (posição 51) tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e compara a um terreno baldio da https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg (posição 73). As imagens https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg (posição 58) e https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg (posição 46), são locais bem mantidos no centro e que tiveram notas na faixa de 4.7, medianas.
+* **Exemplos**: 
++ Alguns casos interessantes. 
++ Amostra anterior: A imagem abaixo teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!
+
+<div class='row'>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.30 (posicao 28)</div>
+</div>
+</div>
+
++ Amostra Atual: A imagem primeira imagem tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e comparável a um terreno baldio da segunda imagem. As imagens 1, 2, 4 e 5, apesar de bem distintos quanto a árvores, manutenção tiveram notas parecidas! 
+
+<div class='row'>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.74 (posicao ??)</div>
+</div>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.68 (posicao ??)</div>
+</div>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_602_22.jpg' width='400px'>
+<div class='caption'>Q-Score = 5.12 (posicao ??)</div>
+</div>
+</div>
+<div class='row'>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.75 (posicao ??)</div>
+</div>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.69 (posicao ??)</div>
+</div>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/norte/centro/Av._Mal._Floriano_Peixoto_913_293.jpg' width='400px'>
+<div class='caption'>Q-Score = 4.24 (posicao ??)</div>
+</div>
+<div class='col-xs-4'>
+<img src='https://contribua.org/bairros/oeste/catole/R._Cristina_Proc%C3%B3pio_Silva_66_45.jpg' width='400px'>
+<div class='caption'>Q-Score = 5.49 (posicao ??)</div>
+</div>
+</div>
+
+3. O grande ponto positivo destas análises é aprender melhor sobre características médias presentes nos locais que favorecem ou não as preferências e aprender um pouco sobre o as preferências típicas dos votantes em relação a essas características. **Por não termos visão completa, cheiro, etc. tipicamente justifica-se como limitação para gerar a percepção do local!**
+
+4. E o panorama detalhado da rua (**visão micro**)? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando **descrever, encontrar problemas/virtudes, avaliar as particularidades**, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
+* Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
+* As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
+* Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
 
 Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas. 
 
@@ -89,7 +150,9 @@ Alguns questionamentos foram inicialmente levantados:
 2. Será que ruas que são parecidas na média, são de fato similares?
 3. Podemos descrever cada rua? Problemas/virtudes (pontos notáveis)?
 
-# Caracterização Geral - Tamanho das amostras e comparação entre rankings
+# Caracterização Geral
+
+## Tamanho das amostras 
 
 Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 330 pessoas (138 pessoas que não são de Campina e 157 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).
 
@@ -226,8 +289,6 @@ files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.da
 listOfFiles <- paste(folder, files, sep="")
 count_profile(listOfFiles)
 ```
-
-# Caracterização Geral - Impressão Geral das Ruas
 
 ## Ranking Geral
 
@@ -409,7 +470,8 @@ texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01,
 #texreg(list(reg), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 ```
 
-## Análise das Ruas
+
+# Análise Geral das Ruas - Média e Dispersão
 
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 
@@ -446,10 +508,14 @@ plot_street_means <- function(data){
                     position=position_dodge(.9)) + ylim(c(0,6))
   p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
 }
+
+print(">>>>> Média Geral")
 plot_street_means(qscoresDFGeral)
 
 #Campina and not campina residents
+print(">>>>> Média Moradores")
 plot_street_means(qscoresDFCampina)
+print(">>>>> Média Não Moradores")
 plot_street_means(qscoresDFNotCampina)
 ```
 
@@ -510,6 +576,7 @@ compare_street_means <- function(old_data, new_data){
   p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
 }
 
+print(">>>>> Médias V1 x Dados Atuais")
 compare_street_means(v1_data, qscoresDFGeral)
 
 simulate_street_means <- function(data){
@@ -566,6 +633,7 @@ simulate_street_means <- function(data){
                     position=position_dodge(.9)) + ylim(c(0,6))
   p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
 }
+print(">>>>> Médias Simulando 3 pontos por rua")
 simulate_street_means(qscoresDFGeral)
 ```
 
@@ -620,6 +688,7 @@ summary(filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva")$qscore)
 Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores. Com isso podemos perceber diferenças e semelhanças entre as ruas, com a presença de locais melhor/pior avaliados ao longo das mesmas.
 
 >>> Considerando todos os respondentes
+
 ```{r  fig.height=10, fig.width=12, echo=FALSE}
 #Plotting Q-Scores through the street
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
@@ -643,16 +712,23 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   }else if (plotTitle == "Inacio"  || plotTitle == "Maciel Pinheiro" || plotTitle == "Cristina Procopio" || plotTitle == "Floriano Peixoto"){
     data1 <- arrange(filter(data, side == "Side 1"), num, angle)
     data2 <- arrange(filter(data, side == "Side 2"), num, angle)
+    
+    if (plotTitle == "Cristina Procopio"){
+        to_change <- data1[nrow(data1)-1,]
+        data1[nrow(data1)-1,] <- data1[nrow(data1),]
+        data1[nrow(data1),] <- to_change
+    }
   }
   
   
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
-  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd, colour="#D55E00") + geom_point(position=pd, size=4, colour="#D55E00") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4)) + scale_colour_hue()
+  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_bar(position=position_dodge(), stat="identity", fill="#D55E00") + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") #geom_line(position=pd, colour="#D55E00") + geom_point(position=pd, size=4, colour="#D55E00") + ylim(c(2, 7))   #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4)) + scale_colour_hue()
 
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
-  g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_line(position=pd, colour="#56B4E9") + geom_point(position=pd, size=4, colour="#56B4E9") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))#+ scale_colour_hue()
+  g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_bar(position=position_dodge(), stat="identity", fill="#56B4E9") + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") #+ geom_line(position=pd, colour="#56B4E9") + geom_point(position=pd, size=4, colour="#56B4E9") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))#+ scale_colour_hue()
   
   multiplot(g1, g2, cols=1)
+  
 }
 
 all_data$xlabel <- paste("Num.:", all_data$num, " Angle: ", all_data$angle) 
@@ -666,6 +742,7 @@ plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cr
 ```
 
 >>> Considerando só os moradores de Campina
+
 ```{r  fig.height=10, fig.width=12, echo=FALSE}
 #Calculating CI for each photo - CAmpina residents
 datacampina <- read.table("all100/all_campina_ordenado.dat")

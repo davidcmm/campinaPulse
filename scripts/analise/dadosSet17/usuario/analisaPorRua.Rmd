@@ -57,6 +57,7 @@ users_info <- read.table("../backupBanco/idsGerais/usersInfo.dat", sep="|")
 users_profile <- read.csv("../backupBanco/users.csv", header=FALSE)
 
 not_camp_info <- merge(merge(users_not_campina, select(users_info, V1, V2), by.x = "V1", by.y = "V1"), users_profile, by.x = "V1", by.y = "V1")
+#View(select(not_camp_info, V1, V2.x, V4, V5))
 ```
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas. Com isso surgem alguns pontos a serem considerados:
@@ -172,7 +173,7 @@ O processo de separação de quem é ou não de Campina obedeceu as seguintes re
 
 Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 157 moradores e 138 não moradores. **Quão parecido é o ranking geral de moradores e não moradores?**
 
-```{r}
+```{r, echo=FALSE}
 datacampina <- read.table("all100/all_campina_ordenado.dat")
 datanotcampina <- read.table("all100/all_notcampina_ordenado.dat")
 
@@ -317,7 +318,7 @@ Alguns pontos a se questionar olhando todas as marcações:
 
 Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
 
-```{r}
+```{r, echo=FALSE}
 input_regressao <- read.csv("input_regressao/regressao-input.csv")
 plotRegAndLinear <- function(reg, test){
   #http://blog.minitab.com/blog/adventures-in-statistics-2/why-you-need-to-check-your-residual-plots-for-regression-analysis
@@ -378,14 +379,14 @@ moran
 
 Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se: 
 
-1. Sidewalk width mais significativo e influente no Geral, influência parecida nos 2 grupos;
+1. Sidewalk width mais significativo e influente para moradores;
 2. Landscape igualmente significativo nos 3, mais influente para moradores;
-3. Trees mais significativo para não moradores e mais influente para eles;
+3. Trees mais significativo no geral e não moradore e mais influente para eles;
 4. Builds ids igualmente significativo nos 3, mais influente para não moradores;
-5. R2 parecidos
+5. R2 parecidos  
 
-```{r}
-#CAmpina residents
+```{r, echo=FALSE}
+#Campina residents 
 reg_input <- merge(datacampina, input_regressao, by.x="V2", by.y="image") %>% do(arrange(., V3)) %>% mutate(rank = 1:n())
 reg_campina <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
@@ -412,7 +413,7 @@ texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01,
 
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 
-```{r}
+```{r, echo=FALSE}
 #Calculating CI for each photo
 current_data$ci <- current_data$sd * 1.96 / sqrt(100)
 current_data <- arrange(current_data, photo_name)
@@ -442,12 +443,12 @@ plot_street_means <- function(data){
       geom_bar(position=position_dodge(), stat="identity") +
       geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
                     width=.2,                    # Width of the error bars
-                    position=position_dodge(.9))
+                    position=position_dodge(.9)) + ylim(c(0,6))
   p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
 }
-
-
 plot_street_means(qscoresDFGeral)
+
+#Campina and not campina residents
 plot_street_means(qscoresDFCampina)
 plot_street_means(qscoresDFNotCampina)
 ```
@@ -455,9 +456,9 @@ plot_street_means(qscoresDFNotCampina)
 - A Manoel P. de Araújo realmente está bem abaixo das demais ruas;
 - As outras 5 ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Cristina e a Floriano parecerem ter uma tendência de melhores scores;
 
-Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua?
+Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua ou ainda com pontos aleatórios dos novos dados?
 
-```{r}
+```{r, echo=FALSE}
 #Comparing current mean with mean obtained in Como e Campina - V1
 v1_data <- filter(read.table("../../dadosSet16/usuario/all100/allGeralNew.dat"), V1 != "seguro?")
 novoV2 <- lapply(as.character(v1_data$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
@@ -510,13 +511,69 @@ compare_street_means <- function(old_data, new_data){
 }
 
 compare_street_means(v1_data, qscoresDFGeral)
+
+simulate_street_means <- function(data){
+  edesio_scores <- c()
+  inacio_scores <- c()
+  manoel_scores <- c()
+  cristina_scores <- c()
+  floriano_scores <- c()
+  maciel_scores <- c()
+  edesio_sd <- c()
+  inacio_sd <- c()
+  manoel_sd <- c()
+  cristina_sd <- c()
+  floriano_sd <- c()
+  maciel_sd <- c()
+  #for (index in 1:1000){
+      current_scores = sample(filter(data, street == "R._Edésio_Silva")$qscore, 3)
+      current_sd = sd(current_scores)
+      edesio_scores = append(edesio_scores, current_scores)
+      edesio_sd = append(current_sd, edesio_sd)
+      
+      current_scores = sample(filter(data, street == "R._Inácio_Marquês_da_Silva")$qscore, 3)
+      current_sd = sd(current_scores)
+      inacio_scores = append(inacio_scores, current_scores)
+      inacio_sd = append(current_sd, inacio_sd)
+      
+      current_scores = sample(filter(data, street == "R._Manoel_Pereira_de_Araújo")$qscore, 3)
+      current_sd = sd(current_scores)
+      manoel_scores = append(manoel_scores, current_scores)
+      manoel_sd = append(current_sd, manoel_sd)
+      
+      current_scores = sample(filter(data, street == "R._Maciel_Pinheiro")$qscore, 3)
+      current_sd = sd(current_scores)
+      maciel_scores = append(maciel_scores, current_scores)
+      maciel_sd = append(current_sd, maciel_sd)
+      
+      current_scores = sample(filter(data, street == "Av._Mal._Floriano_Peixoto")$qscore, 3)
+      current_sd = sd(current_scores)
+      floriano_scores = append(floriano_scores, current_scores)
+      floriano_sd = append(current_sd, floriano_sd)
+      
+      current_scores = sample(filter(data, street == "R._Cristina_Procópio_Silva")$qscore, 3)
+      current_sd = sd(current_scores)
+      cristina_scores = append(cristina_scores, current_scores)
+      cristina_sd = append(current_sd, cristina_sd)
+  #}
+  
+  new_frame = data.frame(mean_scores = c(mean(maciel_scores), mean(manoel_scores), mean(edesio_scores), mean(inacio_scores), mean(floriano_scores), mean(cristina_scores)), medians = c(median(maciel_scores), median(manoel_scores), median(edesio_scores), median(inacio_scores), median(floriano_scores), mean(cristina_scores)), street = c("Maciel", "Manoel", "Edesio", "Inacio", "Floriano", "Cristina"), ci = c(maciel_sd * 1.96 / sqrt(length(maciel_scores)),  manoel_sd * 1.96 / sqrt(length(manoel_scores)), edesio_sd * 1.96 / sqrt(length(edesio_scores)), inacio_sd * 1.96 / sqrt(length(inacio_scores)), floriano_sd * 1.96 / sqrt(length(floriano_scores)), cristina_sd * 1.96 / sqrt(length(cristina_scores))))
+  
+  p <- ggplot(new_frame, aes(x=street, y=mean_scores, fill=street)) + 
+      geom_bar(position=position_dodge(), stat="identity") +
+      geom_errorbar(aes(ymin=mean_scores-ci, ymax=mean_scores+ci),
+                    width=.2,                    # Width of the error bars
+                    position=position_dodge(.9)) + ylim(c(0,6))
+  p + geom_point(data=new_frame, aes(x=street, y=medians, colour=street), shape=8, size=3)
+}
+simulate_street_means(qscoresDFGeral)
 ```
 
 2. Será que ruas que são parecidas na média, são de fato similares?
 
 5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.
 
-```{r }
+```{r, echo=FALSE }
 value <- qscoresDFGeral$qscore
 
 with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7), names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))
@@ -540,7 +597,7 @@ A partir da análise dos violin plots, alguns pontos podem ser destacados:
 - A Inacio, Edesio, Floriano e Cristina possuem QScores que variam em 1.5 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!
 
 Para complemento numérico dos violin plots, temos os coeficientes de dispersão/heterogeneidade e o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
-```{r }
+```{r , echo=FALSE}
 #GINI COEFFICIENTS
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
@@ -563,7 +620,7 @@ summary(filter(qscoresDFGeral, street == "R._Cristina_Procópio_Silva")$qscore)
 Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores. Com isso podemos perceber diferenças e semelhanças entre as ruas, com a presença de locais melhor/pior avaliados ao longo das mesmas.
 
 >>> Considerando todos os respondentes
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 #Plotting Q-Scores through the street
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
@@ -609,7 +666,7 @@ plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cr
 ```
 
 >>> Considerando só os moradores de Campina
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 #Calculating CI for each photo - CAmpina residents
 datacampina <- read.table("all100/all_campina_ordenado.dat")
 datanotcampina <- read.table("all100/all_notcampina_ordenado.dat")
@@ -674,7 +731,7 @@ Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao 
 
 ## Inacio Marques
 
-```{r }
+```{r, echo=FALSE }
 summary_inacio = filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
 summary_inacio$upper <- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / sqrt(4)
 summary_inacio$lower <- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / sqrt(4)
@@ -700,7 +757,7 @@ summary_cristina$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 
 summary_cristina$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 ```
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")))
@@ -776,7 +833,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Edesio Silva
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")))
@@ -814,7 +871,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Maciel Pinheiro
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 maciel <- filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")))
@@ -854,7 +911,7 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 
 ## Manoel Pereira
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")))
@@ -891,7 +948,7 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 
 ## Floriano Peixoto
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini")))
@@ -909,7 +966,7 @@ show_street_data(floriano, all_data)
 
 ## Cristina Procópio
 
-```{r  fig.height=10, fig.width=12}
+```{r  fig.height=10, fig.width=12, echo=FALSE}
 cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini")))

@@ -392,7 +392,7 @@ plotRegAndLinear <- function(reg, test){
   plot(test$build_ident, reg$resid)
 }
 getLatLong <- function(data, fileWithCoord) {
-  coord <- read.table(fileWithCoord, sep="+", header=F)#V4 and V5 -> lat and long; V2 street
+  coord <- arrange(read.table(fileWithCoord, sep="+", header=F), V2)#V4 and V5 -> lat and long; V2 street
   data$lat <- 0
   data$long <- 0
   
@@ -690,11 +690,30 @@ Após a análise das médias por rua e de suas desigualdades, vamos dar uma olha
 >>> Considerando todos os respondentes
 
 ```{r  fig.height=10, fig.width=12, echo=FALSE}
+library(ggmap)#https://rpubs.com/nickbearman/r-google-map-making
+library(sp)
+
 #Plotting Q-Scores through the street
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
 
+getLatLong_2 <- function(data, fileWithCoord) {
+  coord <- arrange(read.table(fileWithCoord, sep="+", header=F), V2)#V4 and V5 -> lat and long; V2 street
+  data$lat <- 0
+  data$long <- 0
+  
+  for (i in 1:nrow(coord)){
+    row <- coord[i,]
+    for (j in 1:nrow(data)){
+      if(length(grep(row$V2, data[j,]$url)) > 0){
+        data[j,]$lat <- row$V4
+        data[j,]$long <- row$V5
+      }  
+    }
+  }
+  return (data)
+}
 plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   pd <- position_dodge(0.1)
   data$xlabel <- factor(data$xlabel, levels = data$xlabel)
@@ -720,9 +739,18 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
     }
   }
   
+  #Plotting in the map
+  #data_lat_lon <- getLatLong_2(data, "streetsQScoresLatLong.dat")
+  #coords <- cbind(Longitude = as.numeric(as.character(data_lat_lon$long)), Latitude = as.numeric(as.character(data_lat_lon$lat)))
+  #scores.pts <- SpatialPointsDataFrame(coords, select(data_lat_lon, url, qscore, lat, long), proj4string = CRS("+init=epsg:4326"))
+  #campina_map <- qmap(location = 'Cristina Procópio, Campina Grande, Brasil', color="bw", legend = "topleft", zoom = 14)
+  #campina_map <- get_googlemap(center = paste("Rua", plotTitle, ", Campina Grande, Brasil", sep= " "), zoom = 16)
+  #mapa <- ggmap(campina_map)# + geom_point(data = data_lat_lon, aes(x = long, y = lat), size=3, alpha=0.5)
   
+  #imgage <- png::readPNG("images/cristina.png")
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
-  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_bar(position=position_dodge(), stat="identity", fill="#D55E00") + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") #geom_line(position=pd, colour="#D55E00") + geom_point(position=pd, size=4, colour="#D55E00") + ylim(c(2, 7))   #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4)) + scale_colour_hue()
+  g1 <- ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num)))+ geom_bar(position=position_dodge(), stat="identity", fill="#D55E00", alpha=0.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") #+annotation_custom(rasterGrob(imgage, width = unit(1,"npc"), height = unit(1,"npc")), -Inf, Inf, -Inf, Inf) 
+ #geom_line(position=pd, colour="#D55E00") + geom_point(position=pd, size=4, colour="#D55E00") + ylim(c(2, 7))   #+ facet_wrap(~side, ncol=1, nrow=2, scales='free') #scale_colour_gradientn(colours=rainbow(4)) + scale_colour_hue()
 
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = rev(xlabel)))
   g2 <- ggplot(data2, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num))) + geom_bar(position=position_dodge(), stat="identity", fill="#56B4E9") + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") #+ geom_line(position=pd, colour="#56B4E9") + geom_point(position=pd, size=4, colour="#56B4E9") + ylim(c(2, 7)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))#+ scale_colour_hue()

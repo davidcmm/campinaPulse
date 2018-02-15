@@ -8,35 +8,56 @@ output:
 
 #Evaluting evolution with pairwise and 4-images
 ```{r, echo=FALSE, fig.show='asis', fig.width=10, fig.height=5}
-dados <- read.table("../../dadosNov15/usuarios/geralSetoresAJ.dat", header=TRUE)
-dados2 <- read.table("../../dadosJulho15/usuarios/geralRankAJ.dat", header=TRUE)
+#Relacionar marco com maio, maio com julho, julho com nov, nov com set16
+file1 <- "../../dadosMar15/usuarios/all_ordenado.dat"
+for (file2 in c("../../dadosMaio15/usuarios/all100/all_ordenado.dat", "../../dadosJulho15/usuarios/all_ordenado.dat", "../../dadosNov15/usuarios/all100/all_ordenado.dat", "../../dadosSet16/usuario/all100/allGeralNew.dat")){
 
-temp <- dados
-qscoreSim <- temp [ c(4:103) ]
-icData <- apply(qscoreSim, 1, ic)
-temp$distance <- icData
+    dados <- read.table(file1)
+    dados2 <- read.table(file2)
+    
+    print(paste(">>>>>> ", file1, " ", file2))
+    
+    temp <- dados
+    qscoreSim <- temp [ c(4:103) ]
+    icData <- apply(qscoreSim, 1, ic)
+    temp$distance <- icData
+    
+    temp2 <- dados2
+    qscoreSim2 <- temp2 [ c(4:103) ]
+    icData2 <- apply(qscoreSim2, 1, ic)
+    temp2$distance <- icData2
+    
+    dadosSub <- temp[, c("V2", "V1", "V3")]#, "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+    dadosSub2 <- temp2[, c("V2", "V1", "V3")]#, "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
+    
+    novosDados <- dadosSub#reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+    novosDados2 <- dadosSub2#reshape(dadosSub2, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
+    
+    data_pleas_1 <- filter(novosDados, V1 != "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
+    
+    data_pleas_2 <- filter(novosDados2, V1 != "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
 
-temp2 <- dados2
-qscoreSim2 <- temp2 [ c(4:103) ]
-icData2 <- apply(qscoreSim2, 1, ic)
-temp2$distance <- icData2
+    print("##### Pleasantness")    
+    merge_agrad <- merge(select(data_pleas_1, V1, V2, rank), select(data_pleas_2, V1, V2, rank), by="V2")
+    print(cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall"))
+    
+    normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    
+    data_saf_1 <- filter(novosDados, V1 == "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
+    
+    data_saf_2 <- filter(novosDados2, V1 == "seguro?") %>% do(arrange(., V3)) %>%
+    mutate(rank = 1:n())
 
-dadosSub <- temp[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-dadosSub2 <- temp2[, c("V2", "V1", "V3", "diag", "hor", "vert", "red", "green", "blue", "grupo", "bairro", "distance")]
-
-novosDados <- reshape(dadosSub, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-novosDados2 <- reshape(dadosSub2, timevar="grupo", idvar=c("V2", "V1", "diag", "hor", "vert", "red", "green", "blue", "bairro"), direction="wide")
-
-dataMaio15 <- filter(novosDados, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
-mutate(rank = 1:n())
-
-dataJulho15 <- filter(novosDados2, V1 != "seguro?") %>% do(arrange(., V3.Geral)) %>%
-mutate(rank = 1:n())
-
-merge_agrad <- merge(select(dataMaio15, V1, V2, rank), select(dataJulho15, V1, V2, rank), by="V2")
-
-cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall")
-normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    print("##### Safety")    
+    merge_agrad <- merge(select(data_saf_1, V1, V2, rank), select(data_saf_2, V1, V2, rank), by="V2")
+    print(cor.test(merge_agrad$rank.x, merge_agrad$rank.y, method="kendall"))
+    normalizedKendallTauDistance2(merge_agrad$rank.x, merge_agrad$rank.y)
+    
+    file1 <- file2
+}
 ```
 
 
@@ -3432,25 +3453,13 @@ texreg(list(regGroup1, regGroup2), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression!
 plotRegAndLinear(reg, test)
 
-#Spatial regression - consider spatial dependency and correlation!
-library(spdep)
-library(texreg)
-sink("spatialRegression.dat")
-
-res <- getLatLong(agrad.l, "moran100/streetsQScoresLatLongAgraAll2.dat")
-crd <- cbind(res$long, res$lat)
-k2 <- knn2nb(knearneigh(unique(crd)))
-maxDist <- max(unlist(nbdists(k2, unique(crd))))
-neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
-neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
-
 #Moran computations
 source("krippMoran.R")
 moranI2(res, "V3.Geral")
 moranI2(res, "V3.Masculino")
 moranI2(res, "V3.Feminino")
 
-reg <- lm(V3.Masculino ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))#OLS regression - minimize squared distances of line and points! red + green + blue + hor + vert + diag
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + graffiti + trees + build_height + diff_build + people, na.action = na.exclude, data = filter(res, V1 != "seguro?"))#OLS regression - minimize squared distances of line and points! red + green + blue + hor + vert + diag
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -5081,16 +5090,16 @@ colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.agrad%C3%A1vel?"]
 colnames(novosgrupo1grupo2)[colnames(novosgrupo1grupo2) == "V3.seguro?"] <- "V3.seguro"
 
 #Spatial Regression of all users opinion
-res <- getLatLong(agrad, "moran100/streetsQScoresLatLongAgraAll2.dat")
+res <- getLatLong(agradGeral, "../../dadosNov15//usuarios/moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 k2 <- knn2nb(knearneigh(unique(crd)))
 maxDist <- max(unlist(nbdists(k2, unique(crd))))
 neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
 
-reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "agradavel?"), listw=neigh2)
+reg <- spautolm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, data=filter(res, V1 != "seguro?"), listw=neigh2)
 summary(reg)
-reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "agradavel?"))
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = filter(res, V1 != "seguro?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -5106,15 +5115,15 @@ reg <- lm(V3.Geral ~ red + green + blue, na.action = na.exclude, data = filter(r
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
-res <- getLatLong(seg, "moran100/streetsQScoresLatLongAgraAll2.dat")
+res <- getLatLong(segGeral, "../../dadosNov15/usuarios/moran100/streetsQScoresLatLongAgraAll2.dat")
 crd <- cbind(res$long, res$lat)
 k2 <- knn2nb(knearneigh(unique(crd)))
 maxDist <- max(unlist(nbdists(k2, unique(crd))))
 neigh <- dnearneigh(crd, 0, 1000*maxDist, longlat=TRUE)#Neighborhoods based on distance! Which values to use as limits? From example were 0, 100; 0, 1 * max or 1.5 * max
 neigh2 <- nb2listw(neigh, style = "B")#Binary weights, control amount of neighbors giving more influence to the ones with more neighbors!
-reg <- spautolm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, data=filter(res, V1 == "seguro?"), listw=neigh2)
+reg <- spautolm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, data=filter(res, V1 == "seguro?"), listw=neigh2)
 summary(reg)
-reg <- lm(V3.Geral ~ street_wid + sidewalk_wid + mov_cars + park_cars + mov_ciclyst + debris + pavement + landscape + build_ident + build_nrectan + prop_street_wall + prop_wind + long_sight + prop_sky_ahead + prop_sky_across + graffiti + trees + small_planters + build_height + build_diff_ages + diff_build + street_furnit + basic_col + lights + accent_col + people + prop_active_use, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
+reg <- lm(rank ~ street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = filter(res, V1 == "seguro?"))
 summary(reg)
 texreg(reg, stars = c(0.001, 0.01, 0.05, 0.1))
 
@@ -5166,12 +5175,36 @@ w = 6
 h = 4
 pdf("images/pleasXsafeAll.pdf", width = w, height = h)
 lb1 <- paste("R^2 == ", 0.54)
-ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)                                                                                                                                                                                                                                                                                                                                                                      
+ggplot(novosDados, aes(y=Pleasant, x=Safe, colour=neighborhood, shape=neighborhood)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Safety") + ylab("Q-Score Pleasantness") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15)) + annotate("text", x = 4, y = 7, label = lb1, parse=TRUE, size=5)
 dev.off(which = 2)
 
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="pearson")
 cor.test(novosDados$Safe, novosDados$Pleasant, method="kendall")
+
+#Users x users scores
+agradGeral <- rename(agradGeral, c("V3.Masculino"="Men", "V3.Feminino"="Women", "V3.Adulto"="Adults", "V3.Jovem"="Young", "V3.Baixa"="Low", "V3.Media"="High"))
+pdf("images/menXwomen_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Men, x=Women)) + geom_point(alpha = 0.7, size=3, stroke = 1) + scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() + theme(axis.text = element_text(size=15), axis.title = element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+
+pdf("images/adultXyoung_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Adults, x=Young)) + geom_point(alpha = 0.7, size=3, stroke = 1) + scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() + theme(axis.text = element_text(size=15), axis.title = element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/lowXhigh_a.pdf", width = w, height = h)
+ggplot(agradGeral, aes(y=Low, x=High)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score High") + ylab("Q-Score Low") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+
+segGeral <- rename(segGeral, c("V3.Masculino"="Men", "V3.Feminino"="Women", "V3.Adulto"="Adults", "V3.Jovem"="Young", "V3.Baixa"="Low", "V3.Media"="High"))
+pdf("images/menXwomen_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Men, x=Women)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Women") + ylab("Q-Score Men") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/adultXyoung_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Adults, x=Young)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score Young") + ylab("Q-Score Adults") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
+pdf("images/lowXhigh_s.pdf", width = w, height = h)
+ggplot(segGeral, aes(y=Low, x=High)) + geom_point(alpha = 0.7, size=3, stroke = 1)+ scale_shape_discrete(solid=F) + xlab("Q-Score High") + ylab("Q-Score Low") + geom_abline(intercept=0, colour="red") + theme_bw() +  theme(axis.text=element_text(size=15), axis.title=element_text(size=15), legend.text = element_text(size=15), legend.title = element_text(size=15))
+dev.off(which = 2)
 
 #Comparing pleasantness and safety from users with predicted output of classifiers
 predicted <- read.table("all100/all_predicted_remove_photo_ordenado.dat")#all_pred_ordenado.dat

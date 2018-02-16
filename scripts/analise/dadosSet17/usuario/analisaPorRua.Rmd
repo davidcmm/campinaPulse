@@ -68,7 +68,7 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Na segunda versão do Place Pulse temos 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)
+  teste <- read.csv("/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -249,7 +249,7 @@ print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(camp_notcamp
 
 Composição social de todos os usuários
 
-```{r, echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+```{r, echo=FALSE, out.extra='',fig.height=10, fig.width=12, warning=FALSE}
 count_profile <- function(listOfFiles) {
   listOfValues <- c()
   for (file in listOfFiles){
@@ -274,7 +274,7 @@ count_profile(listOfFiles)
 
 Composição social de moradores de Campina
 
-```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12, warning=FALSE}
 folder <- "../backupBanco/idsCampina//"
 files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
 listOfFiles <- paste(folder, files, sep="")
@@ -283,7 +283,7 @@ count_profile(listOfFiles)
 
 Composição social de não moradores de Campina
 
-```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12}
+```{r,  echo=FALSE, out.extra='',fig.height=10, fig.width=12, warning=FALSE}
 folder <- "../backupBanco/idsNotCampina//"
 files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
 listOfFiles <- paste(folder, files, sep="")
@@ -374,8 +374,8 @@ Para as imagens com pior avaliação, **a presença de itens na rua (barracas ma
 
 Alguns pontos a se questionar olhando todas as marcações:
 
-* Algumas imagens da Manoel Leonardo Gomes e outros locais degradados foram marcados como melhores, apresentando 1,2,3,4,5,6,7 pontos marcados (temos imagens bem avaliadas com 8 marcações, outras com 40) -> confusão na questão, preferência mesmo (algumas marcações no céu azul, prédios conservados)
-* Algumas imagens da Floriano, Maciel e Museu marcadas como piores -> confusão, preferência (carros, estilos de lojas)
+* Algumas imagens da Manoel Pereira de Araújo e outros locais degradados foram marcados como melhores, apresentando poucos votos 1, 2 a 5 pessoas -> confusão na questão, preferência mesmo (algumas marcações no céu azul, prédios conservados)?
+* Algumas imagens da Floriano, Maciel e Museu marcadas como piores -> confusão, preferência (carros, estilos de lojas)?
 
 Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores
 
@@ -475,7 +475,7 @@ texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01,
 
 1. Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 #Calculating CI for each photo
 current_data$ci <- current_data$sd * 1.96 / sqrt(100)
 current_data <- arrange(current_data, photo_name)
@@ -524,7 +524,7 @@ plot_street_means(qscoresDFNotCampina)
 
 Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua ou ainda com pontos aleatórios dos novos dados?
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 #Comparing current mean with mean obtained in Como e Campina - V1
 v1_data <- filter(read.table("../../dadosSet16/usuario/all100/allGeralNew.dat"), V1 != "seguro?")
 novoV2 <- lapply(as.character(v1_data$V2), function (x) paste(strsplit(x, split="/", fixed=TRUE)[[1]][7], sep=""))
@@ -641,15 +641,19 @@ simulate_street_means(qscoresDFGeral)
 
 5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.
 
-```{r, echo=FALSE }
+```{r, echo=FALSE, warning=FALSE }
+print(">>>>> Todos os usuários")
 value <- qscoresDFGeral$qscore
 
 with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7), names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))
+title("Moradores")
 
+print(">>>>> Moradores")
 value <- qscoresDFCampina$qscore
 
 with(qscoresDFCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))#,  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"]
 
+print(">>>>> Não moradores")
 value <- qscoresDFNotCampina$qscore
 
 with(qscoresDFNotCampina , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"],  value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7) , names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))
@@ -664,8 +668,11 @@ A partir da análise dos violin plots, alguns pontos podem ser destacados:
 - A Floriano também tem uma maior concentração de valores com notas parecidas, porém um pouco mais heterogêneas que a Maciel Pinheiro;
 - A Inacio, Edesio, Floriano e Cristina possuem QScores que variam em 1.5 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!
 
-Para complemento numérico dos violin plots, temos os coeficientes de dispersão/heterogeneidade e o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel.
-```{r , echo=FALSE}
+Para complemento numérico dos violin plots, temos os coeficientes de dispersão/heterogeneidade e o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel. Aqui é importante destacar que:
+
+* Os três pontos mais heterogêneos considerados foram, respectivamente, das ruas Inácio Marques, Edésio Silva e Cristina Procópio. É interessante observar que, apesar da ordem de heterogeneidade das ruas ser diferente, essas 3 ruas são as mais heterogêneas do nosso conjunto de dados.
+
+```{r , echo=FALSE, warning=FALSE}
 #GINI COEFFICIENTS
 all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
@@ -689,7 +696,7 @@ Após a análise das médias por rua e de suas desigualdades, vamos dar uma olha
 
 >>> Considerando todos os respondentes
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 library(ggmap)#https://rpubs.com/nickbearman/r-google-map-making
 library(sp)
 
@@ -771,7 +778,7 @@ plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cr
 
 >>> Considerando só os moradores de Campina
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 #Calculating CI for each photo - CAmpina residents
 datacampina <- read.table("all100/all_campina_ordenado.dat")
 datanotcampina <- read.table("all100/all_notcampina_ordenado.dat")
@@ -807,7 +814,7 @@ plot_ci_per_photo(filter(all_data_camp, street == "R._Cristina_Procópio_Silva")
 
 >>> Considerando só os não moradores de Campina
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
 #Calculating CI for each photo - CAmpina residents
 datanotcampina$sd <- apply(datanotcampina[,4:103], 1, sd)
 datanotcampina$n <- ( 1.96 * datanotcampina$sd / 0.2) ** 2  #All QScores
@@ -836,7 +843,7 @@ Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao 
 
 ## Inacio Marques
 
-```{r, echo=FALSE }
+```{r, echo=FALSE, warning=FALSE}
 summary_inacio = filter(qscoresDFGeral, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% summarise(media_ponto = mean(qscore), sd = sd(qscore))
 summary_inacio$upper <- summary_inacio$media_ponto + summary_inacio$sd * 1.96 / sqrt(4)
 summary_inacio$lower <- summary_inacio$media_ponto - summary_inacio$sd * 1.96 / sqrt(4)
@@ -862,7 +869,7 @@ summary_cristina$upper <- summary_manoel$media_ponto + summary_manoel$sd * 1.96 
 summary_cristina$lower <- summary_manoel$media_ponto - summary_manoel$sd * 1.96 / sqrt(4)
 ```
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini")))
@@ -884,7 +891,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 - no número 360 as variações para os números 90 e 203 
 - no número 500 temos o ângulo 203 com uma nota mais baixa
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 library("knitr")
 
 show_street_data <- function (current_df, all_data){
@@ -938,7 +945,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Edesio Silva
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini")))
@@ -960,7 +967,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 - no número 1136 temos uma maior homogeneidade, de forma negativa;
 - no número 1546 temos uma maior homogeneidade, de forma positiva, com o ângulo 22 apresentando uma nota ainda melhor.
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 show_street_data(edesio, all_data)
 ```
 
@@ -976,7 +983,7 @@ Analisando de forma geral as fotos percebemos que, conforme esperado, os locais 
 
 ## Maciel Pinheiro
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 maciel <- filter(qscoresDFGeral, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini")))
@@ -998,7 +1005,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar **qu
 - No número 190, temos uma nota mais baixa para o ângulo 180;
 - No número 130, temos uma nota mais baixa para os ângulos 270 e 360
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 show_street_data(maciel, all_data)
 ```
 
@@ -1016,7 +1023,7 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 
 ## Manoel Pereira
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini")))
@@ -1037,7 +1044,7 @@ Analisando os scores de cada ângulo em cada ponto da rua, pode-se observar que,
 - No número 300, ângulo 315 temos aprox. 0.9 a menos  do angulo 203;
 - No número 222, ângulo 22 temos 0.6 a menos do angulo 315;
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 show_street_data(manoel, all_data)
 ```
 
@@ -1053,7 +1060,7 @@ De forma geral as fotos percebemos que, conforme esperado, em geral os locais po
 
 ## Floriano Peixoto
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini")))
@@ -1065,13 +1072,13 @@ summary_floriano
 plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Floriano Peixoto", c(22,293), c(112,203))#Street 5
 ``` 
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 show_street_data(floriano, all_data)
 ```
 
 ## Cristina Procópio
 
-```{r  fig.height=10, fig.width=12, echo=FALSE}
+```{r  fig.height=10, fig.width=12, echo=FALSE, warning=FALSE}
 cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, street, num, angle, qscore)
 
 print(paste(">>> GINI da rua: ", ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini")))
@@ -1083,7 +1090,7 @@ summary_cristina
 plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
 ``` 
 
-```{r results='asis', echo=FALSE, out.extra=''}
+```{r results='asis', echo=FALSE, out.extra='', warning=FALSE}
 show_street_data(cristina, all_data)
 ```
 
@@ -1094,7 +1101,7 @@ Algumas observações:
 - Para as ruas Maciel Pinheiro, Cardoso Vieira, Peregrino de Carvalho e Marquês de Herval apesar de terem características diferentes quanto á largura de rua, arborização e conservação de prédios, os usuários mostraram alta importância para Espaços Públicos, Arborização, Espaços para Circulação de Pedestres e Mobiliário Urbano;
 - A importância dada a espaço para circulação é geralmente de média a alta, com algumas variações entre estas ruas
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
 center_data <- read.csv("aida/usuarios-centro-historico.csv", header = TRUE)
 
 plot_street_summary <- function(data, street_name){

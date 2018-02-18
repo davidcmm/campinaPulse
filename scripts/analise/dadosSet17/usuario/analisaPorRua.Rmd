@@ -68,7 +68,7 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Na segunda versão do Place Pulse temos 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)
+  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -768,13 +768,27 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
 
 all_data$xlabel <- paste("Num.:", all_data$num, " Angle: ", all_data$angle) 
 
-plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
-plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 plot_ci_per_photo(filter(all_data, street == "R._Maciel_Pinheiro"), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 plot_ci_per_photo(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Floriano Peixoto", c(22,293), c(112,203))#Street 5
+plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
+plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
 ```
+<div class='row'>
+<div class='col-xs-12'>
+<img src='images/cristina_procopio.png' width='800px'>
+<div class='caption'>Cristina Procópio</div>
+</div>
+</div>
+
+<div class='row'>
+<div class='col-xs-12'>
+<img src='images/inacio_marques.png' width='800px'>
+<div class='caption'>Inácio Marques</div>
+</div>
+</div>
+
 
 >>> Considerando só os moradores de Campina
 

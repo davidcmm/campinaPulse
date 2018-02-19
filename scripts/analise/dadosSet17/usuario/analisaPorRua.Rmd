@@ -65,10 +65,10 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 1. A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?
 * No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz
 + Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;
-* Na segunda versão do Place Pulse temos 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
+* Na segunda versão do Place Pulse tem-se 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
+  teste <- read.csv("/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -142,7 +142,9 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
 * Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
 
-Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas. 
+Estamos pensando em o que fazer com esses dados, como computar e apresentar pontos úteis no mundo micro! Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas.
+
+As fotos de cada ruas foram comparadas com as de outras ruas, ao invés de apenas naquela rua, de modo que possamos comparar as ruas entre si e, também, tenhamos uma maior variação de tipos de locais comparados entre si.
 
 Alguns questionamentos foram inicialmente levantados:
 
@@ -440,11 +442,12 @@ moran
 
 Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se: 
 
-1. Sidewalk width mais significativo e influente para moradores;
-2. Landscape igualmente significativo nos 3, mais influente para moradores;
-3. Trees mais significativo no geral e não moradore e mais influente para eles;
-4. Builds ids igualmente significativo nos 3, mais influente para não moradores;
-5. R2 parecidos  
+1. Sidewalk width mais significativo e influente para moradores (média);
+2. Landscape igualmente significativo nos 3, mais influente para moradores (média);
+3. Trees mais significativo no geral e não moradores e mais influente para eles (média);
+4. Builds ids igualmente significativo nos 3, mais influente para não moradores (média);
+5. Os ICs apontam similaridade entre todos os coeficientes dos 3 grupos; 
+6. R2 parecidos  
 
 ```{r, echo=FALSE}
 #Campina residents 
@@ -463,6 +466,9 @@ reg_input <- merge(datanotcampina, input_regressao, by.x="V2", by.y="image") %>%
 reg_not_campina <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident, na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
 
 texreg(list(reg_geral, reg_campina, reg_not_campina), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+
+print(">>>>>> IC Geral x Campina x Not Moradores")
+print(cbind( confint(reg_geral, level=0.95), confint(reg_campina, level=0.95), confint(reg_not_campina, level=0.95) ))
 
 #Standardized regression
 #reg <- lm(rank ~ scale(street_wid) + scale(sidewalk_wid) + scale(landscape) + scale(trees) + scale(build_ident), na.action = na.exclude, data = select(reg_input, rank, street_wid, sidewalk_wid, landscape, trees, build_ident))#rank ~ .*.
@@ -774,6 +780,7 @@ plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Flor
 plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
 plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
+#http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=4
 ```
 <div class='row'>
 <div class='col-xs-12'>

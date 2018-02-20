@@ -53,7 +53,6 @@ Ações a fazer:
 
 * Motivação: Birds-eye x visão de baixo no urbanismo
 * Gerar aleatórios das comparações das cenas entre si e ver range de scores de todas as fotos em comparação com o range de todas as fotos que temos agora
-* Moradores x não-moradores nas logísticas!
 * O número da rua indica o que? Metros? http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf
 * Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
 - Representação em gráfico de duas linhas (dois lados) x mediana x média da rua -> áreas abaixo e acima + interseção de marcações
@@ -137,13 +136,14 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   }
   
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
+  data1$mean <- mean(data1$V3)
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
+  data2$mean <- mean(data2$V3)
   
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
   
-  g1 <- ggplot(data, aes(x=reorder(xlabel, num), y=V3, group=side, fill=side)) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + geom_line() + geom_area(alpha=0.5)  + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + ylim(c(0,6)) #ggplot(data1, aes(x=reorder(xlabel, num), y=V3, group=side, shape = factor(num)))+ geom_bar(position=position_dodge(), stat="identity", fill="#D55E00", alpha=0.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") 
-  g1
+  ggplot(data, aes(x=reorder(xlabel, num), y=V3, fill=side, group=side))  + geom_line() + geom_area(position = "identity", alpha = 0.5) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + ylim(c(0,6)) +  geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_hline(aes(yintercept=mean, color=side), linetype="dashed")
 }
 
 plot_ci_per_photo(filter(all_data, street == "R._Maciel_Pinheiro"), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3

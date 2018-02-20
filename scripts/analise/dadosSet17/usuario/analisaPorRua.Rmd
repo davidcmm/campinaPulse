@@ -648,7 +648,18 @@ simulate_street_means(qscoresDFGeral)
 5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.
 
 ```{r, echo=FALSE, warning=FALSE }
-print(">>>>> Todos os usuários")
+print(">>>>> Todos os usuários e todas as fotos juntas")
+value <- qscoresDFGeral$qscore
+
+with(qscoresDFGeral , vioplot( value, col=rgb(0.1,0.4,0.7,0.7), names=c("Todos"), ylim = c(2.5, 7) ))
+
+print(">>>>> Votos aleatórios")
+random_votes <- read.table("all100/all_random_ordenado.dat")
+value <- random_votes$V3
+
+with(random_votes , vioplot(value, col=rgb(0.1,0.4,0.7,0.7), names=c("Todos"), ylim = c(2.5, 7) ))
+
+print(">>>>> Todos os usuários por rua")
 value <- qscoresDFGeral$qscore
 
 with(qscoresDFGeral , vioplot( value[street=="R._Inácio_Marquês_da_Silva"] , value[street=="R._Edésio_Silva"], value[street=="R._Manoel_Pereira_de_Araújo"], value[street=="R._Maciel_Pinheiro"], value[street=="Av._Mal._Floriano_Peixoto"], value[street=="R._Cristina_Procópio_Silva"], col=rgb(0.1,0.4,0.7,0.7), names=c("Inacio","Edesio","Manoel", "Maciel", "Floriano", "Cristina"), ylim = c(2.5, 7) ))

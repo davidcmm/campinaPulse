@@ -1,0 +1,282 @@
+>>>>>>>>>>>>>>>>>> Not Scaled
+> summary(agrad_intercept_ns)
+
+Call:
+glm(formula = choice ~ 1, family = binomial(), data = the_data)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.177  -1.177   0.000   1.177   1.177  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.00000    0.01373       0        1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 29403  on 21209  degrees of freedom
+Residual deviance: 29403  on 21209  degrees of freedom
+AIC: 29405
+
+Number of Fisher Scoring iterations: 2
+
+> summary(agrad_intercept_user_ns)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ 1 + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 29407.3  29423.2 -14701.7  29403.3    21208 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+    -1     -1      0      1      1 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.00000    0.01373       0        1
+> logLik(agrad_intercept_ns)*-2 
+'log Lik.' 29403.3 (df=1)
+> logLik(agrad_intercept_user_ns)*-2
+'log Lik.' 29403.3 (df=2)
+
+> summary(agrad_random_user_nscaled)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+    bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +      d_bid) + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 24653.5  24796.8 -12308.8  24617.5    21192 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.8205 -0.7777  0.0066  0.7997  4.4843 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+                            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               -0.2517089  0.0246711 -10.203  < 2e-16 ***
+d_swidth                  -0.0030221  0.0018245  -1.656 0.097643 .  
+d_sidewalk                 0.1477897  0.0090199  16.385  < 2e-16 ***
+d_trees                    0.0444125  0.0089486   4.963 6.94e-07 ***
+d_lands                    0.5446823  0.0197303  27.606  < 2e-16 ***
+d_bid                     -0.0303602  0.0156917  -1.935 0.053017 .  
+bair_catcatole_centro      0.8059618  0.0493966  16.316  < 2e-16 ***
+bair_catcatole_liberdade   0.6635419  0.0662345  10.018  < 2e-16 ***
+bair_catcentro_catole     -0.3246093  0.0533081  -6.089 1.13e-09 ***
+bair_catcentro_liberdade  -0.1254815  0.0615990  -2.037 0.041643 *  
+bair_catliberdade_catole   0.2116445  0.0731405   2.894 0.003808 ** 
+bair_catliberdade_centro   0.4731011  0.0617273   7.664 1.80e-14 ***
+d_swidth:citynotcampina    0.0004564  0.0026369   0.173 0.862588    
+d_sidewalk:citynotcampina -0.0237991  0.0134383  -1.771 0.076562 .  
+d_trees:citynotcampina     0.0266552  0.0131056   2.034 0.041963 *  
+d_lands:citynotcampina    -0.1333451  0.0289245  -4.610 4.02e-06 ***
+d_bid:citynotcampina      -0.0739897  0.0205342  -3.603 0.000314 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 17 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it
+
+convergence code: 0
+Model is nearly unidentifiable: very large eigenvalue
+ - Rescale variables?
+
+>>>>>>>>>>>>>>>>>> Scaled
+> summary(agrad_intercept)
+
+Call:
+glm(formula = choice ~ 1, family = binomial(), data = the_data)
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.177  -1.177   0.000   1.177   1.177  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.00000    0.01373       0        1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 29403  on 21209  degrees of freedom
+Residual deviance: 29403  on 21209  degrees of freedom
+AIC: 29405
+
+Number of Fisher Scoring iterations: 2
+
+> summary(agrad_intercept_user)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ 1 + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 29407.3  29423.2 -14701.7  29403.3    21208 
+
+Scaled residuals: 
+   Min     1Q Median     3Q    Max 
+    -1     -1      0      1      1 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept)  0.00000    0.01373       0        1
+
+> logLik(agrad_intercept)*-2 
+'log Lik.' 29403.3 (df=1)
+> logLik(agrad_intercept_user)*-2
+'log Lik.' 29403.3 (df=2)
+
+> summary(agrad_random_user)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+    bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +      d_bid) + (1 | userID)
+   Data: the_data
+
+     AIC      BIC   logLik deviance df.resid 
+ 24653.5  24796.9 -12308.8  24617.5    21192 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.8265 -0.7773  0.0063  0.8008  4.4786 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               -0.186901   0.024562  -7.609 2.75e-14 ***
+d_swidth                  -0.043650   0.026378  -1.655 0.097974 .  
+d_sidewalk                 0.404451   0.024694  16.378  < 2e-16 ***
+d_trees                    0.148320   0.029900   4.961 7.03e-07 ***
+d_lands                    0.814409   0.029564  27.547  < 2e-16 ***
+d_bid                     -0.055580   0.028705  -1.936 0.052840 .  
+bair_catcatole_centro      0.805816   0.049398  16.313  < 2e-16 ***
+bair_catcatole_liberdade   0.663299   0.066235  10.014  < 2e-16 ***
+bair_catcentro_catole     -0.324606   0.053310  -6.089 1.14e-09 ***
+bair_catcentro_liberdade  -0.125658   0.061602  -2.040 0.041365 *  
+bair_catliberdade_catole   0.211556   0.073140   2.892 0.003822 ** 
+bair_catliberdade_centro   0.473071   0.061728   7.664 1.80e-14 ***
+d_swidth:citynotcampina    0.006614   0.038140   0.173 0.862325    
+d_sidewalk:citynotcampina -0.065101   0.036831  -1.768 0.077138 .  
+d_trees:citynotcampina     0.089052   0.043816   2.032 0.042112 *  
+d_lands:citynotcampina    -0.199399   0.043471  -4.587 4.50e-06 ***
+d_bid:citynotcampina      -0.135253   0.037647  -3.593 0.000327 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 17 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it
+
+> summary(agrad_random_user_bob)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+    bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +      d_bid) + (1 | userID)
+   Data: the_data
+Control: glmerControl(optimizer = c(optimizer_to_use))
+
+     AIC      BIC   logLik deviance df.resid 
+ 24653.5  24796.9 -12308.8  24617.5    21192 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.8265 -0.7773  0.0063  0.8008  4.4786 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               -0.186901   0.024562  -7.609 2.75e-14 ***
+d_swidth                  -0.043650   0.026378  -1.655 0.097974 .  
+d_sidewalk                 0.404451   0.024694  16.378  < 2e-16 ***
+d_trees                    0.148320   0.029900   4.961 7.03e-07 ***
+d_lands                    0.814409   0.029564  27.547  < 2e-16 ***
+d_bid                     -0.055580   0.028705  -1.936 0.052840 .  
+bair_catcatole_centro      0.805816   0.049398  16.313  < 2e-16 ***
+bair_catcatole_liberdade   0.663299   0.066235  10.014  < 2e-16 ***
+bair_catcentro_catole     -0.324606   0.053310  -6.089 1.14e-09 ***
+bair_catcentro_liberdade  -0.125658   0.061602  -2.040 0.041365 *  
+bair_catliberdade_catole   0.211556   0.073140   2.892 0.003822 ** 
+bair_catliberdade_centro   0.473071   0.061728   7.664 1.80e-14 ***
+d_swidth:citynotcampina    0.006614   0.038140   0.173 0.862325    
+d_sidewalk:citynotcampina -0.065101   0.036831  -1.768 0.077138 .  
+d_trees:citynotcampina     0.089052   0.043816   2.032 0.042112 *  
+d_lands:citynotcampina    -0.199399   0.043471  -4.587 4.50e-06 ***
+d_bid:citynotcampina      -0.135253   0.037647  -3.593 0.000327 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 17 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it
+
+> summary(agrad_random_user_nelder)
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: binomial  ( logit )
+Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+    bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +      d_bid) + (1 | userID)
+   Data: the_data
+Control: glmerControl(optimizer = c(optimizer_to_use))
+
+     AIC      BIC   logLik deviance df.resid 
+ 24653.5  24796.9 -12308.8  24617.5    21192 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.8265 -0.7773  0.0063  0.8008  4.4786 
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ userID (Intercept) 0        0       
+Number of obs: 21210, groups:  userID, 347
+
+Fixed effects:
+                           Estimate Std. Error z value Pr(>|z|)    
+(Intercept)               -0.186901   0.024562  -7.609 2.75e-14 ***
+d_swidth                  -0.043650   0.026378  -1.655 0.097974 .  
+d_sidewalk                 0.404451   0.024694  16.378  < 2e-16 ***
+d_trees                    0.148320   0.029900   4.961 7.03e-07 ***
+d_lands                    0.814409   0.029564  27.547  < 2e-16 ***
+d_bid                     -0.055580   0.028705  -1.936 0.052840 .  
+bair_catcatole_centro      0.805816   0.049398  16.313  < 2e-16 ***
+bair_catcatole_liberdade   0.663299   0.066235  10.014  < 2e-16 ***
+bair_catcentro_catole     -0.324606   0.053310  -6.089 1.14e-09 ***
+bair_catcentro_liberdade  -0.125658   0.061602  -2.040 0.041365 *  
+bair_catliberdade_catole   0.211556   0.073140   2.892 0.003822 ** 
+bair_catliberdade_centro   0.473071   0.061728   7.664 1.80e-14 ***
+d_swidth:citynotcampina    0.006614   0.038140   0.173 0.862325    
+d_sidewalk:citynotcampina -0.065101   0.036831  -1.768 0.077138 .  
+d_trees:citynotcampina     0.089052   0.043816   2.032 0.042112 *  
+d_lands:citynotcampina    -0.199399   0.043471  -4.587 4.50e-06 ***
+d_bid:citynotcampina      -0.135253   0.037647  -3.593 0.000327 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation matrix not shown by default, as p = 17 > 12.
+Use print(x, correlation=TRUE)  or
+	 vcov(x)	 if you need it

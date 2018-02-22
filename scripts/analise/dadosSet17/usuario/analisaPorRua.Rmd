@@ -428,7 +428,7 @@ residuals <- resid(reg_geral)
 #Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
 plotRegAndLinear(reg_geral, reg_input)
 
-#test for spatial autocorrelation using residuals
+#test for spatial autocorrelation using residuals: http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-statistics-toolbox/h-how-spatial-autocorrelation-moran-s-i-spatial-st.htm
 moran <- lm.morantest(reg_geral, neigh2, alternative="two.sided")
 moran.test(residuals,neigh2, alternative="two.sided")
 summary(moran)

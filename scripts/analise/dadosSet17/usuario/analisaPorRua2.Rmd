@@ -1,7 +1,12 @@
 ---
 title: "analisaPorRua2"
-output: html_document
+output:
+  html_document:
+    self_contained: no
+  pdf_document: default
 ---
+
+Aqui apresenta-se uma análise mais detalhada, rua a rua, a partir das percepções capturadas.
 
 ```{r setup, include=FALSE}
 library("vioplot")
@@ -11,6 +16,8 @@ library("knitr")
 library("texreg")
 library("ineq")
 library(R.utils)
+library("knitr")
+library("spdep")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -49,10 +56,9 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 ```
 
-Ações a fazer:
+Ações a fazer/Discussão:
 
 * Motivação: Birds-eye x visão de baixo no urbanismo
-* Gerar aleatórios das comparações das cenas entre si e ver range de scores de todas as fotos em comparação com o range de todas as fotos que temos agora
 * O número da rua indica o que? Metros? http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf
 * Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
 - Representação em gráfico de duas linhas (dois lados) x mediana x média da rua -> áreas abaixo e acima + interseção de marcações
@@ -61,23 +67,23 @@ Ações a fazer:
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
 #Checking sample size
-current_data <- read.table("all100/all_ordenado.dat")
-current_data$sd <- apply(current_data[,4:ncol(current_data)], 1, sd)
-current_data$n <- ( 1.96 * current_data$sd / 0.2) ** 2  #All QScores
-current_data$ci <- current_data$sd * 1.96 / sqrt(100)
-novoV2 <- lapply(as.character(current_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+scores_data <- read.table("all100/all_ordenado.dat")
+scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
+scores_data$n <- ( 1.96 * scores_data$sd / 0.2) ** 2  #All QScores
+scores_data$ci <- scores_data$sd * 1.96 / sqrt(100)
+novoV2 <- lapply(as.character(scores_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
 novoV2 <- unlist(lapply(novoV2, '[[', 1))
 novoV2 <- strsplit(novoV2, split="\\.jpg")
 photo <- unlist(lapply(novoV2, '[[', 1))
-current_data$photo_name <- photo
-current_data <- arrange(current_data, photo_name)
+scores_data$photo_name <- photo
+scores_data <- arrange(scores_data, photo_name)
 
 qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
 qscoresDFCampina<- read.csv("qscores-df-campina.csv", header = TRUE)
 qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 
 #Plotting Q-Scores through the street
-all_data <- merge(qscoresDFGeral, current_data, by.x = "url", by.y="V2")#qscoresDFGeral
+all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
 
@@ -134,6 +140,38 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
         occurred <- FALSE
     }
   }
+  numbers_to_show <- unique(append(data1$num, data2$num))
+  #Pair values in side1 and odd values in side2
+  cur_num <- 0
+  occurred <- FALSE
+  for (i in 1:nrow(data1)) { 
+    if(data1[i,]$num %% 2 != 0){
+        data1[i,]$num <- data1[i,]$num + 1
+    }
+    if(occurred == FALSE && cur_num == 0){
+        cur_num <- data1[i,]$num
+        occurred <- TRUE
+    }else if(occurred == TRUE){
+        data1[i,]$num <- data1[i,]$num + 2
+        cur_num <- 0
+        occurred <- FALSE
+    }   
+  }
+  cur_num <- 0
+  occurred <- FALSE
+  for (i in 1:nrow(data2)) { 
+    if(data2[i,]$num %% 2 == 0){
+        data2[i,]$num <- data2[i,]$num + 1
+    }
+    if(occurred == FALSE && cur_num == 0){
+        cur_num <- data2[i,]$num
+        occurred <- TRUE
+    }else if(occurred == TRUE){
+        data2[i,]$num <- data2[i,]$num + 2
+        cur_num <- 0
+        occurred <- FALSE
+    }
+  }
   
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
   data1$mean <- mean(data1$V3)
@@ -143,24 +181,211 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
   
-  ggplot(data, aes(x=reorder(xlabel, num), y=V3, fill=side, group=side))  + geom_line() + geom_area(position = "identity", alpha = 0.5) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + ylim(c(0,6)) +  geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_hline(aes(yintercept=mean, color=side), linetype="dashed")
+  mapping <- select(data, xlabel, side, V3, street, num, angle)
+  
+  labels_to_show <- select(filter(data, side=="Side 1"), xlabel)[[2]][c(1,3,5,7,9)]
+  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.7) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") #+ scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
+  multiplot(g1, cols=1)
+  return (mapping)
 }
 
-plot_ci_per_photo(filter(all_data, street == "R._Maciel_Pinheiro"), "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
-plot_ci_per_photo(filter(all_data, street == "R._Manoel_Pereira_de_Araújo"), "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
-plot_ci_per_photo(filter(all_data, street == "Av._Mal._Floriano_Peixoto"), "Floriano Peixoto", c(22,293), c(112,203))#Street 5
-plot_ci_per_photo(filter(all_data, street == "R._Edésio_Silva"), "Edésio Silva", c(22, 135), c(315, 203))#Street 1
-plot_ci_per_photo(filter(all_data, street == "R._Inácio_Marquês_da_Silva"), "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
-plot_ci_per_photo(filter(all_data, street == "R._Cristina_Procópio_Silva"), "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
-
-# Use semi-transparent fill
-p <-ggplot(filter(all_data, street == "R._Cristina_Procópio_Silva"),  aes(x=num, fill=qscore)) +
-  geom_area(stat ="bin", alpha=0.6) +
-  theme_classic()
-p
-# Add mean lines
-p+geom_vline(data=mu, aes(xintercept=grp.mean, color=sex),
-             linetype="dashed")
 ```
 
+De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.
 
+```{r , echo=FALSE, warning=FALSE}
+#GINI COEFFICIENTS
+all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+inequalities <- data.frame( labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)), floriano=c(ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini"), ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="entropy"), sd(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore)), cristina= c(ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore)) )
+
+inequalities
+```
+
+O que procurar?
+
+* Melhores e piores locais da rua
+* Melhores e piores áreas da rua (considerando os dois lados)
+* Áreas muito diferentes entre lados
+* Descontinuidades no mesmo lado
+* Descontinuidades no ponto -> Isso tudo pode ser explicado pela regressão geral das features?
+
+* Ponto mais heterogeneo/homogeneo
+
+#Cristina Procópio
+
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
+worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
+
+cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+print(">>> GINI da rua: ")
+ineq(cristina$qscore, type="Gini")
+for (value in unique(cristina$num)){
+  print(paste("Número", value, ineq(filter(cristina, num == value)$qscore, type="Gini")))
+}
+```
+
+* Pontos mais heterogeneo/homogeneo: 305 e 436
+
+```{r results='asis', echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
+kable(mapping, format = "markdown")
+
+show_street_data <- function (current_df, all_data, best_folder, worst_folder){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+    step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
+    thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
+    
+    cat("<div class='row'>")
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      
+      street <- as.character(row$street)
+      photo_name <- as.character(row$photo_name)
+      num <- row$num
+      angle <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      color_index <- findInterval(score, thresholds)[1]
+      if (color_index > length(color_space)){
+         color_index <- length(color_space)
+      }
+      
+        if (file.exists(paste(best_folder, photo_name, sep=""))){
+        url <- paste(best_folder, photo_name, sep="")
+      }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+        url <- paste(worst_folder, photo_name, sep="")
+      }else{
+         url <- as.character(row$url)
+      }
+      
+      cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
+      cat("<img src='", url,"' width='300px'>", sep = "")
+      cat("<div class='caption' style=\"color:white\">", url, " -> ", score,  "</div>", sep="")
+      cat("</div>")
+      if (i > 1 && i %% 4 == 0){
+        cat("</div>")
+        cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
+        cat("<div class='row'>")
+        angleData = c()
+      }
+    }
+}
+
+show_street_data(cristina, all_data, best_folder, worst_folder)
+
+```
+
+* Melhores e piores locais da rua: 66-p2 side2 (melhor) e 305-p1 side2 (pior) diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
+* Melhores e piores áreas da rua (considerando os dois lados): 66 a 261 side1 (melhor) e 305 a 436 side2 (pior) menor dif. de aprox. 2.1> verde, boa manutenção x lixo, menor manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
+* Áreas muito diferentes entre lados -> 305 a 436 menor diferenca de aprox. 1 -> boa manutenção, verde x lixo, pouca manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
+* Descontinuidades no mesmo lado
++ 66 side2 dif de 0.8 -> manutenção e verde aparente
++ 305 side2 dif de 0.8 -> no meio da falta de manutenção, lixo a segunda imagem tem um prédio melhor conservado
++ 305 side1 dif. de 0.45 -> mais prédios mais conservados
++ 436 side2 dif. de 1.3 -> mais verde aparente, construção/manutenção
+* Descontinuidades no ponto -> o pontos mais heterogêneros foram o 305 (lixo, falta de manutenção) e 436 (falta de manuteção, verde aparente)
+
+* O que é a rua? Rua de mediana para boa, com variações de locais melhores e piores ao longo de toda a rua, no final da rua um lado da rua parece despertar maiores preferências que o outro lado. Dada essa diferença o meio da rua 66 a 261 parece ser a melhor área da rua.
+
+#Edésio Silva
+
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+print(paste(">>> GINI da rua: ", ineq(edesio$qscore, type="Gini")))
+for (value in unique(edesio$num)){
+  print(paste("Número", value, ineq(filter(edesio, num == value)$qscore, type="Gini")))
+}
+```
+
+* Ponto mais heterogeneo/homogeneo: 70 e 602
+
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
+kable(mapping, format = "markdown")
+
+show_street_data(edesio, all_data,  best_folder, worst_folder)
+
+```
+
+* Melhores e piores locais da rua: 602 p2 side2 e 70 p1 side1 dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
+* Melhores e piores áreas da rua (considerando os dois lados): confuso!
+* Áreas muito diferentes entre lados: 70 a 306 melhora em side2 e piora em side1 -> no side1 temos um ponto muito bom (70, 22) que foge do padrão de melhoria que sairia de pouca manutenção e falta de áŕvore para melhor manutenção e mais árvores. no side2 temos uma certa melhoria de manutenção + árvores aparentes
+* Descontinuidades no mesmo lado
++ 70 no side1 -> construção, falta de verde x melhor manutenção, verde
++ 602 no side1 -> falta de manutenção, menos verde aparente x melhor manutenção, verde
++ 602 no side2 -> manutenção, verde x lixão
++ 1136 no side2 -> lixão
+* Descontinuidades no ponto: os pontos mais heterogêneos foram o 70 (construção, menor manutenção x melhor manutenção e algum verde) e 602 (menor manutenção, lixão x melhor manutenção, verde)
+
+
+* O que é a rua? Rua de mediana para boa, com variações de locais melhores e piores ao longo de toda a rua, sem uma distinição clara de melhor área ou lado da rua.
+
+#Inácio Marques
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+print(paste(">>> GINI da rua: ", ineq(inacio$qscore, type="Gini")))
+for (value in unique(inacio$num)){
+  print(paste("Número", value, ineq(filter(inacio, num == value)$qscore, type="Gini")))
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
+kable(mapping, format = "markdown")
+
+show_street_data(inacio, all_data,  best_folder, worst_folder)
+
+```
+
+#Floriano peixoto
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+print(paste(">>> GINI da rua: ", ineq(floriano$qscore, type="Gini")))
+for (value in unique(floriano$num)){
+  print(paste("Número", value, ineq(filter(floriano, num == value)$qscore, type="Gini")))
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
+kable(mapping, format = "markdown")
+
+show_street_data(floriano, all_data,  best_folder, worst_folder)
+```
+
+#Maciel Pinheiro
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+maciel <- filter(all_data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+print(paste(">>> GINI da rua: ", ineq(maciel$qscore, type="Gini")))
+for (value in unique(maciel$num)){
+  print(paste("Número", value, ineq(filter(maciel, num == value)$qscore, type="Gini")))
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
+kable(mapping, format = "markdown")
+
+show_street_data(maciel, all_data,  best_folder, worst_folder)
+```
+
+#Manoel Pereira
+```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
+manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+print(paste(">>> GINI da rua: ", ineq(manoel$qscore, type="Gini")))
+for (value in unique(manoel$num)){
+  print(paste("Número", value, ineq(filter(manoel, num == value)$qscore, type="Gini")))
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
+kable(mapping, format = "markdown")
+
+show_street_data(manoel, all_data,  best_folder, worst_folder)
+```

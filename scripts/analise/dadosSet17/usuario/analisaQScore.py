@@ -442,6 +442,152 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
 	output.close()
 
+
+def evaluateAllRandomVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, percentOfComparisonsToDeal=1):
+	""" Considering all votes for each pair of photos and performing a simulation (bootstrap based)"""
+	votes = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	allQScores = {possibleQuestions[0]:{}, possibleQuestions[1]:{}}
+	
+	#Reading from pybossa task-run CSV
+	for line in lines:
+		lineData = line.split("+")
+
+		executionID = lineData[0].strip(' \t\n\r"')
+		taskID = lineData[3].strip(' \t\n\r"')
+		userAnswer = lineData[9].strip(' \t\n\r"')
+
+		#It is a new vote, read tasks definition from JSON!
+		if executionID[0].lower() == 'n':
+			data = json.loads(userAnswer)
+			
+			if data['question'].strip(' \t\n\r"') == "agradavel?" or data['question'].strip(' \t\n\r"') == possibleQuestions[0]:
+				question = possibleQuestions[0]
+			else:
+				question = possibleQuestions[1]
+
+			photo1 = data['theMost'].strip(' \t\n\r"')
+			photo2 = data['theLess'].strip(' \t\n\r"')
+
+			if len(photo1) == 0 or len(photo2) == 0:#Error in persisting photos!
+				print "Foto zerada! " + line
+				continue
+
+			taskDef = tasksDefinitions[taskID]
+			photos = Set( [taskDef['url_c'].strip(' \t\n\r"'), taskDef['url_b'].strip(' \t\n\r"'), taskDef['url_a'].strip(' \t\n\r"'), taskDef['url_d'].strip(' \t\n\r"')] )
+			if photo1 != completeTie:
+				photos.remove(photo1)
+				photos.remove(photo2)
+			else:
+				photo1 = photos.pop()
+				photo2 = photos.pop()
+			
+			photo3 = photos.pop()
+			photo4 = photos.pop()
+
+			#Creating votes dictionary
+			if not votes[question].has_key(photo1):
+				votes[question][photo1] = {}
+			if not votes[question][photo1].has_key(photo2):
+				votes[question][photo1][photo2] = set([])
+			if not votes[question][photo1].has_key(photo3):
+				votes[question][photo1][photo3] = set([])
+			if not votes[question][photo1].has_key(photo4):
+				votes[question][photo1][photo4] = set([])
+			if not votes[question].has_key(photo2):
+				votes[question][photo2] = {}
+			if not votes[question][photo2].has_key(photo3):
+				votes[question][photo2][photo3] = set([])
+			if not votes[question][photo2].has_key(photo4):
+				votes[question][photo2][photo4] = set([])
+			if not votes[question].has_key(photo3):
+				votes[question][photo3] = {}
+			if not votes[question][photo3].has_key(photo4):
+				votes[question][photo3][photo4] = set([])
+
+			#Saving votes from task-run
+			if photo1 != completeTie:
+				votes[question][photo1][photo2].add(left)
+				votes[question][photo1][photo3].add(left)
+				votes[question][photo1][photo4].add(left)
+				votes[question][photo2][photo3].add(right)
+				votes[question][photo2][photo4].add(right)
+				votes[question][photo3][photo4].add(notKnown)
+			else:
+				votes[question][photo1][photo2].add(notKnown)
+				votes[question][photo1][photo3].add(notKnown)
+				votes[question][photo1][photo4].add(notKnown)
+				votes[question][photo2][photo3].add(notKnown)
+				votes[question][photo2][photo4].add(notKnown)
+				votes[question][photo3][photo4].add(notKnown)
+
+			allPhotos.add(photo1)
+			allPhotos.add(photo2)
+			allPhotos.add(photo3)
+			allPhotos.add(photo4)
+
+		else:#Old-fashioned way of capturing votes
+			#In user answers that contain profile information, jump to comparison
+			if userAnswer[0] == '{':
+				index = userAnswer.find("Qual")
+				if index == -1:
+					raise Exception("Line with profile does not contain question: " + userAnswer)
+				userAnswer = userAnswer[index:].split(" ")
+			else:
+				userAnswer = userAnswer.split(" ")
+
+			question = userAnswer[5].strip(' \t\n\r"')
+			answer = userAnswer[6].strip(' \t\n\r"')
+			photo1 = userAnswer[7].strip(' \t\n\r"')
+			photo2 = userAnswer[8].strip(' \t\n\r"')
+		
+			#Creating votes dictionary
+			if not votes[question].has_key(photo1):
+				votes[question][photo1] = {}
+			if not votes[question][photo1].has_key(photo2):
+				votes[question][photo1][photo2] = set([])
+
+			#Saving votes from task-run
+			votes[question][photo1][photo2].add(answer)
+
+			allPhotos.add(photo1)
+			allPhotos.add(photo2)
+
+	
+	#print str(len(allPhotos))
+	#print str(len(votes[possibleQuestions[0]]))
+	#print str(len(votes[possibleQuestions[1]]))
+
+	#Evaluating votes in order to choose winning photos or ties
+	for i in range(0, amountOfSamples):
+		resetCounters()
+
+		for question, qDic in votes.iteritems():
+			for photo1, photosDic in qDic.iteritems():
+				value = random.random()
+				if value <= percentOfComparisonsToDeal:
+					for photo2, votesList in photosDic.iteritems():
+						answer = random.sample([left, right, notKnown], 1)[0]#Generating random answer to consider
+			
+						if answer == left:
+							saveWin(photo1, photo2, question)
+						elif answer == right:
+							saveWin(photo2, photo1, question)
+						elif answer == notKnown:
+							saveDraw(photo1, photo2, question)	
+
+		qscores = computeQScores(allPhotos)
+		for question, qDic in qscores.iteritems():
+			for photo, qscore in qDic.iteritems():
+				if not allQScores[question].has_key(photo):
+					allQScores[question][photo] = []
+				allQScores[question][photo].append(qscore)
+	#Output file
+	output = open(outputFileName, 'w')
+	for question, qDic in allQScores.iteritems():
+		for photo, qscoreList in qDic.iteritems():
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
+	output.close()
+
 def evaluateAllVotesPredicted(data_wodraw, data_draws, outputFileName, amountOfSamples):
 	""" Considering all predicted (classifiers) votes from wodraw and 3 classes files for each pair of photos and performing a simulation (bootstrap based)"""
 
@@ -692,7 +838,7 @@ def readTasksDefinitions(linesTasks):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2> <project type: campina, streetseen or pred-campina>"
+		print "Uso: <arquivo com execuções das tarefas> <# bootstrap samples - used in all votes> <tasks definition - V2> <project type: campina, random, streetseen or pred-campina>"
 		sys.exit(1)
 	
 	if len(sys.argv) > 3:
@@ -711,6 +857,17 @@ if __name__ == "__main__":
 
 		#evaluateFirstVote(lines, "first.dat")
 		evaluateAllVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks), 1)
+		#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
+
+		dataFile.close()
+	elif projectType == "random":
+		dataFile = open(sys.argv[1], 'r')
+		tasksFile = open(sys.argv[3], 'r')
+		lines = dataFile.readlines()
+		linesTasks = tasksFile.readlines()
+
+		#evaluateFirstVote(lines, "first.dat")
+		evaluateAllRandomVotes(lines, "all.dat", amountOfSamples, readTasksDefinitions(linesTasks), 1)
 		#evaluateVotePerIteration(lines, ["qscoresPerIteration0.dat", "qscoresPerIteration1.dat", "qscoresPerIteration2.dat"])
 
 		dataFile.close()

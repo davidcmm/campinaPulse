@@ -1,0 +1,1451 @@
+---
+title: "compare_groups"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(stringr)
+
+require(gmodels)
+require(vcd)
+require(lme4)
+library(nlme)
+library(caret)
+library(pscl)
+library(DT)
+library(ggplot2)
+theme_set(theme_bw())
+library(GGally)
+library(dplyr, warn.conflicts = F)
+library(broom)
+
+library(car)
+library(readr)
+
+source("../analisaICPorFoto.R")
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+sample_size <- function(x) { 
+    return ( ( ( sd(x) * qnorm(1-(0.05/2)) )  / ( 0.05 * mean(x) ) ) ** 2)  #95% confidence interval, significance level of 0.05 (alpha) - sample 100
+  }
+
+mergeSort <- function(x){
+  if(length(x) == 1){
+    inv <- 0
+  } else {
+    n <- length(x)
+    n1 <- ceiling(n/2)
+    n2 <- n-n1
+    y1 <- mergeSort(x[1:n1])
+    y2 <- mergeSort(x[n1+1:n2])
+    inv <- y1$inversions + y2$inversions
+    x1 <- y1$sortedVector
+    x2 <- y2$sortedVector
+    i1 <- 1
+    i2 <- 1
+    while(i1+i2 <= n1+n2+1){
+      if(i2 > n2 || (i1 <= n1 && x1[i1] <= x2[i2])){
+        x[i1+i2-1] <- x1[i1]
+        i1 <- i1 + 1
+      } else {
+        inv <- inv + n1 + 1 - i1
+        x[i1+i2-1] <- x2[i2]
+        i2 <- i2 + 1
+      }
+    }
+  }
+  return (list(inversions=inv,sortedVector=x))
+}
+
+numberOfInversions <- function(x){
+  r <- mergeSort(x)
+  return (r$inversions)
+}
+
+normalizedKendallTauDistance2 <- function(data1, data2){
+  x <- data1
+  y <- data2
+  
+  tau = numberOfInversions(order(x)[rank(y)])
+  print(tau)
+  nItens = length(x)
+  maxNumberOfInverstions <- (nItens*(nItens-1))/2
+  normalized = tau/maxNumberOfInverstions
+
+  print (normalized)
+}
+
+#Reading CrowdFlower features data
+dadosg1 <- read.csv("../regressao100/g1.csv")
+dadosg2 <- read.csv("../regressao100/g2.csv")
+dadosg3 <- read.csv("../regressao100/g3.csv")
+dadosg4 <- read.csv("../regressao100/g4.csv")
+dadosg5 <- read.csv("../regressao100/g5.csv")
+dadosg6 <- read.csv("../regressao100/g6.csv")
+dadosg7 <- read.csv("../regressao100/g7.csv")
+dadosg8 <- read.csv("../regressao100/g8.csv")
+dadosg9 <- read.csv("../regressao100/g9.csv")
+dadosg10 <- read.csv("../regressao100/g10.csv")
+dadosg11 <- read.csv("../regressao100/g11.csv")
+dadosg12 <- read.csv("../regressao100/g12.csv")
+dadosg13 <- read.csv("../regressao100/g13.csv")
+
+#Summing features values  - left and right
+somaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+    dados1[is.na(dados1)] <- 0
+    dados2[is.na(dados2)] <- 0
+    
+    soma = dados1 + dados2
+    desvios = (desvio1 + desvio2)/2
+    
+    desvio = sd(soma)
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+}
+
+#Mean of features values - left and right
+mediaValores <- function(dados1, dados2, desvio1, desvio2, uplimit){
+   for (i in 1:length(dados1)){
+       if(is.na(dados1[i])){
+         dados1[i] <- dados2[i]
+       }
+       if(is.na(dados2[i])){
+         dados2[i] <- dados1[i]
+       }
+    }
+    
+    soma = (dados1 + dados2) / 2
+    desvios = (desvio1 + desvio2)/2
+    
+    desvio = sd(soma)
+        soma <- ifelse(soma < 0, 0, soma)
+        soma <- ifelse(soma > uplimit, uplimit, soma)
+        return (mean(soma))
+}
+
+
+#Creating values for the cases where only 1 answer was obtained considering the desviations of other features answers
+geraValores <- function(lista, question, desvios, uplimit){
+   #desvio = sd(lista)
+   return (mean(lista, na.rm = TRUE))
+}
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+#Grouping by image and question - G1
+by_image <- group_by(dadosg1, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
+groupedData1 <- summarise(by_image,
+  #count = n(),
+  q1 = geraValores(question1, "1", desvios, 100),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 100),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 100),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 100),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 100)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
+
+#Grouping by image and question- G2
+by_image <- group_by(dadosg2, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE) )
+groupedData2 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 100),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 200),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 100),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 100),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 100)
+  #sdq3 = sd(question3, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G3
+by_image <- group_by(dadosg3, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData3 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 5),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 5),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 5),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 5),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 5),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 5),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 5),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 5),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 5)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G4
+by_image <- group_by(dadosg4, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE))
+groupedData4 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 10),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 10)
+  #sdq2 = sd(question2, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G5
+by_image <- group_by(dadosg5, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(your_answer_is, na.rm = TRUE))
+groupedData5 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 20),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(your_answer_is, "2", desvios, 20)
+  #sdq2 = sd(question2, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G6
+by_image <- group_by(dadosg6, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
+groupedData6 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 1),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 1),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 1),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 1),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 1)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+  )
+
+#Grouping by image and question - G7
+by_image <- group_by(dadosg7, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData7 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 3),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 1),
+  #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = mediaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 1),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 1),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 1)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G8
+by_image <- group_by(dadosg8, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2_right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3_right_side, na.rm = TRUE)
+                  )
+groupedData8 <- summarise(by_image,
+  count = n(),
+  q1 = Mode(question1),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2_right_side, desvios$sd2l, desvios$sd2r, 40),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 20),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2_right_side, "2r", desvios, 20),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE)  
+  q3 = somaValores(question3__left_side, question3_right_side, desvios$sd3l, desvios$sd3r, 40),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 20),
+  q3_right = geraValores(question3_right_side, "3r", desvios, 20)
+  )
+
+#Grouping by image and question - G9
+by_image <- group_by(dadosg9, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE) )
+groupedData9 <- summarise(by_image,
+  count = n(),
+  q1 = mediaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 200),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 200),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 200)
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G10
+by_image <- group_by(dadosg10, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2 = sd(question2, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
+groupedData10 <- summarise(by_image,
+  count = n(),
+  q1 = Mode(x = question1),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = geraValores(question2, "2", desvios, 50),
+  #sdq2 = sd(question2, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios, 1)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G11
+by_image <- group_by(dadosg11, image_url)
+desvios <- summarise (by_image, 
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3l = sd(question3__left_side, na.rm = TRUE),
+                  sd3r = sd(question3__right_side, na.rm = TRUE) )
+groupedData11 <- summarise(by_image,
+  count = n(),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 10),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 10),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = somaValores(question3__left_side, question3__right_side, desvios$sd3l, desvios$sd3r, 80),
+  q3_left = geraValores(question3__left_side, "3l", desvios, 40),
+  #sdq3_left = sd(question3__left_side, na.rm = TRUE),
+  q3_right = geraValores(question3__right_side, "3r", desvios, 40)
+  #sdq3_right = sd(question3__right_side, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G12
+by_image <- group_by(dadosg12, image_url)
+desvios <- summarise (by_image, 
+                  sd1 = sd(question1, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE),
+                  sd3 = sd(question3, na.rm = TRUE))
+groupedData12 <- summarise(by_image,
+  count = n(),
+  q1 = geraValores(question1, "1", desvios, 10),
+  #sdq1 = sd(question1, na.rm = TRUE),
+  q2 = somaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 20),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 10),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 10),
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE),
+  q3 = geraValores(question3, "3", desvios,10)
+  #sdq3 = sd(question3, na.rm = TRUE)  
+  )
+
+#Grouping by image and question - G13
+by_image <- group_by(dadosg13, image_url)
+desvios <- summarise (by_image, 
+                  sd1l = sd(question1__left_side, na.rm = TRUE),
+                  sd1r = sd(question1__right_side, na.rm = TRUE),
+                  sd2l = sd(question2__left_side, na.rm = TRUE),
+                  sd2r = sd(question2__right_side, na.rm = TRUE) )
+groupedData13 <- summarise(by_image,
+  count = n(),
+  q1 = somaValores(question1__left_side, question1__right_side, desvios$sd1l, desvios$sd1r, 30),
+  q1_left = geraValores(question1__left_side, "1l", desvios, 10),
+  #sdq1_left = sd(question1__left_side, na.rm = TRUE),
+  q1_right = geraValores(question1__right_side, "1r", desvios, 15),
+  #sdq1_right = sd(question1__right_side, na.rm = TRUE),
+  q2 = mediaValores(question2__left_side, question2__right_side, desvios$sd2l, desvios$sd2r, 1),
+  q2_left = geraValores(question2__left_side, "2l", desvios, 1),
+  #sdq2_left = sd(question2__left_side, na.rm = TRUE),
+  q2_right = geraValores(question2__right_side, "2r", desvios, 1)
+  #sdq2_right = sd(question2__right_side, na.rm = TRUE) 
+  )
+
+#Renaming columns according to a fixed id
+renomeiaGrupos <- function(dadosPorGrupo, listaColunas, idGrupo) {
+    for (coluna in listaColunas){
+        colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- paste(idGrupo, coluna, sep="")
+    }
+    return(dadosPorGrupo)
+}
+
+renomeiaGrupos2 <- function(dadosPorGrupo, listaColunas, novosNomes) {
+    for (i in seq(1, length(listaColunas))){
+        coluna = listaColunas[i]
+        colnames(dadosPorGrupo)[colnames(dadosPorGrupo) == coluna] <- novosNomes[i]
+    }
+    return(dadosPorGrupo)
+}
+
+groupedData1 <- renomeiaGrupos(groupedData1, c("q2_left", "q2_right", "count"), "g1")
+groupedData2 <- renomeiaGrupos(groupedData2, c("q2_left", "q2_right", "count"), "g2")
+groupedData3 <- renomeiaGrupos(groupedData3, c("q1_left", "q1_right","q2_left", "q2_right","q3_left", "q3_right", "count"), "g3")
+groupedData4 <- renomeiaGrupos(groupedData4, c("count"), "g4")
+groupedData5 <- renomeiaGrupos(groupedData5, c("count"), "g5")
+groupedData6 <- renomeiaGrupos(groupedData6, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g6")
+groupedData7 <- renomeiaGrupos(groupedData7, c("q3_left", "q3_right", "count"), "g7")
+groupedData8 <- renomeiaGrupos(groupedData8, c("q2_left", "q2_right","q3_left", "q3_right", "count"), "g8")
+groupedData9 <- renomeiaGrupos(groupedData9, c("q1_left", "q1_right", "count"), "g9")
+groupedData10 <- renomeiaGrupos(groupedData10, c("count"), "g10")
+groupedData11 <- renomeiaGrupos(groupedData11, c("q2_left", "q2_right","q3_left", "q3_right", "count"), "g11")
+groupedData12 <- renomeiaGrupos(groupedData12, c("q2_left", "q2_right", "count"), "g12")
+groupedData13 <- renomeiaGrupos(groupedData13, c("q1_left", "q1_right", "q2_left", "q2_right", "count"), "g13")
+
+groupedData1 <- renomeiaGrupos2(groupedData1, c("q1", "q2", "q3"), c("street_wid", "sidewalk_wid", "public_art"))
+groupedData2 <- renomeiaGrupos2(groupedData2, c("q1", "q2", "q3"), c("mov_cars", "park_cars", "mov_ciclyst"))
+groupedData3 <- renomeiaGrupos2(groupedData3, c("q1", "q2", "q3"), c("debris", "pavement", "landscape"))
+groupedData4 <- renomeiaGrupos2(groupedData4, c("q1", "q2"), c("courtyards", "major_landsc"))
+groupedData5 <- renomeiaGrupos2(groupedData5, c("q1", "q2"), c("build_ident", "build_nrectan"))
+groupedData6 <- renomeiaGrupos2(groupedData6, c("q1", "q2"), c("prop_street_wall", "prop_wind"))
+groupedData7 <- renomeiaGrupos2(groupedData7, c("q1", "q2", "q3"), c("long_sight", "prop_sky_ahead", "prop_sky_across"))
+groupedData8 <- renomeiaGrupos2(groupedData8, c("q1", "q2", "q3"), c("graffiti", "trees", "small_planters"))
+groupedData9 <- renomeiaGrupos2(groupedData9, c("q1"), c("build_height"))
+groupedData10 <- renomeiaGrupos2(groupedData10, c("q1", "q2", "q3"), c("build_diff_ages", "diff_build", "prop_hist_build"))
+groupedData11 <- renomeiaGrupos2(groupedData11, c("q2", "q3"), c("outdoor_table", "street_furnit"))
+groupedData12 <- renomeiaGrupos2(groupedData12, c("q1", "q2", "q3"), c("basic_col", "lights", "accent_col"))
+groupedData13 <- renomeiaGrupos2(groupedData13, c("q1","q2"), c("people", "prop_active_use"))
+```
+
+## Comparing original groups x randomized groups and both randomized groups!
+```{r cars}
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/" 
+for (folder in c("hom60_mul40/")){
+    
+    if(grepl("jovem", folder)){
+        g1_files <- list.files(path = folder, pattern = "alljovemOrdInter*")
+        g2_files <- list.files(path = folder, pattern = "alladultoOrdInter*")
+        
+        g1_original <- read.table("../all100/allJovemOrdInter.dat")
+        g2_original <- read.table("../all100/allAdultoOrdInter.dat")    
+        g1 <- "Jovem"
+        g2 <- "Adulto"
+    }else if(grepl("media", folder)){
+        g1_files <- list.files(path = folder, pattern = "allmediaOrdInter*")
+        g2_files <- list.files(path = folder, pattern = "allbaixaOrdInter*")
+        
+        g1_original <- read.table("../all100/allMediaOrdInter.dat")
+        g2_original <- read.table("../all100/allBaixaOrdInter.dat")    
+        g1 <- "Media"
+        g2 <- "Baixa"
+    }else{
+        if (folder == "hom60_mul15/" || folder == "hom60_mul60/" || folder == "hom60_mul40/") {
+            g1_files <- list.files(path = folder, pattern = "allmasculinoOrdInter*")
+            g2_files <- list.files(path = folder, pattern = "allfemininoOrdInter*")
+        }else {
+            g1_files <- list.files(path = folder, pattern = "allMasculinoOrdInter*")
+            g2_files <- list.files(path = folder, pattern = "allFemininoOrdInter*")
+        }
+        
+        g1_original <- read.table("../all100/allMasculinoOrdInter.dat")
+        g2_original <- read.table("../all100/allFemininoOrdInter.dat")    
+        g1 <- "Masculino"
+        g2 <- "Feminino"
+    }
+   
+    ag_orig_g1 <- filter(g1_original, V1 != "seguro?")
+    seg_orig_g1 <- filter(g1_original, V1 == "seguro?")
+    ag_orig_g2 <- filter(g2_original, V1 != "seguro?")
+    seg_orig_g2 <- filter(g2_original, V1 == "seguro?")
+    
+    all_means_ag_g1 <- data.frame()
+    all_means_seg_g1 <- data.frame()
+    all_means_ag_g2 <- data.frame()
+    all_means_seg_g2 <- data.frame()
+    
+    sink(paste(folder, "rank_comparisons.dat", sep=""), append = TRUE)
+    #for (current_file in masc_files){
+    for (i in seq(1, 100)){
+    
+       #id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
+       print(paste("########### Iteration ", i))
+       g1_file <- paste(folder, g1_files[i], sep="")
+       g2_file <- paste(folder, g2_files[i], sep="")
+       
+      #Comparing men random x men original
+       #data <- read.table(current_file)
+       data_g1 <- read.table(g1_file)
+       seg_g1 <- filter(data_g1, V1 == "seguro?")
+       ag_g1 <- filter(data_g1, V1 != "seguro?")
+       
+        merged_g1 <- merge(ag_orig_g1, ag_g1, by.x="V2", by.y="V2")
+        merged_seg_g1 <- merge(seg_orig_g1, seg_g1, by.x="V2", by.y="V2")
+        
+        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g1, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+        res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g1, res$estimate))
+        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g1, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
+        res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g1, res$estimate))
+       
+       #Looking for corresponding data from women - UNUSED
+       #current_other <- read.table(paste("allFemininoOrdInter_", id, ".dat", sep = ""))
+       #other_seg_data <- filter(current_other, V1 == "seguro?")
+       #other_ag_data <- filter(current_other, V1 != "seguro?")
+       
+       #Comparing women random x women original
+       #merged <- merge(other_ag_data, ag_data, by.x="V2", by.y="V2")
+       #merged_seg <- merge(other_seg_data, seg_data, by.x="V2", by.y="V2")
+       data_g2 <- read.table(g2_file)
+       seg_g2 <- filter(data_g2, V1 == "seguro?")
+       ag_g2 <- filter(data_g2, V1 != "seguro?")
+        
+        merged_g2 <- merge(ag_orig_g2, ag_g2, by.x="V2", by.y="V2")
+        merged_seg_g2 <- merge(seg_orig_g2, seg_g2, by.x="V2", by.y="V2")
+       
+        print(paste(">>>>>>> Kendall distance Agrad: Fixed x Random", g2, normalizedKendallTauDistance2(merged_g2$V3.y, merged_g2$V3.x)))
+        res <- cor.test(merged_g2$V3.y, merged_g2$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Agrad: Fixed x Random", g2, res$estimate))
+        print(paste(">>>>>>> Kendall distance Seg: Fixed x Random", g2, normalizedKendallTauDistance2(merged_seg_g2$V3.y, merged_seg_g2$V3.x)))
+        res <- cor.test(merged_seg_g2$V3.y, merged_seg_g2$V3.x, method="kendall")
+        print(res)
+        print(paste(">>>>>>>> Correlation Seg: Fixed x Random", g2, res$estimate))
+       
+       #Comparing women random x men random
+#        merged <- merge(ag_g1, ag_g2, by.x="V2", by.y="V2")
+#        merged_seg <- merge(seg_g1, seg_g2, by.x="V2", by.y="V2")
+#        
+#        print(paste(">>>>>>> Kendall distance Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+#        res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Agrad: Random", g1, "x", g2, res$estimate))
+#        print(paste(">>>>>>> Kendall distance Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+#        res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+#        print(res)
+#        print(paste(">>>>>>>> Correlation Seg: Random", g1, "x", g2, res$estimate))
+      
+       #Comparing top 10 of women x top 10 of men
+       top_size <- 10
+       merged <- merge(head(ag_g1, n=top_size), head(ag_g2, n=top_size), by.x="V2", by.y="V2")
+       merged_seg <- merge(head(seg_g1, n=top_size), head(seg_g2, n=top_size), by.x="V2", by.y="V2")
+
+       diff1 <- length(setdiff(head(ag_g1, n=top_size)$V2, head(ag_g2, n=top_size)$V2))
+       diff2 <- length(setdiff(head(ag_g2, n=top_size)$V2, head(ag_g1, n=top_size)$V2))
+       print(paste(">>>>>>> Set diff Top10_Agrad: Random", g1, "x", g2, diff1))
+       print(paste(">>>>>>> Set diff Top10_Agrad: Random",  g2, "x", g1, diff2))
+
+       if (diff1 <= top_size - 2){
+	       print(paste(">>>>>>> Kendall distance Top10_Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+	       res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+	       print(res)
+	       print(paste(">>>>>>>> Correlation Top10_Agrad: Random", g1, "x", g2, res$estimate))
+       }
+
+    	diff1 <- length(setdiff(head(seg_g1, n=top_size)$V2, head(seg_g2, n=top_size)$V2))
+      diff2 <- length(setdiff(head(seg_g2, n=top_size)$V2, head(seg_g1, n=top_size)$V2))
+    	print(paste(">>>>>>> Set diff Top10_Seg: Random", g1, "x", g2, diff1))
+    	print(paste(">>>>>>> Set diff Top10_Seg: Random",  g2, "x", g1, diff2))
+
+    	if (diff1 <= top_size - 2){
+
+    	       print(paste(">>>>>>> Kendall distance Top10_Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+    	       res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+    	       print(res)
+    	       print(paste(">>>>>>>> Correlation Top10_Seg: Random", g1, "x", g2, res$estimate))
+    	}
+
+      #Comparing bottom 10 of women x bottom 10 of men
+       merged <- merge(tail(ag_g1, n=10), tail(ag_g2, n=10), by.x="V2", by.y="V2")
+       merged_seg <- merge(tail(seg_g1, n=10), tail(seg_g2, n=10), by.x="V2", by.y="V2")
+
+      diff1 <- length(setdiff(tail(ag_g1, n=top_size)$V2, tail(ag_g2, n=top_size)$V2))
+      diff2 <- length(setdiff(tail(ag_g2, n=top_size)$V2, tail(ag_g1, n=top_size)$V2))
+
+      print(paste(">>>>>>> Set diff Bot10_Agrad: Random", g1, "x", g2, diff1))
+      print(paste(">>>>>>> Set diff Bot10_Agrad: Random",  g2, "x", g1, diff2))
+
+    	if (diff1 <= top_size - 2){
+    	       print(paste(">>>>>>> Kendall distance Bot10_Agrad: Random", g1, "x", g2, normalizedKendallTauDistance2(merged$V3.y, merged$V3.x)))
+    	       res <- cor.test(merged$V3.y, merged$V3.x, method="kendall")
+    	       print(res)
+    	       print(paste(">>>>>>>> Correlation Bot10_Agrad: Random", g1, "x", g2, res$estimate))
+    	}
+
+      diff1 <- length(setdiff(tail(seg_g1, n=top_size)$V2, tail(seg_g2, n=top_size)$V2))
+      diff2 <- length(setdiff(tail(seg_g2, n=top_size)$V2, tail(seg_g1, n=top_size)$V2))
+
+      print(paste(">>>>>>> Set diff Bot10_Seg: Random", g1, "x", g2, diff1))
+      print(paste(">>>>>>> Set diff Bot10_Seg: Random",  g2, "x", g1, diff2))
+
+      if (diff1 <= top_size - 2){
+	       print(paste(">>>>>>> Kendall distance Bot10_Seg: Random", g1, "x", g2, normalizedKendallTauDistance2(merged_seg$V3.y, merged_seg$V3.x)))
+	       res <- cor.test(merged_seg$V3.y, merged_seg$V3.x, method="kendall")
+	       print(res)
+	       print(paste(">>>>>>>> Correlation Bot10_Seg: Random", g1, "x", g2, res$estimate))
+	    }
+
+       #Storing all means
+       if(length(all_means_ag_g1) == 0){
+         all_means_ag_g1 <- select(ag_g1, V1, V2, V3)
+         all_means_seg_g1 <- select(seg_g1, V1, V2, V3)
+         all_means_ag_g2 <- select(ag_g2, V1, V2, V3)
+         all_means_seg_g2 <- select(seg_g2, V1, V2, V3)
+       }else{
+          all_means_ag_g1 <- merge(all_means_ag_g1, select(ag_g1, V2, V3), by.x="V2", by.y="V2")
+          all_means_seg_g1 <- merge(all_means_seg_g1, select(seg_g1, V2, V3), by.x="V2", by.y="V2")
+          all_means_ag_g2 <- merge(all_means_ag_g2, select(ag_g2, V2, V3), by.x="V2", by.y="V2")
+          all_means_seg_g2 <- merge(all_means_seg_g2, select(seg_g2, V2, V3), by.x="V2", by.y="V2")
+       }
+    }
+    sink()
+  
+  #Testing regressions for men
+  #all_means_ag$mean <- apply(all_means_ag[,3:ncol(all_means_ag)], 1, mean)
+  #all_means_seg$mean <- apply(all_means_seg[,3:ncol(all_means_seg)], 1, mean)
+  
+  #combineFeaturesAndTestRegression(all_means_ag)
+  #combineFeaturesAndTestRegression(all_means_seg)
+}
+
+#Iterating through rank_comparisons files to extract data for tau_agrad and tau_seg: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
+for (folder in c("hom60_mul40/")){
+    data <- readLines(paste(folder, "rank_comparisons.dat", sep=""))
+
+     index <- grep( ">>>>>>>> Correlation Agrad: Random",  data)
+     sink(paste(folder, "tau_agrad.dat", sep=""))
+     print(data[index], row.names = FALSE, quote = FALSE)
+     sink()
+     
+     index <- grep( ">>>>>>>> Correlation Seg: Random",  data)
+     sink(paste(folder, "tau_seg.dat", sep=""))
+     print(data[index], row.names = FALSE, quote = FALSE)
+     sink()
+    
+    index <- grep( ">>>>>>>> Correlation Top10_Agrad: Random",  data)
+    write(data[index], file=paste(folder, "taut10_agrad.dat", sep=""))
+    index <- grep( ">>>>>>>> Correlation Bot10_Agrad: Random",  data)
+    write(data[index], file=paste(folder, "taub10_agrad.dat", sep=""))
+
+    index <- grep( ">>>>>>>> Correlation Top10_Seg: Random",  data)
+    write(data[index], file=paste(folder, "taut10_seg.dat", sep=""))
+    index <- grep( ">>>>>>>> Correlation Bot10_Seg: Random",  data)
+    write(data[index], file=paste(folder, "taub10_seg.dat", sep=""))
+
+    index <- grep( ">>>>>>> Set diff Bot10_Agrad: Random",  data)
+    write(data[index], file=paste(folder, "bot10_agrad.dat", sep=""))
+    index <- grep(">>>>>>> Set diff Bot10_Seg: Random",  data)
+    write(data[index], file=paste(folder, "bot10_seg.dat", sep=""))
+
+    index <- grep( ">>>>>>> Set diff Top10_Agrad: Random",  data)
+    write(data[index], file=paste(folder, "top10_agrad.dat", sep=""))
+    index <- grep(">>>>>>> Set diff Top10_Seg: Random",  data)
+    write(data[index], file=paste(folder, "top10_seg.dat", sep=""))
+}
+
+#Evaluating confidence intervals for computed kendall correlations
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "hom60_mul60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
+for (folder in c("hom60_mul40/")){
+  for (file in c(paste(folder, "tau_agrad.dat", sep=""), paste(folder, "tau_seg.dat", sep=""))){
+    ag_cor <- read.table(file, sep="")
+    ag_cor$V3 <- as.factor(ag_cor$V3)
+    #values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+    values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][8]))#Column 9 in old format and V2
+    new_values <- unlist(lapply(values, '[[', 1))
+    ag_cor$value <- new_values
+    
+    print(paste(">>>> ", file))
+    delta <- ic(ag_cor$value)
+    print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+    print(sample_size(ag_cor$value))
+  }
+  
+}
+
+#"hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+  for ( file in c( paste(folder, "taut10_agrad.dat", sep=""), paste(folder, "taut10_seg.dat", sep=""), paste(folder, "taub10_agrad.dat", sep=""), paste(folder, "taub10_agrad.dat", sep="") ) ){
+    ag_cor <- read.table(file, sep="")
+    ag_cor$V3 <- as.factor(ag_cor$V3)
+    #values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+    values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = " ")[[1]][8]))#Column 9 in old format and V2
+    new_values <- unlist(lapply(values, '[[', 1))
+    ag_cor$value <- new_values
+    
+    print(paste(">>>> ", file))
+    delta <- ic(ag_cor$value)
+    print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+    print(sample_size(ag_cor$value))
+  }
+}
+
+#Elements diff in top and bottom 10
+#"hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/"
+for (folder in c("jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/")){
+  for ( file in c( paste(folder, "bot10_agrad.dat", sep=""), paste(folder, "top10_agrad.dat", sep=""), paste(folder, "top10_seg.dat", sep=""), paste(folder, "bot10_seg.dat", sep="") ) ){
+    ag_cor <- read.table(file, sep="")
+    ag_cor$V2 <- as.factor(ag_cor$V2)
+    #values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = "Random")[[1]][2]))
+    values <- lapply(as.character(ag_cor$V2), function (x) as.double(str_split(x, pattern = " ")[[1]][9]))#Column 9 in old format and V2
+    new_values <- unlist(lapply(values, '[[', 1))
+    ag_cor$value <- new_values
+    
+    print(paste(">>>> ", file))
+    delta <- ic(ag_cor$value)
+    print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+    print(sample_size(ag_cor$value))
+  }
+}
+```
+
+
+## Comparing all participants together in original data and removing some users!
+```{r cars}
+extract_list_of_urban_features_general = function(summary_info, all_estimates, all_pvalues){
+  estimates <- summary_info$coef[,"Estimate"]
+  pvalues <- summary_info$coef[,"Pr(>|t|)"]
+  
+  for (column in names(estimates)) { 
+    all_estimates[[column]] <- append(all_estimates[[column]], estimates[[column]])
+    all_pvalues[[column]] <- append(all_pvalues[[column]], pvalues[[column]])
+  }
+  
+  return (list(all_estimates, all_pvalues))
+}
+
+#Combining all street features
+combineFeaturesAndTestRegression <- function(dataset){
+    
+      colnames(dataset)[colnames(dataset) == "V2"] <- "image_url"
+      temp <- merge(groupedData1, dataset, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData2, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData3, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData4, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData5, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData6, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData7, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData8, by.x="image_url", by.y="image_url")
+      temp<- merge(temp, groupedData9, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData10, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData11, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData12, by.x="image_url", by.y="image_url")
+      temp <- merge(temp, groupedData13, by.x="image_url", by.y="image_url")
+      
+      temp1 <- lapply(as.character(temp$image_url), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][6])
+      neigs1 <- unlist(lapply(temp1, '[[', 1))
+      temp$bairro <- neigs1
+      
+      temp <- arrange(temp, V3)  %>% mutate(rank = 1:n()) #arrange(temp, mean)  %>% mutate(rank = 1:n())
+      temp$centro <- 0
+      temp$catole <- 0
+      temp$liberdade <- 0
+      temp$centro[temp$bairro == "centro"] <- 1
+      temp$catole[temp$bairro == "catole"] <- 1
+      temp$liberdade[temp$bairro == "liberdade"] <- 1
+      temp$graffiti <- factor(temp$graffiti, levels = c("Yes", "No"))
+      temp$graffiti <- relevel(temp$graffiti,  "No")
+      
+      regGeneral <- lm(rank ~  street_wid + mov_cars + park_cars + mov_ciclyst + landscape + build_ident + trees + log2(build_height+1) + people + centro + catole + liberdade + diff_build + graffiti, na.action = na.exclude, data = temp)
+      print(summary(regGeneral))
+      return(summary(regGeneral))
+}
+
+#Other groups: "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "jovem60_adulto60/", "hom60_mul60/", "media60_baixa60/"
+for (folder in c("hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/") ){
+
+  if(grepl("jovem", folder)){
+        g1 <- "Jovem"
+        g2 <- "Adulto"
+  }else if(grepl("media", folder)){
+        g1 <- "Media"
+        g2 <- "Baixa"
+  }else{
+        g1 <- "masculino" #"Masculino"
+        g2 <- "feminino" #"Feminino"
+  }
+  
+  all_diff_m <- list.files(path = folder, pattern = "allDiff*_*")
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  seg_orig <- filter(all_original, V1 == "seguro?")
+  
+  all_means_ag_g1 <- data.frame()
+  all_means_seg_g1 <- data.frame()
+  
+  all_estimates_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
+all_pvalues_a <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), graffitiYes=c(), centro=c(), catole=c())
+
+  all_estimates_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
+  all_pvalues_s <- list("(Intercept)"=c(), street_wid=c(), mov_cars=c(), park_cars=c(), trees=c(), mov_ciclyst=c(), landscape=c(), build_ident=c(), "log2(build_height + 1)"=c(), diff_build=c(), people=c(), centro=c(), catole=c(), graffitiYes=c())
+  
+  sink(paste(folder, "rank_comparisons_general.dat", sep=""))
+  for (i in seq(1,100)){
+  #for (current_file in all_diff_m){
+     #id <- strsplit(strsplit(current_file, "_")[[1]][2], "\\.")[[1]][1]
+     print(paste("########### Iteration ", i))
+     
+     #General ranking removing men
+     current_file <- paste(folder, all_diff_m[i], sep="")
+     data <- read.table(current_file)
+     seg_g1 <- filter(data, V1 == "seguro?") 
+     ag_g1 <- filter(data, V1 != "seguro?") 
+     
+      merged_g1 <- merge(ag_orig, ag_g1, by.x="V2", by.y="V2")
+      merged_seg_g1 <- merge(seg_orig, seg_g1, by.x="V2", by.y="V2")
+      
+      print(paste(">>>>>>> Kendall distance Agrad: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+      res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+      print(res)
+      print(paste(">>>>>>>> Correlation Agrad: General Old x Removing Random", g1, g2, res$estimate))
+      print(paste(">>>>>>> Kendall distance Seg: General Old x Removing Random", g1, g2, normalizedKendallTauDistance2(merged_seg_g1$V3.y, merged_seg_g1$V3.x)))
+      res <- cor.test(merged_seg_g1$V3.y, merged_seg_g1$V3.x, method="kendall")
+      print(res)
+      print(paste(">>>>>>>> Correlation Seg: General Old x Removing Random", g1, g2, res$estimate))
+     
+     #Storing all Q-Scores/rank means
+#      if(length(all_means_ag_g1) == 0){
+#        all_means_ag_g1 <- select(ag_g1, V1, V2, rank) #select(ag_g1, V1, V2, V3)
+#        all_means_seg_g1 <- select(seg_g1, V1, V2, rank) #select(seg_g1, V1, V2, V3)
+#      }else{
+#         all_means_ag_g1 <- merge(all_means_ag_g1, select(ag_g1, V2, rank), by.x="V2", by.y="V2")
+#         all_means_seg_g1 <- merge(all_means_seg_g1, select(seg_g1, V2, rank), by.x="V2", by.y="V2")
+#      }
+
+      #Extracting features for current regression and saving them!
+      sum_agrad <- combineFeaturesAndTestRegression(select(ag_g1, V1, V2, V3))
+      sum_seg <- combineFeaturesAndTestRegression(select(seg_g1, V1, V2, V3))
+      
+      partial_data <- extract_list_of_urban_features_general(sum_agrad, all_estimates_a, all_pvalues_a)
+      all_estimates_a <- partial_data[[1]]
+      all_pvalues_a <- partial_data[[2]]
+      partial_data <- extract_list_of_urban_features_general(sum_seg, all_estimates_s, all_pvalues_s)
+      all_estimates_s <- partial_data[[1]]
+      all_pvalues_s <- partial_data[[2]]
+  }
+#   sink()
+  
+#   all_means_ag_g1$mean <- apply(all_means_ag_g1[,3:ncol(all_means_ag_g1)], 1, mean)
+#   all_means_seg_g1$mean <- apply(all_means_seg_g1[,3:ncol(all_means_seg_g1)], 1, mean)
+#   
+#   sink(paste(folder, "regressions.dat", sep=""))
+#   print(">>> Agrad")
+#   combineFeaturesAndTestRegression(all_means_ag_g1)
+#   print(">>> Seg")
+#   combineFeaturesAndTestRegression(all_means_seg_g1)
+#   sink()
+
+    sink(paste(folder, "regressions.dat", sep=""), append=TRUE)
+    print(paste(">>>>> Groups ", g1, g2, folder))
+    for (column in names(all_estimates_a)) { 
+        print( paste("#### Agrad Values", column, mean(all_estimates_a[[column]])) )
+        print( paste("#### Agrad PValues", column, mean(all_pvalues_a[[column]])) )
+        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05, na.rm = TRUE) / length(which(!is.na(all_pvalues_a[[column]]))) ) )
+    } 
+    
+    for (column in names(all_estimates_s)) { 
+        print( paste("#### Seg Values", column, mean(all_estimates_s[[column]])) )
+        print( paste("#### Seg PValues", column, mean(all_pvalues_s[[column]])) )
+        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05, na.rm = TRUE) / length(which(!is.na(all_pvalues_a[[column]]))) ) )
+    }
+    sink()
+}
+
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
+for (folder in c( "hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/" )){
+    data <- readLines(paste(folder, "rank_comparisons_general.dat", sep=""))
+    index <- grep(">>>>>>>> Correlation Agrad: General Old x Removing",  data)
+    sink(paste(folder, "taug_agrad.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
+    
+    index <- grep(">>>>>>>> Correlation Seg: General Old x Removing",  data)
+    sink(paste(folder, "taug_seg.dat", sep=""))
+    print(data[index], row.names = FALSE, quote = FALSE)
+    sink()
+}
+
+#, "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "hom60_mul15/", "jovem60_adulto60/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem80_adulto80/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/"
+sink("correlations.dat")
+for (folder in c(  "hom60_mul40/", "hom40_mul60/", "hom60_mul60/", "hom15_mul60/", "hom60_mul15/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "jovem60_adulto60/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/", "media60_baixa60/" )){
+    #Evaluating sample sizes
+    for (file in c(paste(folder, "taug_agrad.dat", sep=""), paste(folder, "taug_seg.dat", sep=""))) {
+        ag_cor <- read.table(file, sep="")
+        ag_cor$V3 <- as.factor(ag_cor$V3)
+        
+        if(grepl("hom95_mul95", folder)){
+          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][10]))
+        }else {
+          values <- lapply(as.character(ag_cor$V3), function (x) as.double(str_split(x, pattern = " ")[[1]][11]))
+        }
+        new_values <- unlist(lapply(values, '[[', 1))
+        ag_cor$value <- new_values
+        
+        print(paste(">>>> ", file))
+        delta <- ic(ag_cor$value)
+        print(paste(mean(ag_cor$value), delta, mean(ag_cor$value) - delta, mean(ag_cor$value) + delta))
+        print(sample_size(ag_cor$value))
+      }
+}
+sink()
+```
+
+## Evaluating pairwise comparisons and logit models
+```{r read}
+create_random_model_w_interact = function(the_data, optimizer_to_use=""){
+  if ( nchar(optimizer_to_use) == 0 ){
+    return( glmer( choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
+            age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = the_data, family=binomial() ) )
+    
+  }else{
+    return( glmer( choice ~ d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff + bair_cat +
+            age_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            gender:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) +
+            inc_cat:(d_swidth + d_mvcars + d_pcars + d_trees + d_mvciclyst + d_lands + d_bid + d_bheig + d_dbuild + d_people + d_graff) + (1|userID), data = the_data, family=binomial(), control = glmerControl(optimizer=c(optimizer_to_use) ) ) )#optimizers="bobyqa", "Nelder_Mead"
+  }
+}
+
+extract_list_of_urban_features = function(summary_info, all_estimates, all_pvalues){
+  estimates <- summary_info$coef[,"Estimate"]
+  pvalues <- summary_info$coef[,"Pr(>|z|)"]
+  
+  for (column in names(estimates)) { 
+    all_estimates[[column]] <- append(all_estimates[[column]], estimates[[column]])
+    all_pvalues[[column]] <- append(all_pvalues[[column]], pvalues[[column]])
+  }
+  
+  return (list(all_estimates, all_pvalues))
+}
+
+#"hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/" 
+for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", , "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+  
+    g1_files <- list.files(path = folder, pattern = "*_wodraw.dat") #c("runMerged_0_wodraw.dat", "runMerged_1_wodraw.dat")
+    if(grepl("jovem", folder)){
+        g1 <- "Jovem"
+        g2 <- "Adulto"
+    }else if(grepl("media", folder)){
+        g1 <- "Media"
+        g2 <- "Baixa"
+    }else{
+        g1 <- "Masculino"
+        g2 <- "Feminino"
+    }
+    
+    all_estimates_a <- list("(Intercept)"=c(), d_swidth=c(), d_mvcars=c(), d_pcars=c(), d_trees=c(), d_mvciclyst=c(), d_lands=c(), d_bid=c(), d_bheig=c(), d_dbuild=c(), d_people=c(), d_graff=c(), bair_catcatole_centro=c(), bair_catcatole_liberdade=c(), bair_catcentro_catole=c(), bair_catcentro_liberdade=c(), bair_catliberdade_catole=c(), bair_catliberdade_centro=c(), "d_swidth:age_catadulto"=c(), "d_mvcars:age_catadulto"=c(), "d_pcars:age_catadulto"=c(), "d_trees:age_catadulto"=c(), "d_mvciclyst:age_catadulto"=c(), "d_lands:age_catadulto"=c(), "d_bid:age_catadulto"=c(), "d_bheig:age_catadulto"=c(), "d_dbuild:age_catadulto"=c(), "d_people:age_catadulto"=c(), "d_graff:age_catadulto"=c(), "d_swidth:gendermasculino"=c(), "d_mvcars:gendermasculino"=c(), "d_pcars:gendermasculino"=c(), "d_trees:gendermasculino"=c(), "d_mvciclyst:gendermasculino"=c(), "d_lands:gendermasculino"=c(), "d_bid:gendermasculino"=c(), "d_bheig:gendermasculino"=c(), "d_dbuild:gendermasculino"=c(), "d_people:gendermasculino"=c(), "d_graff:gendermasculino"=c(), "d_swidth:inc_catmedia"=c(), "d_mvcars:inc_catmedia"=c(), "d_pcars:inc_catmedia"=c(), "d_trees:inc_catmedia"=c(), "d_mvciclyst:inc_catmedia"=c(), "d_lands:inc_catmedia"=c(), "d_bid:inc_catmedia"=c(), "d_bheig:inc_catmedia"=c(), "d_dbuild:inc_catmedia"=c(), "d_people:inc_catmedia"=c(), "d_graff:inc_catmedia"=c())
+all_pvalues_a <- list("(Intercept)"=c(), d_swidth=c(), d_mvcars=c(), d_pcars=c(), d_trees=c(), d_mvciclyst=c(), d_lands=c(), d_bid=c(), d_bheig=c(), d_dbuild=c(), d_people=c(), d_graff=c(), bair_catcatole_centro=c(), bair_catcatole_liberdade=c(), bair_catcentro_catole=c(), bair_catcentro_liberdade=c(), bair_catliberdade_catole=c(), bair_catliberdade_centro=c(), "d_swidth:age_catadulto"=c(), "d_mvcars:age_catadulto"=c(), "d_pcars:age_catadulto"=c(), "d_trees:age_catadulto"=c(), "d_mvciclyst:age_catadulto"=c(), "d_lands:age_catadulto"=c(), "d_bid:age_catadulto"=c(), "d_bheig:age_catadulto"=c(), "d_dbuild:age_catadulto"=c(), "d_people:age_catadulto"=c(), "d_graff:age_catadulto"=c(), "d_swidth:gendermasculino"=c(), "d_mvcars:gendermasculino"=c(), "d_pcars:gendermasculino"=c(), "d_trees:gendermasculino"=c(), "d_mvciclyst:gendermasculino"=c(), "d_lands:gendermasculino"=c(), "d_bid:gendermasculino"=c(), "d_bheig:gendermasculino"=c(), "d_dbuild:gendermasculino"=c(), "d_people:gendermasculino"=c(), "d_graff:gendermasculino"=c(), "d_swidth:inc_catmedia"=c(), "d_mvcars:inc_catmedia"=c(), "d_pcars:inc_catmedia"=c(), "d_trees:inc_catmedia"=c(), "d_mvciclyst:inc_catmedia"=c(), "d_lands:inc_catmedia"=c(), "d_bid:inc_catmedia"=c(), "d_bheig:inc_catmedia"=c(), "d_dbuild:inc_catmedia"=c(), "d_people:inc_catmedia"=c(), "d_graff:inc_catmedia"=c())
+all_estimates_s <- list("(Intercept)"=c(), d_swidth=c(), d_mvcars=c(), d_pcars=c(), d_trees=c(), d_mvciclyst=c(), d_lands=c(), d_bid=c(), d_bheig=c(), d_dbuild=c(), d_people=c(), d_graff=c(), bair_catcatole_centro=c(), bair_catcatole_liberdade=c(), bair_catcentro_catole=c(), bair_catcentro_liberdade=c(), bair_catliberdade_catole=c(), bair_catliberdade_centro=c(), "d_swidth:age_catadulto"=c(), "d_mvcars:age_catadulto"=c(), "d_pcars:age_catadulto"=c(), "d_trees:age_catadulto"=c(), "d_mvciclyst:age_catadulto"=c(), "d_lands:age_catadulto"=c(), "d_bid:age_catadulto"=c(), "d_bheig:age_catadulto"=c(), "d_dbuild:age_catadulto"=c(), "d_people:age_catadulto"=c(), "d_graff:age_catadulto"=c(), "d_swidth:gendermasculino"=c(), "d_mvcars:gendermasculino"=c(), "d_pcars:gendermasculino"=c(), "d_trees:gendermasculino"=c(), "d_mvciclyst:gendermasculino"=c(), "d_lands:gendermasculino"=c(), "d_bid:gendermasculino"=c(), "d_bheig:gendermasculino"=c(), "d_dbuild:gendermasculino"=c(), "d_people:gendermasculino"=c(), "d_graff:gendermasculino"=c(), "d_swidth:inc_catmedia"=c(), "d_mvcars:inc_catmedia"=c(), "d_pcars:inc_catmedia"=c(), "d_trees:inc_catmedia"=c(), "d_mvciclyst:inc_catmedia"=c(), "d_lands:inc_catmedia"=c(), "d_bid:inc_catmedia"=c(), "d_bheig:inc_catmedia"=c(), "d_dbuild:inc_catmedia"=c(), "d_people:inc_catmedia"=c(), "d_graff:inc_catmedia"=c())
+all_pvalues_s <- list("(Intercept)"=c(), d_swidth=c(), d_mvcars=c(), d_pcars=c(), d_trees=c(), d_mvciclyst=c(), d_lands=c(), d_bid=c(), d_bheig=c(), d_dbuild=c(), d_people=c(), d_graff=c(), bair_catcatole_centro=c(), bair_catcatole_liberdade=c(), bair_catcentro_catole=c(), bair_catcentro_liberdade=c(), bair_catliberdade_catole=c(), bair_catliberdade_centro=c(), "d_swidth:age_catadulto"=c(), "d_mvcars:age_catadulto"=c(), "d_pcars:age_catadulto"=c(), "d_trees:age_catadulto"=c(), "d_mvciclyst:age_catadulto"=c(), "d_lands:age_catadulto"=c(), "d_bid:age_catadulto"=c(), "d_bheig:age_catadulto"=c(), "d_dbuild:age_catadulto"=c(), "d_people:age_catadulto"=c(), "d_graff:age_catadulto"=c(), "d_swidth:gendermasculino"=c(), "d_mvcars:gendermasculino"=c(), "d_pcars:gendermasculino"=c(), "d_trees:gendermasculino"=c(), "d_mvciclyst:gendermasculino"=c(), "d_lands:gendermasculino"=c(), "d_bid:gendermasculino"=c(), "d_bheig:gendermasculino"=c(), "d_dbuild:gendermasculino"=c(), "d_people:gendermasculino"=c(), "d_graff:gendermasculino"=c(), "d_swidth:inc_catmedia"=c(), "d_mvcars:inc_catmedia"=c(), "d_pcars:inc_catmedia"=c(), "d_trees:inc_catmedia"=c(), "d_mvciclyst:inc_catmedia"=c(), "d_lands:inc_catmedia"=c(), "d_bid:inc_catmedia"=c(), "d_bheig:inc_catmedia"=c(), "d_dbuild:inc_catmedia"=c(), "d_people:inc_catmedia"=c(), "d_graff:inc_catmedia"=c())
+    
+    for ( i in seq(1, length(g1_files)) ){
+        current_file <- paste(folder, g1_files[i], sep="")
+
+        pairwise = read_delim(
+          current_file,
+          delim = "\t",
+          col_types = cols(
+            .default = col_double(),
+            choice = col_character(),
+            question = col_character(),
+            photo1 = col_character(),
+            photo2 = col_character(),
+            choice = col_integer(),
+            userID = col_integer(),
+            gender = col_character(),
+            age = col_character(),
+            income = col_character(),
+            education = col_character(),
+            city = col_character(),
+            marital = col_character(),
+            graffiti1 = col_character(),
+            bairro1 = col_character(),
+            graffiti2 = col_character(),
+            bairro2 = col_character()
+            )
+          )
+        
+        data = pairwise %>% 
+          mutate( # Recode
+            income = if_else(is.na(income), "media", income),
+            age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
+            inc_cat = if_else(income %in% c("baixa", "media baixa"),
+                                 "baixa", 
+                                 "media"), # substituirá os NA
+            choice = if_else(choice == "1", "0", 
+                               if_else(choice == "-1", "1", choice)), 
+            bair_cat = if_else(bairro1 == bairro2, "mesmo", 
+                               paste0(bairro1, "_", bairro2))    
+            ) %>% 
+          mutate_at( # to factor
+            vars(income, age_cat, inc_cat, choice, bair_cat, marital, gender),
+            as.factor) %>% 
+          mutate( # relevel
+            bair_cat = relevel(bair_cat,  "mesmo"),
+            marital = relevel(marital,  "solteiro"),
+            income = relevel(income,  "baixa"),
+            age_cat = relevel(age_cat,  "jovem"),
+            gender = relevel(gender,  "feminino"),
+            inc_cat = relevel(inc_cat,  "baixa")
+          ) 
+        
+        # Create diff features
+        data = data %>%
+          mutate(
+            d_swidth = street_wid1 - street_wid2,
+            d_mvcars = mov_cars1 - mov_cars2,
+            d_pcars = park_cars1 - park_cars2,
+            d_trees = trees1 - trees2,
+            d_mvciclyst = mov_ciclyst1 - mov_ciclyst2,
+            d_lands = landscape1 - landscape2,
+            d_bid = build_ident1 - build_ident2,
+            d_bheig = log2(build_height1 + 1) - log2(build_height2 + 1),
+            d_dbuild = diff_build1 - diff_build2,
+            d_people = people1 - people2,
+            d_graff = (graffiti1 == "Yes") - (graffiti2 == "Yes")
+          )
+        
+        
+        agrad_nscaled <- filter(data, !(question %in% c("seguro?", "seguro")))
+        seg_nscaled <- filter(data, (question %in% c("seguro?", "seguro")))
+        
+        agrad_random_user_nscaled <- create_random_model_w_interact(agrad_nscaled, "")
+        sum_agrad <- summary(agrad_random_user_nscaled)
+        partial_data <- extract_list_of_urban_features(sum_agrad, all_estimates_a, all_pvalues_a)
+        all_estimates_a <- partial_data[[1]]
+        all_pvalues_a <- partial_data[[2]]
+        
+        seg_random_user <- create_random_model_w_interact(seg_nscaled, "")
+        sum_seg <- summary(seg_random_user)
+        partial_data <- extract_list_of_urban_features(sum_seg, all_estimates_s, all_pvalues_s)
+        all_estimates_s <- partial_data[[1]]
+        all_pvalues_s <- partial_data[[2]]
+    }
+
+    print(paste(">>>>> Groups ", g1, g2, folder))
+    for (column in names(all_estimates_a)) { 
+        print( paste("#### Agrad Values", column, mean(all_estimates_a[[column]])) )
+        print( paste("#### Agrad PValues", column, mean(all_pvalues_a[[column]])) )
+        print( paste("#### Agrad PValues", column, sum(all_pvalues_a[[column]] < 0.05) / length(all_pvalues_a[[column]])) )
+    } 
+    
+    for (column in names(all_estimates_s)) { 
+        print( paste("#### Seg Values", column, mean(all_estimates_s[[column]])) )
+        print( paste("#### Seg PValues", column, mean(all_pvalues_s[[column]])) )
+        print( paste("#### Seg PValues", column, sum(all_pvalues_s[[column]] < 0.05) / length(all_pvalues_a[[column]])) )
+    }  
+}
+```
+
+##Counting ages in randomized groups without draws!
+```{r read}
+for (folder in c("hom60_mul15/", "hom15_mul60/", "hom40_mul60/", "hom95_mul95/", "jovem15_adulto60/", "jovem40_adulto60/", "jovem60_adulto15/", "jovem60_adulto40/", "media15_baixa60/", "media40_baixa60/", "media60_baixa15/", "media60_baixa40/")){
+  
+    g1_files <- list.files(path = folder, pattern = "*_wodraw.dat") #c("runMerged_0_wodraw.dat", "runMerged_1_wodraw.dat")
+    if(grepl("jovem", folder)){
+        g1 <- "Jovem"
+        g2 <- "Adulto"
+    }else if(grepl("media", folder)){
+        g1 <- "Media"
+        g2 <- "Baixa"
+    }else{
+        g1 <- "Masculino"
+        g2 <- "Feminino"
+    }
+    
+    for ( i in seq(1, length(g1_files)) ){
+        current_file <- paste(folder, g1_files[i], sep="")
+        pairwise = read_delim(
+          current_file,
+          delim = "\t",
+          col_types = cols(
+            .default = col_double(),
+            choice = col_character(),
+            question = col_character(),
+            photo1 = col_character(),
+            photo2 = col_character(),
+            choice = col_integer(),
+            userID = col_integer(),
+            gender = col_character(),
+            age = col_character(),
+            income = col_character(),
+            education = col_character(),
+            city = col_character(),
+            marital = col_character(),
+            graffiti1 = col_character(),
+            bairro1 = col_character(),
+            graffiti2 = col_character(),
+            bairro2 = col_character()
+            )
+          )
+        
+        data = pairwise %>% 
+          mutate( # Recode
+            income = if_else(is.na(income), "media", income),
+            age_cat = if_else(as.integer(age) >= 25 | is.na(age), "adulto", "jovem"),
+            inc_cat = if_else(income %in% c("baixa", "media baixa"),
+                                 "baixa", 
+                                 "media"), # substituirá os NA
+            choice = if_else(choice == "1", "0", 
+                               if_else(choice == "-1", "1", choice)), 
+            bair_cat = if_else(bairro1 == bairro2, "mesmo", 
+                               paste0(bairro1, "_", bairro2))    
+            ) %>% 
+          mutate_at( # to factor
+            vars(income, age_cat, inc_cat, choice, bair_cat, marital, gender),
+            as.factor) %>% 
+          mutate( # relevel
+            bair_cat = relevel(bair_cat,  "mesmo"),
+            marital = relevel(marital,  "solteiro"),
+            income = relevel(income,  "baixa"),
+            age_cat = relevel(age_cat,  "jovem"),
+            gender = relevel(gender,  "feminino"),
+            inc_cat = relevel(inc_cat,  "baixa")
+          ) 
+        
+        print(paste(g1, "x", g2, folder, "Age"))
+        print(table(data$age_cat))
+        print(paste(g1, "x", g2, folder, "Income"))
+        print(table(data$income))
+        print(paste(g1, "x", g2, folder, "Gender"))
+        print(table(data$gender))
+        
+    }
+}    
+```
+
+## Comparing original Como e Campina with all users rankings x elo rankings
+```{r read}
+for (file in c("../gavel/all_elo_40.dat")){
+  print(paste(">>>>> Folder ", file))
+  
+  eloData <- read.table(file)
+  eloData$sd_mu <- apply(eloData[,c(4:10003)], 1, sd)
+  eloData$mean_mu <- apply(eloData[,c(4:10003)], 1, mean)
+   eloData$ci_mu <- eloData$sd_mu * 1.96 / sqrt(10000)
+   eloData$n_mu <- ( 1.96 * eloData$sd_mu/ 1) ** 2
+   
+  agrad_elo <- arrange(filter(eloData, V1 != "seguro?"), -V3)
+   
+  #Analyzing CI
+   g1 <- ggplot(agrad_elo, aes(x=seq(1,120), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(1000, 2000)) + labs(x = "Images", title = "Testing variance of ratings", y = "Elo rating") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   
+   multiplot(g1, cols=1)
+  
+  #Pleasantness x Safety in Elo
+  new_elo_data <- reshape(select(eloData, V1, V2, V3), timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_elo_data)[colnames(new_elo_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_elo, by.x="V2", by.y="V2")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Elo", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Elo", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Elo", res$estimate))
+  
+  #sum_agrad <- combineFeaturesAndTestRegression(select(agrad_elo, V1, V2, V3))
+  #print(sum_agrad)
+  
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_elo, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
+    
+}  
+
+```
+
+## Comparing original Como e Campina with all users rankings x maxdiff rankings
+```{r read}
+for (file in c("../gavel/all.dat-maxdiff")){
+  print(paste(">>>>> Folder ", file))
+  
+  maxDiffData <- read.table(file)
+  agrad_maxdiff <- arrange(filter(maxDiffData, V1 != "seguro?"), -V3)
+  
+  #Pleasantness x Safety in MaxDiff
+  new_maxdiff_data <- reshape(select(maxDiffData, V1, V2, V3), timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_maxdiff_data)[colnames(new_maxdiff_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_maxdiff, by.x="V2", by.y="V2")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Maxdiff", normalizedKendallTauDistance2(merged_g1$V3.y, merged_g1$V3.x)))
+  res <- cor.test(merged_g1$V3.y, merged_g1$V3.x, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Maxdiff", res$estimate))
+  
+  #sum_agrad <- combineFeaturesAndTestRegression(select(agrad_maxdiff, V1, V2, V3))
+  #print(sum_agrad)
+  
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_maxdiff, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
+  
+}  
+
+#Rank-Ordered Logit Model with Ties - Assuming that images not selected are equal
+library(BiasedUrn)
+library(foreign)
+library(mlogit)
+
+setup.flat.data = function(x, number.alternatives){
+   n = nrow(x)
+   number.sets = ncol(x) / number.alternatives
+   data = vector("list",n)
+   for (i in 1:n)
+   {
+       temp.respondent.data = matrix(x[i,],byrow=TRUE,ncol = number.alternatives)
+       respondent.data = vector("list",number.sets)
+       for (s in 1:number.sets)
+          respondent.data[[s]] = as.numeric(temp.respondent.data[s,])
+       data[[i]] = respondent.data
+		}
+compress.data(data)}
+
+compress.data = function(x){#Creates a vector for each set where the first entry was best and the last worst
+  compress = function(x){
+     x.valid = !is.na(x)
+     x.position = (1:length(x))[x.valid]
+     x.position[order(x[x.valid], decreasing = TRUE)]
+  }
+  n = length(x)
+  number.sets = length(x[[1]])
+  number.alternatives = length(x[[1]][[1]])
+  data = vector("list",n)
+  for (i in 1:n)
+   {
+       respondent.data = vector("list",number.sets)
+       for (s in 1:number.sets)
+          respondent.data[[s]] = compress(x[[i]][[s]])
+       data[[i]] = respondent.data
+		}
+class(data) = "maxdiffData"
+data}
+
+d.marley = function(b,x){
+  b.vector = b[x]
+  k = length(b.vector)
+  ediffs = exp(matrix(b.vector,k,k,byrow=FALSE) - matrix(b.vector,k,k,byrow=TRUE))
+ediffs[1,k] / (sum(ediffs) - sum(diag(ediffs)))}
+
+d.rlogit = function(b,x){
+  eb = exp(b[x])
+  k = length(eb)
+  d.best = eb[1]/sum(eb)
+  d.not.worst = dMWNCHypergeo(c(rep(1,k-2),0), rep(1,k-1),k-2,eb[-1], precision = 1E-7)
+d.best * d.not.worst}
+
+d.repeated.maxdiff = function(b,x, method){
+  prod(as.numeric(lapply(x,b = b,switch(method,marley=d.marley, rlogit = d.rlogit))))}
+
+ll.max.diff = function(b,x, maxdiff.method = c("marley","rlogit")[1]){
+   b[b > 100] = 100
+   b[b < -100] = -100
+   sum(log(as.numeric(lapply(x,b = c(0,b),method=maxdiff.method, d.repeated.maxdiff))))
+}
+
+max.diff.rank.ordered.logit.with.ties = function(stacked.data){
+  flat.data = setup.flat.data(stacked.data, ncol(stacked.data))
+  print(ncol(stacked.data))
+  solution = optim(seq(.01,.02, length.out = ncol(stacked.data)-1), ll.max.diff,  maxdiff.method  = "rlogit", gr = NULL, x = flat.data,lmethod   "BFGS", control = list(fnscale  = -1, maxit = 1000, trace = FALSE), hessian = FALSE)
+  pars = c(0, solution$par)
+  names(pars) = dimnames(stacked.data)[[2]]
+  list(log.likelihood = solution$value, coef = pars)}
+
+itMaxDiffData2 <- read.csv("../gavel/maxdiff_rank_input_new.dat")
+old_names <- colnames(itMaxDiffData2)
+for (i in seq(1, length(old_names))){
+  colnames(itMaxDiffData2)[i] <- paste("foto", i, sep="")
+}
+
+#Example
+#itData = read.spss("http://surveyanalysis.org/images/0/06/ItMaxDiff.sav", use.value.labels = FALSE, to.data.frame = TRUE)
+# Selecting the variables containing the max-diff data
+#z = itData[,-1:-5]
+# stacking the data (one set per row)
+#alternativeNames = c("Apple","Microsoft","IBM","Google","Intel","HewlettPackard","Sony","Dell","Yahoo","Nokia")
+#nAlternatives = length(alternativeNames)
+#nBlocks = ncol(z) / nAlternatives
+#nAltsPerSet = 5
+#n = nrow(z)
+#nObservations = n * nBlocks 
+#itMaxDiffData = matrix(as.numeric(t(z)),ncol = nAlternatives,byrow = TRUE, dimnames = list(1:nObservations, alternativeNames))
+
+
+rankModel = max.diff.rank.ordered.logit.with.ties(itMaxDiffData2)
+ranks = nAlternatives + 1 - rank(rankModel$coef)
+cbind(Parameters = rankModel$coef, Ranks = ranks)
+
+#Solution 2
+nRows = sum(!is.na(itMaxDiffData)) * 2
+longData = matrix(0, nRows,nAlternatives + 3)
+counter = 0
+setCounter = 0
+for (rr in 1:nObservations){
+  nAlts = 0
+  alternatives = NULL
+  respondent = floor(rr/nBlocks) + 1
+  for (cc in 1:nAlternatives){
+    v = itMaxDiffData[rr,cc]
+    if (!is.na(v)){
+        nAlts = nAlts + 1
+        alternatives[nAlts] = cc
+        if (v == 1)
+           best = cc
+        if (v == -1)
+           worst = cc
+    }
+  }
+  setCounter = setCounter + 1
+  for (a in 1:nAlts){
+	counter = counter + 1
+        this_a = alternatives[a]
+        if (this_a == best)
+	   longData[counter,3] = 1
+        else if (this_a == worst)
+	   longData[counter + nAlts,3] = 1
+	longData[counter, 1] = respondent 
+	longData[counter + nAlts,1] = respondent 
+	longData[counter, 2] = setCounter 
+	longData[counter + nAlts, 2] = setCounter + 1
+	longData[counter,3 + this_a] = 1
+	longData[counter + nAlts,3 + this_a] = -1
+  }
+  setCounter = setCounter + 1
+  counter = counter + nAlts
+}
+longData[1:20,]
+longData = as.data.frame(longData)
+names(longData) = c("ID","Set","Choice",alternativeNames)
+
+library(mlogit)
+nAltsPerSet = 4
+mlogit(Choice ~ B + C + D + E + F | 0, data = trickedData, alt.levels = paste(1:nAltsPerSet), shape = "long")
+
+```
+
+## Comparing original Como e Campina with all users rankings x rankings obtained from gavel
+```{r read}
+#Analyzing simulations CI
+for (file in c("../gavel/allPairwiseComparison-lam01-gam01.dat", "../gavel/allPairwiseComparison-lam01-gam01.dat")){
+   gavelData <- read.table(file)
+   
+   merged_sub <- subset(gavelData, select = c(1:302,605:903))
+   
+   merged_sub$sd_mu <- apply(merged_sub[,c(3:602)], 1, sd)
+   #merged_sub$sd_sigma <- apply(gavelData[,c(303:602)], 1, sd)
+   merged_sub$mean_mu <- apply(merged_sub[,c(3:602)], 1, mean)
+   #merged_sub$mean_sigma <- apply(gavelData[,c(303:602)], 1, mean)
+   merged_sub$ci_mu <- merged_sub$sd_mu * 1.96 / sqrt(600)
+   #merged_sub$ci_sigma <- gavelData$sd_sigma * 1.96 / sqrt(300)
+   
+   merged_sub$n_mu <- ( 1.96 * merged_sub$sd_mu/ 0.01) ** 2
+   #merged_sub$n_sigma <- ( 1.96 * merged_sub$sd_sigma/ 0.01) ** 2
+   
+   g1 <- ggplot(filter(merged_sub, V1.x!="seguro?"), aes(x=seq(1,108), y=mean_mu)) + geom_errorbar(aes(ymin=mean_mu-ci_mu, ymax=mean_mu+ci_mu), colour="black", width=.1) + ylim(c(0,0.5)) + labs(x = "Images", title = "Testing variance of mu", y = "Gavel mu") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10))
+   
+   multiplot(g1, cols=1)
+}
+
+for (file in c("../gavel/allPairwiseComparison-lam01-gam01.dat", "../gavel/allPairwiseComparison-lam1-gam01.dat")){
+	  print(paste(">>>>> Folder ", file))
+  
+  gavelData <- read.table(file)
+  gavelData$V1 <- "agrad%C3%A1vel?"
+  agrad_gavel <- arrange(filter(gavelData, V1 != "seguro?"), -V3)
+  
+  #Pleasantness x Safety in Gavel
+  new_gavel_data <- reshape(gavelData, timevar="V1", idvar=c("V2"), direction="wide")
+  colnames(new_gavel_data)[colnames(new_gavel_data) == "V3.agrad%C3%A1vel?"] <- "V3.agradavel"
+  
+  all_original <- read.table("../all100/all_ordenado.dat")
+  ag_orig <- filter(all_original, V1 != "seguro?")
+  
+  #Pleasantness
+  merged_g1 <- merge(ag_orig, agrad_gavel, by.x="V2", by.y="V2")
+  merged_g1 <- merged_g1 %>% do(arrange(., V3.y)) %>% mutate(index = 1:n()) %>% do(arrange(., V3.x)) %>% mutate(rank = 1:n())
+  print(paste(">>>>>>> Kendall distance Agrad: Q-Score x Gavel", normalizedKendallTauDistance2(merged_g1$rank, merged_g1$index)))
+  res <- cor.test(merged_g1$rank, merged_g1$index, method="kendall")
+  print(res)
+  print(paste(">>>>>>>> Correlation Agrad: Q-Score x Gavel", res$estimate))
+  
+  #sum_agrad <- combineFeaturesAndTestRegression(select(agrad_gavel, V1, V2, V3))
+  #print(sum_agrad)
+  
+  top_size <- 10
+  diff1 <- length(setdiff(head(ag_orig, n=top_size)$V2, head(agrad_gavel, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Top10_Agrad: ", diff1))
+  #print(head(select(ag_orig, V1, V2, V3), n=10))
+  #print(head(agrad_gavel, n=10))
+  diff1 <- length(setdiff(tail(ag_orig, n=top_size)$V2, tail(agrad_gavel, n=top_size)$V2))
+  print(paste(">>>>>>> Set diff Bottom10_Agrad: ", diff1))
+  
+}  
+```

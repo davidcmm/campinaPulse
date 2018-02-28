@@ -174,16 +174,18 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
   data1$mean <- mean(data1$V3)
+  data1$median <- median(data1$V3)
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
   data2$mean <- mean(data2$V3)
+  data2$median <- median(data2$V3)
   
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
   
   mapping <- select(data, xlabel, side, V3, street, num, angle)
   
-  labels_to_show <- select(filter(data, side=="Side 1"), xlabel)[[2]][c(1,3,5,7,9)]
-  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.7) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") #+ scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
+  labels_to_show <- select(filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
+  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.7) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") #+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
   multiplot(g1, cols=1)
   return (mapping)
 }
@@ -278,31 +280,35 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* 305 side2 (lixo, pouca manutenção)
-* 436 side2 203 (construção/menor manutenção) 
+    * 305 side2 (lixo, pouca manutenção)
+    * 436 side2 203 (construção/menor manutenção) 
 2. Melhor e pior local da rua: 
-* 66-p2 side2 (melhor) 
-* 305-p1 side2 (pior) diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
+    * 66-p2 side2 (melhor) 
+    * 305-p1 side2 (pior) diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
 3. Melhor e pior lado da rua:
-* O side1 parece ligeiramente melhor (2 side2, 66 empate, 261, 305, 436 side1)
+    * O side1 parece ligeiramente melhor (2 side2, 66 empate, 261, 305, 436 side1)
 4. Melhor e pior área da rua (considerando os dois lados): 
-* 66 a 261 side1 (melhor) 
-* 305 a 436 side2 (pior) menor dif. de aprox. 2.1 -> verde, boa manutenção x lixo, menor manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
+    * 66 a 261 side1 (melhor) 
+    * 305 a 436 side2 (pior) menor dif. de aprox. 2.1 -> verde, boa manutenção x lixo, menor manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
 5. Áreas muito diferentes entre lados:  
-* 305 a 436 menor diferenca de aprox. 1 -> boa manutenção, verde x lixo, pouca manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
+    * 305 a 436 menor diferenca de aprox. 1 -> boa manutenção, verde x lixo, pouca manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)
 6. Descontinuidades no mesmo lado
-* 66 side2 dif de 0.8 -> manutenção e verde aparente
-* 305 side2 dif de 0.8 -> no meio da falta de manutenção, lixo a segunda imagem tem um prédio melhor conservado
-* 305 side1 dif. de 0.45 -> mais prédios mais conservados
-* 436 side2 dif. de 1.3 -> mais verde aparente, construção/manutenção
+    * 66 side2 dif de 0.8 -> manutenção e verde aparente
+    * 305 side2 dif de 0.8 -> no meio da falta de manutenção, lixo a segunda imagem tem um prédio melhor conservado
+    * 305 side1 dif. de 0.45 -> mais prédios mais conservados
+    * 436 side2 dif. de 1.3 -> mais verde aparente, construção/manutenção
 7. Heterogeneidade/Homogeneidade no ponto:
-* os pontos mais heterogêneros foram o 305 (lixo, falta de manutenção) e 436 (falta de manuteção, verde aparente). 
-* o mais homogêneo foi o 261 que é um ponto bem mantido e com verde
+    * os pontos mais heterogêneros foram o 305 (lixo, falta de manutenção) e 436 (falta de manuteção, verde aparente). 
+    * o mais homogêneo foi o 261 que é um ponto bem mantido e com verde
 8. Foram encontrados os problemas? 
-* Os dois pontos foram encontrados. Tanto no número 305 como no 436, dentre os pontos avaliados, pôde-se perceber locais que necessitam de melhoria na rua.
-* Além disso, no ponto 66 sugere-se uma melhoria com um pouco mais de verde de modo a homogenizar ainda mais o ponto.
-9. O que é a rua? 
-* Rua de mediana para boa, com variações de locais melhores e piores ao longo de toda a rua,  alguns números com grande variação no local. No final da rua um lado da rua parece despertar maiores preferências que o outro lado. Dada essa diferença o meio da rua 66 a 261 parece ser a melhor área da rua. O side1 parece ligeiramente melhor
+    * Os dois pontos foram encontrados. Tanto no número 305 como no 436, dentre os pontos avaliados, pôde-se perceber locais que necessitam de melhoria na rua.
+    * Além disso, no ponto 66 sugere-se uma melhoria com um pouco mais de verde de modo a homogenizar ainda mais o ponto.
+9. O que é a rua?
+    * A nota média/mediana é boa ou ruim? De mediana para boa
+    * Existe muita variação? Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
+    * Existe um lado melhor? No final da rua side1 parece despertar maiores preferências que o outro lado. Média e mediana de side1 melhores
+    * Existe uma área melhor pior? Conforme questão 4 do número 66 ao 261 parece termos a melhor área da rua e do número 305 ao 436 a pior área.
+
 
 #Edésio Silva
 
@@ -323,31 +329,37 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* 70 side1 135 (construção, menor manutenção) e side2 315 (menor manutenção); 
-* 602 side 203 (lixão); 
-* 1136 todos os lados (pouca manutenção, lixo, terrenos);
+    * 70 side1 135 (construção, menor manutenção) e side2 315 (menor manutenção); 
+    * 602 side 203 (lixão); 
+    * 1136 todos os lados (pouca manutenção, lixo, terrenos);
 2. Melhor e pior local da rua: 
-* 602 p2 side2 
-* 70 p1 side1. Dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
+    * 602 p2 side2 
+    * 70 p1 side1. Dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
 3. Melhor e pior lado da rua:
-* Não fica claro
+    * Não fica claro
 4. Melhor e pior área da rua (considerando os dois lados): 
-* confuso, não dá pra discernir facilmente
+    * confuso, não dá pra discernir facilmente
 5. Áreas muito diferentes entre lados: 
-* 70 a 306 melhora em side2 e piora em side1 -> no side1 temos um ponto muito bom (70, 22) que foge do padrão de melhoria que sairia de pouca manutenção e falta de áŕvore para melhor manutenção e mais árvores. no side2 temos uma certa melhoria de manutenção + árvores aparentes
+    * 70 a 306 melhora em side2 e piora em side1
+        * No side1 temos um ponto muito bom (70, 22) que foge do padrão de melhoria que sairia de pouca manutenção e falta de áŕvore para melhor manutenção e mais árvores. 
+        * No side2 temos uma certa melhoria de manutenção + árvores aparentes
 6. Descontinuidades no mesmo lado
-* 70 no side1, diferença de 1.55 -> construção, falta de verde x melhor manutenção, verde
-* 602 no side1, diferença de 0.6 -> falta de manutenção, menos verde aparente x melhor manutenção, verde
-* 602 no side2, diferença de 1.15 -> manutenção, verde x lixão
-* 1136 no side2, diferença de 0.6 -> lixão
+    * 70 no side1, diferença de 1.55 -> construção, falta de verde x melhor manutenção, verde
+    * 602 no side1, diferença de 0.6 -> falta de manutenção, menos verde aparente x melhor manutenção, verde
+    * 602 no side2, diferença de 1.15 -> manutenção, verde x lixão
+    * 1136 no side2, diferença de 0.6 -> lixão
 7. Heterogeneidade/Homogeneidade no ponto: 
-* os pontos mais heterogêneos foram o 70 (construção, menor manutenção x melhor manutenção e algum verde) e 602 (menor manutenção, lixão x melhor manutenção, verde)
-* o ponto mais homogêneo foi o 1546, é bem mantido e com alguma vegetação.
+    * os pontos mais heterogêneos foram o 70 (construção, menor manutenção x melhor manutenção e algum verde) e 602 (menor manutenção, lixão x melhor manutenção, verde)
+    * o ponto mais homogêneo foi o 1546, é bem mantido e com alguma vegetação.
 8. Foram encontrados os problemas? 
-* O número 70 side2 315, e o número 1136 no side não foram apontados dentre os 4 problemas levantados. 
-* O 70 side2 315 seria encontrado se continuássemos varrendo a lista de piores scores (3 pior nota), o 1136 seria encontrado (diferença de 0.45) se continuássemos olhando as descontinuidades no mesmo lado da rua ou as piores notas (2 pior nota)
+    * O número 70 side2 315, e o número 1136 no side não foram apontados dentre os 4 problemas levantados. 
+    * O 70 side2 315 seria encontrado se continuássemos varrendo a lista de piores scores (3 pior nota), o 1136 seria encontrado (diferença de 0.45) se continuássemos olhando as descontinuidades no mesmo lado da rua ou as piores notas (2 pior nota)
 9. O que é a rua? 
-* Rua de mediana para boa, com variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local, sem uma distinição clara de melhor área ou lado da rua. Um lado não parece se destacar do outro.
+    * A nota média/mediana é boa ou ruim? De mediana para boa
+    * Existe muita variação?  Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
+    * Existe um lado melhor? Não
+    * Existe uma área melhor pior? Não
+
 
 #Inácio Marques
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
@@ -367,31 +379,34 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* 54 angulos 203 e 293 (falta de manutenção e verde); 
-* 120 angulo 203 (falta de manutenção e verde); 
-* 360 angulos 90 e 203 (terreno); 
-* todo o número 500 
+    * 54 angulos 203 e 293 (falta de manutenção e verde); 
+    * 120 angulo 203 (falta de manutenção e verde); 
+    * 360 angulos 90 e 203 (terreno); 
+    * todo o número 500 
 2. Melhor e pior local da rua: 
-* 239 p1 side1 
-* 54 p2 side2. Diferenca de 1.45 -> boa manutenção, algum verde x menor manutenção, lixo
+    * 239 p1 side1 
+    * 54 p2 side2. Diferenca de 1.45 -> boa manutenção, algum verde x menor manutenção, lixo
 3. Melhor e pior lado da rua:
-* O side2 parece ligeiramente melhor (54 e 239 empate (uma foto de um lado e outra do outro), 500 empate com igualdade, 120 e 360 side2)
+    * O side2 parece ligeiramente melhor (54 e 239 empate (uma foto de um lado e outra do outro), 500 empate com igualdade, 120 e 360 side2)
 4. Melhor e pior área da rua (considerando os dois lados): 
-* 239 a 360 (melhor)? manutenção, verde, museu, apesar de duas visões de terreno que tiveram notas não tão ruins 
+    * 239 a 360 (melhor)? manutenção, verde, museu, apesar de duas visões de terreno que tiveram notas não tão ruins 
 5. Áreas muito diferentes entre lados: 
-* 120 a 239 -> no 239 temos um maior equilíbrio bom entre todos os pontos (boa manutenção, verde), mas no 120 temos um ponto pior para o side1 (menor manutenção, lixo, ausência de verde) 
+    * 120 a 239 -> no 239 temos um maior equilíbrio bom entre todos os pontos (boa manutenção, verde), mas no 120 temos um ponto pior para o side1 (menor manutenção, lixo, ausência de verde) 
 6. Descontinuidades no mesmo lado:
-* 54 side1, diferenca de 1.2 -> melhor manutenção x pior manutenção
-* 54 side2, diferença de 0.6 -> melhor manutenção, verde x pior manutenção, falta de verde
-* 120 side1, diferença de 1.1 -> melhor manutenção, verde x pior manutenção, falta de verde
+    * 54 side1, diferenca de 1.2 -> melhor manutenção x pior manutenção
+    * 54 side2, diferença de 0.6 -> melhor manutenção, verde x pior manutenção, falta de verde
+    * 120 side1, diferença de 1.1 -> melhor manutenção, verde x pior manutenção, falta de verde
 7. Heterogeneidade/Homogeneidade no ponto: 
-* os pontos mais heterogêneos foram o 54 (pior manutenção, falta de verde x melhor manutenção, verde) e 120 (pior manutenção, falta de verde x melhor manutenção); 
-* o mais homogêneo foi o 500 (pouca manutenção, muros, terrenos)  
+    * os pontos mais heterogêneos foram o 54 (pior manutenção, falta de verde x melhor manutenção, verde) e 120 (pior manutenção, falta de verde x melhor manutenção); 
+    * o mais homogêneo foi o 500 (pouca manutenção, muros, terrenos)  
 8. Foram encontrados os problemas? 
-* Dos 4 pontos levantados o 360 não foi percebido pelas perguntas acima. 
-* Se olhássemos o terceiro ponto mais heterogêneo encontraríamos o problema do ponto 360 (menor diferença de 0.4) ou como os pontos de cada lado tem notas parecidas se olhássemos diferenças entre áreas após a diferença que foi discutida acima. 
+    * Dos 4 pontos levantados o 360 não foi percebido pelas perguntas acima. 
+    * Se olhássemos o terceiro ponto mais heterogêneo encontraríamos o problema do ponto 360 (menor diferença de 0.4) ou como os pontos de cada lado tem notas parecidas se olhássemos diferenças entre áreas após a diferença que foi discutida acima. 
 9. O que é a rua? 
-* Rua de mediana para boa, com variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local, sem uma distinição clara de melhor área ou lado da rua. O final da rua parece ter uma maior homogeneidade negativa. O side2 parece ligeiramente melhor
+    * A nota média/mediana é boa ou ruim? De mediana para boa
+    * Existe muita variação?  Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
+    * Existe um lado melhor? Side2 ligeiramente melhor
+    * Existe uma área melhor pior? Não
 
 #Floriano peixoto
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
@@ -410,29 +425,33 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* 813 angulos 22 (manutenção); 
-* 913 angulo 293 (identidade visual)
+    * 813 angulos 22 (manutenção); 
+    * 913 angulo 293 (identidade visual)
 2. Melhor e pior local da rua: 
-* 549 p2 side2 (muito verde bem mantido, praça) 
-* 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
+    * 549 p2 side2 (muito verde bem mantido, praça) 
+    * 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
 3. Melhor e pior lado da rua:
-* O side2 parece ligeiramente melhor (445, 549, 913 side2, 691 side1, 813 empate)
+    * O side2 parece ligeiramente melhor (445, 549, 913 side2, 691 side1, 813 empate)
 4. Melhor e pior área da rua (considerando os dois lados): 
-* 691 a 813? verde, bem mantido e alguns pontos precisando de manutenção.
+    * 691 a 813? verde, bem mantido e alguns pontos precisando de manutenção.
 5. Áreas muito diferentes entre lados: 
-* 549 (praça x prédios mais acanhados)??
+    * 549 (praça x prédios mais acanhados)??
 6. Descontinuidades no mesmo lado: 
-* 445 side1, diferença de 0.7 -> ônibus??
-* 445 side2, diferença de 0.6 -> mais verde x menos verde, prédio
-* 549 side2, diferença de 0.4 -> mais verde, praça x menos verde, estacionamento
+    * 445 side1, diferença de 0.7 -> ônibus??
+    * 445 side2, diferença de 0.6 -> mais verde x menos verde, prédio
+    * 549 side2, diferença de 0.4 -> mais verde, praça x menos verde, estacionamento
 7. Heterogeneidade/Homogeneidade no ponto: 
-* os pontos mais heterogêneos foram o 913 (visual das lojas?) e 549 (praça, verde x estacionamento, prédio). 
-* O mais homogênero foi o 691 (prédios até bem mantidos com algumas árvores)
+    * os pontos mais heterogêneos foram o 913 (visual das lojas?) e 549 (praça, verde x estacionamento, prédio). 
+    * O mais homogênero foi o 691 (prédios até bem mantidos com algumas árvores)
 8. Foram encontrados os problemas? 
-* O ponto 813 dos dois apontados não foi percebido. 
-* Se olhássemos outras descontinuidades no mesmo lado acabaríamos chegando nessa comparação apesar da baixa diferença de 0.2.
+    * O ponto 813 dos dois apontados não foi percebido. 
+    * Se olhássemos outras descontinuidades no mesmo lado acabaríamos chegando nessa comparação apesar da baixa diferença de 0.2.
 9. O que é a rua? 
-* Rua bem homogênea, de mediano para bom, com pequenas variações entre alguns de seus pontos. O side2 parece ligeiramente melhor
+    * A nota média/mediana é boa ou ruim? De mediana para boa
+    * Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos
+    * Existe um lado melhor? Side2 ligeiramente melhor
+    * Existe uma área melhor pior? Não
+
 
 #Maciel Pinheiro
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
@@ -451,33 +470,36 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* 130 angulo 360 (manutenção de prédio); 
-* 190 angulo 180 (manutenção de prédio); 
-* 284 360 (manutenção de prédio); 
-* 360 270 (manutenção de prédio). 
-* Não existem árvores na rua.
+    * 130 angulo 360 (manutenção de prédio); 
+    * 190 angulo 180 (manutenção de prédio); 
+    * 284 360 (manutenção de prédio); 
+    * 360 270 (manutenção de prédio). 
+    * Não existem árvores na rua.
 2. Melhor e pior local da rua: 
-* 248 angulo 180 (boa manutenção)
-* 190 180 (manutenção de prédio faltando)
+    * 248 angulo 180 (boa manutenção)
+    * 190 180 (manutenção de prédio faltando)
 3. Melhor e pior lado da rua:
-* O side1 parece ligeiramente melhor (130, 284 empate, 190, 360 side1, 248 side2)
+    * O side1 parece ligeiramente melhor (130, 284 empate, 190, 360 side1, 248 side2)
 4. Melhor e pior área da rua (considerando os dois lados): 
-* confuso!
+    * confuso!
 5. Áreas muito diferentes entre lados: 
-* 284 a 360, com side1 ligeiramente melhor (no side2 temos um estacionamento e um caminhão na vista)
+    * 284 a 360, com side1 ligeiramente melhor (no side2 temos um estacionamento e um caminhão na vista)
 6. Descontinuidades no mesmo lado: 
-* 190 side2, diferença de 0.9 -> prédio precisando de manutenção x boa manutenção
-* 248 side1, diferença de 0.7 -> menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos
-* 248 side2, diferença de 0.5 -> menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos
-* 284 side2, diferença de 0.5 -> boa manutenção x estacionamento, prédio, carros 
+    * 190 side2, diferença de 0.9 -> prédio precisando de manutenção x boa manutenção
+    * 248 side1, diferença de 0.7 -> menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos
+    * 248 side2, diferença de 0.5 -> menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos
+    * 284 side2, diferença de 0.5 -> boa manutenção x estacionamento, prédio, carros 
 7.  Heterogeneidade/Homogeneidade no ponto: 
-* Os pontos mais heterogêneos foram o 248 (boa manutenção x mais identificadores/prédios) e 190 (boa manutenção x prédio que precisa de manutenção). 
-* O mais homogêneo foi o 284 (boa manutenção, apesar do estacionamento e prédio precisando de manutenção)
+    * Os pontos mais heterogêneos foram o 248 (boa manutenção x mais identificadores/prédios) e 190 (boa manutenção x prédio que precisa de manutenção). 
+    * O mais homogêneo foi o 284 (boa manutenção, apesar do estacionamento e prédio precisando de manutenção)
 8.  Foram encontrados os problemas? 
-* Apenas o 190 dos 4 pontos foi encontrado. A valorização da presença de árvores no final da rua pareceu não fazer um efeito tão alto em relação ao restante da rua. 
-* O 130 seria encontrado se continuássemos a olhar descontinuidades por lado. O 360 270 seria verificado se comparássemos a mesma visão dos dois lados da rua (e.g., olhando para a praça). 
+    * Apenas o 190 dos 4 pontos foi encontrado. A valorização da presença de árvores no final da rua pareceu não fazer um efeito tão alto em relação ao restante da rua. 
+    * O 130 seria encontrado se continuássemos a olhar descontinuidades por lado. O 360 270 seria verificado se comparássemos a mesma visão dos dois lados da rua (e.g., olhando para a praça). 
 9. O que é a rua? 
-* Rua homogênea, de mediana pra boa. Alguns pontos de variação podem ser percebidos relacionados a manutenção e identificadores.  O side1 parece ligeiramente melhor
+    * A nota média/mediana é boa ou ruim? De mediana para boa
+    * Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos. Variações parecem estar ligadas ao estado de manutenção e identificadores
+    * Existe um lado melhor? O side1 parece ligeiramente melhor
+    * Existe uma área melhor pior? Do 190 ao 248 parece ser a melhor área, e do 248 ao 284 a pior
 
 #Manoel Pereira
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
@@ -496,29 +518,32 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-* A rua em geral precisa de manutenção. 
-* Alguns pontos parecem ainda piores como o 222 angulo 22 (prédio acabado + itens na rua), 300 angulo 22 e 135 (barraca, itens na rua), 370 angulo 22, 203 e 315 (prédios acabados, barracas). 
-* Ausência de árvores de fato na rua.
+    * A rua em geral precisa de manutenção. 
+    * Alguns pontos parecem ainda piores como o 222 angulo 22 (prédio acabado + itens na rua), 300 angulo 22 e 135 (barraca, itens na rua), 370 angulo 22, 203 e 315 (prédios acabados, barracas). 
+    * Ausência de árvores de fato na rua.
 2. Melhor e pior local da rua: 
-* 222 p1 side2 (prédio mais conservado da sucata) 
-* 188 p1 side2 (prédio acabado, carros, itens na rua)
+    * 222 p1 side2 (prédio mais conservado da sucata) 
+    * 188 p1 side2 (prédio acabado, carros, itens na rua)
 3. Melhor e pior lado da rua:
-* Não fica claro
+    * Não fica claro
 4. Melhor e pior área da rua (considerando os dois lados): 
-* confuso!
+    * confuso!
 5. Áreas muito diferentes entre lados: 
-* 300 a 370 (um lado com alguns pontos melhor conservados, o outro lado com mais variação); 
-* 222 a 300 (um lado com alguns pontos melhor conservados, o outro lado com mais variação)
+    * 300 a 370 (um lado com alguns pontos melhor conservados, o outro lado com mais variação); 
+    * 222 a 300 (um lado com alguns pontos melhor conservados, o outro lado com mais variação)
 6. Descontinuidades no mesmo lado: 
-* 188 side2, diferença de 0.4 -> manutenção um pouco melhor
-* 222 side2, diferença de 0.4 -> manutenção de prédios e mais itens na rua na imagem menos preferida
-* 370 side1, diferença de 0.6 -> pequena variação de manutenção, menos itens na rua na imagem preferida
+    * 188 side2, diferença de 0.4 -> manutenção um pouco melhor
+    * 222 side2, diferença de 0.4 -> manutenção de prédios e mais itens na rua na imagem menos preferida
+    * 370 side1, diferença de 0.6 -> pequena variação de manutenção, menos itens na rua na imagem preferida
 7. Heterogeneidade/Homogeneidade no ponto: 
-* Os pontos mais heterogêneos foram o 370 (manutenção um pouco melhor em alguns locais e menos itens na rua) e o 188 (manutenção um pouco melhor em alguns locais). 
-* O ponto mais homogêneo foi o 392 (melhor manutenção em média dos prédios)
+    * Os pontos mais heterogêneos foram o 370 (manutenção um pouco melhor em alguns locais e menos itens na rua) e o 188 (manutenção um pouco melhor em alguns locais). 
+    * O ponto mais homogêneo foi o 392 (melhor manutenção em média dos prédios)
 8. Foram encontrados os problemas? 
-* Olhando as diferenças entre lados englobamos os números 222, 300 e 370. 
-* Olhando as maiores descontinuidades aparentes englobamos 222 e 370. 
-* Como a rua toda praticamente não tem árvores fica difícil pesar este aspecto dado a pobreza de manutenção, todavia a imagem 370 315 apesar de péssima manutenção e barracas/itens na rua teve uma nota melhor que outros locais e as árvores foram marcadas junto com o céu.
+    * Olhando as diferenças entre lados englobamos os números 222, 300 e 370. 
+    * Olhando as maiores descontinuidades aparentes englobamos 222 e 370. 
+    * Como a rua toda praticamente não tem árvores fica difícil pesar este aspecto dado a pobreza de manutenção, todavia a imagem 370 315 apesar de péssima manutenção e barracas/itens na rua teve uma nota melhor que outros locais e as árvores foram marcadas junto com o céu.
 9. O que é a rua? 
-* Rua homogênea de notas baixas, porém com alguns pontos que se destacam positivamente por ter uma melhor manutenção ou menos itens na rua e outros que se destacam negativamente por terem manutenção ainda pior e/ou mais itens na rua. Um lado não parece se destacar do outro.
+    * A nota média/mediana é boa ou ruim? De mediana para ruim, com notas baixas
+    * Existe muita variação? Rua mais homogênea, com alguns pontos que se destacam positivamente por ter uma melhor manutenção ou menos itens na rua e outros que se destacam negativamente por terem manutenção ainda pior e/ou mais itens na rua
+    * Existe um lado melhor? Não
+    * Existe uma área melhor pior? Não

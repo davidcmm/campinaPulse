@@ -439,7 +439,17 @@ def evaluateAllVotes(lines, outputFileName, amountOfSamples, tasksDefinitions, p
 	output = open(outputFileName, 'w')
 	for question, qDic in allQScores.iteritems():
 		for photo, qscoreList in qDic.iteritems():
-			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8") + "\t" + str(numpy.mean(qscoreList))+"\t" + str(qscoreList).strip("[ ]").replace(",", "\t")+'\n')
+	output.close()
+
+	#Computing best-worst scores for maxDiff
+	output = open(outputFileName+"-maxdiff", 'w')
+	for question, qDic in allCounts.iteritems():
+		for photo, photo_counters in qDic.iteritems():
+			win_counter = photo_counters[0]
+			loss_counter = photo_counters[1]
+			app_counter = photo_counters[2]
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8") + "\t" + str((win_counter - loss_counter)*1.0/app_counter) +'\n')
 	output.close()
 
 

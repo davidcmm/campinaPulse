@@ -250,11 +250,22 @@ create_model_wo_profile = function(the_data){
 create_random_model_w_interact = function(the_data, optimizer_to_use=""){
   if ( nchar(optimizer_to_use) == 0 ){
     return( glmer( choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid + bair_cat + 
-      city:(d_swidth + d_sidewalk + d_trees + d_lands + d_bid) + (1|userID), data = the_data, family=binomial() ) )
+      city:(d_swidth + d_sidewalk + d_trees + d_lands + d_bid + bair_cat) + (1|userID), data = the_data, family=binomial() ) )
     
   }else{
     return( glmer( choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid + bair_cat + 
       city:(d_swidth + d_sidewalk + d_trees + d_lands + d_bid) + (1|userID), data = the_data, family=binomial(), control = glmerControl(optimizer=c(optimizer_to_use) ) ) )#optimizers="bobyqa", "Nelder_Mead"
+  }
+}
+
+create_random_model_wo_interact = function(the_data, optimizer_to_use=""){
+  if ( nchar(optimizer_to_use) == 0 ){
+    return( glmer( choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid + bair_cat + 
+      + (1|userID), data = the_data, family=binomial() ) )
+    
+  }else{
+    return( glmer( choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid + bair_cat + 
+      + (1|userID), data = the_data, family=binomial(), control = glmerControl(optimizer=c(optimizer_to_use) ) ) )#optimizers="bobyqa", "Nelder_Mead"
   }
 }
 
@@ -286,6 +297,9 @@ logLik(agrad_intercept_user_ns)*-2
 agrad_random_user_nscaled <- create_random_model_w_interact(agrad_nscaled, "")
 summary(agrad_random_user_nscaled)
 
+agrad_random_wo_user_nscaled <- create_random_model_wo_interact(agrad_nscaled, "")
+summary(agrad_random_wo_user_nscaled)
+
 #Scaled
 agrad_intercept <- create_model_only_int(agrad_scaled)
 agrad_intercept_user <- create_model_only_int_random(agrad_scaled)
@@ -305,6 +319,9 @@ ctab <- cbind(est=fixef(agrad_random_user), cc)
 rtab <- exp(ctab)
 print(rtab, digits=3)
 computePseudoR2(baselineModel = agrad_intercept_user, completeModel = agrad_random_user)
+
+agrad_random_wo_user_scaled <- create_random_model_wo_interact(agrad_scaled, "")
+summary(agrad_random_wo_user_scaled)
 
 relagrad <- with(agrad_random_user@optinfo$derivs,solve(Hessian,gradient))#Testing convergence
 max(abs(relagrad))

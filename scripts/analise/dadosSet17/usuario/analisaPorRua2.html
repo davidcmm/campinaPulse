@@ -20,8 +20,8 @@
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="analisaPorRua2_files/navigation-1.1/tabsets.js"></script>
-<link href="analisaPorRua2_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="analisaPorRua2_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="analisaPorRua2_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="analisaPorRua2_files/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -30,12 +30,10 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
 }
 </script>
 
@@ -126,20 +124,36 @@ $(document).ready(function () {
 <p>Ações a fazer/Discussão:</p>
 <ul>
 <li>O número da rua indica o que? Metros? <a href="http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf" class="uri">http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf</a></li>
-<li>Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?</li>
-<li>Representação em gráfico de duas linhas (dois lados) x mediana x média da rua -&gt; áreas abaixo e acima + interseção de marcações</li>
+<li>Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
+<ul>
+<li>Anomalias? <a href="https://www.datascience.com/blog/python-anomaly-detection" class="uri">https://www.datascience.com/blog/python-anomaly-detection</a></li>
+<li>Derivadas, máximos e mínimos locais? Pacote features do R?</li>
 <li>O que um especialista diria de útil na análise</li>
-<li>Treinado x pessoas respondendo? Vantagens e desvantagens?</li>
+</ul></li>
+<li>Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?</li>
 </ul>
 <p>De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.</p>
-<pre><code>##    labels      edesio      inacio      maciel      manoel    floriano
-## 1    Gini 0.057674434 0.053160138 0.032776750 0.029203575 0.038041410
-## 2 Entropy 0.005207376 0.004667139 0.001702221 0.001390847 0.002341453
-## 3      SD 0.494679876 0.474938832 0.287567208 0.197150047 0.350922975
-##      cristina
-## 1 0.064517317
-## 2 0.009060597
-## 3 0.639710128</code></pre>
+<pre><code>##   labels variable      value
+## 1   Gini cristina 0.06451732
+## 2   Gini   edesio 0.05767443
+## 3   Gini   inacio 0.05316014
+## 4   Gini floriano 0.03804141
+## 5   Gini   maciel 0.03277675
+## 6   Gini   manoel 0.02920358</code></pre>
+<pre><code>##    labels variable       value
+## 1 Entropy cristina 0.009060597
+## 2 Entropy   edesio 0.005207376
+## 3 Entropy   inacio 0.004667139
+## 4 Entropy floriano 0.002341453
+## 5 Entropy   maciel 0.001702221
+## 6 Entropy   manoel 0.001390847</code></pre>
+<pre><code>##   labels variable     value
+## 1     SD cristina 0.6397101
+## 2     SD   edesio 0.4946799
+## 3     SD   inacio 0.4749388
+## 4     SD floriano 0.3509230
+## 5     SD   maciel 0.2875672
+## 6     SD   manoel 0.1971500</code></pre>
 <p>O que procurar?</p>
 <ol style="list-style-type: decimal">
 <li>Ponto mais heterogeneo/homogeneo</li>
@@ -154,11 +168,12 @@ $(document).ready(function () {
 <h1>Cristina Procópio</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua: &quot;</code></pre>
 <pre><code>## [1] 0.06451732</code></pre>
-<pre><code>## [1] &quot;Número 2 0.0256192164248497&quot;
-## [1] &quot;Número 66 0.0303442708640982&quot;
-## [1] &quot;Número 261 0.023746174384649&quot;
-## [1] &quot;Número 305 0.111938737021024&quot;
-## [1] &quot;Número 436 0.0510636557713389&quot;</code></pre>
+<pre><code>##   num      value
+## 1 305 0.11193874
+## 2 436 0.05106366
+## 3  66 0.03034427
+## 4   2 0.02561922
+## 5 261 0.02374617</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-4-1.png" width="1152" /></p>
 <table>
@@ -337,25 +352,25 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_45' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_45' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_45 -&gt; 4.794746
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_135 -&gt; 5.075437
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_225' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_225 -&gt; 5.09369
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_293 -&gt; 4.521649
 </div>
@@ -364,25 +379,25 @@ $(document).ready(function () {
 ####### Sumário do Número 2 : Max. 5.09369 Min: 4.521649 Diff: 0.5720413
 <div class="row">
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_45' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_45' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_45 -&gt; 5.498587
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_135 -&gt; 4.753867
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_225 -&gt; 5.597781
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_315 -&gt; 5.445511
 </div>
@@ -391,25 +406,25 @@ $(document).ready(function () {
 ####### Sumário do Número 66 : Max. 5.597781 Min: 4.753867 Diff: 0.8439133
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_22 -&gt; 5.146898
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_135 -&gt; 4.814955
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_225' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_225 -&gt; 5.243109
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_315 -&gt; 5.436423
 </div>
@@ -418,25 +433,25 @@ $(document).ready(function () {
 ####### Sumário do Número 261 : Max. 5.436423 Min: 4.814955 Diff: 0.6214681
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_45' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_45' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_45 -&gt; 4.79437
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#000000">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_135 -&gt; 3.04297
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_225' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_225 -&gt; 3.835359
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_293 -&gt; 5.248873
 </div>
@@ -445,25 +460,25 @@ $(document).ready(function () {
 ####### Sumário do Número 305 : Max. 5.248873 Min: 3.04297 Diff: 2.205903
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_22 -&gt; 5.1949
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_135 -&gt; 5.390811
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_203 -&gt; 4.121735
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_315 -&gt; 5.427303
 </div>
@@ -525,11 +540,12 @@ $(document).ready(function () {
 <div id="edesio-silva" class="section level1">
 <h1>Edésio Silva</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0576744342800989&quot;</code></pre>
-<pre><code>## [1] &quot;Número 70 0.0706647608784143&quot;
-## [1] &quot;Número 306 0.0226002778093226&quot;
-## [1] &quot;Número 602 0.0526592041256655&quot;
-## [1] &quot;Número 1136 0.0347163267782535&quot;
-## [1] &quot;Número 1546 0.0054140035393464&quot;</code></pre>
+<pre><code>##    num       value
+## 1   70 0.070664761
+## 2  602 0.052659204
+## 3 1136 0.034716327
+## 4  306 0.022600278
+## 5 1546 0.005414004</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-6-1.png" width="1152"  /></p>
 <table>
@@ -708,52 +724,52 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_70_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_22 -&gt; 5.459569
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_70_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_135 -&gt; 3.881736
+../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_135 -&gt; 3.881736
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_70_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_203 -&gt; 4.444845
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_70_315' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_315 -&gt; 4.117668
+../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_315 -&gt; 4.117668
 </div>
 </div>
 </div>
 ####### Sumário do Número 70 : Max. 5.459569 Min: 3.881736 Diff: 1.577833
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_306_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_22 -&gt; 4.993888
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_306_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_135 -&gt; 4.748159
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_306_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_203 -&gt; 5.316674
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_306_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_315 -&gt; 4.895543
 </div>
@@ -762,25 +778,25 @@ $(document).ready(function () {
 ####### Sumário do Número 306 : Max. 5.316674 Min: 4.748159 Diff: 0.5685142
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_22 -&gt; 5.125127
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_135 -&gt; 4.537421
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_203 -&gt; 4.276371
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_315 -&gt; 5.441191
 </div>
@@ -789,25 +805,25 @@ $(document).ready(function () {
 ####### Sumário do Número 602 : Max. 5.441191 Min: 4.276371 Diff: 1.164819
 <div class="row">
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1136_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_22 -&gt; 4.061773
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1136_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_135 -&gt; 4.508766
+../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_135 -&gt; 4.508766
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1136_203' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_203 -&gt; 4.16565
+../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_203 -&gt; 4.16565
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1136_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1136_315 -&gt; 4.75714
 </div>
@@ -816,25 +832,25 @@ $(document).ready(function () {
 ####### Sumário do Número 1136 : Max. 4.75714 Min: 4.061773 Diff: 0.6953668
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_22 -&gt; 5.153065
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_135' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_135 -&gt; 5.20079
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_203 -&gt; 5.114107
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_315 -&gt; 5.247739
 </div>
@@ -900,11 +916,12 @@ $(document).ready(function () {
 <div id="inacio-marques" class="section level1">
 <h1>Inácio Marques</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0531601377276022&quot;</code></pre>
-<pre><code>## [1] &quot;Número 54 0.059452874200673&quot;
-## [1] &quot;Número 120 0.0486691616244079&quot;
-## [1] &quot;Número 239 0.0096569868918992&quot;
-## [1] &quot;Número 360 0.030864204443148&quot;
-## [1] &quot;Número 500 0.00481726095111701&quot;</code></pre>
+<pre><code>##   num       value
+## 1  54 0.059452874
+## 2 120 0.048669162
+## 3 360 0.030864204
+## 4 239 0.009656987
+## 5 500 0.004817261</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-8-1.png" width="1152"  /></p>
 <table>
@@ -1083,79 +1100,79 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_22 -&gt; 5.22581
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_112 -&gt; 5.056521
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_203' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_203 -&gt; 4.395569
+../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_203 -&gt; 4.395569
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_293' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_293 -&gt; 3.968053
+../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_293 -&gt; 3.968053
 </div>
 </div>
 </div>
 ####### Sumário do Número 54 : Max. 5.22581 Min: 3.968053 Diff: 1.257757
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_22 -&gt; 5.337336
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_112 -&gt; 5.18149
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_203 -&gt; 4.148817
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_293' width='300px'>
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_293.jpg' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_293 -&gt; 5.39904
+<a href="https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_293.jpg" class="uri">https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_120_293.jpg</a> -&gt; 5.39904
 </div>
 </div>
 </div>
 ####### Sumário do Número 120 : Max. 5.39904 Min: 4.148817 Diff: 1.250223
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_22 -&gt; 5.32549
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_90 -&gt; 5.404294
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_203 -&gt; 5.155989
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_270 -&gt; 5.253824
 </div>
@@ -1164,25 +1181,25 @@ $(document).ready(function () {
 ####### Sumário do Número 239 : Max. 5.404294 Min: 5.155989 Diff: 0.2483044
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_22 -&gt; 5.165576
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_90 -&gt; 4.50627
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_203 -&gt; 4.681429
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_270 -&gt; 5.105879
 </div>
@@ -1191,27 +1208,27 @@ $(document).ready(function () {
 ####### Sumário do Número 360 : Max. 5.165576 Min: 4.50627 Diff: 0.6593053
 <div class="row">
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_22 -&gt; 4.343081
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_90 -&gt; 4.425882
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_203 -&gt; 4.340677
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_270' width='300px'>
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_270.jpg' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_500_270 -&gt; 4.425348
+<a href="https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_270.jpg" class="uri">https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_500_270.jpg</a> -&gt; 4.425348
 </div>
 </div>
 </div>
@@ -1272,11 +1289,12 @@ $(document).ready(function () {
 <div id="floriano-peixoto" class="section level1">
 <h1>Floriano peixoto</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0380414099374088&quot;</code></pre>
-<pre><code>## [1] &quot;Número 445 0.0324016617918168&quot;
-## [1] &quot;Número 549 0.0366599777162926&quot;
-## [1] &quot;Número 691 0.0124170056115485&quot;
-## [1] &quot;Número 813 0.0145295659569444&quot;
-## [1] &quot;Número 913 0.0407823104028531&quot;</code></pre>
+<pre><code>##   num      value
+## 1 913 0.04078231
+## 2 549 0.03665998
+## 3 445 0.03240166
+## 4 813 0.01452957
+## 5 691 0.01241701</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-10-1.png" width="1152"  /></p>
 <table>
@@ -1455,25 +1473,25 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_22 -&gt; 5.402592
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112 -&gt; 5.400026
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_203 -&gt; 4.849774
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_293 -&gt; 4.706462
 </div>
@@ -1482,25 +1500,25 @@ $(document).ready(function () {
 ####### Sumário do Número 445 : Max. 5.402592 Min: 4.706462 Diff: 0.6961303
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_22 -&gt; 4.937479
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112 -&gt; 5.241308
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203 -&gt; 5.622123
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_293 -&gt; 4.720323
 </div>
@@ -1509,25 +1527,25 @@ $(document).ready(function () {
 ####### Sumário do Número 549 : Max. 5.622123 Min: 4.720323 Diff: 0.9018009
 <div class="row">
 <div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22 -&gt; 5.522711
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_112 -&gt; 5.320523
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_203 -&gt; 5.176836
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_293 -&gt; 5.299257
 </div>
@@ -1536,25 +1554,25 @@ $(document).ready(function () {
 ####### Sumário do Número 691 : Max. 5.522711 Min: 5.176836 Diff: 0.3458745
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_22 -&gt; 4.855551
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112 -&gt; 5.187819
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_203 -&gt; 4.883455
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_293 -&gt; 5.047525
 </div>
@@ -1563,25 +1581,25 @@ $(document).ready(function () {
 ####### Sumário do Número 813 : Max. 5.187819 Min: 4.855551 Diff: 0.3322681
 <div class="row">
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_913_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_22' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_913_22 -&gt; 4.464216
+../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_22 -&gt; 4.464216
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112 -&gt; 5.020493
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203 -&gt; 5.084641
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_913_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_913_293' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_913_293 -&gt; 4.246906
 </div>
@@ -1641,11 +1659,12 @@ $(document).ready(function () {
 <div id="maciel-pinheiro" class="section level1">
 <h1>Maciel Pinheiro</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0327767504596409&quot;</code></pre>
-<pre><code>## [1] &quot;Número 130 0.0224107996078886&quot;
-## [1] &quot;Número 190 0.0356993971485202&quot;
-## [1] &quot;Número 248 0.0365423796145339&quot;
-## [1] &quot;Número 284 0.0200410010210863&quot;
-## [1] &quot;Número 360 0.0217660819750043&quot;</code></pre>
+<pre><code>##   num      value
+## 1 248 0.03654238
+## 2 190 0.03569940
+## 3 130 0.02241080
+## 4 360 0.02176608
+## 5 284 0.02004100</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-12-1.png" width="1152"  /></p>
 <table>
@@ -1824,52 +1843,52 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90 -&gt; 5.167156
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_180' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_180' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_180 -&gt; 5.024561
+../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_180 -&gt; 5.024561
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_270 -&gt; 4.75477
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_360' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_360' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_360 -&gt; 4.670898
+../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_360 -&gt; 4.670898
 </div>
 </div>
 </div>
 ####### Sumário do Número 130 : Max. 5.167156 Min: 4.670898 Diff: 0.4962581
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90 -&gt; 5.056711
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_180' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_190_180' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_180 -&gt; 4.234283
+../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_190_180 -&gt; 4.234283
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270 -&gt; 5.132187
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360 -&gt; 5.140332
 </div>
@@ -1878,25 +1897,25 @@ $(document).ready(function () {
 ####### Sumário do Número 190 : Max. 5.140332 Min: 4.234283 Diff: 0.9060486
 <div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90 -&gt; 5.14329
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180 -&gt; 5.23231
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_270 -&gt; 4.745852
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_360' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_360' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_360 -&gt; 4.413008
 </div>
@@ -1905,52 +1924,52 @@ $(document).ready(function () {
 ####### Sumário do Número 248 : Max. 5.23231 Min: 4.413008 Diff: 0.8193015
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90 -&gt; 4.841157
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180 -&gt; 5.01771
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_284_270' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_270 -&gt; 4.529582
+../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_284_270 -&gt; 4.529582
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_360' width='300px'>
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_360.jpg' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_360 -&gt; 4.925018
+<a href="https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_360.jpg" class="uri">https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_284_360.jpg</a> -&gt; 4.925018
 </div>
 </div>
 </div>
 ####### Sumário do Número 284 : Max. 5.01771 Min: 4.529582 Diff: 0.488128
 <div class="row">
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_90' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_90' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_90 -&gt; 4.695433
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_180' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_180' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_180 -&gt; 4.583014
+../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_180 -&gt; 4.583014
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_270' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_270 -&gt; 4.494353
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360 -&gt; 5.001745
 </div>
@@ -2014,11 +2033,12 @@ $(document).ready(function () {
 <div id="manoel-pereira" class="section level1">
 <h1>Manoel Pereira</h1>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0292035753018673&quot;</code></pre>
-<pre><code>## [1] &quot;Número 188 0.0291357295718799&quot;
-## [1] &quot;Número 222 0.026588597922482&quot;
-## [1] &quot;Número 300 0.0244804553312614&quot;
-## [1] &quot;Número 370 0.0321046250844108&quot;
-## [1] &quot;Número 392 0.018781510249541&quot;</code></pre>
+<pre><code>##   num      value
+## 1 370 0.03210463
+## 2 188 0.02913573
+## 3 222 0.02658860
+## 4 300 0.02448046
+## 5 392 0.01878151</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-14-1.png" width="1152"  /></p>
 <table>
@@ -2197,79 +2217,79 @@ $(document).ready(function () {
 </table>
 <div class="row">
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_22' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_22 -&gt; 3.83952
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_22 -&gt; 3.83952
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_135 -&gt; 3.638034
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_135 -&gt; 3.638034
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_203 -&gt; 3.283834
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_315' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_188_315 -&gt; 3.628099
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_315 -&gt; 3.628099
 </div>
 </div>
 </div>
 ####### Sumário do Número 188 : Max. 3.83952 Min: 3.283834 Diff: 0.5556861
 <div class="row">
 <div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_22 -&gt; 3.497591
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_22 -&gt; 3.497591
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_135 -&gt; 3.676951
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_135 -&gt; 3.676951
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_203' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_203 -&gt; 3.992773
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_203 -&gt; 3.992773
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_222_315 -&gt; 3.592702
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_315 -&gt; 3.592702
 </div>
 </div>
 </div>
 ####### Sumário do Número 222 : Max. 3.992773 Min: 3.497591 Diff: 0.4951812
 <div class="row">
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_22' width='300px'>
+<img src='https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_22.jpg' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_22 -&gt; 3.614718
+<a href="https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_22.jpg" class="uri">https://contribua.org/bairros/norte/centro/R._Manoel_Pereira_de_Araújo_300_22.jpg</a> -&gt; 3.614718
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_135 -&gt; 3.305779
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_135 -&gt; 3.305779
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_203' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_203 -&gt; 3.746254
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_203 -&gt; 3.746254
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_300_315 -&gt; 3.700124
 </div>
@@ -2278,54 +2298,54 @@ $(document).ready(function () {
 ####### Sumário do Número 300 : Max. 3.746254 Min: 3.305779 Diff: 0.4404747
 <div class="row">
 <div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='300px'>
 <div class="caption" style="color:white">
 ../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_22 -&gt; 3.367666
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_135' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_135 -&gt; 3.978157
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_135 -&gt; 3.978157
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_203' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_203 -&gt; 3.676955
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_203 -&gt; 3.676955
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_370_315 -&gt; 3.627112
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_315 -&gt; 3.627112
 </div>
 </div>
 </div>
 ####### Sumário do Número 370 : Max. 3.978157 Min: 3.367666 Diff: 0.6104911
 <div class="row">
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_22' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_22 -&gt; 3.677024
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_22 -&gt; 3.677024
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_112' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_112' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_112 -&gt; 3.862603
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_112 -&gt; 3.862603
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_225 -&gt; 3.560585
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_225 -&gt; 3.560585
 </div>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_293' width='300px'>
 <div class="caption" style="color:white">
-../percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Araújo_392_293 -&gt; 3.873702
+../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_293 -&gt; 3.873702
 </div>
 </div>
 </div>

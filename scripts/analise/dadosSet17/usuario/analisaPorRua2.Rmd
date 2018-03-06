@@ -18,6 +18,7 @@ library("ineq")
 library(R.utils)
 library("knitr")
 library("spdep")
+library("reshape")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -60,8 +61,9 @@ Ações a fazer/Discussão:
 
 * O número da rua indica o que? Metros? http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf
 * Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
-- Representação em gráfico de duas linhas (dois lados) x mediana x média da rua -> áreas abaixo e acima + interseção de marcações
-- O que um especialista diria de útil na análise
+    * Anomalias? https://www.datascience.com/blog/python-anomaly-detection
+    * Derivadas, máximos e mínimos locais? Pacote features do R?
+    * O que um especialista diria de útil na análise
 * Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -199,7 +201,13 @@ De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discuss�
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
 inequalities <- data.frame( labels=c("Gini", "Entropy", "SD"), edesio=c(ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Edésio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Edésio_Silva")$qscore)), inacio=c(ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Inácio_Marquês_da_Silva")$qscore)), maciel=c(ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Maciel_Pinheiro")$qscore, type="entropy"), sd(filter(all_data, street == "R._Maciel_Pinheiro")$qscore)), manoel=c(ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore, type="entropy"), sd(filter(all_data, street == "R._Manoel_Pereira_de_Araújo")$qscore)), floriano=c(ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="Gini"), ineq(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore, type="entropy"), sd(filter(all_data, street == "Av._Mal._Floriano_Peixoto")$qscore)), cristina= c(ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="Gini"), ineq(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore, type="entropy"), sd(filter(all_data, street == "R._Cristina_Procópio_Silva")$qscore)) )
 
-inequalities
+gini <- melt(filter(inequalities, labels=="Gini"), id=c("labels"))
+entropy <- melt(filter(inequalities, labels=="Entropy"), id=c("labels"))
+SD <- melt(filter(inequalities, labels=="SD"), id=c("labels"))
+
+arrange(gini, desc(value))
+arrange(entropy, desc(value))
+arrange(SD, desc(value))
 ```
 
 O que procurar?
@@ -223,9 +231,11 @@ cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_
 
 print(">>> GINI da rua: ")
 ineq(cristina$qscore, type="Gini")
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(cristina$num)){
-  print(paste("Número", value, ineq(filter(cristina, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(cristina, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
@@ -315,9 +325,11 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
 print(paste(">>> GINI da rua: ", ineq(edesio$qscore, type="Gini")))
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(edesio$num)){
-  print(paste("Número", value, ineq(filter(edesio, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(edesio, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -365,9 +377,11 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
 print(paste(">>> GINI da rua: ", ineq(inacio$qscore, type="Gini")))
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(inacio$num)){
-  print(paste("Número", value, ineq(filter(inacio, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(inacio, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -412,9 +426,11 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
 print(paste(">>> GINI da rua: ", ineq(floriano$qscore, type="Gini")))
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(floriano$num)){
-  print(paste("Número", value, ineq(filter(floriano, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(floriano, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -457,9 +473,11 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 maciel <- filter(all_data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
 print(paste(">>> GINI da rua: ", ineq(maciel$qscore, type="Gini")))
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(maciel$num)){
-  print(paste("Número", value, ineq(filter(maciel, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(maciel, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -505,9 +523,11 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
 print(paste(">>> GINI da rua: ", ineq(manoel$qscore, type="Gini")))
+gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(manoel$num)){
-  print(paste("Número", value, ineq(filter(manoel, num == value)$qscore, type="Gini")))
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(manoel, num == value)$qscore, type="Gini"))
 }
+arrange(gini, desc(value))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}

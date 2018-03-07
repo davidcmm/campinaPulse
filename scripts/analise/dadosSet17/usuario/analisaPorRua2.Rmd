@@ -57,12 +57,25 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 ```
 
-Ações a fazer/Discussão:
+Alguns pontos importantes:
 
 * O número da rua indica o que? Metros? http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf
 * Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
     * Anomalias? https://www.datascience.com/blog/python-anomaly-detection
     * Derivadas, máximos e mínimos locais? Pacote features do R?
+
+TO DO: 
+* Diferença de 80 no AIC/BIC é relevante? -> Stackexchange/CrossValidated
+* Jan Ghel + Brasília
+    * https://www.archdaily.com.br/br/876422/a-sindrome-de-brasilia-jan-gehl-tem-razao-sergio-ulisses-jatoba
+* Refinar o método
+    * Escrever os passos
+    * Aperfeiçoar visualização (diferença entre linhas?)
+* Gerar mais pontos nas ruas mais heterogêneas?
+    * Cristina e Inácio?
+* Qual o nível de incerteza nos pontos?
+    * Surprise Maps? https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865
+* Avaliar o mínimo de respostas necessárias?
 * O que um especialista diria de útil na análise
 * Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
 
@@ -247,6 +260,8 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
     step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
     thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
     
+    median_value <- median(all_data$qscore)
+    cat(paste("++++++ Median ", median_value))
     cat("<div class='row'>")
     angleData = c()
     for(i in 1:nrow(current_df)) {
@@ -264,17 +279,32 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
          color_index <- length(color_space)
       }
       
+      folder <- "none"
+      if (score >= median_value){
         if (file.exists(paste(best_folder, photo_name, sep=""))){
-        url <- paste(best_folder, photo_name, sep="")
-      }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
-        url <- paste(worst_folder, photo_name, sep="")
+          url <- paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else{
+           url <- as.character(row$url)
+        }
       }else{
-         url <- as.character(row$url)
+        if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else{
+           url <- as.character(row$url)
+        }
       }
       
       cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
       cat("<img src='", url,"' width='300px'>", sep = "")
-      cat("<div class='caption' style=\"color:white\">", url, " -> ", score,  "</div>", sep="")
+      cat("<p style=\"color:white;font-size:90%\">", folder, "<br>", photo_name, "-> ", score,  "</p>", sep="")
       cat("</div>")
       if (i > 1 && i %% 4 == 0){
         cat("</div>")

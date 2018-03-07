@@ -63,7 +63,7 @@ Ações a fazer/Discussão:
 * Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
     * Anomalias? https://www.datascience.com/blog/python-anomaly-detection
     * Derivadas, máximos e mínimos locais? Pacote features do R?
-    * O que um especialista diria de útil na análise
+* O que um especialista diria de útil na análise
 * Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
@@ -290,6 +290,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
+    * 2 side1 (terreno com lixo)
     * 305 side2 (lixo, pouca manutenção)
     * 436 side2 203 (construção/menor manutenção) 
 2. Melhor e pior local da rua: 
@@ -311,7 +312,8 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
     * os pontos mais heterogêneros foram o 305 (lixo, falta de manutenção) e 436 (falta de manuteção, verde aparente). 
     * o mais homogêneo foi o 261 que é um ponto bem mantido e com verde
 8. Foram encontrados os problemas? 
-    * Os dois pontos foram encontrados. Tanto no número 305 como no 436, dentre os pontos avaliados, pôde-se perceber locais que necessitam de melhoria na rua.
+    * Dois (305 e 436) dos três pontos foram encontrados. Tanto no número 305 como no 436, dentre os pontos avaliados, pôde-se perceber locais que necessitam de melhoria na rua.
+    * O ponto 2 seria encontrado se seguissemos a lista de heterogeneidade (2 mais homogeneo) ou se avaliassemos diferenças entre os dois lados por ponto (complicado em vários casos).
     * Além disso, no ponto 66 sugere-se uma melhoria com um pouco mais de verde de modo a homogenizar ainda mais o ponto.
 9. O que é a rua?
     * A nota média/mediana é boa ou ruim? De mediana para boa
@@ -341,8 +343,8 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-    * 70 side1 135 (construção, menor manutenção) e side2 315 (menor manutenção); 
-    * 602 side 203 (lixão); 
+    * 70 side1 135 (construção, menor manutenção, lixo) e side2 315 (menor manutenção), 203 (um pouco de lixo e menor manutenção); 
+    * 602 side 203 (terreno com muito lixo); 
     * 1136 todos os lados (pouca manutenção, lixo, terrenos);
 2. Melhor e pior local da rua: 
     * 602 p2 side2 
@@ -364,8 +366,8 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
     * os pontos mais heterogêneos foram o 70 (construção, menor manutenção x melhor manutenção e algum verde) e 602 (menor manutenção, lixão x melhor manutenção, verde)
     * o ponto mais homogêneo foi o 1546, é bem mantido e com alguma vegetação.
 8. Foram encontrados os problemas? 
-    * O número 70 side2 315, e o número 1136 no side não foram apontados dentre os 4 problemas levantados. 
-    * O 70 side2 315 seria encontrado se continuássemos varrendo a lista de piores scores (3 pior nota), o 1136 seria encontrado (diferença de 0.45) se continuássemos olhando as descontinuidades no mesmo lado da rua ou as piores notas (2 pior nota)
+    * O número 1136 no side1 não foi apontado dentre os 5 problemas levantados. 
+    * O 1136 seria encontrado (diferença de 0.45) se continuássemos olhando as descontinuidades no mesmo lado da rua ou as piores notas (2 pior nota)
 9. O que é a rua? 
     * A nota média/mediana é boa ou ruim? De mediana para boa
     * Existe muita variação?  Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
@@ -394,7 +396,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 
 1. Locais problemáticos na rua (olhando as fotos): 
     * 54 angulos 203 e 293 (falta de manutenção e verde); 
-    * 120 angulo 203 (falta de manutenção e verde); 
+    * 120 angulo 203 (falta de manutenção, lixo e verde); 
     * 360 angulos 90 e 203 (terreno); 
     * todo o número 500 
 2. Melhor e pior local da rua: 
@@ -415,7 +417,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
     * o mais homogêneo foi o 500 (pouca manutenção, muros, terrenos)  
 8. Foram encontrados os problemas? 
     * Dos 4 pontos levantados o 360 não foi percebido pelas perguntas acima. 
-    * Se olhássemos o terceiro ponto mais heterogêneo encontraríamos o problema do ponto 360 (menor diferença de 0.4) ou como os pontos de cada lado tem notas parecidas se olhássemos diferenças entre áreas após a diferença que foi discutida acima. 
+    * Se olhássemos o terceiro ponto mais heterogêneo encontraríamos o problema do ponto 360 (menor diferença de 0.4) ou como os pontos de cada lado tem notas parecidas se olhássemos diferenças entre lados no ponto. 
 9. O que é a rua? 
     * A nota média/mediana é boa ou ruim? De mediana para boa
     * Existe muita variação?  Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
@@ -441,8 +443,9 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
-    * 813 angulos 22 (manutenção); 
-    * 913 angulo 293 (identidade visual)
+    * 549 angulo 22 (manutenção no prédio)
+    * 813 angulos 22 (manutenção no telegrafo/histórico) 
+    * 913 angulo 203 (manutenção prédio amarelo)
 2. Melhor e pior local da rua: 
     * 549 p2 side2 (muito verde bem mantido, praça) 
     * 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
@@ -460,7 +463,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
     * os pontos mais heterogêneos foram o 913 (visual das lojas?) e 549 (praça, verde x estacionamento, prédio). 
     * O mais homogênero foi o 691 (prédios até bem mantidos com algumas árvores)
 8. Foram encontrados os problemas? 
-    * O ponto 813 dos dois apontados não foi percebido. 
+    * O ponto 813 dos 3 apontados não foi percebido. 
     * Se olhássemos outras descontinuidades no mesmo lado acabaríamos chegando nessa comparação apesar da baixa diferença de 0.2.
 9. O que é a rua? 
     * A nota média/mediana é boa ou ruim? De mediana para boa
@@ -492,7 +495,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * 190 angulo 180 (manutenção de prédio); 
     * 284 360 (manutenção de prédio); 
     * 360 270 (manutenção de prédio). 
-    * Não existem árvores na rua.
+    * Não existem árvores na rua?
 2. Melhor e pior local da rua: 
     * 248 angulo 180 (boa manutenção)
     * 190 180 (manutenção de prédio faltando)
@@ -511,8 +514,10 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * Os pontos mais heterogêneos foram o 248 (boa manutenção x mais identificadores/prédios) e 190 (boa manutenção x prédio que precisa de manutenção). 
     * O mais homogêneo foi o 284 (boa manutenção, apesar do estacionamento e prédio precisando de manutenção)
 8.  Foram encontrados os problemas? 
-    * Apenas o 190 dos 4 pontos foi encontrado. A valorização da presença de árvores no final da rua pareceu não fazer um efeito tão alto em relação ao restante da rua. 
-    * O 130 seria encontrado se continuássemos a olhar descontinuidades por lado. O 360 270 seria verificado se comparássemos a mesma visão dos dois lados da rua (e.g., olhando para a praça). 
+    * Apenas o 190 dos 4 pontos foi encontrado. 
+    * A valorização da presença de árvores no final da rua pareceu não fazer um efeito tão alto em relação ao restante da rua. 
+    * O 130 seria encontrado se continuássemos a olhar descontinuidades por lado. 
+    * O 360 270 seria verificado se olhando para a praça comparássemos. 
 9. O que é a rua? 
     * A nota média/mediana é boa ou ruim? De mediana para boa
     * Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos. Variações parecem estar ligadas ao estado de manutenção e identificadores
@@ -567,3 +572,14 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
     * Existe muita variação? Rua mais homogênea, com alguns pontos que se destacam positivamente por ter uma melhor manutenção ou menos itens na rua e outros que se destacam negativamente por terem manutenção ainda pior e/ou mais itens na rua
     * Existe um lado melhor? Não
     * Existe uma área melhor pior? Não
+  
+#Novas Ideias que não foram consideradas
+
+* Olhar a diferença entre os lados da rua por ponto? 
+    * Acharia 2 problemas não encontrados
+* Olhar a favor/contra carros e comparar os scores?
+    * Acharia 1 problema não encontrado
+    
+#Descartar/Alterar?
+
+* Melhor e pior área por lado ao invés de melhor e pior área da rua?

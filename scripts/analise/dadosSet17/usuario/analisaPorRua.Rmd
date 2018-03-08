@@ -15,6 +15,7 @@ library("texreg")
 library("ineq")
 library(R.utils)
 library("reshape")
+library("nonnest2")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -677,6 +678,9 @@ print(summary(agrad_random_user_nscaled))
 agrad_random_wo_user_nscaled <- create_random_model_wo_interact(agrad_nscaled, "")
 print("Random Effects without user moderation not scaled")
 print(summary(agrad_random_wo_user_nscaled))
+
+vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)
+icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled, conf.level = 0.95)
 
 computePseudoR2(baselineModel = agrad_intercept_user_ns, completeModel = agrad_random_user_nscaled)
 

@@ -227,8 +227,8 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   
   labels_to_show <- select(filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
-  g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
-  
+  #g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
+  g2 <- ggplot(data, aes(x=num, y=surprise, size=3)) + geom_point(aes(colour = surprise)) + scale_colour_continuous(low="red", high="green")
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
 #     x <-x[order(x$num), ]
@@ -258,7 +258,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
 #     
 #       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
   
-  multiplot(g1, cols=1)
+  multiplot(g1, g2, cols=1)
   return (mapping)
 }
 
@@ -278,6 +278,9 @@ SD <- melt(filter(inequalities, labels=="SD"), id=c("labels"))
 arrange(gini, desc(value))
 arrange(entropy, desc(value))
 arrange(SD, desc(value))
+
+
+surprise <- read.csv("~/workspace_doutorado/bayesian-surprise-master/Demo/surprise_data.csv")
 ```
 
 O que procurar?
@@ -298,6 +301,7 @@ best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 
 cristina <- filter(all_data, street == "R._Cristina_Procópio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+cristina$surprise <- melt(filter(surprise, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 
 print(">>> GINI da rua: ")
 ineq(cristina$qscore, type="Gini")
@@ -413,6 +417,8 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 edesio <- filter(all_data, street == "R._Edésio_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+edesio$surprise <- melt(filter(surprise, street == "R._Edésio_Silva"), id.vars = "street")$value
+
 print(paste(">>> GINI da rua: ", ineq(edesio$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(edesio$num)){
@@ -465,6 +471,8 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 #Inácio Marques
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 inacio <- filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+inacio$surprise <- melt(filter(surprise, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+
 print(paste(">>> GINI da rua: ", ineq(inacio$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(inacio$num)){
@@ -514,6 +522,8 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 #Floriano peixoto
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 floriano <- filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+floriano$surprise <- melt(filter(surprise, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+
 print(paste(">>> GINI da rua: ", ineq(floriano$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(floriano$num)){
@@ -562,6 +572,8 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 #Maciel Pinheiro
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 maciel <- filter(all_data, street == "R._Maciel_Pinheiro") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+maciel$surprise <- melt(filter(surprise, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+
 print(paste(">>> GINI da rua: ", ineq(maciel$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(maciel$num)){
@@ -614,6 +626,8 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 #Manoel Pereira
 ```{r echo=FALSE, fig.height=10, fig.width=12, warning=FALSE}
 manoel <- filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% group_by(num) %>% arrange(street, num, angle) %>% select(url, photo_name, street, num, angle, qscore, V3, ci)
+manoel$surprise <- melt(filter(surprise, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+
 print(paste(">>> GINI da rua: ", ineq(manoel$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
 for (value in unique(manoel$num)){

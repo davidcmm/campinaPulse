@@ -128,6 +128,25 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
     }
   }
   
+  #Creating sorted data info for area plot
+  # data$ymin <- 0
+  # data$ymax <- 0
+  # sorted_data <- arrange(data, num)
+  # for (i in seq(1, nrow(sorted_data), by = 4)) { 
+  #   ymin <- min(sorted_data[i,]$qscore, sorted_data[i+1,]$qscore, sorted_data[i+2,]$qscore, sorted_data[i+3,]$qscore)
+  #   ymax <- max(sorted_data[i,]$qscore, sorted_data[i+1,]$qscore, sorted_data[i+2,]$qscore, sorted_data[i+3,]$qscore)
+  #   
+  #   sorted_data[i,]$ymin <- ymin
+  #   sorted_data[i,]$ymax <- ymax
+  #   sorted_data[i+1,]$ymin <- ymin
+  #   sorted_data[i+1,]$ymax <- ymax
+  #   sorted_data[i+2,]$ymin <- ymin
+  #   sorted_data[i+2,]$ymax <- ymax
+  #   sorted_data[i+3,]$ymin <- ymin
+  #   sorted_data[i+3,]$ymax <- ymax
+  # }
+  
+  
   #Labeling first and second points of each street number in each side
   data1$xlabel <- paste(data1$num, "-", "p1") 
   data2$xlabel <- paste(data2$num, "-", "p1")
@@ -191,17 +210,54 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data1 <- data1 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
   data1$mean <- mean(data1$V3)
   data1$median <- median(data1$V3)
+  data1$upper <- data1$mean + (sd(data1$V3) * 1.96 / sqrt(nrow(data1)))
+  data1$lower <- data1$mean - (sd(data1$V3) * 1.96 / sqrt(nrow(data1)))
   data2 <- data2 %>% mutate(xlabel = factor(xlabel, levels = xlabel))
   data2$mean <- mean(data2$V3)
   data2$median <- median(data2$V3)
+  data2$upper <- data2$mean + (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
+  data2$lower <- data2$mean - (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
+  
+  side_summary <- data.frame(side=c(rep("side1",4), rep("side2",4)), upper=c(rep(unique(data1$upper),4), rep(unique(data2$upper),4)), lower= c(rep(unique(data1$lower),4), rep(unique(data2$lower),4)), x=rep(seq(max(numbers_to_show), max(numbers_to_show)+30, 10), 1) )  
   
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
-  
+
   mapping <- select(data, xlabel, side, V3, street, num, angle)
   
   labels_to_show <- select(filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
-  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.7) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") #+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
+  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
+  g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
+  
+#Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
+# mperson <-function(x) {
+#     x <-x[order(x$num), ]
+#     y <-x[-c(1, 2, nrow(x) -1, nrow(x)), ]
+#     x <-rbind(x, y)
+#     x <-x[order(x$num), ]
+#     x$group <-rep(letters[1:(nrow(x)/4)], each = 4)
+#     return(x)
+# }
+# data2 <-ddply(data, .(), mperson)
+# mgroup <-function(x) {
+#     x <-x[order(x$qscore), ]
+#     left <-x[x$num ==min(x$num), ]
+#     right <-x[x$num ==max(x$num), ]
+#     if (all(left$side ==right$side)) {
+#         left <-left[order(left$qscore, decreasing = T), ]
+#         right <-right[order(right$qscore, decreasing = F), ]
+#         return(rbind(left, right))
+#     } else {
+#         return(x[order(x$num), ])
+#     }
+# }
+# data2 <-ddply(data2, .(group), mgroup)
+#   
+#   ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line(aes(colour=side)) + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") +
+# geom_polygon(data = dat2, aes(y = qscore, group = group), alpha = 0.3)
+#     
+#       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
+  
   multiplot(g1, cols=1)
   return (mapping)
 }

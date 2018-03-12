@@ -107,6 +107,11 @@ function makeMaps(){
   
   calcSurprise();
   console.log(surpriseData);
+  var text = "";
+  for (key in surpriseData){ 
+	text = text + (key+"," + surpriseData[key]+"\n"); 
+  }
+  document.getElementById("surpriseData").textContent = text;
   //Make both our density and surprise maps
   //makeBigMap(rate,data,"Unemployment","rates");
   //makeBigMap(surprise,surpriseData,"Surprise","surprise");
@@ -251,7 +256,22 @@ function update(){
   .attr("fill-opacity",function(d,i){ return i==(curYear-minYear)? 1 : 0.3;});
 }
 
-function average(prop){
+function average_num(prop, i){
+  //Average scores for current street.
+  //var index = i ? i : curYear-minYear;
+  var sum = 0;
+  var n = 0;
+
+  var int_part = parseInt(i/4);
+
+  for(var i = int_part * 4; i < (int_part+1) * 4; i++){
+	    sum+= data[prop][i];
+	    n++;
+  }
+  return sum/n;
+}
+
+function average_street(prop){
   //Average scores for current street.
   //var index = i ? i : curYear-minYear;
   var sum = 0;
@@ -263,7 +283,19 @@ function average(prop){
   return sum/n;
 }
 
-function sumU(prop){
+function sumU_num(prop, i){
+  //Sum scores for current street.
+  //var index = i ? i : curYear-minYear;
+  var sum = 0;
+  var int_part = parseInt(i/4);
+
+  for(var i = int_part * 4; i < (int_part+1) * 4; i++){
+	    sum+= data[prop][i];
+  }
+  return sum;
+}
+
+function sumU_street(prop){
   //Sum scores for current street.
   //var index = i ? i : curYear-minYear;
   var sum = 0;
@@ -343,8 +375,11 @@ function calcSurprise(){
 
     //Calculate per state surprise
     for(var prop in data){
-      avg = average(prop);
-      total = sumU(prop);
+      /*avg = average_street(prop);//For whole street
+      total = sumU_street(prop);*/
+
+      avg = average_num(prop, i);//For current point
+      total = sumU_num(prop, i);
       
       //Estimate P(D|M) as 1 - |O - E|
       //uniform

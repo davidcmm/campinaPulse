@@ -137,6 +137,14 @@ function makeMaps(){
   }
   document.getElementById("baseconf").textContent = text_base_conf;
 
+  var text_norm_conf = "";
+  for (value in bust.pM){ 
+	text_base_conf = text_base_conf + (bust.pM[value]+"\n"); 
+  }
+  document.getElementById("normconf").textContent = text_base_conf;
+
+
+
 
   //Make both our density and surprise maps
   //makeBigMap(rate,data,"Unemployment","rates");
@@ -357,6 +365,36 @@ function makeRandom(){
   return randData;
 }
 
+window.temp = {
+    spareNormal: undefined
+};
+
+Math.normal = function (mean, standardDeviation) {
+    let q, u, v, p;
+
+    mean = mean || 0.5;
+    standardDeviation = standardDeviation || 0.125;
+
+    if (typeof temp.spareNormal !== 'undefined') {
+        v = mean + standardDeviation * temp.spareNormal;
+        temp.spareNormal = undefined;
+
+        return v;
+    }
+
+    do  {
+        u = 2.0 * Math.random() - 1.0;
+        v = 2.0 * Math.random() - 1.0;
+
+        q = u * u + v * v;
+    } while (q >= 1.0 || q === 0);
+
+    p = Math.sqrt(-2.0 * Math.log(q) / q);
+
+    temp.spareNormal = v * p;
+    return mean + standardDeviation * u * p;
+}
+
 function calcSurprise(){
 
   
@@ -381,7 +419,7 @@ function calcSurprise(){
   //0 = uniform, 1 = boom, 2 = bust
   
   //Initially, everything is equiprobable.
-  var pMs =[(1/2),(1/2)]//,(1/3)];
+  var pMs =[(1/3),(1/3),(1/3)];
 
   uniform.surprise = [];
   boom.surprise = [];
@@ -389,22 +427,28 @@ function calcSurprise(){
   
   uniform.pM = [pMs[0]];
   boom.pM = [pMs[1]];//Max of street
-  //bust.pM = [pMs[2]];//Min of street
+  bust.pM = [pMs[2]];//Min of street
   
   var pDMs = [];
   var pMDs = [];
   var avg;
   var total;
+
+  var normal_fit = {"R._Cristina_Procópio_Silva" : [4.92394878, 0.62351231], "R._Maciel_Pinheiro" : [4.84016850, 0.28028584], "R._Inácio_Marquês_da_Silva": [4.84231882, 0.46291311], "R._Manoel_Pereira_de_Araújo": [3.65700904, 0.19215810], "Av._Mal._Floriano_Peixoto": [ 5.04950088, 0.34203741], "R._Edésio_Silva": [4.77236112, 0.48215430]};
   
   //Bayesian surprise is the KL divergence from prior to posterior
   var kl;
-  var diffs = [0,0]//,0];
-  var sumDiffs = [0,0]//,0];
+  var diffs = [0,0,0];
+  var sumDiffs = [0,0,0];
   for(var i = 0; i < 20; i++){
-    sumDiffs = [0,0]//,0];
+    sumDiffs = [0,0,0];
 
     //Calculate per state surprise
     for(var prop in data){
+
+      var norm_data = normal_fit[prop]
+      var norm_estimate = Math.normal(norm_data[0], norm_data[1]);
+
       avg_street  = average_street(prop);//For whole street
       total_street = sumU_street(prop);
       avg_num = average_num(prop, i);//For current point
@@ -417,15 +461,15 @@ function calcSurprise(){
       //boom -> Average per num
       diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street));
       pDMs[1] = 1 - Math.abs(diffs[1]);
-      /*//bust
-      diffs[2] = ((data[prop][i]/total) - (avg/total));
-      pDMs[2] = 1 - Math.abs(diffs[2]);*/
+      //normal
+      diffs[2] = ((data[prop][i]/total_street) - (norm_estimate/total_street));
+      pDMs[2] = 1 - Math.abs(diffs[2]);
       
       //Estimate P(M|D)
       //uniform
       pMDs[0] = pMs[0]*pDMs[0];
       pMDs[1] = pMs[1]*pDMs[1];
-      //pMDs[2] = pMs[2]*pDMs[2];
+      pMDs[2] = pMs[2]*pDMs[2];
       
       
       // Surprise is the sum of KL divergance across model space
@@ -459,7 +503,7 @@ function calcSurprise(){
     
     uniform.pM.push(pMs[0]);
     boom.pM.push(pMs[1]);
-    //bust.pM.push(pMs[2]);
+    bust.pM.push(pMs[2]);
     
   }
   

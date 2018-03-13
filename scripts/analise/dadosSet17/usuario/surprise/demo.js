@@ -112,6 +112,32 @@ function makeMaps(){
 	text = text + (key+"," + surpriseData[key]+"\n"); 
   }
   document.getElementById("surpriseData").textContent = text;
+
+  var text_uni = "";
+  for (key in uniformData){ 
+	text_uni = text_uni + (key+"," + uniformData[key]+"\n"); 
+  }
+  document.getElementById("uniformData").textContent = text_uni;
+
+  var text_base = "";
+  for (key in baseData){ 
+	text_base = text_base + (key+"," + baseData[key]+"\n"); 
+  } 
+  document.getElementById("baseData").textContent = text_base;
+
+  var text_uni_conf = "";
+  for (value in uniform.pM){ 
+	text_uni_conf = text_uni_conf + (uniform.pM[value]+"\n"); 
+  }
+  document.getElementById("uniformconf").textContent = text_uni_conf;
+
+  var text_base_conf = "";
+  for (value in boom.pM){ 
+	text_base_conf = text_base_conf + (boom.pM[value]+"\n"); 
+  }
+  document.getElementById("baseconf").textContent = text_base_conf;
+
+
   //Make both our density and surprise maps
   //makeBigMap(rate,data,"Unemployment","rates");
   //makeBigMap(surprise,surpriseData,"Surprise","surprise");
@@ -336,8 +362,12 @@ function calcSurprise(){
   
   for(var prop in data){
     surpriseData[prop] = [];
+    uniformData[prop] = [];
+    baseData[prop] = [];
     for(var i = 0; i < 20; i++){
       surpriseData[prop][i] = 0;
+      uniformData[prop][i] = 0;
+      baseData[prop][i] = 0;
     }
   }
   // Start with equiprobably P(M)s
@@ -351,15 +381,15 @@ function calcSurprise(){
   //0 = uniform, 1 = boom, 2 = bust
   
   //Initially, everything is equiprobable.
-  var pMs =[(1/3),(1/3),(1/3)];
+  var pMs =[(1/2),(1/2)]//,(1/3)];
 
   uniform.surprise = [];
   boom.surprise = [];
-  bust.surprise = [];
+  //bust.surprise = [];
   
   uniform.pM = [pMs[0]];
   boom.pM = [pMs[1]];//Max of street
-  bust.pM = [pMs[2]];//Min of street
+  //bust.pM = [pMs[2]];//Min of street
   
   var pDMs = [];
   var pMDs = [];
@@ -368,35 +398,34 @@ function calcSurprise(){
   
   //Bayesian surprise is the KL divergence from prior to posterior
   var kl;
-  var diffs = [0,0,0];
-  var sumDiffs = [0,0,0];
+  var diffs = [0,0]//,0];
+  var sumDiffs = [0,0]//,0];
   for(var i = 0; i < 20; i++){
-    sumDiffs = [0,0,0];
+    sumDiffs = [0,0]//,0];
 
     //Calculate per state surprise
     for(var prop in data){
-      /*avg = average_street(prop);//For whole street
-      total = sumU_street(prop);*/
-
-      avg = average_num(prop, i);//For current point
-      total = sumU_num(prop, i);
+      avg_street  = average_street(prop);//For whole street
+      total_street = sumU_street(prop);
+      avg_num = average_num(prop, i);//For current point
+      total_num = sumU_num(prop, i);
       
       //Estimate P(D|M) as 1 - |O - E|
       //uniform
-      diffs[0] = ((data[prop][i]/total) - (avg/total));
+      diffs[0] = ((data[prop][i]/total_street) - (avg_street/total_street));
       pDMs[0] = 1 - Math.abs(diffs[0]);
-      //boom
-      diffs[1] = ((data[prop][i]/total) - (avg/total));
+      //boom -> Average per num
+      diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street));
       pDMs[1] = 1 - Math.abs(diffs[1]);
-      //bust
+      /*//bust
       diffs[2] = ((data[prop][i]/total) - (avg/total));
-      pDMs[2] = 1 - Math.abs(diffs[2]);
+      pDMs[2] = 1 - Math.abs(diffs[2]);*/
       
       //Estimate P(M|D)
       //uniform
       pMDs[0] = pMs[0]*pDMs[0];
       pMDs[1] = pMs[1]*pDMs[1];
-      pMDs[2] = pMs[2]*pDMs[2];
+      //pMDs[2] = pMs[2]*pDMs[2];
       
       
       // Surprise is the sum of KL divergance across model space
@@ -410,6 +439,8 @@ function calcSurprise(){
       }
       
       surpriseData[prop][i] = voteSum >= 0 ? Math.abs(kl) : -1*Math.abs(kl);
+      uniformData[prop][i] = pMs[0];
+      baseData[prop][i] = pMs[1];
     }
     
     //Now lets globally update our model belief.
@@ -428,7 +459,7 @@ function calcSurprise(){
     
     uniform.pM.push(pMs[0]);
     boom.pM.push(pMs[1]);
-    bust.pM.push(pMs[2]);
+    //bust.pM.push(pMs[2]);
     
   }
   

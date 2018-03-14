@@ -181,13 +181,13 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   occurred <- FALSE
   for (i in 1:nrow(data1)) { 
     if(data1[i,]$num %% 2 != 0){
-        data1[i,]$num <- data1[i,]$num + 1
+        data1[i,]$num <- data1[i,]$num + 3
     }
     if(occurred == FALSE && cur_num == 0){
         cur_num <- data1[i,]$num
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data1[i,]$num <- data1[i,]$num + 2
+        data1[i,]$num <- data1[i,]$num + 4
         cur_num <- 0
         occurred <- FALSE
     }   
@@ -196,13 +196,13 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   occurred <- FALSE
   for (i in 1:nrow(data2)) { 
     if(data2[i,]$num %% 2 == 0){
-        data2[i,]$num <- data2[i,]$num + 1
+        data2[i,]$num <- data2[i,]$num + 3
     }
     if(occurred == FALSE && cur_num == 0){
         cur_num <- data2[i,]$num
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data2[i,]$num <- data2[i,]$num + 2
+        data2[i,]$num <- data2[i,]$num + 4
         cur_num <- 0
         occurred <- FALSE
     }
@@ -335,7 +335,10 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
     thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
     
     median_value <- median(all_data$qscore)
-    cat(paste("++++++ Median ", median_value))
+    cat(paste("++++++ Median all", median_value, "<br>"))
+    cat(paste("++++++ Mean all", mean(all_data$qscore), "<br>"))
+    cat(paste("++++++ Median street", median(current_df$qscore), "<br>"))
+    cat(paste("++++++ Mean street", mean(current_df$qscore), "<br>"))
     cat("<div class='row'>")
     angleData = c()
     for(i in 1:nrow(current_df)) {
@@ -397,6 +400,14 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
     * 2 side1 (terreno com lixo)
     * 305 side2 (lixo, pouca manutenção)
     * 436 side2 203 (construção/menor manutenção) 
+1. Virtudes na rua (olhando as fotos): 
+    * 2 side2 (prédios bem mantidos, verde)
+    * 66 inteiro (prédios bem mantidos, verde)
+    * 261 inteiro (verde, prédios bem mantidos)
+    * 436 menos o 203 (verde, casas bem mantidas)
+
+>> Olhando os Q-Scores ao longo da rua
+
 2. Melhor e pior local da rua: 
     * 66-p2 side2 (melhor) 
     * 305-p1 side2 (pior) diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
@@ -426,6 +437,36 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
     * Existe uma área melhor pior? Conforme questão 4 do número 66 ao 261 parece termos a melhor área da rua e do número 305 ao 436 a pior área.
 
 
+>> Olhando o surprise maps (uniforme + base rate + normal)
+
+1. Máximo e Mínimo?
+    * 66 p2 side2 
+    * 305 p1 side2 diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
+2. Mais diversidade?
+   * 436, 1 estranho: verde, manutenção x construção, menor manutenção, problema na pista, lixo
+   * 305, 2 lados separados: verde, manutenção x lixo, muro acabado
+   * 66, 1 estranho: verde, prédios bem mantidos x verde menos destacado, manutenção
+   * 261, 1 estranho: verde, boa manutenção x lixo, árvores pequenas, poste
+   * 2, 2 lados separados: verde, prédios mantidos x terreno, lixo
+3. Diferenças/saltos no lado?
+   * 436, side2
+   * 261, side2
+   * 66, side2 -> recaem nos estranhos apontados acima
+4. Avaliação Problemas
+   * Pesquisador: 3 problemas (descritos acima)
+   * Recall = método / pesquisador = 3/3 = 1
+   * Precisão = reais / método = 3/5 = 0.6
+5. Avaliação Virtudes
+   * Pesquisador: 4 virtudes (descritos acima)
+   * Recall = método / pesquisador = 4/4 = 1
+   * Precisão = reais / método = 4/5 = 0.75
+6. Descrição
+   * Média/mediana: 4.92/5.12 > 4.68/4.82 -> rua de mediana para boa
+   * Variação no surprise? Variações ao longo da rua, alternando locais legais e não tão legais
+   * Lado melhor? Side1 (8) x Side2 (5)
+   * Região melhor? não fica claro no surprise, mas **nos scores pode-se falar do 66 ao 261**
+   
+   
 #Edésio Silva
 
 ```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
@@ -462,6 +503,14 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
     * 70 side1 135 (construção, menor manutenção, lixo) e side2 315 (menor manutenção), 203 (um pouco de lixo e menor manutenção); 
     * 602 side 203 (terreno com muito lixo); 
     * 1136 todos os lados (pouca manutenção, lixo, terrenos);
+1. Virtudes na rua (olhando as fotos): 
+    * 70 22 (verde, casas bem mantidas)
+    * 306 menos o 315 (verde, casas bem mantidas)
+    * 602 22 e 315 (verde, casas bem mantidas)
+    * 1546 todo (casas bem mantidas, verde)
+    
+>> Olhando os Q-Scores ao longo da rua
+
 2. Melhor e pior local da rua: 
     * 602 p2 side2 
     * 70 p1 side1. Dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
@@ -489,6 +538,30 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
     * Existe muita variação?  Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local
     * Existe um lado melhor? Não
     * Existe uma área melhor pior? Não
+    
+>> Olhando o surprise maps (uniforme + base rate + normal)
+
+1. Máximo e Mínimo?
+    * 602 p2 side2 
+    * 70 p1 side1. Dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
+2. Mais diversidade?
+   * 1546, p2 side1 estranho: ??
+   * 306, p2 side1 estranho: 
+3. Diferenças/saltos no lado?
+   * 
+4. Avaliação Problemas
+   * Pesquisador: 3 problemas (descritos acima)
+   * Recall = método / pesquisador = 
+   * Precisão = reais / método = 
+5. Avaliação Virtudes
+   * Pesquisador: 4 virtudes (descritos acima)
+   * Recall = método / pesquisador = 
+   * Precisão = reais / método = 
+6. Descrição
+   * Média/mediana: 4.77/4.82 > 4.68/4.82 -> rua de mediana para boa
+   * Variação no surprise? Variações ao longo da rua, alternando locais legais e não tão legais
+   * Lado melhor? Side1 (8) x Side2 (5)
+   * Região melhor? não fica claro no surprise, mas **nos scores pode-se falar do 66 ao 261**
 
 
 #Inácio Marques

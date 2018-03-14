@@ -309,10 +309,16 @@ cristina$surprise_num <- melt(filter(surprise_num, street == "R._Cristina_Procó
 print(">>> GINI da rua: ")
 ineq(cristina$qscore, type="Gini")
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(cristina$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(cristina, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(cristina, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(cristina, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
@@ -425,10 +431,16 @@ edesio$surprise_num <- melt(filter(surprise_num, street == "R._Edésio_Silva"), 
 
 print(paste(">>> GINI da rua: ", ineq(edesio$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(edesio$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(edesio, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(edesio, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(edesio, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
@@ -480,10 +492,16 @@ inacio$surprise_num <- melt(filter(surprise_num, street == "R._Inácio_Marquês_
 
 print(paste(">>> GINI da rua: ", ineq(inacio$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(inacio$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(inacio, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(inacio, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(inacio, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
@@ -532,10 +550,16 @@ floriano$surprise_num <- melt(filter(surprise_num, street == "Av._Mal._Floriano_
 
 print(paste(">>> GINI da rua: ", ineq(floriano$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(floriano$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(floriano, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(floriano, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(floriano, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
@@ -583,10 +607,16 @@ maciel$surprise_num <- melt(filter(surprise_num, street == "R._Maciel_Pinheiro")
 
 print(paste(">>> GINI da rua: ", ineq(maciel$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(maciel$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(maciel, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(maciel, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(maciel, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
@@ -638,10 +668,16 @@ manoel$surprise_num <- melt(filter(surprise_num, street == "R._Manoel_Pereira_de
 
 print(paste(">>> GINI da rua: ", ineq(manoel$qscore, type="Gini")))
 gini <- data.frame("num"=integer(), "value"=double())
+gini_surp_num <- data.frame("num"=integer(), "value"=double())
+gini_surp_st <- data.frame("num"=integer(), "value"=double())
 for (value in unique(manoel$num)){
   gini[nrow(gini) + 1,] = list(value, ineq(filter(manoel, num == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(manoel, num == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(manoel, num == value)$surprise_street, type="Gini"))
 }
-arrange(gini, desc(value))
+arrange(gini, desc(abs(value)))
+arrange(gini_surp_st, desc(abs(value)))
+arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}

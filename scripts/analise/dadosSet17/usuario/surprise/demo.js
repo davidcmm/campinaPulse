@@ -112,6 +112,40 @@ function makeMaps(){
 	text = text + (key+"," + surpriseData[key]+"\n"); 
   }
   document.getElementById("surpriseData").textContent = text;
+
+  var text_uni = "";
+  for (key in uniformData){ 
+	text_uni = text_uni + (key+"," + uniformData[key]+"\n"); 
+  }
+  document.getElementById("uniformData").textContent = text_uni;
+
+  var text_base = "";
+  for (key in baseData){ 
+	text_base = text_base + (key+"," + baseData[key]+"\n"); 
+  } 
+  document.getElementById("baseData").textContent = text_base;
+
+  var text_uni_conf = "";
+  for (value in uniform.pM){ 
+	text_uni_conf = text_uni_conf + (uniform.pM[value]+"\n"); 
+  }
+  document.getElementById("uniformconf").textContent = text_uni_conf;
+
+  var text_base_conf = "";
+  for (value in boom.pM){ 
+	text_base_conf = text_base_conf + (boom.pM[value]+"\n"); 
+  }
+  document.getElementById("baseconf").textContent = text_base_conf;
+
+  var text_norm_conf = "";
+  for (value in bust.pM){ 
+	text_base_conf = text_base_conf + (bust.pM[value]+"\n"); 
+  }
+  document.getElementById("normconf").textContent = text_base_conf;
+
+
+
+
   //Make both our density and surprise maps
   //makeBigMap(rate,data,"Unemployment","rates");
   //makeBigMap(surprise,surpriseData,"Surprise","surprise");
@@ -331,13 +365,47 @@ function makeRandom(){
   return randData;
 }
 
+window.temp = {
+    spareNormal: undefined
+};
+
+Math.normal = function (mean, standardDeviation) {
+    let q, u, v, p;
+
+    mean = mean || 0.5;
+    standardDeviation = standardDeviation || 0.125;
+
+    if (typeof temp.spareNormal !== 'undefined') {
+        v = mean + standardDeviation * temp.spareNormal;
+        temp.spareNormal = undefined;
+
+        return v;
+    }
+
+    do  {
+        u = 2.0 * Math.random() - 1.0;
+        v = 2.0 * Math.random() - 1.0;
+
+        q = u * u + v * v;
+    } while (q >= 1.0 || q === 0);
+
+    p = Math.sqrt(-2.0 * Math.log(q) / q);
+
+    temp.spareNormal = v * p;
+    return mean + standardDeviation * u * p;
+}
+
 function calcSurprise(){
 
   
   for(var prop in data){
     surpriseData[prop] = [];
+    uniformData[prop] = [];
+    baseData[prop] = [];
     for(var i = 0; i < 20; i++){
       surpriseData[prop][i] = 0;
+      uniformData[prop][i] = 0;
+      baseData[prop][i] = 0;
     }
   }
   // Start with equiprobably P(M)s
@@ -355,7 +423,7 @@ function calcSurprise(){
 
   uniform.surprise = [];
   boom.surprise = [];
-  bust.surprise = [];
+  //bust.surprise = [];
   
   uniform.pM = [pMs[0]];
   boom.pM = [pMs[1]];//Max of street
@@ -365,6 +433,8 @@ function calcSurprise(){
   var pMDs = [];
   var avg;
   var total;
+
+  var normal_fit = {"R._Cristina_Procópio_Silva" : [4.92394878, 0.62351231], "R._Maciel_Pinheiro" : [4.84016850, 0.28028584], "R._Inácio_Marquês_da_Silva": [4.84231882, 0.46291311], "R._Manoel_Pereira_de_Araújo": [3.65700904, 0.19215810], "Av._Mal._Floriano_Peixoto": [ 5.04950088, 0.34203741], "R._Edésio_Silva": [4.77236112, 0.48215430]};
   
   //Bayesian surprise is the KL divergence from prior to posterior
   var kl;
@@ -375,21 +445,24 @@ function calcSurprise(){
 
     //Calculate per state surprise
     for(var prop in data){
-      /*avg = average_street(prop);//For whole street
-      total = sumU_street(prop);*/
 
-      avg = average_num(prop, i);//For current point
-      total = sumU_num(prop, i);
+      var norm_data = normal_fit[prop]
+      var norm_estimate = Math.normal(norm_data[0], norm_data[1]);
+
+      avg_street  = average_street(prop);//For whole street
+      total_street = sumU_street(prop);
+      avg_num = average_num(prop, i);//For current point
+      total_num = sumU_num(prop, i);
       
       //Estimate P(D|M) as 1 - |O - E|
       //uniform
-      diffs[0] = ((data[prop][i]/total) - (avg/total));
+      diffs[0] = ((data[prop][i]/total_street) - (avg_street/total_street));
       pDMs[0] = 1 - Math.abs(diffs[0]);
-      //boom
-      diffs[1] = ((data[prop][i]/total) - (avg/total));
+      //boom -> Average per num
+      diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street));
       pDMs[1] = 1 - Math.abs(diffs[1]);
-      //bust
-      diffs[2] = ((data[prop][i]/total) - (avg/total));
+      //normal
+      diffs[2] = ((data[prop][i]/total_street) - (norm_estimate/total_street));
       pDMs[2] = 1 - Math.abs(diffs[2]);
       
       //Estimate P(M|D)
@@ -410,6 +483,8 @@ function calcSurprise(){
       }
       
       surpriseData[prop][i] = voteSum >= 0 ? Math.abs(kl) : -1*Math.abs(kl);
+      uniformData[prop][i] = pMs[0];
+      baseData[prop][i] = pMs[1];
     }
     
     //Now lets globally update our model belief.

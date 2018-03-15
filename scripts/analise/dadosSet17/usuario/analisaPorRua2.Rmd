@@ -326,7 +326,7 @@ arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203
+mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
 kable(mapping, format = "markdown")
 
 show_street_data <- function (current_df, all_data, best_folder, worst_folder){
@@ -596,7 +596,7 @@ arrange(gini_surp_num, desc(abs(value)))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2
+mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2. ADD 180 in side1 
 kable(mapping, format = "markdown")
 
 show_street_data(inacio, all_data,  best_folder, worst_folder)
@@ -802,6 +802,12 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * 284 360 (manutenção de prédio); 
     * 360 270 (manutenção de prédio). 
     * Não existem árvores na rua?
+    
+1. Virtudes na rua (olhando as fotos): 
+    * 
+    
+>> Olhando os Q-Scores ao longo da rua    
+  
 2. Melhor e pior local da rua: 
     * 248 angulo 180 (boa manutenção)
     * 190 180 (manutenção de prédio faltando)
@@ -829,6 +835,35 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos. Variações parecem estar ligadas ao estado de manutenção e identificadores
     * Existe um lado melhor? O side1 parece ligeiramente melhor
     * Existe uma área melhor pior? Do 190 ao 248 parece ser a melhor área, e do 248 ao 284 a pior
+
+>> Olhando o surprise maps (uniforme + base rate + normal)
+
+1. Máximo e Mínimo?
+    * 549 p2 side2 (muito verde bem mantido, praça) 
+    * 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
+2. Mais diversidade?
+   * 913, side2 separado de side1: visual das lojas, manutenção?
+   * 549, p2 side1 afastado: visual de lojas x praça
+   * 445, 1 ponto de cada side separado: verde, praça x mais prédio?
+   * 813, 1 ponto de cada side separado: igreja, prédios x estilo de prédios, telegráfo?
+3. Menor diversidade?
+   * 660, ponto mais homogêneo e positivo: verde, prédios bem mantidos
+4 Diferenças/saltos no lado?
+   * 445, 1 ponto de cada side separado
+   * 813, 1 ponto de cada side separado
+5. Avaliação Problemas
+   * Pesquisador: 3 problemas (descritos acima)
+   * Recall = método / pesquisador = 1/3 = 0.33
+   * Precisão = reais / método = 1/1 = 1
+6. Avaliação Virtudes
+   * Pesquisador: 4 virtudes (descritos acima)
+   * Recall = método / pesquisador = 4/4 = 1
+   * Precisão = reais / método = 4/4 = 1
+7. Descrição
+   * Média/mediana: 5.06/5.04 x 4.68/4.82 -> rua de mediana para boa
+   * Variação no surprise? Em cada ponto temos algumas variações ao longo da rua e um ponto mais homogêneo positivamente
+   * Lado melhor? Side1 (6) x Side2 (8), side2 ligeiramente melhor
+   * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
 
 #Manoel Pereira
 ```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}

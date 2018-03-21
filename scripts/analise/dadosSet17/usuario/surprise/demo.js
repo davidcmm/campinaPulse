@@ -434,7 +434,7 @@ function calcSurprise(){
   var avg;
   var total;
 
-  var normal_fit = {"R._Cristina_Procópio_Silva" : [4.92394878, 0.62351231], "R._Maciel_Pinheiro" : [4.84016850, 0.28028584], "R._Inácio_Marquês_da_Silva": [4.84231882, 0.46291311], "R._Manoel_Pereira_de_Araújo": [3.65700904, 0.19215810], "Av._Mal._Floriano_Peixoto": [ 5.04950088, 0.34203741], "R._Edésio_Silva": [4.77236112, 0.48215430]};
+  var normal_fit = {"all" : [4.68088452, 0.62863384], "R._Cristina_Procópio_Silva" : [4.92394878, 0.62351231], "R._Maciel_Pinheiro" : [4.84016850, 0.28028584], "R._Inácio_Marquês_da_Silva": [4.84231882, 0.46291311], "R._Manoel_Pereira_de_Araújo": [3.65700904, 0.19215810], "Av._Mal._Floriano_Peixoto": [ 5.04950088, 0.34203741], "R._Edésio_Silva": [4.77236112, 0.48215430]};
   
   //Bayesian surprise is the KL divergence from prior to posterior
   var kl;
@@ -446,7 +446,7 @@ function calcSurprise(){
     //Calculate per state surprise
     for(var prop in data){
 
-      var norm_data = normal_fit[prop]
+      var norm_data = normal_fit["all"]
       var norm_estimate = Math.normal(norm_data[0], norm_data[1]);
 
       avg_street  = average_street(prop);//For whole street
@@ -458,7 +458,7 @@ function calcSurprise(){
       //uniform
       diffs[0] = ((data[prop][i]/total_street) - (avg_street/total_street));
       pDMs[0] = 1 - Math.abs(diffs[0]);
-      //boom -> Average per num
+      //Average per num
       diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street));
       pDMs[1] = 1 - Math.abs(diffs[1]);
       //normal

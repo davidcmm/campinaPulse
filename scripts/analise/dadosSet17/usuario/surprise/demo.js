@@ -458,7 +458,7 @@ function calcSurprise(){
       //uniform
       diffs[0] = ((data[prop][i]/total_street) - (avg_street/total_street));
       pDMs[0] = 1 - Math.abs(diffs[0]);
-      //boom -> Average per num
+      //Average per num
       diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street));
       pDMs[1] = 1 - Math.abs(diffs[1]);
       //normal

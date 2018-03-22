@@ -231,7 +231,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   #g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
   g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-   g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.05, 0.05))
+   g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
 #     x <-x[order(x$num), ]
@@ -869,8 +869,8 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
    * Precisão = reais / método = 3/5 (248 1 ponto de cada side separado, 284 270 afastado) = 0.6
 6. Avaliação Virtudes
    * Pesquisador: 4 virtudes (descritos acima)
-   * Recall = método / pesquisador = 4/4 = 1 (incluindo a média da rua ser boa)
-   * Precisão = reais / método = 3/5 = 0.6
+   * Recall = método / pesquisador = 3.66/4 = 0.91 (130 o método acha 2 pontos legais, falta 1)
+   * Precisão = reais / método = 3/5 = 0.6 (248 180, 284 3 pontos legais)
 7. Descrição
    * Média/mediana: 4.84/4.88 > 4.68/4.82 -> rua de mediana para boa
    * Variação no surprise? Temos alternância de pontos melhores e piores ao longo de toda a rua
@@ -964,12 +964,12 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
    * 370, 1 ponto de cada side separado 
 5. Avaliação Problemas
    * Pesquisador: 5 problemas (descritos acima)
-   * Recall = método / pesquisador = 4/5 = 0.8
-   * Precisão = reais / método =  5/5 = 1
+   * Recall = método / pesquisador = 3.66/5 = 0.73 (falta de arvore e um ponto do 370)
+   * Precisão = reais / método =  3/6 = 0.5 (188 p1 side2, 392 1 ponto de cada side, 188 homogeneo mais negativo)
 6. Avaliação Virtudes
    * Pesquisador:  2 virtudes (descritos acima)
    * Recall = método / pesquisador = 2/2 = 1
-   * Precisão = reais / método = 2/4 = 0.5
+   * Precisão = reais / método = 2/4 = 0.5 (392 1 ponto de cada side, 370 1 ponto de cada side)
 7. Descrição
    * Média/mediana: 3.65/3.65 x 4.68/4.82 -> rua de mediana para ruim
    * Variação no surprise? Início da rua mais homogêneo, mas com alternâncias de melhores e piores pontos ao longo da rua

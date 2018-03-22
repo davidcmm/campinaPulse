@@ -446,7 +446,7 @@ function calcSurprise(){
     //Calculate per state surprise
     for(var prop in data){
 
-      var norm_data = normal_fit["all"]
+      var norm_data = normal_fit[prop]
       var norm_estimate = Math.normal(norm_data[0], norm_data[1]);
 
       avg_street  = average_street(prop);//For whole street

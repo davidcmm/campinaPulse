@@ -812,7 +812,10 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * Não existem árvores na rua?
     
 1. Virtudes na rua (olhando as fotos): 
-    * 
+    * Em geral bem conservada
+    * 360, 360 (prédio conservado + praça)
+    * 190, 90 e 360 (prédios ainda mais bem conservados + estilo)
+    * 130, 90, 180 e 270 (prédios ainda mais bem conservados + estilo)
     
 >> Olhando os Q-Scores ao longo da rua    
   
@@ -847,31 +850,32 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 >> Olhando o surprise maps (uniforme + base rate + normal) - DAQUI!
 
 1. Máximo e Mínimo?
-    * 549 p2 side2 (muito verde bem mantido, praça) 
-    * 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
+    * 248 angulo 180 (boa manutenção)
+    * 190 180 (manutenção de prédio faltando)
 2. Mais diversidade?
-   * 913, side2 separado de side1: visual das lojas, manutenção?
-   * 549, p2 side1 afastado: visual de lojas x praça
-   * 445, 1 ponto de cada side separado: verde, praça x mais prédio?
-   * 813, 1 ponto de cada side separado: igreja, prédios x estilo de prédios, telegráfo?
+   * 360, p2 side1 (360) afastado (melhor conservação, estilo, sem caminhão + praça)
+   * 190, p1 side2 (180) afastado (prédio precisando de manutenção)
+   * 248, 1 ponto de cada side separado (prédios conservados, estilo + motos, estilos)
+   * 284, p2 side2 (270) afastado (estacionamento + prédio + carros)
+   * 130, 1 ponto de cada side separado (prédios conservados, estilo + estilo, prédio precisando de conservação)
 3. Menor diversidade?
-   * 660, ponto mais homogêneo e positivo: verde, prédios bem mantidos
+   * alguma heterogeneidade em todos os pontos
 4 Diferenças/saltos no lado?
-   * 445, 1 ponto de cada side separado
-   * 813, 1 ponto de cada side separado
+   * 248, 1 ponto de cada side separado
+   * 130, 1 ponto de cada side separado 
 5. Avaliação Problemas
-   * Pesquisador: 3 problemas (descritos acima)
-   * Recall = método / pesquisador = 1/3 = 0.33
-   * Precisão = reais / método = 1/1 = 1
+   * Pesquisador: 5 problemas (descritos acima)
+   * Recall = método / pesquisador = 3 de 5 (arvore no geral e 284 360 não foram percebidos) = 0.6
+   * Precisão = reais / método = 3/5 (248 1 ponto de cada side separado, 284 270 afastado) = 0.6
 6. Avaliação Virtudes
    * Pesquisador: 4 virtudes (descritos acima)
-   * Recall = método / pesquisador = 4/4 = 1
-   * Precisão = reais / método = 4/4 = 1
+   * Recall = método / pesquisador = 4/4 = 1 (incluindo a média da rua ser boa)
+   * Precisão = reais / método = 3/5 = 0.6
 7. Descrição
-   * Média/mediana: 5.06/5.04 x 4.68/4.82 -> rua de mediana para boa
-   * Variação no surprise? Em cada ponto temos algumas variações ao longo da rua e um ponto mais homogêneo positivamente
-   * Lado melhor? Side1 (6) x Side2 (8), side2 ligeiramente melhor
-   * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
+   * Média/mediana: 4.84/4.88 > 4.68/4.82 -> rua de mediana para boa
+   * Variação no surprise? Temos alternância de pontos melhores e piores ao longo de toda a rua
+   * Lado melhor? Side1 (7) x Side2(4) -> side1 ligeiramente melhor
+   * Região melhor? O meio da rua (190 a 284) parece ter mais concentração de surpresas positivas, confirmado olhando os scores
 
 #Manoel Pereira
 ```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
@@ -908,6 +912,13 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
     * A rua em geral precisa de manutenção. 
     * Alguns pontos parecem ainda piores como o 222 angulo 22 (prédio acabado + itens na rua), 300 angulo 22 e 135 (barraca, itens na rua), 370 angulo 22, 203 e 315 (prédios acabados, barracas). 
     * Ausência de árvores de fato na rua.
+
+1. Virtudes na rua (olhando as fotos): 
+    * 222, 203 e 315 (prédios mais bem conservados, apesar de parecerem galpões)
+    * 300, 203 (prédio melhor conservado)
+    
+>> Olhando os Q-Scores ao longo da rua
+    
 2. Melhor e pior local da rua: 
     * 222 p1 side2 (prédio mais conservado da sucata) 
     * 188 p1 side2 (prédio acabado, carros, itens na rua)
@@ -934,14 +945,44 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
     * Existe muita variação? Rua mais homogênea, com alguns pontos que se destacam positivamente por ter uma melhor manutenção ou menos itens na rua e outros que se destacam negativamente por terem manutenção ainda pior e/ou mais itens na rua
     * Existe um lado melhor? Não
     * Existe uma área melhor pior? Não
+    
+    
+>> Olhando o surprise maps (uniforme + base rate + normal)
+
+1. Máximo e Mínimo?
+    * 222 p1 side2 (prédio mais conservado da sucata) 
+    * 188 p1 side2 (prédio acabado, carros, itens na rua)
+2. Mais diversidade?
+   * 392, 1 ponto de cada side separado (prédios melhores conservados x construção, mais itens na rua)
+   * 222, p1 side2 separado (prédio melhor conservado)
+   * 370, 1 ponto de cada side separado (melhor conservação, menos itens x pior conservação, mais itens na rua)
+   * 300, side2 melhor que side1 (menos itens na rua, conservação)
+3. Menor diversidade?
+   * 188 mais próximo de homogêneo
+4 Diferenças/saltos no lado?
+   * 392, 1 ponto de cada side separado
+   * 370, 1 ponto de cada side separado 
+5. Avaliação Problemas
+   * Pesquisador: 5 problemas (descritos acima)
+   * Recall = método / pesquisador = 4/5 = 0.8
+   * Precisão = reais / método =  5/5 = 1
+6. Avaliação Virtudes
+   * Pesquisador:  2 virtudes (descritos acima)
+   * Recall = método / pesquisador = 2/2 = 1
+   * Precisão = reais / método = 2/4 = 0.5
+7. Descrição
+   * Média/mediana: 3.65/3.65 x 4.68/4.82 -> rua de mediana para ruim
+   * Variação no surprise? Início da rua mais homogêneo, mas com alternâncias de melhores e piores pontos ao longo da rua
+   * Lado melhor? Side1 (3) x Side2 (5) -> side2 ligeiramente melhor
+   * Região melhor? Não dá para dizer pelo surprise maps, olhando os scores também é complicado
   
-#Novas Ideias que não foram consideradas
+#Novas Ideias que não foram consideradas - Q-Scores
 
 * Olhar a diferença entre os lados da rua por ponto? 
     * Acharia 2 problemas não encontrados
 * Olhar a favor/contra carros e comparar os scores?
     * Acharia 1 problema não encontrado
     
-#Descartar/Alterar?
+#Descartar/Alterar? - Q-Scores
 
 * Melhor e pior área por lado ao invés de melhor e pior área da rua?

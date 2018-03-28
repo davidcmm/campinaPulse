@@ -18,8 +18,8 @@ right = 'Right'
 notKnown = 'NotKnown'
 completeTie = 'equal'
 
-def build_qscore_rankings():
-	data = pd.read_table("../all100/all_80.dat", sep='\s+', encoding='utf8', header=None)
+def build_qscore_rankings(index):
+	data = pd.read_table("ranking_predictions/all_qscore_80_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 
@@ -27,8 +27,8 @@ def build_qscore_rankings():
 
 	return {possibleQuestions[0] : pleasant, possibleQuestions[1] : safe}
 
-def build_maxdiff_rankings():
-	data = pd.read_table("../all100/all_80.dat-maxdiff", sep='\s+', encoding='utf8', header=None)
+def build_maxdiff_rankings(index):
+	data = pd.read_table("ranking_predictions/all.dat-maxdiff_80_"+str(index), sep='\s+', encoding='utf8', header=None)
 	pleasant = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 
@@ -36,35 +36,35 @@ def build_maxdiff_rankings():
 
 	return {possibleQuestions[0] : pleasant, possibleQuestions[1] : safe}
 
-def build_elo_rankings():
-	data = pd.read_table("all_elo_80_10.dat", sep='\s+', encoding='utf8', header=None)
+def build_elo_rankings(index):
+	data = pd.read_table("ranking_predictions/all_elo_80_10_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_10 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_10 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 
 	#print("Elo " + str(pleasant_10.shape) + "\t" + str(safe_10.shape))
 
-	data = pd.read_table("all_elo_80_20.dat", sep='\s+', encoding='utf8', header=None)
+	data = pd.read_table("ranking_predictions/all_elo_80_20_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_20 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_20 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 
 	#print("Elo " + str(pleasant_20.shape) + "\t" + str(safe_20.shape))
 
-	data = pd.read_table("all_elo_80_40.dat", sep='\s+', encoding='utf8', header=None)
+	data = pd.read_table("ranking_predictions/all_elo_80_40_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_40 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_40 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 
 	#print("Elo " + str(pleasant_40.shape) + "\t" + str(safe_40.shape))
 
 	return {"10" : {possibleQuestions[0] : pleasant_10, possibleQuestions[1] : safe_10}, "20" :  {possibleQuestions[0] : pleasant_20, possibleQuestions[1] : safe_20}, "40" : {possibleQuestions[0] : pleasant_40, possibleQuestions[1] : safe_40}}
-
-def build_crowdbt_rankings():
-	data = pd.read_table("allPairwiseComparison_80-lam01-gam01.dat", sep='\s+', encoding='utf8', header=None)
+	
+def build_crowdbt_rankings(index):
+	data = pd.read_table("ranking_predictions/allPairwiseComparison_80-lam01-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_01 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_01 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True)
 
 	#print("gavel " + str(pleasant_01.shape) + "\t" + str(safe_01.shape))
 
-	data = pd.read_table("allPairwiseComparison_80-lam1-gam01.dat", sep='\s+', encoding='utf8', header=None)
+	data = pd.read_table("ranking_predictions/allPairwiseComparison_80-lam1-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_1 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_1 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True)
 
@@ -90,8 +90,8 @@ def check_ranking_prediction(current_ranking, photo1, photo2, counters, tie=Fals
 		
 	return counters
 
-def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_counters, maxdiff_counters, crowdbt_counters, elo_counters):
-	lines = open("../../backupBanco/run_20.csv", "r").readlines()
+def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_counters, maxdiff_counters, crowdbt_counters, elo_counters, index):
+	lines = open("../../backupBanco/ranking_predictions/run_20_"+str(index)+".csv", "r").readlines()
 
 	#Reading from pybossa task-run CSV
 	for line in lines:
@@ -408,21 +408,22 @@ def readTasksDefinitions(linesTasks):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print "Uso: <run with testing data> <tasks definition file>"
+		print "Uso: <tasks definition file>"
 		sys.exit(1)
 
 	tasksFile = open(sys.argv[1], 'r')
 	linesTasks = tasksFile.readlines()
 	tasksDefinitions = readTasksDefinitions(linesTasks)
 
-	elo = build_elo_rankings()
-	maxdiff = build_maxdiff_rankings()
-	qscore = build_qscore_rankings()
-	crowdbt = build_crowdbt_rankings()
-	
 	qscore_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}#positives, negatives, false positives, false negatives
 	maxdiff_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}
 	crowdbt_counters = {"01" : {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "1": {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}}
 	elo_counters = {"10":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "20":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "40":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}}
 
-	read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_counters, maxdiff_counters, crowdbt_counters, elo_counters)
+	for i in range(0,500):
+		elo = build_elo_rankings(i)
+		maxdiff = build_maxdiff_rankings(i)
+		qscore = build_qscore_rankings(i)
+		crowdbt = build_crowdbt_rankings(i)
+	
+		read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_counters, maxdiff_counters, crowdbt_counters, elo_counters, i)

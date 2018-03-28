@@ -197,7 +197,8 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 	output = open(outputFileName, 'w')
 	for question, qDic in allRatings.iteritems():
 		for photo, ratingList in qDic.iteritems():
-			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(ratingList))+"\t" + str(ratingList).strip("[ ]").replace(",", "\t")+'\n')
+			#output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(ratingList))+"\t" + str(ratingList).strip("[ ]").replace(",", "\t")+'\n')
+			output.write(question.strip(' \t\n\r')+ "\t" + photo.strip(' \t\n\r').encode("utf-8")+ "\t" + str(numpy.mean(ratingList))+"\n")
 	output.close()
 
 
@@ -205,12 +206,13 @@ def evaluate_ELO(lines, outputFileName, tasksDefinitions, samples):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:
-		print "Uso: <arquivo com execuções das tarefas> <tasks definition - V2> <amount of samples>"
+		print "Uso: <arquivo com execuções das tarefas> <tasks definition - V2> <amount of samples> <K value>"
 		sys.exit(1)
 
 	dataFile = open(sys.argv[1], 'r')
 	tasksFile = open(sys.argv[2], 'r')
 	samples = int(sys.argv[3])
+	K = int(sys.argv[4])
 
 	lines = dataFile.readlines()
 	linesTasks = tasksFile.readlines()

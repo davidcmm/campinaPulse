@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in $(seq 0 499); do
+for i in $(seq 61 499); do
 	file="../../backupBanco/ranking_predictions/run_80_${i}.csv"
 
 	python compute_elo.py $file ../../backupBanco/tasksDef.csv 10000 10

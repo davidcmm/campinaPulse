@@ -58,13 +58,13 @@ def build_elo_rankings(index):
 	return {"10" : {possibleQuestions[0] : pleasant_10, possibleQuestions[1] : safe_10}, "20" :  {possibleQuestions[0] : pleasant_20, possibleQuestions[1] : safe_20}, "40" : {possibleQuestions[0] : pleasant_40, possibleQuestions[1] : safe_40}}
 	
 def build_crowdbt_rankings(index):
-	data = pd.read_table("ranking_predictions/allPairwiseComparison_80-lam01-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
+	data = pd.read_table("ranking_predictions/all_crowdbt_80-lam01-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_01 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_01 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True)
 
 	#print("gavel " + str(pleasant_01.shape) + "\t" + str(safe_01.shape))
 
-	data = pd.read_table("ranking_predictions/allPairwiseComparison_80-lam1-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
+	data = pd.read_table("ranking_predictions/all_crowdbt_80-lam1-gam01_"+str(index)+".dat", sep='\s+', encoding='utf8', header=None)
 	pleasant_1 = data[data.loc[:,0] == "agrad%C3%A1vel?"].sort(columns=[2], ascending=True).reset_index(drop=True)
 	safe_1 = data[data.loc[:,0] == "seguro?"].sort(columns=[2], ascending=True)
 
@@ -78,10 +78,13 @@ def check_ranking_prediction(current_ranking, photo1, photo2, counters, tie=Fals
 
 	#if abs(current_ranking.loc[current_ranking.loc[:,1] == photo1][1] - current_ranking.loc[current_ranking.loc[:,1] == photo2][2]) > threshold:
 	#print(photo1+"\t"+photo2+"\t"+str(index1)+"\t"+str(index2))
-	if index1 > index2: 
-		counters[0] = counters[0] + 1
-	elif index1 < index2:
-		counters[3] = counters[3] + 1
+	if tie:
+		print ">>>> Não estamos considerando empates agora"	
+	else:
+		if index1 > index2: 
+			counters[0] = counters[0] + 1
+		elif index1 < index2:
+			counters[3] = counters[3] + 1
 	#else:
 	#	if tie:
 	#		counters[0] = counters[0] + 1

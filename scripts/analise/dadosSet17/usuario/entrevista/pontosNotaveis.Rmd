@@ -1,0 +1,213 @@
+---
+title: "Pontos Notáveis"
+output:
+  html_document:
+    self_contained: no
+  pdf_document: default
+---
+
+<style>
+    body .main-container {
+         max-width: 100%;
+        margin-left: 20px;
+        margin-right: auto;
+    }
+</style>
+
+Pontos notáveis (positivos e negativos) apontados por nosso método e descrição.   
+
+```{r setup, include=FALSE}
+cat("<br/>")
+
+library("ggplot2")
+library("dplyr")
+library("knitr")
+library("texreg")
+library("ineq")
+library(R.utils)
+library("knitr")
+library("spdep")
+library("reshape")
+library("fitdistrplus")
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+show_street_data <- function (current_df, all_data, force_split, highlighted_positive){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+    step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
+    thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
+    
+    cat("<div class='row'>")
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      
+      street <- as.character(row$street)
+      photo_name <- as.character(row$url)
+      number <- row$num
+      angl <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      filtered <- filter(highlighted_positive, num==number & angle == angl)
+      
+      if (nrow(filtered) > 0){
+         color_index <- 11
+      }else{
+         color_index <- 1
+      }
+      
+      cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
+      cat("<img src='", photo_name,"' width='300px'>", sep = "")
+      cat("<p style=\"color:white;font-size:90%\">", number, "-", angl, "-> ", score,  "</p>", sep="")
+      cat("</div>")
+      
+      #End of row with 4 images
+      if(force_split && i%%4 == 0){
+        cat("<div class=\"col-xs-12\" style=\"height:1000px;\"></div>")
+      }
+    }
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+#Checking sample size
+scores_data <- read.table("../all100/all_ordenado.dat")
+scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
+scores_data$n <- ( 1.96 * scores_data$sd / 0.2) ** 2  #All QScores
+scores_data$ci <- scores_data$sd * 1.96 / sqrt(100)
+novoV2 <- lapply(as.character(scores_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+scores_data$photo_name <- photo
+scores_data <- arrange(scores_data, photo_name)
+
+qscoresDFGeral <- read.csv("../qscores-df-geral.csv", header = TRUE)
+qscoresDFCampina<- read.csv("../qscores-df-campina.csv", header = TRUE)
+qscoresDFNotCampina <- read.csv("../qscores-df-notcampina.csv", header = TRUE)
+
+#Plotting Q-Scores through the street
+all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
+all_data$street <- as.character(all_data$street)
+all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+```
+
+
+#\#\#\# Rua 1
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(cristina, qscore == max(cristina$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='400px'>", sep = "")
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(cristina, qscore == min(cristina$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='400px'>", sep = "")
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(2,2, 66, 66, 66, 261, 261, 261, 305, 305, 436, 436, 436), angle=c(135, 225, 45, 315, 225, 22, 315, 225, 45, 293, 22, 135, 315))
+
+show_street_data(cristina, all_data, TRUE, highlighted_positive)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+* Média/mediana: 4.92/5.12 > 4.68/4.82 -> rua de mediana para boa
+* Variação no surprise? Variações ao longo da rua, alternando locais legais e não tão legais
+* Lado melhor? Side1 (8) x Side2 (5)
+* Região melhor? não fica claro no surprise, mas **nos scores pode-se falar do 66 ao 261**
+   
+   
+#\#\#\# Rua 2
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(floriano, qscore == max(floriano$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='400px'>", sep = "")
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(floriano, qscore == min(floriano$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='400px'>", sep = "")
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(445, 445, 549, 549, 549, 691, 691, 691, 691, 813, 813, 913, 913), angle=c(22, 112, 22, 112, 203, 22, 293, 112, 203, 112, 293, 112, 203))
+
+show_street_data(floriano, all_data, TRUE, highlighted_positive)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+   * Média/mediana: 5.06/5.04 x 4.68/4.82 -> rua de mediana para boa
+   * Variação no surprise? Em cada ponto temos algumas variações ao longo da rua e um ponto mais homogêneo positivamente
+   * Lado melhor? Side1 (6) x Side2 (8), side2 ligeiramente melhor
+   * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**

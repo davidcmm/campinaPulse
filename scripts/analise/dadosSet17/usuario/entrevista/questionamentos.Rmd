@@ -1,0 +1,191 @@
+---
+title: "Entrevista"
+output:
+  html_document:
+    self_contained: no
+  pdf_document: default
+---
+
+<style>
+    body .main-container {
+         max-width: 100%;
+        margin-left: 20px;
+        margin-right: auto;
+    }
+</style>
+
+Entrevista sobre processo de coleta de percepções através de crowdsourcing.   
+
+```{r setup, include=FALSE}
+cat("<br/>")
+
+library("vioplot")
+library("ggplot2")
+library("dplyr")
+library("knitr")
+library("texreg")
+library("ineq")
+library(R.utils)
+library("knitr")
+library("spdep")
+library("reshape")
+library("fitdistrplus")
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+#Checking sample size
+scores_data <- read.table("../all100/all_ordenado.dat")
+scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
+scores_data$n <- ( 1.96 * scores_data$sd / 0.2) ** 2  #All QScores
+scores_data$ci <- scores_data$sd * 1.96 / sqrt(100)
+novoV2 <- lapply(as.character(scores_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+scores_data$photo_name <- photo
+scores_data <- arrange(scores_data, photo_name)
+
+qscoresDFGeral <- read.csv("../qscores-df-geral.csv", header = TRUE)
+qscoresDFCampina<- read.csv("../qscores-df-campina.csv", header = TRUE)
+qscoresDFNotCampina <- read.csv("../qscores-df-notcampina.csv", header = TRUE)
+
+#Plotting Q-Scores through the street
+all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
+all_data$street <- as.character(all_data$street)
+all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+```
+
+
+#\#\#\# Rua 1
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+show_street_data <- function (current_df, force_split){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+    
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      
+      street <- as.character(row$street)
+      photo_name <- as.character(row$url)
+      num <- row$num
+      angle <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      cat(paste("<div class='col-xs-3' \">", sep=""))
+      cat("<img src='", photo_name,"' width='400px'>", sep = "")
+      cat("<p style=\"color:black;font-size:90%\">", num, "- ", angle,  "</p>", sep="")
+      cat("</div>")
+      
+      #End of row with 4 images
+      if(force_split && i%%4 == 0){
+        cat("<div class=\"col-xs-12\" style=\"height:1000px;\"></div>")
+      }
+    }
+}
+
+show_street_data(cristina, TRUE)
+```
+
+Recaptulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(cristina, FALSE)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+
+#\#\#\# Rua 2
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+show_street_data <- function (current_df, force_split){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+    
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      
+      street <- as.character(row$street)
+      photo_name <- as.character(row$url)
+      num <- row$num
+      angle <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      cat(paste("<div class='col-xs-3' \">", sep=""))
+      cat("<img src='", photo_name,"' width='400px'>", sep = "")
+      cat("<p style=\"color:black;font-size:90%\">", num, "- ", angle,  "</p>", sep="")
+      cat("</div>")
+      
+      #End of row with 4 images
+      if(force_split && i%%4 == 0){
+        cat("<div class=\"col-xs-12\" style=\"height:1000px;\"></div>")
+      }
+    }
+}
+
+show_street_data(floriano, TRUE)
+```
+
+Recaptulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(floriano, FALSE)
+```

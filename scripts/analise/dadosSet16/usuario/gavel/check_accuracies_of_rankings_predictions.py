@@ -435,6 +435,8 @@ if __name__ == "__main__":
 		crowdbt_acc["1"][possibleQuestions[0]].append(crowdbt_counters["1"][possibleQuestions[0]][0] / (crowdbt_counters["1"][possibleQuestions[0]][0]+crowdbt_counters["1"][possibleQuestions[0]][3]))
 		crowdbt_acc["1"][possibleQuestions[1]].append(crowdbt_counters["1"][possibleQuestions[1]][0] / (crowdbt_counters["1"][possibleQuestions[1]][0]+crowdbt_counters["1"][possibleQuestions[1]][3]))
 
+		print ">>> Terminei " + str(i)
+
 	#Printing confidence intervals of accuracies for each ranking strategy
 	for key in qscore_acc:
 		values = qscore_acc[key]

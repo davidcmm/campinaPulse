@@ -80,7 +80,7 @@ def check_ranking_prediction(current_ranking, photo1, photo2, counters, tie=Fals
 	#print(photo1+"\t"+photo2+"\t"+str(index1)+"\t"+str(index2))
 	if tie:
 		#print ">>>> Não estamos considerando empates agora"	
-		continue
+		pass
 	else:
 		if index1 > index2: 
 			counters[0] = counters[0] + 1
@@ -297,7 +297,7 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)
 
 			else:
-				continue
+				pass
 				#print(">>>>> Empates não considerados por enquanto")
 				#votes[question][photo1][photo2].add(notKnown)
 				#votes[question][photo1][photo3].add(notKnown)
@@ -377,7 +377,7 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)
 			else:
 				#print(">>>>> Empates não considerados por enquanto")
-				continue
+				pass
 
 
 def readTasksDefinitions(linesTasks):

@@ -67,9 +67,14 @@ if __name__ == "__main__":
 		group1 = group1_file.split(".")[0]
 		group2 = group2_file.split(".")[0]
 
+		print str(g1_data)
+
 		for i in range(0, num_of_randomizations):
-			random_g1 = g1_data.take(np.random.permutation(len(g1_data))[:group1_size])
-			random_g2 = g2_data.take(np.random.permutation(len(g2_data))[:group2_size])
+			#random_g1 = g1_data.take(np.random.permutation(len(g1_data))[:group1_size])
+			#random_g2 = g2_data.take(np.random.permutation(len(g2_data))[:group2_size])
+
+			random_g1 = np.random.choice(g1_data['id'], size=group1_size, replace=True)
+			random_g2 = np.random.choice(g2_data['id'], size=group2_size, replace=True)
 
 			output_file1 = open(group1+"_"+str(i)+".dat", "w")
 			output_file1.write("[]\n")
@@ -77,11 +82,13 @@ if __name__ == "__main__":
 			output_file2 = open(group2+"_"+str(i)+".dat", "w")
 			output_file2.write("[]\n")
 
-			for index, row in random_g1.iterrows():
-				output_file1.write(str(row['id'])+"\n")	
+			#for index, row in random_g1.iterrows():
+			for value in random_g1:
+				output_file1.write(str(value)+"\n")	
 
-			for index, row in random_g2.iterrows():
-				output_file2.write(str(row['id'])+"\n")	
+			#for index, row in random_g2.iterrows():
+			for value in random_g2:
+				output_file2.write(str(value)+"\n")	
 
 			output_file1.close()
 			output_file2.close()

@@ -403,7 +403,7 @@ if __name__ == "__main__":
 	maxdiff_acc = {possibleQuestions[0]: [], possibleQuestions[1]: []}
 	crowdbt_acc = {"01" : {possibleQuestions[0]: [], possibleQuestions[1]: []}, "1": {possibleQuestions[0]: [], possibleQuestions[1]: []}}
 	elo_acc = {"10":{possibleQuestions[0]: [], possibleQuestions[1]: []}, "20":{possibleQuestions[0]: [], possibleQuestions[1]: []}, "40":{possibleQuestions[0]: [], possibleQuestions[1]: []}}
-	for i in range(0,500):
+	for i in range(0,1):
 		qscore_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}#positives, negatives, false positives, false negatives
 		maxdiff_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}
 		crowdbt_counters = {"01" : {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "1": {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}}
@@ -441,18 +441,18 @@ if __name__ == "__main__":
 	for key in qscore_acc:
 		values = qscore_acc[key]
 		std = numpy.std(values)
-		print("QScore\t" + key + "\t" + numpy.mean(values) + "\t [" + (numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + (numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
+		print("QScore\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
 
 	for key in maxdiff_acc:
 		values = maxdiff_acc[key]
-		print("MaxDiff\t" + key + "\t" + numpy.mean(values) + "\t [" + (numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + (numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
+		print("MaxDiff\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
 
 	for key in crowdbt_acc:
 		for value in crowdbt_acc[key]:
 			values = crowdbt_acc[key][value]
-			print("Crowdbt-" + str(value) + "\t" + key + "\t" + numpy.mean(values) + "\t [" + (numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + (numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
+			print("Crowdbt-" + str(value) + "\t" + str(key) + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
 			
 	for key in elo_acc:
 		for value in elo_acc[key]:
 			values = elo_acc[key][value]
-			print("Elo-" + str(value) + "\t" + key + "\t" + numpy.mean(values) + "\t [" + (numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + (numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )
+			print("Elo-" + str(value) + "\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / sqrt(len(values))) + "]" +"\n" )

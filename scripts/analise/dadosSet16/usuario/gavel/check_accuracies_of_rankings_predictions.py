@@ -134,9 +134,9 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				#Photo1 x Photo2
 				#print(">>>> Photo1 x Photo2")
 				#print("Max diff")
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
 
 				#print("Qscore")
 				current_ranking = qscore[question]
@@ -157,18 +157,18 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)
 
 				#print("Crowdbt 01")
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)				
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)				
 				#print("Crowdbt 1")
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
 
 				#Photo1 x Photo3
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -184,17 +184,17 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo3, counters)
 
 				#Photo1 x Photo4
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -210,17 +210,17 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo4, counters)
 
 				#Photo2 x Photo3
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -236,17 +236,17 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo3, photo2, counters)
 
 				#Photo2 x Photo4
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -262,17 +262,17 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo4, photo2, counters)
 
 				#Photo3 x Photo4
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -288,12 +288,12 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo4, photo3, counters, True)
 
 			else:
 				print(">>>>> Empates não considerados por enquanto")
@@ -322,9 +322,9 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 			#Checking answers
 			if answer == left:
 				#Photo1 x Photo2
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -340,18 +340,18 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo1, photo2, counters)
 
 			elif answer == right:
 				#Photo1 x Photo2
-				current_ranking = maxdiff[question]
-				counters = maxdiff_counters[question]
-				maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)	
+				#current_ranking = maxdiff[question]
+				#counters = maxdiff_counters[question]
+				#maxdiff_counters[question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)	
 
 				current_ranking = qscore[question]
 				counters = qscore_counters[question]
@@ -367,12 +367,12 @@ def read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_count
 				counters = elo_counters["40"][question]
 				elo_counters["40"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)
 
-				current_ranking = crowdbt["01"][question]
-				counters = crowdbt_counters["01"][question]
-				crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)				
-				current_ranking = crowdbt["1"][question]
-				counters = crowdbt_counters["1"][question]
-				crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)
+				#current_ranking = crowdbt["01"][question]
+				#counters = crowdbt_counters["01"][question]
+				#crowdbt_counters["01"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)				
+				#current_ranking = crowdbt["1"][question]
+				#counters = crowdbt_counters["1"][question]
+				#crowdbt_counters["1"][question] = check_ranking_prediction(current_ranking, photo2, photo1, counters)
 			else:
 				print(">>>>> Empates não considerados por enquanto")
 
@@ -403,37 +403,39 @@ if __name__ == "__main__":
 	maxdiff_acc = {possibleQuestions[0]: [], possibleQuestions[1]: []}
 	crowdbt_acc = {"01" : {possibleQuestions[0]: [], possibleQuestions[1]: []}, "1": {possibleQuestions[0]: [], possibleQuestions[1]: []}}
 	elo_acc = {"10":{possibleQuestions[0]: [], possibleQuestions[1]: []}, "20":{possibleQuestions[0]: [], possibleQuestions[1]: []}, "40":{possibleQuestions[0]: [], possibleQuestions[1]: []}}
-	for i in range(0,1):
+	for i in range(0,500):
 		qscore_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}#positives, negatives, false positives, false negatives
 		maxdiff_counters = {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}
 		crowdbt_counters = {"01" : {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "1": {possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}}
 		elo_counters = {"10":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "20":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}, "40":{possibleQuestions[0]: [0,0,0,0], possibleQuestions[1]: [0,0,0,0]}}
 
 		elo = build_elo_rankings(i)
-		maxdiff = build_maxdiff_rankings(i)
 		qscore = build_qscore_rankings(i)
-		crowdbt = build_crowdbt_rankings(i)
+		#maxdiff = build_maxdiff_rankings(i)
+		#crowdbt = build_crowdbt_rankings(i)
+		maxdiff = {}
+		crowdbt = {}
 	
 		read_test_data(tasksDefinitions, elo, maxdiff, qscore, crowdbt, qscore_counters, maxdiff_counters, crowdbt_counters, elo_counters, i)
 
 		#Calculating accuracies for each ranking strategy
-		qscore_acc[possibleQuestions[0]].append(qscore_counters[possibleQuestions[0]][0] / (qscore_counters[possibleQuestions[0]][0]+qscore_counters[possibleQuestions[0]][3]))
-		qscore_acc[possibleQuestions[1]].append(qscore_counters[possibleQuestions[1]][0] / (qscore_counters[possibleQuestions[1]][0]+qscore_counters[possibleQuestions[1]][3]))
+		qscore_acc[possibleQuestions[0]].append(1.0*qscore_counters[possibleQuestions[0]][0] / (qscore_counters[possibleQuestions[0]][0]+qscore_counters[possibleQuestions[0]][3]))
+		qscore_acc[possibleQuestions[1]].append(1.0*qscore_counters[possibleQuestions[1]][0] / (qscore_counters[possibleQuestions[1]][0]+qscore_counters[possibleQuestions[1]][3]))
 
-		maxdiff_acc[possibleQuestions[0]].append(maxdiff_counters[possibleQuestions[0]][0] / (maxdiff_counters[possibleQuestions[0]][0]+maxdiff_counters[possibleQuestions[0]][3]))
-		maxdiff_acc[possibleQuestions[1]].append(maxdiff_counters[possibleQuestions[1]][0] / (maxdiff_counters[possibleQuestions[1]][0]+maxdiff_counters[possibleQuestions[1]][3]))
+		#maxdiff_acc[possibleQuestions[0]].append(1.0*maxdiff_counters[possibleQuestions[0]][0] / (maxdiff_counters[possibleQuestions[0]][0]+maxdiff_counters[possibleQuestions[0]][3]))
+		#maxdiff_acc[possibleQuestions[1]].append(1.0*maxdiff_counters[possibleQuestions[1]][0] / (maxdiff_counters[possibleQuestions[1]][0]+maxdiff_counters[possibleQuestions[1]][3]))
 
-		elo_acc["10"][possibleQuestions[0]].append(elo_counters["10"][possibleQuestions[0]][0] / (elo_counters["10"][possibleQuestions[0]][0]+elo_counters["10"][possibleQuestions[0]][3]))
-		elo_acc["10"][possibleQuestions[1]].append(elo_counters["10"][possibleQuestions[1]][0] / (elo_counters["10"][possibleQuestions[1]][0]+elo_counters["10"][possibleQuestions[1]][3]))
-		elo_acc["20"][possibleQuestions[0]].append(elo_counters["20"][possibleQuestions[0]][0] / (elo_counters["20"][possibleQuestions[0]][0]+elo_counters["20"][possibleQuestions[0]][3]))
-		elo_acc["20"][possibleQuestions[1]].append(elo_counters["20"][possibleQuestions[1]][0] / (elo_counters["20"][possibleQuestions[1]][0]+elo_counters["20"][possibleQuestions[1]][3]))
-		elo_acc["40"][possibleQuestions[0]].append(elo_counters["40"][possibleQuestions[0]][0] / (elo_counters["40"][possibleQuestions[0]][0]+elo_counters["40"][possibleQuestions[0]][3]))
-		elo_acc["40"][possibleQuestions[1]].append(elo_counters["40"][possibleQuestions[1]][0] / (elo_counters["40"][possibleQuestions[1]][0]+elo_counters["40"][possibleQuestions[1]][3]))
+		elo_acc["10"][possibleQuestions[0]].append(1.0*elo_counters["10"][possibleQuestions[0]][0] / (elo_counters["10"][possibleQuestions[0]][0]+elo_counters["10"][possibleQuestions[0]][3]))
+		elo_acc["10"][possibleQuestions[1]].append(1.0*elo_counters["10"][possibleQuestions[1]][0] / (elo_counters["10"][possibleQuestions[1]][0]+elo_counters["10"][possibleQuestions[1]][3]))
+		elo_acc["20"][possibleQuestions[0]].append(1.0*elo_counters["20"][possibleQuestions[0]][0] / (elo_counters["20"][possibleQuestions[0]][0]+elo_counters["20"][possibleQuestions[0]][3]))
+		elo_acc["20"][possibleQuestions[1]].append(1.0*elo_counters["20"][possibleQuestions[1]][0] / (elo_counters["20"][possibleQuestions[1]][0]+elo_counters["20"][possibleQuestions[1]][3]))
+		elo_acc["40"][possibleQuestions[0]].append(1.0*elo_counters["40"][possibleQuestions[0]][0] / (elo_counters["40"][possibleQuestions[0]][0]+elo_counters["40"][possibleQuestions[0]][3]))
+		elo_acc["40"][possibleQuestions[1]].append(1.0*elo_counters["40"][possibleQuestions[1]][0] / (elo_counters["40"][possibleQuestions[1]][0]+elo_counters["40"][possibleQuestions[1]][3]))
 		
-		crowdbt_acc["01"][possibleQuestions[0]].append(crowdbt_counters["01"][possibleQuestions[0]][0] / (crowdbt_counters["01"][possibleQuestions[0]][0]+crowdbt_counters["01"][possibleQuestions[0]][3]))
-		crowdbt_acc["01"][possibleQuestions[1]].append(crowdbt_counters["01"][possibleQuestions[1]][0] / (crowdbt_counters["01"][possibleQuestions[1]][0]+crowdbt_counters["01"][possibleQuestions[1]][3]))
-		crowdbt_acc["1"][possibleQuestions[0]].append(crowdbt_counters["1"][possibleQuestions[0]][0] / (crowdbt_counters["1"][possibleQuestions[0]][0]+crowdbt_counters["1"][possibleQuestions[0]][3]))
-		crowdbt_acc["1"][possibleQuestions[1]].append(crowdbt_counters["1"][possibleQuestions[1]][0] / (crowdbt_counters["1"][possibleQuestions[1]][0]+crowdbt_counters["1"][possibleQuestions[1]][3]))
+		#crowdbt_acc["01"][possibleQuestions[0]].append(1.0*crowdbt_counters["01"][possibleQuestions[0]][0] / (crowdbt_counters["01"][possibleQuestions[0]][0]+crowdbt_counters["01"][possibleQuestions[0]][3]))
+		#crowdbt_acc["01"][possibleQuestions[1]].append(1.0*crowdbt_counters["01"][possibleQuestions[1]][0] / (crowdbt_counters["01"][possibleQuestions[1]][0]+crowdbt_counters["01"][possibleQuestions[1]][3]))
+		#crowdbt_acc["1"][possibleQuestions[0]].append(1.0*crowdbt_counters["1"][possibleQuestions[0]][0] / (crowdbt_counters["1"][possibleQuestions[0]][0]+crowdbt_counters["1"][possibleQuestions[0]][3]))
+		#crowdbt_acc["1"][possibleQuestions[1]].append(1.0*crowdbt_counters["1"][possibleQuestions[1]][0] / (crowdbt_counters["1"][possibleQuestions[1]][0]+crowdbt_counters["1"][possibleQuestions[1]][3]))
 
 		print ">>> Terminei " + str(i)
 
@@ -441,21 +443,21 @@ if __name__ == "__main__":
 	for key in qscore_acc:
 		values = qscore_acc[key]
 		std = numpy.std(values)
-		print("QScore\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]" +"\n" )
+		print("QScore\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]")
 
 	for key in maxdiff_acc:
 		values = maxdiff_acc[key]
 		std = numpy.std(values)
-		print("MaxDiff\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]" +"\n" )
+		print("MaxDiff\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]")
 
 	for key in crowdbt_acc:
 		for value in crowdbt_acc[key]:
 			values = crowdbt_acc[key][value]
 			std = numpy.std(values)
-			print("Crowdbt-" + str(value) + "\t" + str(key) + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]" +"\n" )
+			print("Crowdbt-" + str(value) + "\t" + str(key) + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]")
 			
 	for key in elo_acc:
 		for value in elo_acc[key]:
 			values = elo_acc[key][value]
 			std = numpy.std(values)
-			print("Elo-" + str(value) + "\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]" +"\n" )
+			print("Elo-" + str(value) + "\t" + key + "\t" + str(numpy.mean(values)) + "\t [" + str(numpy.mean(values) - std * 1.96 / numpy.sqrt(len(values))) + "," + str(numpy.mean(values) + std * 1.96 / numpy.sqrt(len(values))) + "]")

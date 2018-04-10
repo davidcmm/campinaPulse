@@ -16,7 +16,6 @@ library("knitr")
 library("texreg")
 library("ineq")
 library(R.utils)
-library("knitr")
 library("spdep")
 library("reshape")
 library("fitdistrplus")
@@ -344,8 +343,11 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
     median_value <- median(all_data$qscore)
     cat(paste("++++++ Median all", median_value, "<br>"))
     cat(paste("++++++ Mean all", mean(all_data$qscore), "<br>"))
-    cat(paste("++++++ Median street", median(current_df$qscore), "<br>"))
-    cat(paste("++++++ Mean street", mean(current_df$qscore), "<br>"))
+    result <- group_by(all_data, street) %>% summarise(mean=mean(qscore), median=median(qscore), sd=sd(qscore), gini=ineq(qscore, type="Gini")) %>% arrange(mean)
+    result$upper <- result$mean + (result$sd *  1.96/ sqrt(20))#1.645 for 90%
+    result$lower <- result$mean - (result$sd * 1.96 / sqrt(20))
+    print(kable(result, format = "markdown"))
+    
     cat("<div class='row'>")
     angleData = c()
     for(i in 1:nrow(current_df)) {

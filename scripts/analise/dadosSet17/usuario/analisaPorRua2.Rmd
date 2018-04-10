@@ -231,7 +231,8 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   #g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
   g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-   g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
+    g4 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street") + ylim(c(-0.05, 0.05))
+   g5 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
 #     x <-x[order(x$num), ]
@@ -261,7 +262,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
 #     
 #       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
   
-  multiplot(g1, g2, g3, g4, cols=1)
+  multiplot(g1, g2, g3, g4, g5, cols=1)
   return (mapping)
 }
 
@@ -285,6 +286,7 @@ arrange(SD, desc(value))
 
 surprise_street <- read.csv("./surprise/surprise_data_street.csv")
 surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
+surprise_unif_baseMed_norm <- read.csv("./surprise/surprise_unif_baseMedian_norm.csv")
 surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
 ```
 
@@ -308,7 +310,9 @@ worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 cristina$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 cristina$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+cristina$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 cristina$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+
 
 shapiro.test(cristina$qscore)
 fitdistr(cristina$qscore, "normal")
@@ -478,6 +482,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
+edesio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Edésio_Silva"), id.vars = "street")$value
 
 shapiro.test(edesio$qscore)
@@ -581,6 +586,7 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+inacio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 inacio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 
 
@@ -680,6 +686,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+floriano$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 
 shapiro.test(floriano$qscore)
@@ -778,6 +785,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+maciel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 
 shapiro.test(maciel$qscore)
@@ -882,6 +890,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+manoel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 
 shapiro.test(manoel$qscore)
@@ -975,6 +984,8 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
    * Variação no surprise? Início da rua mais homogêneo, mas com alternâncias de melhores e piores pontos ao longo da rua
    * Lado melhor? Side1 (3) x Side2 (5) -> side2 ligeiramente melhor
    * Região melhor? Não dá para dizer pelo surprise maps, olhando os scores também é complicado
+
+#Sumário comparações dos Surprise Maps com basea rate usando média ou mediana - TO DO
 
 #Sumário comparações dos Surprise Maps com normal para todas as ruas x normal por rua
 

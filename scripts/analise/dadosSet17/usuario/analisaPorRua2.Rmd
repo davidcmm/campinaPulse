@@ -987,11 +987,26 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
    * Lado melhor? Side1 (3) x Side2 (5) -> side2 ligeiramente melhor
    * Região melhor? Não dá para dizer pelo surprise maps, olhando os scores também é complicado
 
-#Sumário comparações dos Surprise Maps com basea rate usando média ou mediana - TO DO
+#Sumário comparações dos Surprise Maps com base rate usando média ou mediana
+
+```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+tabl <- "  
+| Street        | Base Rate (median)           | Base Rate (mean)  |
+|---------------|:-------------:|------:|
+| Cristina      |  |  X:  2 (dois lados separados), 261 (1 estranho no side2)|
+| Edésio        |   1546 (todos positivos)   |  X: 306-135 (pior), 1136 (1 ponto de cada side abaixo e acima)     |
+| Inácio        | 0: 54 (side2 talvez um pouco mais surpreendente positivamente)  | 0    |
+| Floriano      |   549 (side2 mais positivo)     | X: 549 (um ponto de side1 positivo é aceitável), 660 (a representação menos ruim é colocar todos positivos)    |
+| Maciel        | 284 (todos negativos pode ser entendido por notas mais baixas que resto da rua)  |  X: 130 (1 ponto de cada side abaixo e acima), 284 (270 negativo é aceitável)   |
+| Manoel        | 188 (1 ponto de side2 mais positivo e side1 com 1 ponto ligeiramente melhor)  | X: 188 (1 ponto de cada side no 0, 1 positivo e outro negativo), 222 (1 ponto de side2 mais positivo)   |
+"
+cat(tabl) # output the table in a format good for HTML/PDF/docx conversion
+```
+
 
 #Sumário comparações dos Surprise Maps com normal para todas as ruas x normal por rua
 
-```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
+```{r table3, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tabl <- "  
 | Street        | Normal All           | Normal Street  |
 |---------------|:-------------:|------:|

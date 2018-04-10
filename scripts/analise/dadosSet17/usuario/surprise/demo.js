@@ -291,8 +291,7 @@ function update(){
 }
 
 function average_num(prop, i){
-  //Average scores for current street.
-  //var index = i ? i : curYear-minYear;
+  //Average scores for current street point.
   var sum = 0;
   var n = 0;
 
@@ -303,6 +302,36 @@ function average_num(prop, i){
 	    n++;
   }
   return sum/n;
+}
+
+function median(numbers) {
+    // median of [3, 5, 4, 4, 1, 1, 2, 3] = 3
+    var median = 0, numsLen = numbers.length;
+    numbers.sort();
+ 
+    if (
+        numsLen % 2 === 0 // is even
+    ) {
+        // average of two middle numbers
+        median = (numbers[numsLen / 2 - 1] + numbers[numsLen / 2]) / 2;
+    } else { // is odd
+        // middle number only
+        median = numbers[(numsLen - 1) / 2];
+    }
+ 
+    return median;
+}
+
+function median_num(prop, i){
+  //Median score for current street point.
+  current_values = [];
+
+  var int_part = parseInt(i/4);
+
+  for(var i = int_part * 4; i < (int_part+1) * 4; i++){
+	current_values = current_values.concat(data[prop][i]);
+  }
+  return median(current_values);
 }
 
 function average_street(prop){
@@ -451,7 +480,7 @@ function calcSurprise(){
 
       avg_street  = average_street(prop);//For whole street
       total_street = sumU_street(prop);
-      avg_num = average_num(prop, i);//For current point
+      avg_num = average_num(prop, i);//median_num(prop, i);//For current point
       total_num = sumU_num(prop, i);
       
       //Estimate P(D|M) as 1 - |O - E|
@@ -477,12 +506,13 @@ function calcSurprise(){
       kl = 0;
       var voteSum = 0;
       for(var j=0;j<pMDs.length;j++){
-        kl+= pMDs[j] * (Math.log( pMDs[j] / pMs[0])/Math.log(2));
+        kl+= pMDs[j] * (Math.log( pMDs[j] / pMs[j])/Math.log(2));
         voteSum += diffs[j]*pMs[j];
         sumDiffs[j]+=Math.abs(diffs[j]);
       }
       
       surpriseData[prop][i] = voteSum >= 0 ? Math.abs(kl) : -1*Math.abs(kl);
+
       uniformData[prop][i] = pMs[0];
       baseData[prop][i] = pMs[1];
     }

@@ -80,7 +80,7 @@ TO DO:
 * O que um especialista diria de útil na análise
 * Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 #Checking sample size
 scores_data <- read.table("all100/all_ordenado.dat")
 scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
@@ -304,7 +304,7 @@ O que procurar?
 
 #Cristina Procópio
 
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 
@@ -336,7 +336,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
 kable(mapping, format = "markdown")
 
@@ -485,7 +485,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
    
 #Edésio Silva
 
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
@@ -510,7 +510,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 kable(mapping, format = "markdown")
 
@@ -590,7 +590,7 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 
 
 #Inácio Marques
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
@@ -616,7 +616,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2. ADD 180 in side1 
 kable(mapping, format = "markdown")
 
@@ -691,7 +691,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
    * Região melhor? Pelo surprise parece ser a região de 120 a 360, mesma sensação olhando os scores.
 
 #Floriano peixoto
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
@@ -716,7 +716,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
 kable(mapping, format = "markdown")
 
@@ -791,7 +791,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
    * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
 
 #Maciel Pinheiro
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
@@ -816,7 +816,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 kable(mapping, format = "markdown")
 
@@ -897,7 +897,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
    * Região melhor? O meio da rua (190 a 284) parece ter mais concentração de surpresas positivas, confirmado olhando os scores
 
 #Manoel Pereira
-```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
@@ -922,7 +922,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=20, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 kable(mapping, format = "markdown")
 

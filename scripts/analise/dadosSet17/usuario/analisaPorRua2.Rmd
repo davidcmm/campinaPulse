@@ -80,7 +80,7 @@ TO DO:
 * O que um especialista diria de útil na análise
 * Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 #Checking sample size
 scores_data <- read.table("all100/all_ordenado.dat")
 scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
@@ -231,7 +231,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
   g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, size=3)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") + ylim(c(-0.03, 0.03))
-    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylim(c(-0.05, 0.05))
+    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylim(c(-0.03, 0.03))
    g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
@@ -304,7 +304,7 @@ O que procurar?
 
 #Cristina Procópio
 
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 
@@ -336,7 +336,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
 kable(mapping, format = "markdown")
 
@@ -485,7 +485,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
    
 #Edésio Silva
 
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
@@ -510,7 +510,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 kable(mapping, format = "markdown")
 
@@ -590,7 +590,7 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 
 
 #Inácio Marques
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
@@ -616,7 +616,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2. ADD 180 in side1 
 kable(mapping, format = "markdown")
 
@@ -691,7 +691,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
    * Região melhor? Pelo surprise parece ser a região de 120 a 360, mesma sensação olhando os scores.
 
 #Floriano peixoto
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
@@ -716,7 +716,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
 kable(mapping, format = "markdown")
 
@@ -791,7 +791,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
    * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
 
 #Maciel Pinheiro
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
@@ -816,7 +816,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 kable(mapping, format = "markdown")
 
@@ -897,7 +897,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
    * Região melhor? O meio da rua (190 a 284) parece ter mais concentração de surpresas positivas, confirmado olhando os scores
 
 #Manoel Pereira
-```{r echo=FALSE, fig.height=40, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
@@ -922,7 +922,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=40, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 kable(mapping, format = "markdown")
 
@@ -999,16 +999,21 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
 
 #Sumário comparações dos Surprise Maps com base rate usando média ou mediana
 
+== Versão atual - 500 execuções do surprise e calculando média dos surprises ====
+
+* As versões com média e mediana foram equivalentes!
+
+=== Versão anterior ===
 ```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tabl <- "  
 | Street        | Base Rate (median)           | Base Rate (mean)  |
 |---------------|:-------------:|------:|
-| Cristina      |  |  X:  2 (dois lados separados), 261 (1 estranho no side2)|
-| Edésio        |   1546 (todos positivos)   |  X: 306-135 (pior), 1136 (1 ponto de cada side abaixo e acima)     |
-| Inácio        | 0: 54 (side2 talvez um pouco mais surpreendente positivamente)  | 0    |
-| Floriano      |   549 (side2 mais positivo)     | X: 549 (um ponto de side1 positivo é aceitável), 660 (a representação menos ruim é colocar todos positivos)    |
-| Maciel        | 284 (todos negativos pode ser entendido por notas mais baixas que resto da rua)  |  X: 130 (1 ponto de cada side abaixo e acima), 284 (270 negativo é aceitável)   |
-| Manoel        | 188 (1 ponto de side2 mais positivo e side1 com 1 ponto ligeiramente melhor)  | X: 188 (1 ponto de cada side no 0, 1 positivo e outro negativo), 222 (1 ponto de side2 mais positivo)   |
+| Cristina      | 0: 2* (side2 separado e side1 mais negativo), 261 (p1 side1 em cima é estranho, 1 ponto de side2 afastado)    | 0: 2 (1 ponto de cada side separado), 261* (ordem e ponto de side2 afastado)
+| Edésio        |  X: 306 (1 ponto side2 mais positivo e demais juntos), 1546 (todos juntos)    | 1546 (p1 side2 com destaque é estranho)
+| Inácio        |  X: 239 (p1 side1 mais positivo)    |
+| Floriano      |      | X: 691 (ordem de p2 side1 mais próximo a p1 side2), 913 (p2 side2 melhor que p1 side1)
+| Maciel        |   X: 130 (p1 side1 melhor), 190 (p2 side1 melhor que p1), 284 (p2 side1 melhor que p1)   |
+| Manoel        |   X: 300 (side2 ligeiramente melhor que p2 side1), 392 (1 ponto de cada side mais próximo)   |
 "
 cat(tabl) # output the table in a format good for HTML/PDF/docx conversion
 ```

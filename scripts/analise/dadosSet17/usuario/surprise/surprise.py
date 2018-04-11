@@ -106,7 +106,7 @@ def calcSurprise():
 
       avg_street  = average_street(prop)#For whole street
       total_street = sumU_street(prop)
-      avg_num = median_num(prop, i)#average_num(prop, i);//For current point
+      avg_num = average_num(prop, i)#median_num;//For current point
       total_num = sumU_num(prop, i)
       
       #Estimate P(D|M) as 1 - |O - E|

@@ -223,7 +223,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
 
-  mapping <- dplyr::select(data, xlabel, side, V3, street, num, angle)
+  mapping <- dplyr::select(data, xlabel, side, num, angle, V3, street)
   
   labels_to_show <- dplyr::select(dplyr::filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
@@ -457,22 +457,24 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
     * 66 p2 side2 
     * 305 p1 side2 diferença de 2.5 -> boa manutenção, verde, ruas largas x falta de manutenção, lixo
 2. Mais diversidade?
-   * 436, 1 estranho: verde, manutenção x construção, menor manutenção, problema na pista, lixo
    * 305, 2 lados separados: verde, manutenção x lixo, muro acabado
+   * 436, 1 estranho: verde, manutenção x construção, menor manutenção, problema na pista, lixo
    * 66, 1 estranho: verde, prédios bem mantidos x verde menos destacado, manutenção
-   * 261, 1 estranho: verde, boa manutenção x lixo, árvores pequenas, poste
-   * 2, 2 lados separados: verde, prédios mantidos x terreno, lixo
+   * 261, pontos do mesmo lado separados, 135 pior: verde, boa manutenção x lixo, árvores pequenas, poste, muro cego
+   * 2, 2 lados separados, mas 45 mais próximo ao side2 e 293 pior: verde, prédios mantidos x terreno, lixo
 3. Menor diversidade?
-   * 2 como ponto mais homogêneo, mas ainda assim com dispersão
+   * 2 e 261 como mais homogêneos, mas ainda com dispersão
 4. Diferenças/saltos no lado?
-   * 436, side2
-   * 261, side2
-   * 66, side2 -> recaem nos estranhos apontados acima
-5. Avaliação Problemas
+   * 2, side1 separado
+   * 66, side2 -> recaem nos pontos acima
+   * 261, side1 e side2 separados
+   * 305, side1 melhor que side2 e cada side separados internamente
+   * 436, side2 mais separado que side1
+5. Avaliação Problemas (minha opinião)
    * Pesquisador: 3 problemas (descritos acima)
    * Recall = método / pesquisador = 3/3 = 1
    * Precisão = reais / método = 4/5 = 0.8 (menos o 66 1 estranho)
-6. Avaliação Virtudes
+6. Avaliação Virtudes (minha opinião)
    * Pesquisador: 4 virtudes (descritos acima)
    * Recall = método / pesquisador = 4/4 = 1
    * Precisão = reais / método = 4/5 = 0.75 (menos o 305 2 lados separdos)
@@ -561,19 +563,20 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 >> Olhando o surprise maps (uniforme + base rate + normal)
 
 1. Máximo e Mínimo?
-    * 602 p2 side2 
+    * 70 p2 side1
     * 70 p1 side1. Dif de 1.6 -> boa manutenção, algum verde x construção, pouca manutenção, sem verde
 2. Mais diversidade?
-   * 1546, p2 side1 estranho: ??
-   * 306, p1 side1 estranho: material de construção
+   * 70, 22 estranho: casa bem mantida, verde x construção, casas mal mantidas, casas mais simples, carro
    * 602, um ponto de cada side separado: casas bem mantidas, verde x terreno, muro mal mantido
    * 1136, um ponto de cada side separado: casa melhor mantida, verde x terreno, casas muito mal mantidas
-   * 70, p2 side1 estranho: casa bem mantida, verde x construção, casas mal mantidas, casas mais simples, carro
+   * 306, 203 estranho positivamente: casas bem mantidas, árvores
 3. Menor diversidade?
-   * Não tem ponto homogêneo
+   * 1546, mais homogêneo e positivo
 4. Diferenças/saltos no lado?
-   * 1136, um ponto de cada side separado
+   * 70, side1 mais separado que side2
+   * 306, side2 mais separado que side1
    * 602, um ponto de cada side separado
+   * 1136, um ponto de cada side separado
 5. Avaliação Problemas
    * Pesquisador: 3 problemas (descritos acima)
    * Recall = método / pesquisador = 2.5/3 = 0.833 (dois de 4 problemas faltando no 1136)
@@ -668,14 +671,16 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
     * 239 p1 side1 
     * 54 p2 side2. Diferenca de 1.45 -> boa manutenção, algum verde x menor manutenção, lixo
 2. Mais diversidade?
+   * 54, 1 ponto de cada side separado: melhor manutenção, verde x pior manutenção, lixo
    * 120, side1 p2 estranho: lixo, falta de manutenção x melhor manutenção, verde
    * 360, side1 separado de side2: visões do museu x terreno
-   * 54, 1 ponto de cada side separado: melhor manutenção, verde x pior manutenção, lixo
 3. Menor diversidade?
    * 239 homogêneo e positivo (boa manunteção, verde)
    * 500 homogêneo e negativo (falta de manutenção, muros, terreno)
 4 Diferenças/saltos no lado?
    * 54, 1 ponto de cada side separado
+   * 120, side1 separado
+   * 360, side2 separado de side1
 5. Avaliação Problemas
    * Pesquisador: 4 problemas (descritos acima)
    * Recall = método / pesquisador = 4/4 = 1
@@ -768,14 +773,16 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
     * 913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4
 2. Mais diversidade?
    * 913, side2 separado de side1: visual das lojas, manutenção?
-   * 549, p2 side1 afastado: visual de lojas x praça
+   * 549, side2 separado de side1, certa separação entre cada ponto de side2: visual de lojas x praça
    * 445, 1 ponto de cada side separado: verde, praça x mais prédio?
-   * 813, 1 ponto de cada side separado: igreja, prédios x estilo de prédios, telegráfo?
+   * 813, 1 ponto side2 separado: igreja, prédios x estilo de prédios, telegráfo?
 3. Menor diversidade?
    * 660, ponto mais homogêneo e positivo: verde, prédios bem mantidos
 4 Diferenças/saltos no lado?
    * 445, 1 ponto de cada side separado
-   * 813, 1 ponto de cada side separado
+   * 549, side2 separado de side1
+   * 813, side2 separado
+   * 913, side2 separado de side1
 5. Avaliação Problemas
    * Pesquisador: 3 problemas (descritos acima)
    * Recall = método / pesquisador = 1/3 = 0.33 (menos o 549 ang 22 e o 913 ang 203 )
@@ -866,22 +873,25 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
     * Existe um lado melhor? O side1 parece ligeiramente melhor
     * Existe uma área melhor pior? Do 190 ao 248 parece ser a melhor área, e do 248 ao 284 a pior
 
->> Olhando o surprise maps (uniforme + base rate + normal) - DAQUI!
+>> Olhando o surprise maps (uniforme + base rate + normal)
 
 1. Máximo e Mínimo?
     * 248 angulo 180 (boa manutenção)
     * 190 180 (manutenção de prédio faltando)
 2. Mais diversidade?
-   * 360, p2 side1 (360) afastado (melhor conservação, estilo, sem caminhão + praça)
    * 190, p1 side2 (180) afastado (prédio precisando de manutenção)
    * 248, 1 ponto de cada side separado (prédios conservados, estilo + motos, estilos)
-   * 284, p2 side2 (270) afastado (estacionamento + prédio + carros)
    * 130, 1 ponto de cada side separado (prédios conservados, estilo + estilo, prédio precisando de conservação)
+   * 360, p2 side1 melhor (melhor conservação, estilo, sem caminhão + praça)
+   * 284, p2 side2 (270) pior (estacionamento + prédio + carros)
 3. Menor diversidade?
    * alguma heterogeneidade em todos os pontos
 4 Diferenças/saltos no lado?
-   * 248, 1 ponto de cada side separado
    * 130, 1 ponto de cada side separado 
+   * 190, side2 separado
+   * 248, 1 ponto de cada side separado
+   * 284, side2 separado
+   * 360, side1 separado
 5. Avaliação Problemas
    * Pesquisador: 5 problemas (descritos acima)
    * Recall = método / pesquisador = 3 de 5 (arvore no geral e 284 360 não foram percebidos) = 0.6
@@ -974,15 +984,19 @@ show_street_data(manoel, all_data,  best_folder, worst_folder)
     * 222 p1 side2 (prédio mais conservado da sucata) 
     * 188 p1 side2 (prédio acabado, carros, itens na rua)
 2. Mais diversidade?
+   * 370, side1 separado (melhor conservação, menos itens x pior conservação, mais itens na rua)
    * 392, 1 ponto de cada side separado (prédios melhores conservados x construção, mais itens na rua)
-   * 222, p1 side2 separado (prédio melhor conservado)
-   * 370, 1 ponto de cada side separado (melhor conservação, menos itens x pior conservação, mais itens na rua)
-   * 300, side2 melhor que side1 (menos itens na rua, conservação)
+   * 222, side2 separado, side1 pouco separado (side2 - prédio mais conservado, menos itens na rua x prédios pior conservado a direita; side1 - prédios melhor conservado, menos itens na rua)
+   * 300, p1 side1 pior (muitos itens na rua)
+   * 188, p1 side2 pior (prédio pior conservação, estilo dos prédios?)
 3. Menor diversidade?
-   * 188 mais próximo de homogêneo
+   * Todos os pontos tem alguma diversidade
 4 Diferenças/saltos no lado?
    * 392, 1 ponto de cada side separado
-   * 370, 1 ponto de cada side separado 
+   * 370, side1 separado
+   * 300, side1 separado
+   * 222, side2 mais separado que side1
+   * 188, side2 mais separado que side1
 5. Avaliação Problemas
    * Pesquisador: 5 problemas (descritos acima)
    * Recall = método / pesquisador = 3.66/5 = 0.73 (falta de arvore e um ponto do 370)

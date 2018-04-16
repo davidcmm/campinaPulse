@@ -66,7 +66,10 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-show_street_data <- function (current_df, all_data, force_split, highlighted_positive){
+best_folder <- "../../percepcaoLocal/agradavel/melhores/intersects/"
+worst_folder <- "../../percepcaoLocal/agradavel/piores/intersects/"
+
+show_street_data <- function (current_df, all_data, force_split, highlighted_positive, best_folder, worst_folder){
     color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
     step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
     thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
@@ -77,23 +80,41 @@ show_street_data <- function (current_df, all_data, force_split, highlighted_pos
       row <- current_df[i,]
       
       street <- as.character(row$street)
-      photo_name <- as.character(row$url)
+      photo_name <- as.character(row$photo_name)#photo_name <- as.character(row$url)
       number <- row$num
       angl <- row$angle
       score <- row$qscore
       angleData <- append(angleData, score)
       
       filtered <- filter(highlighted_positive, num==number & angle == angl)
-      
+      folder <- "none"
       if (nrow(filtered) > 0){
          color_index <- 11
+        if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else{
+           url <- as.character(row$url)
+        }
       }else{
          color_index <- 1
+        if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else{
+           url <- as.character(row$url)
+        }
       }
       
       cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
-      cat("<img src='", photo_name,"' width='300px'>", sep = "")
-      cat("<p style=\"color:white;font-size:90%\">", number, "-", angl, "-> ", score,  "</p>", sep="")
+      cat("<img src='", url,"' width='300px'>", sep = "")
+      cat("<p style=\"color:white;font-size:90%\">", folder, "-", number, "-", angl, "-> ", score,  "</p>", sep="")
       cat("</div>")
       
       #End of row with 4 images
@@ -139,13 +160,13 @@ cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>%
 cat("<br/>")
 max_point <- filter(cristina, qscore == max(cristina$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
-cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")
+cat("<img src='", paste(best_folder, max_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(max_point$url)
 cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
 cat("</div>")
 
 min_point <- filter(cristina, qscore == min(cristina$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
-cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")
+cat("<img src='", paste(worst_folder, min_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(min_point$url)
 cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
 cat("</div>")
 
@@ -159,7 +180,7 @@ cat("<br/>")
 
 highlighted_positive <- data.frame(num=c(2,2, 66, 66, 66, 261, 261, 261, 305, 305, 436, 436, 436), angle=c(135, 225, 45, 315, 225, 22, 315, 225, 45, 293, 22, 135, 315))
 
-show_street_data(cristina, all_data, TRUE, highlighted_positive)
+show_street_data(cristina, all_data, TRUE, highlighted_positive, best_folder, worst_folder)
 cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
 ```
 
@@ -181,13 +202,13 @@ floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% d
 cat("<br/>")
 max_point <- filter(floriano, qscore == max(floriano$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
-cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")
+cat("<img src='", paste(best_folder, max_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(max_point$url)
 cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
 cat("</div>")
 
 min_point <- filter(floriano, qscore == min(floriano$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
-cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")
+cat("<img src='", paste(worst_folder, min_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(min_point$url)
 cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
 cat("</div>")
 
@@ -199,9 +220,9 @@ Pontos notáveis destacados por ponto na rua
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
 cat("<br/>")
 
-highlighted_positive <- data.frame(num=c(445, 445, 549, 549, 549, 691, 691, 691, 691, 813, 813, 913, 913), angle=c(22, 112, 22, 112, 203, 22, 293, 112, 203, 112, 293, 112, 203))
+highlighted_positive <- data.frame(num=c(445, 445, 549, 549, 691, 691, 691, 691, 813, 913, 913), angle=c(22, 112, 112, 203, 22, 112, 203, 293, 112, 112, 203))
 
-show_street_data(floriano, all_data, TRUE, highlighted_positive)
+show_street_data(floriano, all_data, TRUE, highlighted_positive, best_folder, worst_folder)
 cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
 ```
 

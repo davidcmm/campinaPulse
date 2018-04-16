@@ -681,6 +681,10 @@ agrad_random_wo_user_nscaled <- create_model_wo_profile(agrad_nscaled)#create_ra
 print("Random Effects without user moderation not scaled")
 print(summary(agrad_random_wo_user_nscaled))
 
+print(logLik(agrad_random_wo_user_nscaled)*-2)
+print(logLik(agrad_random_user_nscaled)*-2 )
+print(anova(agrad_random_wo_user_nscaled, agrad_random_user_nscaled))
+
 #vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)#https://cran.r-project.org/web/packages/nonnest2/vignettes/nonnest2.pdf
 #icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)
 

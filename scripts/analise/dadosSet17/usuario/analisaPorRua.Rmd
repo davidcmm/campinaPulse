@@ -16,7 +16,7 @@ library("ineq")
 library(R.utils)
 library("reshape")
 library("spatcounts")
-library("nonnest2")#https://cran.r-project.org/web/packages/nonnest2/nonnest2.pdf
+#library("nonnest2")#https://cran.r-project.org/web/packages/nonnest2/nonnest2.pdf
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -71,7 +71,7 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Na segunda versão do Place Pulse tem-se 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
+  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -671,19 +671,20 @@ print(summary(agrad_intercept_ns))
 print(summary(agrad_intercept_user_ns))
 print(logLik(agrad_intercept_ns)*-2 )
 print(logLik(agrad_intercept_user_ns)*-2)
+print(anova(agrad_intercept_ns, agrad_intercept_user_ns))
 
-agrad_random_user_nscaled <- create_random_model_w_interact(agrad_nscaled, "")
+agrad_random_user_nscaled <- create_model_w_interact(agrad_nscaled)#create_random_model_w_interact(agrad_nscaled, "")
 print("Random Effects not scaled")
 print(summary(agrad_random_user_nscaled))
 
-agrad_random_wo_user_nscaled <- create_random_model_wo_interact(agrad_nscaled, "")
+agrad_random_wo_user_nscaled <- create_model_wo_profile(agrad_nscaled)#create_random_model_wo_interact(agrad_nscaled, "")
 print("Random Effects without user moderation not scaled")
 print(summary(agrad_random_wo_user_nscaled))
 
-vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)#https://cran.r-project.org/web/packages/nonnest2/vignettes/nonnest2.pdf
-icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)
+#vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)#https://cran.r-project.org/web/packages/nonnest2/vignettes/nonnest2.pdf
+#icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)
 
-computePseudoR2(baselineModel = agrad_intercept_user_ns, completeModel = agrad_random_user_nscaled)
+#computePseudoR2(baselineModel = agrad_intercept_user_ns, completeModel = agrad_random_user_nscaled)
 
 #Scaled
 agrad_intercept <- create_model_only_int(agrad_scaled)

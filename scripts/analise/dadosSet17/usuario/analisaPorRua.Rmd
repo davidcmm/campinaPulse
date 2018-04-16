@@ -146,10 +146,13 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Uma cidade projetada com foco no landscape não pode ser apreciada por uma visão bird’s eye. Estilos de arquitetura, escala humana não podem ser experimentados por esta visão. 
 
 
-5. E o panorama detalhado da rua (**visão micro**)? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando **descrever, encontrar problemas/virtudes, avaliar as particularidades**, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
+5. E o panorama detalhado da rua (**visão micro**)? Com essa ideia estamos buscando **descrever, encontrar problemas/virtudes, avaliar as particularidades**, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.
+* Este estudo micro casa bem com o cenário no qual podemos pensar em um sistema de coleta da percepção dos moradores sobre sua rua e uso desta ferramenta para pressão e argumentação junto à autoridades
+* Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais?
++ Se pensarmos em termos o melhor modelo possível, que reproduza fielmente a opinião das pessoas, o que **podemos descrever e apontar de virtudes/problemas**?
 * Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas: 
-* As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
-* Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
++ As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;
++ Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país
 
 Estamos pensando em o que fazer com esses dados, como computar e apresentar pontos úteis no mundo micro! Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas.
 
@@ -674,16 +677,21 @@ print(logLik(agrad_intercept_user_ns)*-2)
 print(anova(agrad_intercept_ns, agrad_intercept_user_ns))
 
 agrad_random_user_nscaled <- create_model_w_interact(agrad_nscaled)#create_random_model_w_interact(agrad_nscaled, "")
-print("Random Effects not scaled")
+print("Logistic model not scaled - with user being or not from campina")
 print(summary(agrad_random_user_nscaled))
 
 agrad_random_wo_user_nscaled <- create_model_wo_profile(agrad_nscaled)#create_random_model_wo_interact(agrad_nscaled, "")
-print("Random Effects without user moderation not scaled")
+print("Logistic model not scaled - without user being or not from campina")
 print(summary(agrad_random_wo_user_nscaled))
 
 print(logLik(agrad_random_wo_user_nscaled)*-2)
 print(logLik(agrad_random_user_nscaled)*-2 )
-print(anova(agrad_random_wo_user_nscaled, agrad_random_user_nscaled))
+
+print("Comparing deviance of models and chi-square values from table")
+dif <- logLik(agrad_random_user_nscaled)*2 - logLik(agrad_random_wo_user_nscaled)*2 
+print(dif)
+print(qchisq(0.95, df=5))
+print(qchisq(0.99, df=5))
 
 #vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)#https://cran.r-project.org/web/packages/nonnest2/vignettes/nonnest2.pdf
 #icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)

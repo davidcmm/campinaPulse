@@ -15,7 +15,7 @@ library("texreg")
 library("ineq")
 library(R.utils)
 library("reshape")
-library("spatcounts")
+#library("spatcounts")
 #library("nonnest2")#https://cran.r-project.org/web/packages/nonnest2/nonnest2.pdf
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -71,7 +71,7 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Na segunda versão do Place Pulse tem-se 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
+  teste <- read.csv("/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -495,7 +495,7 @@ library(pscl)
 library(DT)
 library(ggplot2)
 theme_set(theme_bw())
-library(GGally)
+#library(GGally)
 library(dplyr, warn.conflicts = F)
 library(broom)
 
@@ -683,7 +683,10 @@ print(summary(agrad_random_wo_user_nscaled))
 
 print(logLik(agrad_random_wo_user_nscaled)*-2)
 print(logLik(agrad_random_user_nscaled)*-2 )
-print(anova(agrad_random_wo_user_nscaled, agrad_random_user_nscaled))
+dif <- logLik(agrad_random_user_nscaled)*2 - logLik(agrad_random_wo_user_nscaled)*2
+print(dif)
+print(qchisq(0.95, df=5))
+print(qchisq(0.99, df=5))
 
 #vuongtest(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)#https://cran.r-project.org/web/packages/nonnest2/vignettes/nonnest2.pdf
 #icci(agrad_random_user_nscaled, agrad_random_wo_user_nscaled)

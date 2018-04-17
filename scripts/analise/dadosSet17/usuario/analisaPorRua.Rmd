@@ -58,9 +58,12 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 users_not_campina <- read.table("../backupBanco/idsGerais/notcampina.dat", skip=1)
 users_info <- read.table("../backupBanco/idsGerais/usersInfo.dat", sep="|")
 users_profile <- read.csv("../backupBanco/users.csv", header=FALSE)
+users_n_answered <- read.table("../backupBanco/usersNAnswered.dat")
 
 not_camp_info <- merge(merge(users_not_campina, select(users_info, V1, V2), by.x = "V1", by.y = "V1"), users_profile, by.x = "V1", by.y = "V1")
-#View(select(not_camp_info, V1, V2.x, V4, V5))
+View(select(not_camp_info, V1, V2.x, V4, V5))
+not_answered <- merge(select(users_n_answered, V1), select(users_profile, V1, V3, V5), by.x = "V1", by.y = "V1")
+View(not_answered)
 ```
 
 Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas (**visão macro**). Com isso surgem alguns pontos a serem considerados:

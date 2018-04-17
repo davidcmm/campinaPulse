@@ -12,7 +12,7 @@ def sendEmails(emails):
 
 	fromaddr = "davcandeia@gmail.com"#'comoecampina@gmail.com'
 	username = "davcandeia@gmail.com"#'comoecampina@gmail.com'
-	password = "erigm201409"#'comoecampina2017'
+	password = "erikago198626"#'comoecampina2017'
 	server = None
 
 	try:
@@ -43,7 +43,7 @@ def sendEmails(emails):
 		#message.set_payload(msg)
 		message.attach(MIMEText(msg, 'html'))
 
-		fp = open("/home/davidcmm/workspace_doutorado/campinaPulse/imagens_divulgacao/avatar.jpg",  'rb')#"/local/david/pybossa_env/campinaPulse/imagens_divulgacao/avatar.jpg", "rb")                                                    
+		fp = open("/local/david/pybossa_env/campinaPulse/imagens_divulgacao/avatar.jpg",  'rb')#"/home/davidcmm/workspace_doutorado/campinaPulse/imagens_divulgacao/avatar.jpg", "rb")                                                    
 		img = MIMEImage(fp.read())
 		fp.close()
 		img.add_header('Content-ID', '<{}>'.format("/local/david/pybossa_env/campinaPulse/imagens_divulgacao/avatar.jpg"))

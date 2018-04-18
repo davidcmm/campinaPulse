@@ -33,12 +33,12 @@ def median_num(prop, i):
 	
 	return np.median(current_values)
 
-def average_street(prop):
+def average_street(prop, num_of_points):
 	#Average scores for current street.
 	sum = 0
 	n = 0
   
-	for i in range(0, 20):
+	for i in range(0, num_of_points):
 		sum = sum + data[prop][i]
 		n = n + 1
 	return sum/n
@@ -52,10 +52,10 @@ def sumU_num(prop, i):
 		sum = sum + data[prop][i]
 	return sum
 
-def sumU_street(prop):
+def sumU_street(prop, num_of_points):
 	#Sum scores for current street.
 	sum = 0
- 	for i in range(0, 20):
+ 	for i in range(0, num_of_points):
 		sum = sum + data[prop][i]
 	return sum
 
@@ -63,16 +63,16 @@ def KL(pmd,pm):
   return pmd * (np.log(pmd / pm) / np.log(2))
 
 
-def calcSurprise():
+def calcSurprise(num_of_points):
   
-  uniformData = {}
-  surpriseData = {}
-  baseData = {}
+  uniform_data = {}
+  surprise_data = {}
+  base_data = {}
 
   for prop in data:
-	surpriseData[prop] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-	uniformData[prop] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-	baseData[prop] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	surprise_data[prop] = [0 for x in range(num_of_points)]
+	uniform_data[prop] = [0 for x in range(num_of_points)]
+	base_data[prop] = [0 for x in range(num_of_points)]
 
   #Start with equiprobably P(M)s
   #Initially, everything is equiprobable.
@@ -87,16 +87,16 @@ def calcSurprise():
   avg = 0
   total = 0
 
-  normal_fit = {"all" : [4.68088452, 0.62863384], u'R._Cristina_Proc\xf3pio_Silva' : [4.92394878, 0.62351231], u'R._Maciel_Pinheiro' : [4.84016850, 0.28028584], u'R._In\xe1cio_Marqu\xeas_da_Silva': [4.84231882, 0.46291311], u'R._Manoel_Pereira_de_Ara\xfajo': [3.65700904, 0.19215810], u'Av._Mal._Floriano_Peixoto': [ 5.04950088, 0.34203741], u'R._Ed\xe9sio_Silva': [4.77236112, 0.48215430]}
+  normal_fit = {"all" : [4.68814353, 0.64067694], u'R._Cristina_Proc\xf3pio_Silva' : [4.97966875, 0.71104919], u'R._Maciel_Pinheiro' : [4.77777896, 0.22856043], u'R._In\xe1cio_Marqu\xeas_da_Silva': [4.71353096, 0.54189458], u'R._Manoel_Pereira_de_Ara\xfajo': [3.67248457, 0.18353610], u'Av._Mal._Floriano_Peixoto': [ 4.95739065, 0.32222894], u'R._Ed\xe9sio_Silva': [4.71109467, 0.46001726]}
   
   #Bayesian surprise is the KL divergence from prior to posterior
   kl = 0
   diffs = [0,0,0]
-  sumDiffs = [0,0,0]
+  sum_diffs = [0,0,0]
 
-  for i in range(0, 20):
+  for i in range(0, num_of_points):
 
-    sumDiffs = [0,0,0]
+    sum_diffs = [0,0,0]
 
     #Calculate per state surprise
     for prop in data:
@@ -104,8 +104,8 @@ def calcSurprise():
       norm_data = normal_fit[prop]
       norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
 
-      avg_street  = average_street(prop)#For whole street
-      total_street = sumU_street(prop)
+      avg_street  = average_street(prop, num_of_points)#For whole street
+      total_street = sumU_street(prop, num_of_points)
       avg_num = average_num(prop, i)#median_num;//For current point
       total_num = sumU_num(prop, i)
       
@@ -134,19 +134,19 @@ def calcSurprise():
       for j in range(0, len(pMDs)):
         kl = kl + pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2))
         voteSum = voteSum + diffs[j]*pMs[j]
-        sumDiffs[j] = sumDiffs[j] + abs(diffs[j])
+        sum_diffs[j] = sum_diffs[j] + abs(diffs[j])
       
       if voteSum >= 0:
-	surpriseData[prop][i] = abs(kl) 
+	surprise_data[prop][i] = abs(kl) 
       else: 
-	surpriseData[prop][i] = -1 * abs(kl)
+	surprise_data[prop][i] = -1 * abs(kl)
 
-      uniformData[prop][i] = pMs[0]
-      baseData[prop][i] = pMs[1]
+      uniform_data[prop][i] = pMs[0]
+      base_data[prop][i] = pMs[1]
     
     #Now lets globally update our model belief.
     for j in range(0, len(pMs)):
-      pDMs[j] = 1 - 0.5 * sumDiffs[j]
+      pDMs[j] = 1 - 0.5 * sum_diffs[j]
       pMDs[j] = pMs[j] * pDMs[j]
       pMs[j] = pMDs[j]
     
@@ -159,67 +159,87 @@ def calcSurprise():
     boom_pM.append(pMs[1])
     bust_pM.append(pMs[2])
 
-  return [surpriseData, uniformData, baseData]
+  return [surprise_data, uniform_data, base_data]
+
+if __name__ == "__main__":
+
+	if len(sys.argv) < 3:
+		print "Uso: <arquivo com scores a considerar> <quantidade de pontos de coleta na rua>"
+		sys.exit(1)
+
+	#Init algorithm
+	data = {}
+	surprise_data = {}
+	uniform = {}
+	boom = {}
+	bust = {}
+
+	max_street = {}
+	min_street = {}
+
+	input_data = pd.read_table(sys.argv[1], sep=',', encoding='utf8', header=0)
+	num_of_points = int(sys.argv[2])
+
+	data = {}
+	for index, row in input_data.iterrows():
+		if num_of_points == 20:
+			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20']]
+		else:
+			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28'], row['num29'], row['num30'], row['num31'], row['num32'], row['num33'], row['num34'], row['num35'], row['num36'], row['num37'], row['num38'], row['num39'], row['num40']]
+
+	print str(data)
+
+	#Creating variables to store values over iterations
+	all_surprise = {}
+	all_uniform = {}
+	all_base = {}
+	surprise_summary = {}
+	uniform_summary = {}
+	base_summary = {}
+
+	for prop in input_data['street']:
+		if num_of_points == 20:
+			all_surprise[prop] = [[] for x in range(num_of_points)]
+			all_uniform[prop] = [[] for x in range(num_of_points)]
+			all_base[prop] = [[] for x in range(num_of_points)]
+
+			surprise_summary[prop] = [[] for x in range(num_of_points)]
+			uniform_summary[prop] = [[] for x in range(num_of_points)]
+			base_summary[prop] = [[] for x in range(num_of_points)]
+		else:
+			all_surprise[prop] =[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+			all_uniform[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+			all_base[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+
+			surprise_summary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+			uniform_summary[prop] =[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+			base_summary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
 
 
-#Init algorithm
-data = {}
-surpriseData = {}
-uniform = {}
-boom = {}
-bust = {}
+	#Multiple calculations of surprise values and storing calculus results
+	for i in range(0, 10000):
+	  result = calcSurprise(num_of_points)
+	  #print str(result)
+	  surprise_data = result[0]
+	  uniform_data = result[1]
+	  base_data = result[2]
 
-max_street = {}
-min_street = {}
+	  for prop in input_data['street']:
+		for i in range(0, num_of_points):
+			all_surprise[prop][i].append(surprise_data[prop][i])
+			all_uniform[prop][i].append(uniform_data[prop][i])
+			all_base[prop][i].append(base_data[prop][i])
 
-input_data = pd.read_table("street_scores.csv", sep=',', encoding='utf8', header=0)
-data = {}
-for index, row in input_data.iterrows():
-	 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20']]
+	#Calculating summaries
+	for prop in input_data['street']:
+		for i in range(0, num_of_points):
+			surprise_summary[prop][i] = np.mean(all_surprise[prop][i])
+			uniform_summary[prop][i] =  np.mean(all_uniform[prop][i])
+			base_summary[prop][i] =  np.mean(all_base[prop][i])
 
-print str(data)
-
-#Creating variables to store values over iterations
-allSurprise = {}
-allUniform = {}
-allBase = {}
-surpriseSummary = {}
-uniformSummary = {}
-baseSummary = {}
-
-for prop in input_data['street']:
-	allSurprise[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-	allUniform[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-	allBase[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-
-	surpriseSummary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-	uniformSummary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-	baseSummary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-
-
-#Multiple calculations of surprise values and storing calculus results
-for i in range(0,500):
-  result = calcSurprise()
-  surpriseData = result[0]
-  uniformData = result[1]
-  baseData = result[2]
-
-  for prop in input_data['street']:
-	for i in range(0,20):
-		allSurprise[prop][i].append(surpriseData[prop][i])
-		allUniform[prop][i].append(uniformData[prop][i])
-		allBase[prop][i].append(baseData[prop][i])
-
-#Calculating summaries
-for prop in input_data['street']:
-	for i in range(0,20):
-		surpriseSummary[prop][i] = np.mean(allSurprise[prop][i])
-		uniformSummary[prop][i] =  np.mean(allUniform[prop][i])
-		baseSummary[prop][i] =  np.mean(allBase[prop][i])
-
-#Printing surprise values summaries
-for prop in surpriseSummary:
-	print prop + "," + ','.join(str(i) for i in surpriseSummary[prop])
+	#Printing surprise values summaries
+	for prop in surprise_summary:
+		print prop + "," + ','.join(str(i) for i in surprise_summary[prop])
 
   
 

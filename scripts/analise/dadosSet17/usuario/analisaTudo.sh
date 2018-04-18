@@ -14,7 +14,7 @@ mkdir idsNotCampina
 #Separating all users into groups
 python analisaUsuarios.py run.csv run.csv
 
-python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
+python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat users_gender.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
 mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsGerais/
@@ -40,14 +40,14 @@ cp ../backupBanco/idsGerais/media.dat ../backupBanco/idsGerais/baixa.dat ../back
 #Separating subgroups - Run in backupBanco folder
 python analisaUsuarios.py ../usuario/run100/runCampina.csv ../usuario/run100/runCampina.csv
 
-python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
+python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat users_gender.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
 mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsCampina/
 
 python analisaUsuarios.py ../usuario/run100/runnotCampina.csv ../usuario/run100/runnotCampina.csv
 
-python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat
+python separaGrupo.py separa usersInfo.dat users_notcampina_campina.dat users_gender.dat
 sort -t "|" -k 1 -g -o usersInfo.dat usersInfo.dat
 
 mv campina.dat casado.dat adulto.dat baixa.dat catole.dat centro.dat feminino.dat jovem.dat liberdade.dat masculino.dat media.dat medio.dat notcampina.dat notcatole.dat notcentro.dat notliberdade.dat posgrad.dat solteiro.dat usersInfo*.dat usersNAnswered.dat usersPhotos* cities.dat idsNotCampina/

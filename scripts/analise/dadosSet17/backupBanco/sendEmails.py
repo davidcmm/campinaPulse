@@ -12,7 +12,7 @@ def sendEmails(emails):
 
 	fromaddr = "davcandeia@gmail.com"#'comoecampina@gmail.com'
 	username = "davcandeia@gmail.com"#'comoecampina@gmail.com'
-	password = "erigm201409"#'comoecampina2017'
+	password = "erikago198626"#'comoecampina2017'
 	server = None
 
 	try:

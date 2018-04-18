@@ -56,29 +56,29 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-#Creating output file for surprise calculation - streets with 40 points
-data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Cristina_Procópio_Silva")
-data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
-result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-colnames(result) <- sub("qscore\\.", "num", colnames(result))
-
-data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Inácio_Marquês_da_Silva")
-data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
-result2 <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-colnames(result2) <- sub("qscore\\.", "num", colnames(result2))
-
-write.csv(rbind(result, result2), "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
-
-#Streets with 20 points
-data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street != "R._Cristina_Procópio_Silva" & street != "R._Inácio_Marquês_da_Silva")
-final_result <- data.frame()
-for (name in unique(data$street)){
-  data2 <- dplyr::filter(data, street==name) %>% arrange(num, angle) %>% mutate(rank=1:n())
-  result <- reshape(dplyr::select(data2, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-  colnames(result) <- sub("qscore\\.", "num", colnames(result))
-  final_result <- rbind(final_result, result)
-}
-write.csv(final_result, "surprise/street_scores.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
+# #Creating output file for surprise calculation - streets with 40 points
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Cristina_Procópio_Silva")
+# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+# result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+# colnames(result) <- sub("qscore\\.", "num", colnames(result))
+# 
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Inácio_Marquês_da_Silva")
+# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+# result2 <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+# colnames(result2) <- sub("qscore\\.", "num", colnames(result2))
+# 
+# write.csv(rbind(result, result2), "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
+# 
+# #Streets with 20 points
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street != "R._Cristina_Procópio_Silva" & street != "R._Inácio_Marquês_da_Silva")
+# final_result <- data.frame()
+# for (name in unique(data$street)){
+#   data2 <- dplyr::filter(data, street==name) %>% arrange(num, angle) %>% mutate(rank=1:n())
+#   result <- reshape(dplyr::select(data2, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+#   colnames(result) <- sub("qscore\\.", "num", colnames(result))
+#   final_result <- rbind(final_result, result)
+# }
+# write.csv(final_result, "surprise/street_scores.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
 ```
 
 Alguns pontos importantes:
@@ -236,21 +236,24 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data2$upper <- data2$mean + (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
   data2$lower <- data2$mean - (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
   
-  side_summary <- data.frame(side=c(rep("side1",4), rep("side2",4)), upper=c(rep(unique(data1$upper),4), rep(unique(data2$upper),4)), lower= c(rep(unique(data1$lower),4), rep(unique(data2$lower),4)), x=rep(seq(max(numbers_to_show), max(numbers_to_show)+30, 10), 1) )  
+  #side_summary <- data.frame(side=c(rep("side1",4), rep("side2",4)), upper=c(rep(unique(data1$upper),4), rep(unique(data2$upper),4)), lower= c(rep(unique(data1$lower),4), rep(unique(data2$lower),4)), x=rep(seq(max(numbers_to_show), max(numbers_to_show)+30, 10), 1) )  
   
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
 
   mapping <- dplyr::select(data, xlabel, side, num, angle, V3, street)
   
-  labels_to_show <- dplyr::select(dplyr::filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
+  if (plotTitle == "Inacio" || plotTitle == "Cristina Procopio" ){
+    labels_to_show <- dplyr::select(dplyr::filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9,11,13,15,17,19)]
+  }else{
+    labels_to_show <- dplyr::select(dplyr::filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9)]
+  }
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
-  #g1 + geom_ribbon(data=side_summary, aes(ymin=lower, ymax=upper, x=x, colour=side), linetype=1, alpha=0.3)#+ geom_line(aes(y=mean, x=num, col=side), linetype="dashed") + geom_line(aes(y=median, x=num, col=side), linetype="dotdash")    scale_fill_grey() + scale_color_grey() #reorder(xlabel, num)
-  g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
-  g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, size=3)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") + ylim(c(-0.03, 0.03))
-    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylim(c(-0.03, 0.03))
-   g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
+  #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
+  #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
+  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, size=3)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") + ylim(c(-0.02, 0.02))
+   g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylim(c(-0.02, 0.02))
+   #g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
 #     x <-x[order(x$num), ]
@@ -280,7 +283,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
 #     
 #       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
   
-  multiplot(g1, g2, g3, g4, g5, g6, cols=1)
+  multiplot(g1, g4, g5, cols=1)
   return (mapping)
 }
 
@@ -301,12 +304,15 @@ arrange(gini, desc(value))
 arrange(entropy, desc(value))
 arrange(SD, desc(value))
 
-
+#Surprise data for 20 points in streets
 surprise_street <- read.csv("./surprise/surprise_data_street.csv")
 surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
 surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed.csv")
 surprise_unif_baseMed_norm <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed.csv")
 surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
+
+surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added.csv")
+surprise_unif_baseMed_norm_40 <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed_added.csv")
 ```
 
 O que procurar?
@@ -327,11 +333,11 @@ best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 
 cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-cristina$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-cristina$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-cristina$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-cristina$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+#cristina$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+#cristina$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+cristina$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm_40, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+#cristina$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 
 shapiro.test(cristina$qscore)
 fitdistr(cristina$qscore, "normal")
@@ -351,8 +357,8 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
+```{r results='asis', echo=FALSE, fig.height=15, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 203, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
 kable(mapping, format = "markdown")
 
 show_street_data <- function (current_df, all_data, best_folder, worst_folder){
@@ -370,53 +376,72 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
     
     cat("<div class='row'>")
     angleData = c()
-    for(i in 1:nrow(current_df)) {
-      row <- current_df[i,]
-      
-      street <- as.character(row$street)
-      photo_name <- as.character(row$photo_name)
-      num <- row$num
-      angle <- row$angle
-      score <- row$qscore
-      angleData <- append(angleData, score)
-      
-      color_index <- findInterval(score, thresholds)[1]
-      if (color_index > length(color_space)){
-         color_index <- length(color_space)
-      }
-      
-      folder <- "none"
-      if (score >= median_value){
-        if (file.exists(paste(best_folder, photo_name, sep=""))){
-          url <- paste(best_folder, photo_name, sep="")
-          folder <- "best"
-        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
-          url <- paste(worst_folder, photo_name, sep="")
-          folder <- "worst"
-        }else{
-           url <- as.character(row$url)
-        }
-      }else{
-        if (file.exists(paste(worst_folder, photo_name, sep=""))){
-          url <- paste(worst_folder, photo_name, sep="")
-          folder <- "worst"
-        }else if (file.exists(paste(best_folder, photo_name, sep=""))){
-          url <- paste(best_folder, photo_name, sep="")
-          folder <- "best"
-        }else{
-           url <- as.character(row$url)
+    for(i in seq(1, nrow(current_df), 4)){#1:nrow(current_df)
+      #row <- current_df[i,]
+      rows <- current_df[i:(i+3),] %>% arrange(surprise_unif_base_norm_fixed)
+      max_dif <- -1
+      max_index <- 0
+      for (j in 2:4){
+        dif <- rows[j,]$surprise_unif_base_norm_fixed - rows[(j-1),]$surprise_unif_base_norm_fixed
+        if(dif > max_dif){
+          max_dif <- dif
+          max_index <- j
         }
       }
       
-      cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
-      cat("<img src='", url,"' width='300px'>", sep = "")
-      cat("<p style=\"color:white;font-size:90%\">", folder, "<br>", photo_name, "-> ", score,  "</p>", sep="")
-      cat("</div>")
-      if (i > 1 && i %% 4 == 0){
+      lower_points <- rows[1:(max_index-1),]
+      upper_points <- rows[max_index:4,]
+      
+      rows <- current_df[i:(i+3),] %>% arrange(num, angle)
+      for (j in 1:4){
+        row <- rows[j,]
+        
+        street <- as.character(row$street)
+        photo_name <- as.character(row$photo_name)
+        num <- row$num
+        angle <- row$angle
+        score <- row$qscore
+        surprise <- row$surprise_unif_base_norm_fixed
+        angleData <- append(angleData, score)
+        
+        color_index <- findInterval(score, thresholds)[1]
+        if (color_index > length(color_space)){
+           color_index <- length(color_space)
+        }
+        
+        folder <- "none"
+        if (angle %in% upper_points$angle){
+          if (file.exists(paste(best_folder, photo_name, sep=""))){
+            url <- paste(best_folder, photo_name, sep="")
+            folder <- "best"
+          }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+            url <- paste(worst_folder, photo_name, sep="")
+            folder <- "worst"
+          }else{
+             url <- as.character(row$url)
+          }
+        }else{
+          if (file.exists(paste(worst_folder, photo_name, sep=""))){
+            url <- paste(worst_folder, photo_name, sep="")
+            folder <- "worst"
+          }else if (file.exists(paste(best_folder, photo_name, sep=""))){
+            url <- paste(best_folder, photo_name, sep="")
+            folder <- "best"
+          }else{
+             url <- as.character(row$url)
+          }
+        }
+        
+        cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
+        cat("<img src='", url,"' width='300px'>", sep = "")
+        cat("<p style=\"color:white;font-size:90%\">", folder, "<br>", photo_name, "-> ", score, "(", surprise, ")",  "</p>", sep="")
         cat("</div>")
-        cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
-        cat("<div class='row'>")
-        angleData = c()
+        if (i > 1 && i %% 4 == 0){
+          cat("</div>")
+          cat("####### Sumário do Número ", num, ": Max. ", max(angleData), " Min: ", min(angleData), " Diff: ", max(angleData) - min(angleData))
+          cat("<div class='row'>")
+          angleData = c()
+        }
       }
     }
 }
@@ -504,11 +529,11 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
-edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
+#edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
+#edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Edésio_Silva"), id.vars = "street")$value
 edesio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
-edesio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Edésio_Silva"), id.vars = "street")$value
+#edesio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Edésio_Silva"), id.vars = "street")$value
 
 shapiro.test(edesio$qscore)
 fitdistr(edesio$qscore, "normal")
@@ -527,7 +552,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
 kable(mapping, format = "markdown")
 
@@ -610,11 +635,11 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 #Inácio Marques
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-inacio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-inacio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-inacio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+#inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+#inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+inacio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+inacio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+#inacio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 
 
 shapiro.test(inacio$qscore)
@@ -634,8 +659,8 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 90), c(293, 270, 22))#Street 2. ADD 180 in side1 
+```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
+mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 180, 90), c(293, 270, 22, 10))#Street 2. ADD 180 in side1 
 kable(mapping, format = "markdown")
 
 show_street_data(inacio, all_data,  best_folder, worst_folder)
@@ -713,11 +738,11 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 #Floriano peixoto
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
-floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+#floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+#floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 floriano$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
-floriano$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+#floriano$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 
 shapiro.test(floriano$qscore)
 fitdistr(floriano$qscore, "normal")
@@ -736,7 +761,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
 kable(mapping, format = "markdown")
 
@@ -815,11 +840,11 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 #Maciel Pinheiro
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
-maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+#maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+#maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 maciel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
-maciel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+#maciel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 
 shapiro.test(maciel$qscore)
 fitdistr(maciel$qscore, "normal")
@@ -838,7 +863,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
 kable(mapping, format = "markdown")
 
@@ -924,11 +949,11 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 #Manoel Pereira
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
-manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
-manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+#manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+#manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 manoel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
-manoel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+#manoel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 
 shapiro.test(manoel$qscore)
 fitdistr(manoel$qscore, "normal")
@@ -947,7 +972,7 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
+```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
 mapping <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
 kable(mapping, format = "markdown")
 

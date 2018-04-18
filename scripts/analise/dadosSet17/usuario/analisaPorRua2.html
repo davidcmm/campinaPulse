@@ -20,8 +20,8 @@
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="analisaPorRua2_files/navigation-1.1/tabsets.js"></script>
-<link href="analisaPorRua2_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="analisaPorRua2_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="analisaPorRua2_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="analisaPorRua2_files/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -30,12 +30,10 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
 }
 </script>
 
@@ -131,50 +129,41 @@ $(document).ready(function () {
 <li>Anomalias? <a href="https://www.datascience.com/blog/python-anomaly-detection" class="uri">https://www.datascience.com/blog/python-anomaly-detection</a></li>
 <li>Derivadas, máximos e mínimos locais? Pacote features do R?</li>
 </ul></li>
+<li>Dados surpreendentes?
+<ul>
+<li>Surprise Maps? <a href="https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865" class="uri">https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865</a></li>
+<li>Surprise na rua? Tendo como base um modelo uniforme, um base rate (pela média e pela mediana dos pontos) e um modelo normal extraído (média e desvio) de todos os pontos da rua.</li>
+<li>Como temos o sorteio de valores pelo modelo normal, foram feitas 500 iterações para cálculo da média e da mediana. Os gráficos abaixo apresentam a média das médias/medianas nos surprise maps.</li>
+</ul></li>
 </ul>
 <p>TO DO:</p>
 <ul>
-<li>Refinar o método
-<ul>
-<li>Escrever os passos</li>
-<li>Aperfeiçoar visualização (diferença entre linhas?)</li>
-</ul></li>
-<li>Gerar mais pontos nas ruas mais heterogêneas?
-<ul>
-<li>Cristina e Inácio?</li>
-</ul></li>
-<li>Qual o nível de incerteza nos pontos?
-<ul>
-<li>Surprise Maps? <a href="https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865" class="uri">https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865</a></li>
-<li>Surprise entre ruas? Tendo como base um modelo uniforme, ou média das ruas</li>
-<li>Surprise na rua? Tendo como base um modelo uniforme, ou a média dos pontos</li>
-</ul></li>
-<li><p>Avaliar o mínimo de respostas necessárias?</p></li>
+<li>Avaliar o mínimo de respostas necessárias?</li>
 <li>O que um especialista diria de útil na análise</li>
-<li><p>Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?</p></li>
+<li>Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?</li>
 </ul>
 <p>De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.</p>
 <pre><code>##   labels variable      value
-## 1   Gini cristina 0.06451732
-## 2   Gini   edesio 0.05767443
-## 3   Gini   inacio 0.05316014
-## 4   Gini floriano 0.03804141
-## 5   Gini   maciel 0.03277675
-## 6   Gini   manoel 0.02920358</code></pre>
+## 1   Gini cristina 0.07784902
+## 2   Gini   inacio 0.06499596
+## 3   Gini   edesio 0.05558386
+## 4   Gini floriano 0.03507198
+## 5   Gini   manoel 0.02760162
+## 6   Gini   maciel 0.02734805</code></pre>
 <pre><code>##    labels variable       value
-## 1 Entropy cristina 0.009060597
-## 2 Entropy   edesio 0.005207376
-## 3 Entropy   inacio 0.004667139
-## 4 Entropy floriano 0.002341453
-## 5 Entropy   maciel 0.001702221
-## 6 Entropy   manoel 0.001390847</code></pre>
+## 1 Entropy cristina 0.011161129
+## 2 Entropy   inacio 0.006824837
+## 3 Entropy   edesio 0.004873370
+## 4 Entropy floriano 0.002176359
+## 5 Entropy   manoel 0.001241221
+## 6 Entropy   maciel 0.001149303</code></pre>
 <pre><code>##   labels variable     value
-## 1     SD cristina 0.6397101
-## 2     SD   edesio 0.4946799
-## 3     SD   inacio 0.4749388
-## 4     SD floriano 0.3509230
-## 5     SD   maciel 0.2875672
-## 6     SD   manoel 0.1971500</code></pre>
+## 1     SD cristina 0.7201075
+## 2     SD   inacio 0.5487980
+## 3     SD   edesio 0.4719678
+## 4     SD floriano 0.3305999
+## 5     SD   maciel 0.2344981
+## 6     SD   manoel 0.1883041</code></pre>
 <p>O que procurar?</p>
 <ol style="list-style-type: decimal">
 <li>Ponto mais heterogeneo/homogeneo</li>
@@ -191,30 +180,45 @@ $(document).ready(function () {
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  cristina$qscore
-## W = 0.83573, p-value = 0.003102</code></pre>
+## W = 0.93023, p-value = 0.01639</code></pre>
 <pre><code>##       mean          sd    
-##   4.92394878   0.62351231 
-##  (0.13942159) (0.09858595)</code></pre>
+##   4.97966875   0.71104919 
+##  (0.11242675) (0.07949772)</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua: &quot;</code></pre>
-<pre><code>## [1] 0.06451732</code></pre>
-<pre><code>##   num      value
-## 1 305 0.11193874
-## 2 436 0.05106366
-## 3  66 0.03034427
-## 4   2 0.02561922
-## 5 261 0.02374617</code></pre>
-<pre><code>##   num      value
-## 1   2 -2.3776715
-## 2 436  2.3313726
-## 3 305 -0.6830362
-## 4 261  0.5183015
-## 5  66  0.4040115</code></pre>
-<pre><code>##   num value
-## 1   2   NaN
-## 2  66   NaN
-## 3 261   NaN
-## 4 305   NaN
-## 5 436   NaN</code></pre>
+<pre><code>## [1] 0.07784902</code></pre>
+<pre><code>##    num      value
+## 1  305 0.10968214
+## 2  350 0.10408033
+## 3  436 0.04408976
+## 4    2 0.03968838
+## 5   66 0.03599606
+## 6  390 0.02374677
+## 7  105 0.02329330
+## 8  261 0.01893199
+## 9  210 0.01244132
+## 10 160 0.01224060</code></pre>
+<pre><code>##    num value
+## 1    2   NaN
+## 2   66   NaN
+## 3  105   NaN
+## 4  160   NaN
+## 5  210   NaN
+## 6  261   NaN
+## 7  305   NaN
+## 8  350   NaN
+## 9  390   NaN
+## 10 436   NaN</code></pre>
+<pre><code>##    num value
+## 1    2   NaN
+## 2   66   NaN
+## 3  105   NaN
+## 4  160   NaN
+## 5  210   NaN
+## 6  261   NaN
+## 7  305   NaN
+## 8  350   NaN
+## 9  390   NaN
+## 10 436   NaN</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-4-1.png" width="1152" /></p>
 <table>
@@ -234,7 +238,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">2</td>
 <td align="right">45</td>
-<td align="right">4.794746</td>
+<td align="right">4.453842</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -242,7 +246,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">6</td>
 <td align="right">293</td>
-<td align="right">4.521649</td>
+<td align="right">4.559239</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -250,7 +254,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">66</td>
 <td align="right">45</td>
-<td align="right">5.498587</td>
+<td align="right">5.452532</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -258,7 +262,55 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">70</td>
 <td align="right">315</td>
-<td align="right">5.445511</td>
+<td align="right">5.370995</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">105 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">108</td>
+<td align="right">45</td>
+<td align="right">5.196042</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">105 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">112</td>
+<td align="right">315</td>
+<td align="right">5.151960</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">160 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">160</td>
+<td align="right">45</td>
+<td align="right">5.476950</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">160 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">164</td>
+<td align="right">315</td>
+<td align="right">5.434023</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">210 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">210</td>
+<td align="right">45</td>
+<td align="right">6.099406</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">210 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">214</td>
+<td align="right">315</td>
+<td align="right">5.728927</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -266,7 +318,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">264</td>
 <td align="right">22</td>
-<td align="right">5.146898</td>
+<td align="right">5.213054</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -274,7 +326,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">268</td>
 <td align="right">315</td>
-<td align="right">5.436423</td>
+<td align="right">5.306152</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -282,7 +334,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">308</td>
 <td align="right">45</td>
-<td align="right">4.794370</td>
+<td align="right">4.807596</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -290,7 +342,39 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">312</td>
 <td align="right">293</td>
-<td align="right">5.248873</td>
+<td align="right">5.096545</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">350 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">350</td>
+<td align="right">45</td>
+<td align="right">5.284007</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">350 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">354</td>
+<td align="right">315</td>
+<td align="right">4.671185</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">390 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">390</td>
+<td align="right">45</td>
+<td align="right">4.180123</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">390 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">394</td>
+<td align="right">315</td>
+<td align="right">4.066808</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -298,7 +382,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">436</td>
 <td align="right">135</td>
-<td align="right">5.390811</td>
+<td align="right">5.363136</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -306,7 +390,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">440</td>
 <td align="right">22</td>
-<td align="right">5.194900</td>
+<td align="right">5.078572</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -314,7 +398,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">5</td>
 <td align="right">135</td>
-<td align="right">5.075437</td>
+<td align="right">5.330287</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -322,7 +406,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">9</td>
 <td align="right">225</td>
-<td align="right">5.093690</td>
+<td align="right">5.000870</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -330,7 +414,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">69</td>
 <td align="right">135</td>
-<td align="right">4.753867</td>
+<td align="right">4.637055</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -338,7 +422,55 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">73</td>
 <td align="right">225</td>
-<td align="right">5.597781</td>
+<td align="right">5.621716</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">105 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">105</td>
+<td align="right">135</td>
+<td align="right">5.677544</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">105 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">109</td>
+<td align="right">225</td>
+<td align="right">5.637728</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">160 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">163</td>
+<td align="right">135</td>
+<td align="right">5.715077</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">160 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">167</td>
+<td align="right">225</td>
+<td align="right">5.370386</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">210 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">213</td>
+<td align="right">135</td>
+<td align="right">5.872188</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">210 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">217</td>
+<td align="right">225</td>
+<td align="right">5.937082</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -346,7 +478,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">261</td>
 <td align="right">135</td>
-<td align="right">4.814955</td>
+<td align="right">4.796765</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -354,7 +486,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">265</td>
 <td align="right">225</td>
-<td align="right">5.243110</td>
+<td align="right">5.241681</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -362,7 +494,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">305</td>
 <td align="right">135</td>
-<td align="right">3.042971</td>
+<td align="right">3.002633</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -370,7 +502,39 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">309</td>
 <td align="right">225</td>
-<td align="right">3.835359</td>
+<td align="right">3.771914</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">350 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">353</td>
+<td align="right">135</td>
+<td align="right">3.862171</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">350 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">357</td>
+<td align="right">203</td>
+<td align="right">3.193076</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">390 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">393</td>
+<td align="right">135</td>
+<td align="right">4.419806</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">390 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">397</td>
+<td align="right">203</td>
+<td align="right">4.531448</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="odd">
@@ -378,7 +542,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">439</td>
 <td align="right">203</td>
-<td align="right">4.121735</td>
+<td align="right">4.264181</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 <tr class="even">
@@ -386,12 +550,12 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">443</td>
 <td align="right">315</td>
-<td align="right">5.427303</td>
+<td align="right">5.312050</td>
 <td align="left">R._Cristina_Procópio_Silva</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -416,197 +580,301 @@ $(document).ready(function () {
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
+<div class='row'>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_45' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_2_45-&gt; 4.453842(-0.003669455)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_2_135-&gt; 5.330287(0.003132565)
+</p>
+</div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_2_45' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_225' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_2_45-&gt; 4.794746
+worst<br>R._Cristina_Procópio_Silva_2_225-&gt; 5.00087(0.0001387112)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_2_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_2_293-&gt; 4.559239(-0.002804458)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_45' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_2_135-&gt; 5.075437
+best<br>R._Cristina_Procópio_Silva_66_45-&gt; 5.452532(0.002815287)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_66_135-&gt; 4.637055(-0.003528924)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_66_225-&gt; 5.621716(0.004155726)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_315' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_2_225-&gt; 5.09369
+best<br>R._Cristina_Procópio_Silva_66_315-&gt; 5.370995(0.002052528)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_45' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_105_45-&gt; 5.196042(0.0007860624)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_105_135-&gt; 5.677544(0.004178964)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_225' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_105_225-&gt; 5.637728(0.003820109)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_105_315-&gt; 5.15196(0.0004343865)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_45' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_160_45-&gt; 5.47695(0.002422995)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_160_135-&gt; 5.715077(0.004219859)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_160_225-&gt; 5.370386(0.001788257)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_160_315-&gt; 5.434023(0.002181891)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_45' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_210_45-&gt; 6.099406(0.005912996)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_210_135-&gt; 5.872188(0.004457328)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_210_225-&gt; 5.937082(0.00475087)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_210_315-&gt; 5.728927(0.004012253)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_261_22-&gt; 5.213054(0.001073594)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_2_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_2_293-&gt; 4.521649
-</p>
-</div>
-</div>
-####### Sumário do Número 2 : Max. 5.09369 Min: 4.521649 Diff: 0.5720413
-<div class="row">
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_45' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_66_45-&gt; 5.498587
+worst<br>R._Cristina_Procópio_Silva_261_135-&gt; 4.796765(-0.001638929)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_66_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_225' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_66_135-&gt; 4.753867
+best<br>R._Cristina_Procópio_Silva_261_225-&gt; 5.241681(0.001305321)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_225' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_66_225-&gt; 5.597781
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_66_315-&gt; 5.445511
-</p>
-</div>
-</div>
-####### Sumário do Número 66 : Max. 5.597781 Min: 4.753867 Diff: 0.8439133
-<div class="row">
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_261_22-&gt; 5.146898
+best<br>R._Cristina_Procópio_Silva_261_315-&gt; 5.306152(0.001906442)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_261_135' width='300px'>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_45' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_261_135-&gt; 4.814955
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_225' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_261_225-&gt; 5.243109
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_261_315-&gt; 5.436423
-</p>
-</div>
-</div>
-####### Sumário do Número 261 : Max. 5.436423 Min: 4.814955 Diff: 0.6214681
-<div class="row">
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_45' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_305_45-&gt; 4.79437
+best<br>R._Cristina_Procópio_Silva_305_45-&gt; 4.807596(0.0006025217)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#000000">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_305_135-&gt; 3.04297
+worst<br>R._Cristina_Procópio_Silva_305_135-&gt; 3.002633(-0.01224259)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_305_225-&gt; 3.771914(-0.006759792)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_305_293-&gt; 5.096545(0.003428251)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_45' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_350_45-&gt; 5.284007(0.004633534)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_225' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_305_225-&gt; 3.835359
+worst<br>R._Cristina_Procópio_Silva_350_135-&gt; 3.862171(-0.006346584)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_293' width='300px'>
+<div class="col-xs-3" style="background-color:#000000">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_203' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_305_293-&gt; 5.248873
+worst<br>R._Cristina_Procópio_Silva_350_203-&gt; 3.193076(-0.01107737)
 </p>
 </div>
-</div>
-####### Sumário do Número 305 : Max. 5.248873 Min: 3.04297 Diff: 2.205903
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_22' width='300px'>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_315' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_436_22-&gt; 5.1949
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_135' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_436_135-&gt; 5.390811
+worst<br>R._Cristina_Procópio_Silva_350_315-&gt; 4.671185(-0.001009932)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_436_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_390_45' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Cristina_Procópio_Silva_436_203-&gt; 4.121735
+worst<br>R._Cristina_Procópio_Silva_390_45-&gt; 4.180123(-0.00423652)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_315' width='300px'>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_390_135' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
+best<br>R._Cristina_Procópio_Silva_390_135-&gt; 4.419806(-0.002850302)
 </p>
 </div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_390_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_390_203-&gt; 4.531448(-0.002166461)
+</p>
 </div>
-####### Sumário do Número 436 : Max. 5.427303 Min: 4.121735 Diff: 1.305568
-<div class='row'>
-
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_390_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_390_315-&gt; 4.066808(-0.005047923)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_22-&gt; 5.078572(0.0004015023)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_135-&gt; 5.363136(0.002929795)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_436_203-&gt; 4.264181(-0.005490666)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.31205(0.00241968)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>
@@ -740,23 +1008,23 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  edesio$qscore
-## W = 0.93872, p-value = 0.2268</code></pre>
+## W = 0.95255, p-value = 0.4075</code></pre>
 <pre><code>##       mean          sd    
-##   4.77236112   0.48215430 
-##  (0.10781298) (0.07623529)</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0576744342800989&quot;</code></pre>
-<pre><code>##    num       value
-## 1   70 0.070664761
-## 2  602 0.052659204
-## 3 1136 0.034716327
-## 4  306 0.022600278
-## 5 1546 0.005414004</code></pre>
-<pre><code>##    num       value
-## 1  602  3.51805338
-## 2   70 -1.06657797
-## 3  306  0.52119916
-## 4 1136 -0.38017671
-## 5 1546  0.06881856</code></pre>
+##   4.71109467   0.46001726 
+##  (0.10286299) (0.07273512)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0555838608882523&quot;</code></pre>
+<pre><code>##    num      value
+## 1   70 0.07275862
+## 2  602 0.04218876
+## 3 1136 0.03252513
+## 4  306 0.02503933
+## 5 1546 0.01146904</code></pre>
+<pre><code>##    num value
+## 1   70   NaN
+## 2  306   NaN
+## 3  602   NaN
+## 4 1136   NaN
+## 5 1546   NaN</code></pre>
 <pre><code>##    num value
 ## 1   70   NaN
 ## 2  306   NaN
@@ -782,7 +1050,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">70</td>
 <td align="right">135</td>
-<td align="right">3.881736</td>
+<td align="right">3.806808</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -790,7 +1058,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">74</td>
 <td align="right">22</td>
-<td align="right">5.459569</td>
+<td align="right">5.390646</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -798,7 +1066,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">306</td>
 <td align="right">135</td>
-<td align="right">4.748159</td>
+<td align="right">4.672172</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -806,7 +1074,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">310</td>
 <td align="right">22</td>
-<td align="right">4.993888</td>
+<td align="right">4.890795</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -814,7 +1082,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">602</td>
 <td align="right">135</td>
-<td align="right">4.537421</td>
+<td align="right">4.722831</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -822,7 +1090,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">606</td>
 <td align="right">22</td>
-<td align="right">5.125127</td>
+<td align="right">4.929043</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -830,7 +1098,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">1136</td>
 <td align="right">135</td>
-<td align="right">4.508766</td>
+<td align="right">4.585656</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -838,7 +1106,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">1140</td>
 <td align="right">22</td>
-<td align="right">4.061773</td>
+<td align="right">4.079527</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -846,7 +1114,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">1546</td>
 <td align="right">135</td>
-<td align="right">5.200790</td>
+<td align="right">5.228232</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -854,7 +1122,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 1</td>
 <td align="right">1550</td>
 <td align="right">22</td>
-<td align="right">5.153065</td>
+<td align="right">4.976108</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -862,7 +1130,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">73</td>
 <td align="right">203</td>
-<td align="right">4.444845</td>
+<td align="right">4.375526</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -870,7 +1138,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">77</td>
 <td align="right">315</td>
-<td align="right">4.117668</td>
+<td align="right">4.009834</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -878,7 +1146,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">309</td>
 <td align="right">203</td>
-<td align="right">5.316674</td>
+<td align="right">5.232028</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -886,7 +1154,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">313</td>
 <td align="right">315</td>
-<td align="right">4.895543</td>
+<td align="right">4.655531</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -894,7 +1162,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">605</td>
 <td align="right">203</td>
-<td align="right">4.276371</td>
+<td align="right">4.323727</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -902,7 +1170,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">609</td>
 <td align="right">315</td>
-<td align="right">5.441191</td>
+<td align="right">5.341616</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -910,7 +1178,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">1139</td>
 <td align="right">203</td>
-<td align="right">4.165650</td>
+<td align="right">4.109785</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -918,7 +1186,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">1143</td>
 <td align="right">315</td>
-<td align="right">4.757140</td>
+<td align="right">4.677774</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="odd">
@@ -926,7 +1194,7 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">1549</td>
 <td align="right">203</td>
-<td align="right">5.114107</td>
+<td align="right">5.016951</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 <tr class="even">
@@ -934,12 +1202,12 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <td align="left">Side 2</td>
 <td align="right">1553</td>
 <td align="right">315</td>
-<td align="right">5.247739</td>
+<td align="right">5.197303</td>
 <td align="left">R._Edésio_Silva</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -964,197 +1232,181 @@ best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_22' width='300px'>
+<div class='row'>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_70_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_70_22-&gt; 5.459569
+best<br>R._Edésio_Silva_70_22-&gt; 5.390646(0.01212149)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_70_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_70_135-&gt; 3.806809(-0.01223032)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_70_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_70_203-&gt; 4.375526(-0.003529989)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_70_315' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_70_135-&gt; 3.881736
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_70_203-&gt; 4.444845
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_70_315-&gt; 4.117668
-</p>
-</div>
-</div>
-####### Sumário do Número 70 : Max. 5.459569 Min: 3.881736 Diff: 1.577833
-<div class="row">
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_306_22-&gt; 4.993888
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_306_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_306_135-&gt; 4.748159
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_203' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_306_203-&gt; 5.316674
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_306_315-&gt; 4.895543
-</p>
-</div>
-</div>
-####### Sumário do Número 306 : Max. 5.316674 Min: 4.748159 Diff: 0.5685142
-<div class="row">
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_602_22-&gt; 5.125127
+worst<br>R._Edésio_Silva_70_315-&gt; 4.009834(-0.009215043)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_602_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_306_22' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_602_135-&gt; 4.537421
+worst<br>R._Edésio_Silva_306_22-&gt; 4.890795(0.001698643)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_602_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_306_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_602_203-&gt; 4.276371
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_602_315-&gt; 5.441191
-</p>
-</div>
-</div>
-####### Sumário do Número 602 : Max. 5.441191 Min: 4.276371 Diff: 1.164819
-<div class="row">
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_1136_22-&gt; 4.061773
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_1136_135-&gt; 4.508766
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_1136_203-&gt; 4.16565
+worst<br>R._Edésio_Silva_306_135-&gt; 4.672172(-0.0009342731)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_315' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_306_203' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Edésio_Silva_1136_315-&gt; 4.75714
+best<br>R._Edésio_Silva_306_203-&gt; 5.232028(0.007421607)
 </p>
 </div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_306_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_306_315-&gt; 4.655531(-0.001188314)
+</p>
 </div>
-####### Sumário do Número 1136 : Max. 4.75714 Min: 4.061773 Diff: 0.6953668
-<div class="row">
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_602_22-&gt; 4.929043(0.002661208)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_602_135-&gt; 4.722831(-6.831614e-05)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_602_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_602_203-&gt; 4.323727(-0.006987583)
+</p>
+</div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_315' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_1546_22-&gt; 5.153065
+best<br>R._Edésio_Silva_602_315-&gt; 5.341616(0.009184468)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_135' width='300px'>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1136_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_1546_135-&gt; 5.20079
+worst<br>R._Edésio_Silva_1136_22-&gt; 4.079527(-0.008007843)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_203' width='300px'>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1136_135' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_1546_203-&gt; 5.114107
+best<br>R._Edésio_Silva_1136_135-&gt; 4.585656(-0.0006232917)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_315' width='300px'>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1136_203' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
+worst<br>R._Edésio_Silva_1136_203-&gt; 4.109785(-0.007558915)
 </p>
 </div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1136_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1136_315-&gt; 4.677774(0.001050442)
+</p>
 </div>
-####### Sumário do Número 1546 : Max. 5.247739 Min: 5.114107 Diff: 0.1336316
-<div class='row'>
-
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1546_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1546_22-&gt; 4.976108(0.002595757)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_135-&gt; 5.228233(0.006073802)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Ed%C3%A9sio_Silva_1546_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1546_203-&gt; 5.016951(0.003133517)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_1546_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_315-&gt; 5.197303(0.005602079)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>
@@ -1283,29 +1535,44 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  inacio$qscore
-## W = 0.87607, p-value = 0.01504</code></pre>
+## W = 0.95932, p-value = 0.1588</code></pre>
 <pre><code>##       mean          sd    
-##   4.84231882   0.46291311 
-##  (0.10351052) (0.07319299)</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0531601377276022&quot;</code></pre>
-<pre><code>##   num       value
-## 1  54 0.059452874
-## 2 120 0.048669162
-## 3 360 0.030864204
-## 4 239 0.009656987
-## 5 500 0.004817261</code></pre>
-<pre><code>##   num       value
-## 1 360  6.68498596
-## 2  54 -1.53573452
-## 3 120  1.39768433
-## 4 239  0.11506616
-## 5 500 -0.04594212</code></pre>
-<pre><code>##   num value
-## 1  54   NaN
-## 2 120   NaN
-## 3 239   NaN
-## 4 360   NaN
-## 5 500   NaN</code></pre>
+##   4.71353096   0.54189458 
+##  (0.08568106) (0.06058566)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0649959619143621&quot;</code></pre>
+<pre><code>##    num       value
+## 1  120 0.058672318
+## 2   54 0.058459356
+## 3  434 0.056168171
+## 4    2 0.051918138
+## 5  199 0.029666522
+## 6  360 0.024122901
+## 7  500 0.016683395
+## 8  239 0.012540129
+## 9  160 0.009720794
+## 10 300 0.007573856</code></pre>
+<pre><code>##    num value
+## 1    2   NaN
+## 2   54   NaN
+## 3  120   NaN
+## 4  160   NaN
+## 5  199   NaN
+## 6  239   NaN
+## 7  300   NaN
+## 8  360   NaN
+## 9  434   NaN
+## 10 500   NaN</code></pre>
+<pre><code>##    num value
+## 1    2   NaN
+## 2   54   NaN
+## 3  120   NaN
+## 4  160   NaN
+## 5  199   NaN
+## 6  239   NaN
+## 7  300   NaN
+## 8  360   NaN
+## 9  434   NaN
+## 10 500   NaN</code></pre>
 <pre><code>## Adding missing grouping variables: `num`</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-8-1.png" width="1152"  /></p>
 <table>
@@ -1321,11 +1588,27 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">2</td>
+<td align="right">112</td>
+<td align="right">4.191532</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">2 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">6</td>
+<td align="right">203</td>
+<td align="right">4.507195</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
 <td align="left">54 - p1</td>
 <td align="left">Side 1</td>
 <td align="right">54</td>
 <td align="right">112</td>
-<td align="right">5.056521</td>
+<td align="right">4.988591</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1333,7 +1616,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">58</td>
 <td align="right">203</td>
-<td align="right">4.395569</td>
+<td align="right">4.324356</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1341,7 +1624,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">120</td>
 <td align="right">112</td>
-<td align="right">5.181490</td>
+<td align="right">5.132631</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1349,7 +1632,39 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">124</td>
 <td align="right">203</td>
-<td align="right">4.148817</td>
+<td align="right">3.942704</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">160 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">160</td>
+<td align="right">112</td>
+<td align="right">4.852780</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">160 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">164</td>
+<td align="right">203</td>
+<td align="right">4.621917</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">199 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">202</td>
+<td align="right">112</td>
+<td align="right">5.784865</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">199 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">206</td>
+<td align="right">180</td>
+<td align="right">5.192919</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1357,7 +1672,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">242</td>
 <td align="right">90</td>
-<td align="right">5.404294</td>
+<td align="right">5.145902</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1365,7 +1680,23 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">246</td>
 <td align="right">203</td>
-<td align="right">5.155989</td>
+<td align="right">5.135271</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">300 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">300</td>
+<td align="right">112</td>
+<td align="right">4.866142</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">300 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">304</td>
+<td align="right">180</td>
+<td align="right">5.045754</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1373,7 +1704,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">360</td>
 <td align="right">90</td>
-<td align="right">4.506270</td>
+<td align="right">4.667856</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1381,7 +1712,23 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">364</td>
 <td align="right">203</td>
-<td align="right">4.681430</td>
+<td align="right">4.736766</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">434 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">434</td>
+<td align="right">112</td>
+<td align="right">4.959634</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">434 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">438</td>
+<td align="right">180</td>
+<td align="right">4.016052</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1389,7 +1736,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">500</td>
 <td align="right">90</td>
-<td align="right">4.425882</td>
+<td align="right">4.416113</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1397,7 +1744,23 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 1</td>
 <td align="right">504</td>
 <td align="right">203</td>
-<td align="right">4.340677</td>
+<td align="right">4.138628</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">2 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">5</td>
+<td align="right">22</td>
+<td align="right">3.598719</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">2 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">9</td>
+<td align="right">293</td>
+<td align="right">3.612833</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1405,7 +1768,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">57</td>
 <td align="right">22</td>
-<td align="right">5.225810</td>
+<td align="right">5.086038</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1413,7 +1776,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">61</td>
 <td align="right">293</td>
-<td align="right">3.968053</td>
+<td align="right">3.882486</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1421,7 +1784,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">123</td>
 <td align="right">22</td>
-<td align="right">5.337336</td>
+<td align="right">5.418074</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1429,7 +1792,39 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">127</td>
 <td align="right">293</td>
-<td align="right">5.399040</td>
+<td align="right">5.367713</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">160 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">163</td>
+<td align="right">22</td>
+<td align="right">4.632502</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">160 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">167</td>
+<td align="right">293</td>
+<td align="right">4.613665</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">199 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">199</td>
+<td align="right">10</td>
+<td align="right">4.972919</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">199 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">203</td>
+<td align="right">293</td>
+<td align="right">5.275967</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1437,7 +1832,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">239</td>
 <td align="right">22</td>
-<td align="right">5.325490</td>
+<td align="right">5.450853</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1445,7 +1840,23 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">243</td>
 <td align="right">270</td>
-<td align="right">5.253824</td>
+<td align="right">5.251709</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">300 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">303</td>
+<td align="right">10</td>
+<td align="right">4.947092</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">300 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">307</td>
+<td align="right">293</td>
+<td align="right">5.010201</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1453,7 +1864,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">363</td>
 <td align="right">22</td>
-<td align="right">5.165576</td>
+<td align="right">5.188208</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1461,7 +1872,23 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">367</td>
 <td align="right">270</td>
-<td align="right">5.105879</td>
+<td align="right">5.073327</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">434 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">437</td>
+<td align="right">10</td>
+<td align="right">3.752687</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">434 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">441</td>
+<td align="right">270</td>
+<td align="right">4.198138</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="odd">
@@ -1469,7 +1896,7 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">503</td>
 <td align="right">22</td>
-<td align="right">4.343081</td>
+<td align="right">4.127347</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 <tr class="even">
@@ -1477,12 +1904,12 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <td align="left">Side 2</td>
 <td align="right">507</td>
 <td align="right">270</td>
-<td align="right">4.425348</td>
+<td align="right">4.413154</td>
 <td align="left">R._Inácio_Marquês_da_Silva</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -1507,197 +1934,301 @@ best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_22' width='300px'>
+<div class='row'>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_54_22-&gt; 5.22581
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_54_112-&gt; 5.056521
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_54_203-&gt; 4.395569
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_293' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_54_293-&gt; 3.968053
-</p>
-</div>
-</div>
-####### Sumário do Número 54 : Max. 5.22581 Min: 3.968053 Diff: 1.257757
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_120_22-&gt; 5.337336
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_120_112-&gt; 5.18149
+worst<br>R._Inácio_Marquês_da_Silva_2_22-&gt; 3.598719(-0.00665442)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_120_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_112' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_120_203-&gt; 4.148817
+best<br>R._Inácio_Marquês_da_Silva_2_112-&gt; 4.191532(-0.003032634)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_293' width='300px'>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_203' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_120_293-&gt; 5.39904
+best<br>R._Inácio_Marquês_da_Silva_2_203-&gt; 4.507195(-4.326795e-06)
 </p>
 </div>
-</div>
-####### Sumário do Número 120 : Max. 5.39904 Min: 4.148817 Diff: 1.250223
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_22' width='300px'>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_293' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_239_22-&gt; 5.32549
+worst<br>R._Inácio_Marquês_da_Silva_2_293-&gt; 3.612833(-0.006546172)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_90' width='300px'>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_239_90-&gt; 5.404294
+best<br>R._Inácio_Marquês_da_Silva_54_22-&gt; 5.086038(0.003527193)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_203' width='300px'>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_112' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_239_203-&gt; 5.155989
+best<br>R._Inácio_Marquês_da_Silva_54_112-&gt; 4.988591(0.002719075)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_270' width='300px'>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_203' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_239_270-&gt; 5.253824
+worst<br>R._Inácio_Marquês_da_Silva_54_203-&gt; 4.324356(-0.002758372)
 </p>
 </div>
-</div>
-####### Sumário do Número 239 : Max. 5.404294 Min: 5.155989 Diff: 0.2483044
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_22' width='300px'>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_54_293' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_360_22-&gt; 5.165576
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_360_90' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_360_90-&gt; 4.50627
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_360_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_360_203-&gt; 4.681429
+worst<br>R._Inácio_Marquês_da_Silva_54_293-&gt; 3.882486(-0.006059989)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Inácio_Marquês_da_Silva_360_270-&gt; 5.105879
+best<br>R._Inácio_Marquês_da_Silva_120_22-&gt; 5.418074(0.004869867)
 </p>
 </div>
-</div>
-####### Sumário do Número 360 : Max. 5.165576 Min: 4.50627 Diff: 0.6593053
-<div class="row">
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_22' width='300px'>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_112' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_500_22-&gt; 4.343081
+best<br>R._Inácio_Marquês_da_Silva_120_112-&gt; 5.132631(0.002703912)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_90' width='300px'>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_203' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_500_90-&gt; 4.425882
+worst<br>R._Inácio_Marquês_da_Silva_120_203-&gt; 3.942704(-0.006600194)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_203' width='300px'>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_293' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_500_203-&gt; 4.340677
+best<br>R._Inácio_Marquês_da_Silva_120_293-&gt; 5.367713(0.004508996)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_270' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_160_22' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
+worst<br>R._Inácio_Marquês_da_Silva_160_22-&gt; 4.632501(-0.0003755522)
 </p>
 </div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_160_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_160_112-&gt; 4.85278(0.0009931379)
+</p>
 </div>
-####### Sumário do Número 500 : Max. 4.425882 Min: 4.340677 Diff: 0.08520524
-<div class='row'>
-
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_160_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_160_203-&gt; 4.621917(-0.0004081508)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_160_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_160_293-&gt; 4.613665(-0.0004513745)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_10' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_199_10-&gt; 4.972919(0.001065562)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_199_112-&gt; 5.784865(0.006653562)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_199_180-&gt; 5.192919(0.002651727)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_199_293-&gt; 5.275967(0.002979981)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_239_22-&gt; 5.450853(0.004345318)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_239_90-&gt; 5.145902(0.002314114)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_239_203-&gt; 5.135271(0.002253539)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_239_270-&gt; 5.251709(0.002802554)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_300_10' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_300_10-&gt; 4.947092(0.001016932)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_300_112' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_300_112-&gt; 4.866142(0.0005018608)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_300_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_300_180-&gt; 5.045754(0.001878469)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_300_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_300_293-&gt; 5.010201(0.001546696)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_360_22-&gt; 5.188208(0.003285391)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_360_90-&gt; 4.667856(-0.0006952679)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_360_203-&gt; 4.736766(-9.725729e-05)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_360_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_360_270-&gt; 5.073327(0.002333825)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_434_10' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_434_10-&gt; 3.752687(-0.006119138)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_434_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_434_112-&gt; 4.959634(0.003608038)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_434_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_434_180-&gt; 4.016052(-0.004135688)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_434_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_434_270-&gt; 4.198138(-0.002746433)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_22-&gt; 4.127347(-0.003443433)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_500_90-&gt; 4.416113(-0.001447962)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_203-&gt; 4.138628(-0.003361445)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_500_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.413154(-0.001477832)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>
@@ -1822,23 +2353,23 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  floriano$qscore
-## W = 0.97586, p-value = 0.8703</code></pre>
+## W = 0.95361, p-value = 0.4252</code></pre>
 <pre><code>##       mean          sd    
-##   5.04950088   0.34203741 
-##  (0.07648189) (0.05408086)</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0380414099374088&quot;</code></pre>
+##   4.95739065   0.32222894 
+##  (0.07205258) (0.05094887)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0350719776584624&quot;</code></pre>
 <pre><code>##   num      value
-## 1 913 0.04078231
-## 2 549 0.03665998
-## 3 445 0.03240166
-## 4 813 0.01452957
-## 5 691 0.01241701</code></pre>
-<pre><code>##   num      value
-## 1 445  4.1056210
-## 2 549  2.3309910
-## 3 813 -1.2978517
-## 4 913 -0.5552834
-## 5 691  0.2357708</code></pre>
+## 1 913 0.04636118
+## 2 549 0.04371678
+## 3 813 0.01747931
+## 4 445 0.01482587
+## 5 691 0.01205420</code></pre>
+<pre><code>##   num value
+## 1 445   NaN
+## 2 549   NaN
+## 3 691   NaN
+## 4 813   NaN
+## 5 913   NaN</code></pre>
 <pre><code>##   num value
 ## 1 445   NaN
 ## 2 549   NaN
@@ -1864,7 +2395,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">448</td>
 <td align="right">22</td>
-<td align="right">5.402592</td>
+<td align="right">5.030961</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1872,7 +2403,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">452</td>
 <td align="right">293</td>
-<td align="right">4.706462</td>
+<td align="right">4.906944</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1880,7 +2411,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">552</td>
 <td align="right">22</td>
-<td align="right">4.937479</td>
+<td align="right">4.743456</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1888,7 +2419,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">556</td>
 <td align="right">293</td>
-<td align="right">4.720322</td>
+<td align="right">4.544730</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1896,7 +2427,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">694</td>
 <td align="right">22</td>
-<td align="right">5.522711</td>
+<td align="right">5.374211</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1904,7 +2435,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">698</td>
 <td align="right">293</td>
-<td align="right">5.299257</td>
+<td align="right">5.135495</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1912,7 +2443,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">816</td>
 <td align="right">22</td>
-<td align="right">4.855551</td>
+<td align="right">4.717985</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1920,7 +2451,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">820</td>
 <td align="right">293</td>
-<td align="right">5.047525</td>
+<td align="right">4.986593</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1928,7 +2459,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">916</td>
 <td align="right">22</td>
-<td align="right">4.464216</td>
+<td align="right">4.486147</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1936,7 +2467,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 1</td>
 <td align="right">920</td>
 <td align="right">293</td>
-<td align="right">4.246906</td>
+<td align="right">4.088261</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1944,7 +2475,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">445</td>
 <td align="right">112</td>
-<td align="right">5.400026</td>
+<td align="right">5.266072</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1952,7 +2483,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">449</td>
 <td align="right">203</td>
-<td align="right">4.849774</td>
+<td align="right">4.915208</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1960,7 +2491,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">549</td>
 <td align="right">112</td>
-<td align="right">5.241308</td>
+<td align="right">5.220240</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1968,7 +2499,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">553</td>
 <td align="right">203</td>
-<td align="right">5.622123</td>
+<td align="right">5.555297</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1976,7 +2507,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">691</td>
 <td align="right">112</td>
-<td align="right">5.320523</td>
+<td align="right">5.087900</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -1984,7 +2515,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">695</td>
 <td align="right">203</td>
-<td align="right">5.176836</td>
+<td align="right">5.058091</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -1992,7 +2523,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">813</td>
 <td align="right">112</td>
-<td align="right">5.187819</td>
+<td align="right">5.120962</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -2000,7 +2531,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">817</td>
 <td align="right">203</td>
-<td align="right">4.883455</td>
+<td align="right">4.821832</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="odd">
@@ -2008,7 +2539,7 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">913</td>
 <td align="right">112</td>
-<td align="right">5.020493</td>
+<td align="right">5.025309</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 <tr class="even">
@@ -2016,12 +2547,12 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <td align="left">Side 2</td>
 <td align="right">917</td>
 <td align="right">203</td>
-<td align="right">5.084640</td>
+<td align="right">5.062120</td>
 <td align="left">Av._Mal._Floriano_Peixoto</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -2046,197 +2577,181 @@ worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_445_22-&gt; 5.402592
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_480_112-&gt; 5.400026
-</p>
-</div>
+<div class='row'>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_203' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_445_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_480_203-&gt; 4.849774
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_445_293' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av._Mal._Floriano_Peixoto_445_293-&gt; 4.706462
-</p>
-</div>
-</div>
-####### Sumário do Número 445 : Max. 5.402592 Min: 4.706462 Diff: 0.6961303
-<div class="row">
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_549_22-&gt; 4.937479
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_580_112-&gt; 5.241308
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_580_203-&gt; 5.622123
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_549_293' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av._Mal._Floriano_Peixoto_549_293-&gt; 4.720323
-</p>
-</div>
-</div>
-####### Sumário do Número 549 : Max. 5.622123 Min: 4.720323 Diff: 0.9018009
-<div class="row">
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_691_22-&gt; 5.522711
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_660_112-&gt; 5.320523
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_203' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_660_203-&gt; 5.176836
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_293' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_691_293-&gt; 5.299257
-</p>
-</div>
-</div>
-####### Sumário do Número 691 : Max. 5.522711 Min: 5.176836 Diff: 0.3458745
-<div class="row">
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_22' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_813_22-&gt; 4.855551
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_826_112-&gt; 5.187819
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_203' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_826_203-&gt; 4.883455
+worst<br>Av._Mal._Floriano_Peixoto_445_22-&gt; 5.030961(0.0005016674)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_813_293-&gt; 5.047525
+best<br>Av._Mal._Floriano_Peixoto_480_112-&gt; 5.266072(0.004360108)
 </p>
 </div>
-</div>
-####### Sumário do Número 813 : Max. 5.187819 Min: 4.855551 Diff: 0.3322681
-<div class="row">
 <div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_22' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_480_203' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>Av._Mal._Floriano_Peixoto_913_22-&gt; 4.464216
+worst<br>Av._Mal._Floriano_Peixoto_480_203-&gt; 4.915208(-0.0006407116)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112' width='300px'>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_445_293' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_912_112-&gt; 5.020493
+worst<br>Av._Mal._Floriano_Peixoto_445_293-&gt; 4.906944(-0.0008427378)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203' width='300px'>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_549_22' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>Av._Mal._Floriano_Peixoto_912_203-&gt; 5.084641
+worst<br>Av._Mal._Floriano_Peixoto_549_22-&gt; 4.743456(-0.003701903)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_580_112-&gt; 5.22024(0.003761783)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_580_203-&gt; 5.555297(0.008390278)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_293' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_549_293' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
+worst<br>Av._Mal._Floriano_Peixoto_549_293-&gt; 4.54473(-0.006437727)
 </p>
 </div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_691_22-&gt; 5.374211(0.005147462)
+</p>
 </div>
-####### Sumário do Número 913 : Max. 5.084641 Min: 4.246906 Diff: 0.8377348
-<div class='row'>
-
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_660_112' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_660_112-&gt; 5.0879(0.001052944)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_660_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_660_203-&gt; 5.058092(0.0006895255)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_691_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_691_293-&gt; 5.135494(0.001611101)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_813_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_813_22-&gt; 4.717985(-0.003514282)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_826_112-&gt; 5.120962(0.002821638)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_826_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_826_203-&gt; 4.821832(-0.001657022)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_813_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_813_293-&gt; 4.986593(0.0003616767)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_913_22-&gt; 4.486147(-0.005503796)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_912_112-&gt; 5.025309(0.002813594)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_912_203-&gt; 5.06212(0.003457597)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.088261(-0.01114909)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>
@@ -2360,23 +2875,23 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  maciel$qscore
-## W = 0.94228, p-value = 0.2647</code></pre>
+## W = 0.92629, p-value = 0.131</code></pre>
 <pre><code>##       mean          sd    
-##   4.84016850   0.28028584 
-##  (0.06267382) (0.04431708)</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0327767504596409&quot;</code></pre>
+##   4.77777896   0.22856043 
+##  (0.05110767) (0.03613858)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0273480532370483&quot;</code></pre>
 <pre><code>##   num      value
-## 1 248 0.03654238
-## 2 190 0.03569940
-## 3 130 0.02241080
-## 4 360 0.02176608
-## 5 284 0.02004100</code></pre>
-<pre><code>##   num      value
-## 1 284 -8.2407817
-## 2 248  4.1059221
-## 3 190  3.4215026
-## 4 130  1.7139650
-## 5 360 -0.6972458</code></pre>
+## 1 248 0.03002473
+## 2 190 0.02563699
+## 3 360 0.02218690
+## 4 284 0.02082185
+## 5 130 0.01490685</code></pre>
+<pre><code>##   num value
+## 1 130   NaN
+## 2 190   NaN
+## 3 248   NaN
+## 4 284   NaN
+## 5 360   NaN</code></pre>
 <pre><code>##   num value
 ## 1 130   NaN
 ## 2 190   NaN
@@ -2402,7 +2917,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">130</td>
 <td align="right">90</td>
-<td align="right">5.167156</td>
+<td align="right">5.014311</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2410,7 +2925,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">134</td>
 <td align="right">360</td>
-<td align="right">4.670898</td>
+<td align="right">4.662146</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2418,7 +2933,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">190</td>
 <td align="right">90</td>
-<td align="right">5.056711</td>
+<td align="right">5.093964</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2426,7 +2941,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">194</td>
 <td align="right">360</td>
-<td align="right">5.140332</td>
+<td align="right">5.028834</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2434,7 +2949,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">248</td>
 <td align="right">90</td>
-<td align="right">5.143290</td>
+<td align="right">4.979997</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2442,7 +2957,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">252</td>
 <td align="right">360</td>
-<td align="right">4.413008</td>
+<td align="right">4.491837</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2450,7 +2965,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">284</td>
 <td align="right">90</td>
-<td align="right">4.841157</td>
+<td align="right">4.789855</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2458,7 +2973,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">288</td>
 <td align="right">360</td>
-<td align="right">4.925018</td>
+<td align="right">4.807568</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2466,7 +2981,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">360</td>
 <td align="right">90</td>
-<td align="right">4.695433</td>
+<td align="right">4.652515</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2474,7 +2989,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 1</td>
 <td align="right">364</td>
 <td align="right">360</td>
-<td align="right">5.001745</td>
+<td align="right">4.952766</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2482,7 +2997,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">133</td>
 <td align="right">180</td>
-<td align="right">5.024561</td>
+<td align="right">4.807788</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2490,7 +3005,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">137</td>
 <td align="right">270</td>
-<td align="right">4.754770</td>
+<td align="right">4.719232</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2498,7 +3013,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">193</td>
 <td align="right">180</td>
-<td align="right">4.234283</td>
+<td align="right">4.434079</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2506,7 +3021,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">197</td>
 <td align="right">270</td>
-<td align="right">5.132187</td>
+<td align="right">5.002695</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2514,7 +3029,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">251</td>
 <td align="right">180</td>
-<td align="right">5.232310</td>
+<td align="right">5.123118</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2522,7 +3037,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">255</td>
 <td align="right">270</td>
-<td align="right">4.745852</td>
+<td align="right">4.571920</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2530,7 +3045,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">287</td>
 <td align="right">180</td>
-<td align="right">5.017710</td>
+<td align="right">4.964378</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2538,7 +3053,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">291</td>
 <td align="right">270</td>
-<td align="right">4.529582</td>
+<td align="right">4.442672</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="odd">
@@ -2546,7 +3061,7 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">363</td>
 <td align="right">180</td>
-<td align="right">4.583014</td>
+<td align="right">4.594741</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 <tr class="even">
@@ -2554,12 +3069,12 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <td align="left">Side 2</td>
 <td align="right">367</td>
 <td align="right">270</td>
-<td align="right">4.494353</td>
+<td align="right">4.421162</td>
 <td align="left">R._Maciel_Pinheiro</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -2584,197 +3099,181 @@ worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_130_90-&gt; 5.167156
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_180' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_130_180-&gt; 5.024561
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_270' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_130_270-&gt; 4.75477
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_360' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_130_360-&gt; 4.670898
-</p>
-</div>
-</div>
-####### Sumário do Número 130 : Max. 5.167156 Min: 4.670898 Diff: 0.4962581
-<div class="row">
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_190_90-&gt; 5.056711
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_190_180' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_190_180-&gt; 4.234283
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_190_270-&gt; 5.132187
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_190_360-&gt; 5.140332
-</p>
-</div>
-</div>
-####### Sumário do Número 190 : Max. 5.140332 Min: 4.234283 Diff: 0.9060486
-<div class="row">
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_248_90-&gt; 5.14329
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_248_180-&gt; 5.23231
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_270' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_248_270-&gt; 4.745852
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_360' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_248_360-&gt; 4.413008
-</p>
-</div>
-</div>
-####### Sumário do Número 248 : Max. 5.23231 Min: 4.413008 Diff: 0.8193015
-<div class="row">
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_284_90-&gt; 4.841157
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_284_180-&gt; 5.01771
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_284_270' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_284_270-&gt; 4.529582
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_360' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_284_360-&gt; 4.925018
-</p>
-</div>
-</div>
-####### Sumário do Número 284 : Max. 5.01771 Min: 4.529582 Diff: 0.488128
-<div class="row">
-<div class="col-xs-3" style="background-color:#00b200">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_90' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_360_90-&gt; 4.695433
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_180' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_360_180-&gt; 4.583014
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_270' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Maciel_Pinheiro_360_270-&gt; 4.494353
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
-</p>
-</div>
-</div>
-####### Sumário do Número 360 : Max. 5.001745 Min: 4.494353 Diff: 0.5073912
 <div class='row'>
-
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_130_90-&gt; 5.014312(0.003616276)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_130_180-&gt; 4.807788(0.000212803)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_130_270-&gt; 4.719232(-0.0008662216)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_360' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_130_360-&gt; 4.662146(-0.001993311)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_90-&gt; 5.093964(0.004274293)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_190_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_190_180-&gt; 4.434079(-0.005836101)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_270-&gt; 5.002695(0.002957916)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_360-&gt; 5.028834(0.003362825)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_248_90-&gt; 4.979997(0.00318237)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_248_180-&gt; 5.123118(0.005190108)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_248_270-&gt; 4.57192(-0.003372157)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_360' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_248_360-&gt; 4.491837(-0.00447087)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_90-&gt; 4.789855(0.0001411447)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_180-&gt; 4.964378(0.003167707)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_284_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_284_270-&gt; 4.442672(-0.004997031)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_360-&gt; 4.807568(0.0003866582)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_90-&gt; 4.652515(-0.001224873)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_180-&gt; 4.594741(-0.002244838)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_270-&gt; 4.421162(-0.004808441)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_360_360-&gt; 4.952766(0.003531357)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>
@@ -2905,23 +3404,23 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  manoel$qscore
-## W = 0.95482, p-value = 0.4461</code></pre>
+## W = 0.96046, p-value = 0.553</code></pre>
 <pre><code>##       mean          sd    
-##   3.65700904   0.19215810 
-##  (0.04296786) (0.03038286)</code></pre>
-<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0292035753018673&quot;</code></pre>
+##   3.67248457   0.18353610 
+##  (0.04103992) (0.02901961)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.027601624422647&quot;</code></pre>
 <pre><code>##   num      value
-## 1 370 0.03210463
-## 2 188 0.02913573
-## 3 222 0.02658860
-## 4 300 0.02448046
-## 5 392 0.01878151</code></pre>
-<pre><code>##   num      value
-## 1 370 21.6055987
-## 2 222  2.9810238
-## 3 188 -1.7591857
-## 4 300 -1.3481720
-## 5 392  0.8133517</code></pre>
+## 1 370 0.03995421
+## 2 392 0.02564437
+## 3 300 0.02507132
+## 4 188 0.01555671
+## 5 222 0.01203434</code></pre>
+<pre><code>##   num value
+## 1 188   NaN
+## 2 222   NaN
+## 3 300   NaN
+## 4 370   NaN
+## 5 392   NaN</code></pre>
 <pre><code>##   num value
 ## 1 188   NaN
 ## 2 222   NaN
@@ -2947,7 +3446,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">188</td>
 <td align="right">135</td>
-<td align="right">3.638034</td>
+<td align="right">3.717965</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -2955,7 +3454,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">192</td>
 <td align="right">22</td>
-<td align="right">3.839520</td>
+<td align="right">3.911820</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -2963,7 +3462,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">222</td>
 <td align="right">135</td>
-<td align="right">3.676951</td>
+<td align="right">3.562807</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -2971,7 +3470,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">226</td>
 <td align="right">22</td>
-<td align="right">3.497591</td>
+<td align="right">3.615163</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -2979,7 +3478,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">300</td>
 <td align="right">135</td>
-<td align="right">3.305779</td>
+<td align="right">3.375664</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -2987,7 +3486,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">304</td>
 <td align="right">22</td>
-<td align="right">3.614717</td>
+<td align="right">3.585796</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -2995,7 +3494,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">370</td>
 <td align="right">135</td>
-<td align="right">3.978157</td>
+<td align="right">4.046046</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3003,7 +3502,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">374</td>
 <td align="right">22</td>
-<td align="right">3.367666</td>
+<td align="right">3.321632</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3011,7 +3510,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">392</td>
 <td align="right">293</td>
-<td align="right">3.873702</td>
+<td align="right">4.030718</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3019,7 +3518,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 1</td>
 <td align="right">396</td>
 <td align="right">22</td>
-<td align="right">3.677024</td>
+<td align="right">3.680914</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3027,7 +3526,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">191</td>
 <td align="right">203</td>
-<td align="right">3.283834</td>
+<td align="right">3.616612</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3035,7 +3534,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">195</td>
 <td align="right">315</td>
-<td align="right">3.628099</td>
+<td align="right">3.675074</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3043,7 +3542,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">225</td>
 <td align="right">203</td>
-<td align="right">3.992773</td>
+<td align="right">3.786199</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3051,7 +3550,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">229</td>
 <td align="right">315</td>
-<td align="right">3.592702</td>
+<td align="right">3.584980</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3059,7 +3558,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">303</td>
 <td align="right">203</td>
-<td align="right">3.746254</td>
+<td align="right">3.605822</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3067,7 +3566,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">307</td>
 <td align="right">315</td>
-<td align="right">3.700124</td>
+<td align="right">3.850968</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3075,7 +3574,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">373</td>
 <td align="right">203</td>
-<td align="right">3.676955</td>
+<td align="right">3.657956</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3083,7 +3582,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">377</td>
 <td align="right">315</td>
-<td align="right">3.627112</td>
+<td align="right">3.508412</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="odd">
@@ -3091,7 +3590,7 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">395</td>
 <td align="right">112</td>
-<td align="right">3.862603</td>
+<td align="right">3.768899</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 <tr class="even">
@@ -3099,12 +3598,12 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <td align="left">Side 2</td>
 <td align="right">399</td>
 <td align="right">225</td>
-<td align="right">3.560585</td>
+<td align="right">3.546243</td>
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<p>++++++ Median all 4.80758224866 <br>++++++ Mean all 4.68814353441181 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -3129,197 +3628,181 @@ best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.657009</td>
-<td align="right">3.657492</td>
-<td align="right">0.1971500</td>
-<td align="right">0.0292036</td>
-<td align="right">3.743414</td>
-<td align="right">3.570604</td>
+<td align="right">3.672485</td>
+<td align="right">3.637284</td>
+<td align="right">0.1883041</td>
+<td align="right">0.0276016</td>
+<td align="right">3.755012</td>
+<td align="right">3.589957</td>
 </tr>
 <tr class="even">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.772361</td>
-<td align="right">4.826342</td>
-<td align="right">0.4946799</td>
-<td align="right">0.0576744</td>
-<td align="right">4.989164</td>
-<td align="right">4.555558</td>
+<td align="right">4.711095</td>
+<td align="right">4.700303</td>
+<td align="right">0.4719678</td>
+<td align="right">0.0555839</td>
+<td align="right">4.917944</td>
+<td align="right">4.504246</td>
 </tr>
 <tr class="odd">
-<td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.840168</td>
-<td align="right">4.883088</td>
-<td align="right">0.2875672</td>
-<td align="right">0.0327768</td>
-<td align="right">4.966200</td>
-<td align="right">4.714137</td>
-</tr>
-<tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.842319</td>
-<td align="right">5.081200</td>
-<td align="right">0.4749388</td>
-<td align="right">0.0531601</td>
-<td align="right">5.050470</td>
-<td align="right">4.634168</td>
-</tr>
-<tr class="odd">
-<td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.923949</td>
-<td align="right">5.120294</td>
-<td align="right">0.6397101</td>
-<td align="right">0.0645173</td>
-<td align="right">5.204314</td>
-<td align="right">4.643584</td>
+<td align="right">4.713531</td>
+<td align="right">4.859461</td>
+<td align="right">0.5487980</td>
+<td align="right">0.0649960</td>
+<td align="right">4.954052</td>
+<td align="right">4.473010</td>
 </tr>
 <tr class="even">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.777779</td>
+<td align="right">4.798712</td>
+<td align="right">0.2344981</td>
+<td align="right">0.0273481</td>
+<td align="right">4.880552</td>
+<td align="right">4.675006</td>
+</tr>
+<tr class="odd">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">5.049501</td>
-<td align="right">5.066083</td>
-<td align="right">0.3509230</td>
-<td align="right">0.0380414</td>
-<td align="right">5.203300</td>
-<td align="right">4.895702</td>
+<td align="right">4.957391</td>
+<td align="right">5.028135</td>
+<td align="right">0.3305999</td>
+<td align="right">0.0350720</td>
+<td align="right">5.102283</td>
+<td align="right">4.812499</td>
+</tr>
+<tr class="even">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.979669</td>
+<td align="right">5.204548</td>
+<td align="right">0.7201075</td>
+<td align="right">0.0778490</td>
+<td align="right">5.295270</td>
+<td align="right">4.664068</td>
 </tr>
 </tbody>
 </table>
-<div class="row">
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_188_22-&gt; 3.83952
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_188_135-&gt; 3.638034
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_188_203-&gt; 3.283834
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_188_315-&gt; 3.628099
-</p>
-</div>
-</div>
-####### Sumário do Número 188 : Max. 3.83952 Min: 3.283834 Diff: 0.5556861
-<div class="row">
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_222_22-&gt; 3.497591
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_222_135-&gt; 3.676951
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_222_203-&gt; 3.992773
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_222_315-&gt; 3.592702
-</p>
-</div>
-</div>
-####### Sumário do Número 222 : Max. 3.992773 Min: 3.497591 Diff: 0.4951812
-<div class="row">
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_300_22-&gt; 3.614718
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_300_135-&gt; 3.305779
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_300_203-&gt; 3.746254
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_300_315-&gt; 3.700124
-</p>
-</div>
-</div>
-####### Sumário do Número 300 : Max. 3.746254 Min: 3.305779 Diff: 0.4404747
-<div class="row">
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_370_22-&gt; 3.367666
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_370_135-&gt; 3.978157
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_203' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_370_203-&gt; 3.676955
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_370_315-&gt; 3.627112
-</p>
-</div>
-</div>
-####### Sumário do Número 370 : Max. 3.978157 Min: 3.367666 Diff: 0.6104911
-<div class="row">
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_22' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_392_22-&gt; 3.677024
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_112' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_392_112-&gt; 3.862603
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_225' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_392_225-&gt; 3.560585
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_293' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Manoel_Pereira_de_Araújo_392_293-&gt; 3.873702
-</p>
-</div>
-</div>
-####### Sumário do Número 392 : Max. 3.873702 Min: 3.560585 Diff: 0.3131171
 <div class='row'>
-
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Manoel_Pereira_de_Araújo_188_22-&gt; 3.91182(0.004417162)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_135-&gt; 3.717965(0.0004469701)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_203-&gt; 3.616612(-0.001513601)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_315-&gt; 3.675074(-0.0001238633)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_22-&gt; 3.615163(-0.000729411)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_135-&gt; 3.562807(-0.002001285)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Manoel_Pereira_de_Araújo_222_203-&gt; 3.786199(0.002700322)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_315-&gt; 3.58498(-0.001468388)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_22-&gt; 3.585796(-0.001149088)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_135-&gt; 3.375664(-0.00544214)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_203-&gt; 3.605822(-0.0007038687)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Manoel_Pereira_de_Araújo_300_315-&gt; 3.850968(0.004149439)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_22-&gt; 3.321632(-0.006652221)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Manoel_Pereira_de_Araújo_370_135-&gt; 4.046046(0.007582035)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_203-&gt; 3.657956(-0.0001025604)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_315-&gt; 3.508412(-0.003135544)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_22-&gt; 3.680914(-0.0001814837)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_112' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_112-&gt; 3.768899(0.001273968)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_225-&gt; 3.546243(-0.003341771)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Manoel_Pereira_de_Araújo_392_293-&gt; 4.030718(0.006460155)
+</p>
+</div>
 <ol style="list-style-type: decimal">
 <li>Locais problemáticos na rua (olhando as fotos):
 <ul>

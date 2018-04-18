@@ -106,7 +106,7 @@ def calcSurprise(num_of_points):
 
       avg_street  = average_street(prop, num_of_points)#For whole street
       total_street = sumU_street(prop, num_of_points)
-      avg_num = average_num(prop, i)#median_num;//For current point
+      avg_num = median_num(prop, i)#average_num;//For current point
       total_num = sumU_num(prop, i)
       
       #Estimate P(D|M) as 1 - |O - E|
@@ -198,22 +198,13 @@ if __name__ == "__main__":
 	base_summary = {}
 
 	for prop in input_data['street']:
-		if num_of_points == 20:
-			all_surprise[prop] = [[] for x in range(num_of_points)]
-			all_uniform[prop] = [[] for x in range(num_of_points)]
-			all_base[prop] = [[] for x in range(num_of_points)]
+		all_surprise[prop] = [[] for x in range(num_of_points)]
+		all_uniform[prop] = [[] for x in range(num_of_points)]
+		all_base[prop] = [[] for x in range(num_of_points)]
 
-			surprise_summary[prop] = [[] for x in range(num_of_points)]
-			uniform_summary[prop] = [[] for x in range(num_of_points)]
-			base_summary[prop] = [[] for x in range(num_of_points)]
-		else:
-			all_surprise[prop] =[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-			all_uniform[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-			all_base[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-
-			surprise_summary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-			uniform_summary[prop] =[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
-			base_summary[prop] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [] ]
+		surprise_summary[prop] = [[] for x in range(num_of_points)]
+		uniform_summary[prop] = [[] for x in range(num_of_points)]
+		base_summary[prop] = [[] for x in range(num_of_points)]
 
 
 	#Multiple calculations of surprise values and storing calculus results

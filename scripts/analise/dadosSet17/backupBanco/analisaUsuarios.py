@@ -17,7 +17,7 @@ user_educ = {}
 user_city = {}
 user_time = {}
 user_rel = {}
-user_neig = {}
+user_neig = {'cen' : 0, 'cat' : 0, 'lib' : 0}
 empty = 0
 
 #possible questions
@@ -435,7 +435,10 @@ def readUserData(lines1, lines2, outputFileName):
 			#Extracting profile
 			user_profile_data = user_answer_data['userProfile']
 
-			age = user_profile_data['age']
+			if 'age' in user_profile_data:
+				age = user_profile_data['age']
+			else:
+				age = -1
 			sex = user_profile_data['sex'].encode('utf-8').strip(' \t\n\r"')
 			currentClass = user_profile_data['clas'].encode('utf-8').strip(' \t\n\r"')
 			educ =  user_profile_data['educ'].encode('utf-8').strip(' \t\n\r"')

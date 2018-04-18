@@ -67,7 +67,7 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 		tasksIDAgra = eval(data[2])
 		tasksIDSeg = eval(data[3])
 
-		if len(data[1]) > 0:#TODO: Add gender based on name?
+		if len(data[1]) > 0:
 			#Separating by age
 			if len(profile[0]) > 0 and profile[0] != "None":
 				age = int(profile[0].lower())
@@ -85,14 +85,14 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 			#print str(profile)+"\t"+str(len(data[1]))
 			if len(profile[1]) > 0 and profile[1] != "None":
 				sex = profile[1].lower()
-			else:
+			elif str(userID) in manual_gender_ids:
 				sex = manual_gender_ids[str(userID)]
 
 			if sex[0] == 'f':
 				feminine.add(userID)
 				tasks_fem.update(tasksIDSeg)
 				tasks_fem.update(tasksIDAgra)
-			else:
+			elif sex[0] =='m':
 				masculine.add(userID)
 				tasks_masc.update(tasksIDSeg)
 				tasks_masc.update(tasksIDAgra)

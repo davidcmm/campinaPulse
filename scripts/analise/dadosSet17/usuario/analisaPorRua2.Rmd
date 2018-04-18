@@ -55,6 +55,30 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     }
   }
 }
+
+#Creating output file for surprise calculation - streets with 40 points
+data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Cristina_Procópio_Silva")
+data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+colnames(result) <- sub("qscore\\.", "num", colnames(result))
+
+data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Inácio_Marquês_da_Silva")
+data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+result2 <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+colnames(result2) <- sub("qscore\\.", "num", colnames(result2))
+
+write.csv(rbind(result, result2), "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
+
+#Streets with 20 points
+data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street != "R._Cristina_Procópio_Silva" & street != "R._Inácio_Marquês_da_Silva")
+final_result <- data.frame()
+for (name in unique(data$street)){
+  data2 <- dplyr::filter(data, street==name) %>% arrange(num, angle) %>% mutate(rank=1:n())
+  result <- reshape(dplyr::select(data2, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+  colnames(result) <- sub("qscore\\.", "num", colnames(result))
+  final_result <- rbind(final_result, result)
+}
+write.csv(final_result, "surprise/street_scores.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
 ```
 
 Alguns pontos importantes:
@@ -308,9 +332,6 @@ cristina$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, 
 cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 cristina$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 cristina$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-
-
-
 
 shapiro.test(cristina$qscore)
 fitdistr(cristina$qscore, "normal")

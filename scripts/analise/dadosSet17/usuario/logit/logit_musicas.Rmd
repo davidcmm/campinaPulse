@@ -48,7 +48,6 @@ computePseudoR2 <- function(baselineModel, completeModel){
   print(  cs  )
   print("Nagelkerke")
   print(  cs / ( 1 - exp(- baselineModel@devcomp$cmp['dev'] / nrow(completeModel@frame) )  )  )
-
 }
 ```
 
@@ -98,7 +97,7 @@ cc <- confint(complete_model, parm="beta_", level = 0.95, method="boot", nsim=1,
 #Predicting: https://www.theanalysisfactor.com/r-tutorial-glm1/; https://www.tatvic.com/blog/logistic-regression-with-r/; https://www.analyticsvidhya.com/blog/2015/11/beginners-guide-on-logistic-regression-in-r/; **https://www.r-bloggers.com/evaluating-logistic-regression-models/
 
 #Simple partition with 60% for training and 40% for testing
-Train <- createDataPartition(data$sim.A.B....sim.A.C., p=0.6, list=FALSE)
+Train <- createDataPartition(data$sim.A.B....sim.A.C., p=0.6, list=FALSE, times=100)
 training <- data[ Train, ]
 testing <- data[ -Train, ]
 
@@ -117,7 +116,7 @@ pred = predict(mod_fit, newdata=testing)
 confusionMatrix(data=pred, testing$sim.A.B....sim.A.C.)#https://en.wikipedia.org/wiki/Sensitivity_and_specificity
 
 #Using 10-fold cross-validation
-ctrl <- trainControl(method = "repeatedcv", number = 10, savePredictions = TRUE)
+ctrl <- trainControl(method = "repeatedcv", number = 5, savePredictions = TRUE)
 
 mod_fit <- train(sim.A.B....sim.A.C. ~ simple_chroma_AB + simple_chroma_AC + simple_chroma_BC + simple_mfcc_AB + simple_mfcc_AC + simple_mfcc_BC, data=training, method="glm", family="binomial", trControl = ctrl)#, tuneLength = 5)
 pred = predict(mod_fit, newdata=testing)

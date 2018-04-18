@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>analisaPorRua</title>
+
+<script src="analisaPorRua_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="analisaPorRua_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="analisaPorRua_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="analisaPorRua_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="analisaPorRua_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="analisaPorRua_files/navigation-1.1/tabsets.js"></script>
+<link href="analisaPorRua_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="analisaPorRua_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">analisaPorRua</h1>
+
+</div>
+
+
+<p>Os estudos de percepção realizados até o momento têm focado em capturar diversas imagens espalhadas pela cidade, obter os QScores/preferências das pessoas e treinar modelos de mais baixo nível ou alto nível (vide nosso artigo do HT ou o artigo com índice de ceu, verde, etc.) para predizer preferências para novas fotos que ainda não foram avaliadas por pessoas (<strong>visão macro</strong>). Com isso surgem alguns pontos a serem considerados:</p>
+<ol style="list-style-type: decimal">
+<li>A coleta nos artigos gera uma pergunta: Ao escolhermos pontos tão esparsos estamos considerando a média dos ambientes, isso é representativo?</li>
+</ol>
+<ul>
+<li>No Place Pulse são coletadas mais de uma imagem por local (2 ou mais direções) para lidar com variação e foram 1.706 imagens para NY, 1.236 para Boston, 544 para Salzburg e 650 para Linz</li>
+<li>Na análise dos Q-Scores por dados de homícidio usa-se a média no zip-code;</li>
+<li>Na segunda versão do Place Pulse tem-se 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua <strong>foram cobertos 6,1% das ruas (pouca cobertura!)</strong>.</li>
+</ul>
+<pre class="r"><code>  teste &lt;- read.csv(&quot;~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv&quot;, header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
+  lat_min &lt;- -23.401371#Sao Paulo
+  lat_max &lt;- -24.006227
+  lon_min &lt;- -46.334217
+  lon_max &lt;- -46.821569
+  left_ids &lt;- filter(teste, (teste$left_lat &gt;= lat_max &amp; teste$left_lat &lt;= lat_min)  &amp;  (teste$left_long &gt;= lon_max &amp; teste$left_long &lt;= lon_min))$left_id
+  right_ids &lt;- filter(teste, (teste$right_lat &gt;= lat_max &amp; teste$right_lat &lt;= lat_min)  &amp;  (teste$right_long &gt;= lon_max &amp; teste$right_long &lt;= lon_min))$right_id
+  length(unique(append(left_ids, right_ids)))</code></pre>
+<pre><code>## [1] 2984</code></pre>
+<pre class="r"><code>  #https://super.abril.com.br/cultura/quantas-ruas-existem-em-sao-paulo/</code></pre>
+<ul>
+<li>No Urban Gems, cena aleatória dentro de 300m do metrô e dentro dos bounding-box de áreas de censo. 258 Street View e 310 do Geograph, múltiplas visões do local</li>
+<li>No Como é Campina? escolhemos pontos distantes 50m, dentro dos setores censitários.</li>
+<li>Pela análise do Como é Campina?, focando em divergências, nós encontramos <strong>11 pontos (22 imagens), para o agradável, com diferenças no Q-Score maiores que 1 ponto. Diferenças maiores que 1 ponto, para o agradável, conduziram a diferenças de 25 a 107 posições no ranking e de 26 a 107 posições, para segurança</strong>.</li>
+<li>Podemos considerar a variação nas médias e ICs quando temos mais imagens e quando só temos 2 ou 3 imagens por rua</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Os <strong>modelos treinados com estes conjuntos de dados tendem a capturar as tendências médias</strong>, o típico presente nos dados. E se pensarmos em analisar outro contexto social, ruas de outros locais ou, ainda, traçar um panorama detalhado de alguma rua?</li>
+</ol>
+<ul>
+<li>Em relação ao contexto social podemos pensar em lidar capturando preferências dos diferentes segmentos sociais, diferentes culturas</li>
+<li><p>Em relação às ruas de outras cidades podemos pensar em capturar imagens de outras cidades, cujo contexto seja mais parecido com o contexto da cidade que queremos avaliar</p></li>
+<li><strong>Exemplos</strong>:</li>
+<li>Alguns casos interessantes.</li>
+<li><p>Amostra anterior: A imagem abaixo teve nota 4.30 (posição 28) mesmo contendo casas bem mantidas e árvores, por conta do terreno!</p></li>
+</ul>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/Rua_Santa_Catarina__1231__0.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.30 (posicao 28)
+</div>
+</div>
+</div>
+<ul>
+<li>Amostra Atual: A imagem primeira imagem tem um bom nível de manutenção, árvores e calçadas razoáveis, todavia pelos restos de construção teve uma nota menor e comparável a um terreno baldio da segunda imagem. As imagens 1, 2, 4 e 5, apesar de bem distintos quanto a árvores, manutenção tiveram notas parecidas!</li>
+</ul>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Edésio_Silva_306_135.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.74 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/catole/R._Inácio_Marquês_da_Silva_360_203.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.68 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/liberdade/R._Ed%C3%A9sio_Silva_602_22.jpg' width='400px'>
+<div class="caption">
+Q-Score = 5.12 (posicao ??)
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_130_270.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.75 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/R._Maciel_Pinheiro_360_90.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.69 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/norte/centro/Av._Mal._Floriano_Peixoto_913_293.jpg' width='400px'>
+<div class="caption">
+Q-Score = 4.24 (posicao ??)
+</div>
+</div>
+<div class="col-xs-4">
+<img src='https://contribua.org/bairros/oeste/catole/R._Cristina_Proc%C3%B3pio_Silva_66_45.jpg' width='400px'>
+<div class="caption">
+Q-Score = 5.49 (posicao ??)
+</div>
+</div>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li><p>O grande ponto positivo destas análises é aprender melhor sobre características médias presentes nos locais que favorecem ou não as preferências e aprender um pouco sobre o as preferências típicas dos votantes em relação a essas características. <strong>Por não termos visão completa, cheiro, etc. tipicamente justifica-se como limitação para gerar a percepção do local!</strong></p></li>
+<li>Existe uma discussão no urbanismo sobre <strong>top-down e bottom-up design</strong> (<a href="https://books.google.com.br/books?id=M-H0AgAAQBAJ&amp;pg=PA255&amp;lpg=PA255&amp;dq=what+is+opposed+to+bird%27s+eye+view+urbanism&amp;source=bl&amp;ots=8owGSyzJpv&amp;sig=8bFt7WNHhCuNqKmvwMclv9XQlt8&amp;hl=pt-BR&amp;sa=X&amp;ved=0ahUKEwjS8Ifqq7rZAhWCkZAKHU9QCyoQ6AEITDAJ#v=onepage&amp;q=what%20is%20opposed%20to%20bird&#39;s%20eye%20view%20urbanism&amp;f=false">https://books.google.com.br/books?id=M-H0AgAAQBAJ&amp;pg=PA255&amp;lpg=PA255&amp;dq=what+is+opposed+to+bird%27s+eye+view+urbanism&amp;source=bl&amp;ots=8owGSyzJpv&amp;sig=8bFt7WNHhCuNqKmvwMclv9XQlt8&amp;hl=pt-BR&amp;sa=X&amp;ved=0ahUKEwjS8Ifqq7rZAhWCkZAKHU9QCyoQ6AEITDAJ#v=onepage&amp;q=what%20is%20opposed%20to%20bird's%20eye%20view%20urbanism&amp;f=false</a>):</li>
+</ol>
+<ul>
+<li>top-down, bird’s eye view, plan mostra a organização, não a experiência, a qualidade, o charme, nossa ligação emocional com a cidade do dia a dia</li>
+<li>Incorporar os locais e seu conhecimento no planejamento precisa de uma abordagem bottom-up</li>
+<li>Uma cidade projetada com foco no landscape não pode ser apreciada por uma visão bird’s eye. Estilos de arquitetura, escala humana não podem ser experimentados por esta visão.</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>E o panorama detalhado da rua (<strong>visão micro</strong>)? Precisamos ter ideias mais precisas de como são as várias ruas daquela cidade, suas particularidades, para que os modelos treinados com esses dados possam reproduzir mais fielmente as preferências das pessoas sobre aqueles locais? Com essa ideia estamos buscando <strong>descrever, encontrar problemas/virtudes, avaliar as particularidades</strong>, ou o que podemos ganhar/perder, pensando em captura de percepções em um nível mais micro em relação à captura de percepção em um nível mais macro.</li>
+</ol>
+<ul>
+<li>Se para nos aproximarmos de modelos/descrições mais detalhadas de ruas precisamos de muitos dados/fotos da cidade, começamos a nos deparar com alguns problemas:</li>
+<li>As grandes bases que existem (PlacePulse, UrbanGems, StreetSeen?) pouco tem do contexto sub-desenvolvido, particularmente do contexto brasileiro;</li>
+<li>Mesmo no contexto brasileiro, temos aspectos sociais, culturais e cidades bem distintas entre as várias partes do país</li>
+</ul>
+<p>Estamos pensando em o que fazer com esses dados, como computar e apresentar pontos úteis no mundo micro! Para tentar avaliar melhor esses aspectos, foram escolhidas 6 ruas de Campina Grande, 20 fotos por rua (5 pontos da rua x 4 ângulos), para avaliação quanto à questão agradável. 3 dessas ruas apresentaram os pontos de maior divergência de percepção em nossa análise anterior (Edésio Silva, Inácio Marques e Cristina Procópio), uma rua apresentou o ponto de maior homogeneidade (Manoel Pereira), porém com notas baixas, e as outras ruas são pontos importantes do centro da cidade (Maciel Pinheiro e Floriano Peixoto), que tem uma tendência de homogeneidade, com notas boas.</p>
+<p>As fotos de cada ruas foram comparadas com as de outras ruas, ao invés de apenas naquela rua, de modo que possamos comparar as ruas entre si e, também, tenhamos uma maior variação de tipos de locais comparados entre si.</p>
+<p>Alguns questionamentos foram inicialmente levantados:</p>
+<ol style="list-style-type: decimal">
+<li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
+<li>Será que ruas que são parecidas na média, são de fato similares?</li>
+<li>Podemos descrever cada rua? Problemas/virtudes (pontos notáveis)?</li>
+</ol>
+<div id="caracterizacao-geral" class="section level1">
+<h1>Caracterização Geral</h1>
+<div id="tamanho-das-amostras" class="section level2">
+<h2>Tamanho das amostras</h2>
+<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 330 pessoas (138 pessoas que não são de Campina e 157 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).</p>
+<pre class="r"><code>#Checking sample size
+current_data &lt;- read.table(&quot;all100/all_ordenado.dat&quot;)
+current_data$sd &lt;- apply(current_data[,4:ncol(current_data)], 1, sd)
+current_data$n &lt;- ( 1.96 * current_data$sd / 0.2) ** 2  #All QScores
+print(&quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;</code></pre>
+<pre class="r"><code>print(max(current_data$n))</code></pre>
+<pre><code>## [1] 0.3401999</code></pre>
+<pre class="r"><code>print(min(current_data$n))</code></pre>
+<pre><code>## [1] 0.00431684</code></pre>
+<pre class="r"><code>#Checking rankings similarity
+mergeSort &lt;- function(x){
+  if(length(x) == 1){
+    inv &lt;- 0
+  } else {
+    n &lt;- length(x)
+    n1 &lt;- ceiling(n/2)
+    n2 &lt;- n-n1
+    y1 &lt;- mergeSort(x[1:n1])
+    y2 &lt;- mergeSort(x[n1+1:n2])
+    inv &lt;- y1$inversions + y2$inversions
+    x1 &lt;- y1$sortedVector
+    x2 &lt;- y2$sortedVector
+    i1 &lt;- 1
+    i2 &lt;- 1
+    while(i1+i2 &lt;= n1+n2+1){
+      if(i2 &gt; n2 || (i1 &lt;= n1 &amp;&amp; x1[i1] &lt;= x2[i2])){
+        x[i1+i2-1] &lt;- x1[i1]
+        i1 &lt;- i1 + 1
+      } else {
+        inv &lt;- inv + n1 + 1 - i1
+        x[i1+i2-1] &lt;- x2[i2]
+        i2 &lt;- i2 + 1
+      }
+    }
+  }
+  return (list(inversions=inv,sortedVector=x))
+}
+numberOfInversions &lt;- function(x){
+  r &lt;- mergeSort(x)
+  return (r$inversions)
+}
+normalizedKendallTauDistance2 &lt;- function(data1, data2){
+  x &lt;- data1
+  y &lt;- data2
+  
+  tau = numberOfInversions(order(x)[rank(y)])
+  print(tau)
+  nItens = length(x)
+  maxNumberOfInverstions &lt;- (nItens*(nItens-1))/2
+  normalized = tau/maxNumberOfInverstions
+
+  print (normalized)
+}
+data29 &lt;- read.table(&quot;29users/all_ordenado.dat&quot;)
+
+d29_cur &lt;- merge(select(data29, V2, V3), select(current_data, V2, V3), by = &quot;V2&quot;)
+print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;kendall&quot;))</code></pre>
+<pre><code>## 
+##  Kendall&#39;s rank correlation tau
+## 
+## data:  d29_cur$V3.x and d29_cur$V3.y
+## z = 9.9878, p-value &lt; 2.2e-16
+## alternative hypothesis: true tau is not equal to 0
+## sample estimates:
+##       tau 
+## 0.7607595</code></pre>
+<pre class="r"><code>print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  d29_cur$V3.x and d29_cur$V3.y
+## S = 6330, p-value &lt; 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.9258087</code></pre>
+<pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d29_cur$V3.x, d29_cur$V3.y)))</code></pre>
+<pre><code>## [1] 1642
+## [1] 0.5196203
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.519620253164557&quot;</code></pre>
+<pre class="r"><code>data69 &lt;- read.table(&quot;69users/all_ordenado.dat&quot;)
+
+d69_cur &lt;- merge(select(data69, V2, V3), select(current_data, V2, V3), by = &quot;V2&quot;)
+print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code></pre>
+<pre><code>## 
+##  Kendall&#39;s rank correlation tau
+## 
+## data:  d69_cur$V3.x and d69_cur$V3.y
+## z = 10.744, p-value &lt; 2.2e-16
+## alternative hypothesis: true tau is not equal to 0
+## sample estimates:
+##       tau 
+## 0.8183544</code></pre>
+<pre class="r"><code>print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  d69_cur$V3.x and d69_cur$V3.y
+## S = 3914, p-value &lt; 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.9541256</code></pre>
+<pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))</code></pre>
+<pre><code>## [1] 1393
+## [1] 0.4408228
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.440822784810127&quot;</code></pre>
+</div>
+<div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level2">
+<h2>Comparação entre rankings de moradores e não moradores</h2>
+<p>O processo de separação de quem é ou não de Campina obedeceu as seguintes regras:</p>
+<ol style="list-style-type: decimal">
+<li>O usuário informando se é morador ou não ou através do IP;</li>
+<li>Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);</li>
+<li>Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.</li>
+</ol>
+<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 157 moradores e 138 não moradores. <strong>Quão parecido é o ranking geral de moradores e não moradores?</strong></p>
+<pre><code>## 
+##  Kendall&#39;s rank correlation tau
+## 
+## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
+## z = 11.309, p-value &lt; 2.2e-16
+## alternative hypothesis: true tau is not equal to 0
+## sample estimates:
+##       tau 
+## 0.6983193</code></pre>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
+## S = 33112, p-value &lt; 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.8850198</code></pre>
+<pre><code>## [1] 3237
+## [1] 0.4533613
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.453361344537815&quot;</code></pre>
+<p>Composição social de todos os usuários</p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-4-1.png" width="1152"  /></p>
+<p>Composição social de moradores de Campina</p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-5-1.png" width="1152"  /></p>
+<p>Composição social de não moradores de Campina</p>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-6-1.png" width="1152"  /></p>
+</div>
+<div id="ranking-geral" class="section level2">
+<h2>Ranking Geral</h2>
+<p>Computados os QScores as 10 melhores e 10 piores imagens avaliadas estão apresentadas abaixo juntamente com as interseções das marcações dos usuários do porquê as escolheram como melhor ou pior imagem dentre as 4 apresentadas nas tarefas.</p>
+<h3>
+Top ../percepcaoLocal/agradavel/melhores/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_580_203 5.622123
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_225 5.597781
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_691_22 5.522711
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_45' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_45 5.498587
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_70_22' width='400px'>
+<div class="caption">
+R._Edésio_Silva_70_22 5.459569
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_315 5.445511
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Ed%C3%A9sio_Silva_602_315' width='400px'>
+<div class="caption">
+R._Edésio_Silva_602_315 5.441191
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_261_315 5.436423
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_436_315 5.427303
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_239_90 5.404294
+</div>
+</div>
+</div>
+<h3>
+Bottom ../percepcaoLocal/agradavel/piores/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_315 3.628099
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_315 3.627112
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_22 3.614718
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_315 3.592702
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_392_225 3.560585
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_22 3.497591
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_22 3.367666
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_135 3.305779
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_203 3.283834
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_305_135 3.04297
+</div>
+</div>
+</div>
+<h3>
+Top ../percepcaoLocal/agradavel/melhorescampina/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_225 5.934195
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/Av._Mal._Floriano_Peixoto_580_203' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_580_203 5.843986
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_261_315 5.814866
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_315 5.746403
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Ed%C3%A9sio_Silva_70_22' width='400px'>
+<div class="caption">
+R._Edésio_Silva_70_22 5.724754
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_120_22 5.666528
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_293' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_120_293 5.654007
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_90' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_239_90 5.62591
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_239_22' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_239_22 5.595636
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Maciel_Pinheiro_248_180' width='400px'>
+<div class="caption">
+R._Maciel_Pinheiro_248_180 5.555018
+</div>
+</div>
+</div>
+<h3>
+Bottom ../percepcaoLocal/agradavel/piorescampina/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_135' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_135 3.484499
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_22 3.483501
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_315 3.44121
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_392_22 3.369351
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_22 3.362999
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_22 3.309299
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_203 3.155315
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_305_135 2.992928
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_135 2.880851
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_315 2.829048
+</div>
+</div>
+</div>
+<h3>
+Top ../percepcaoLocal/agradavel/melhoresnotcampina/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_45' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_45 5.93931
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_66_225 5.834418
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_135' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_436_135 5.798566
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Ed%C3%A9sio_Silva_1546_135' width='400px'>
+<div class="caption">
+R._Edésio_Silva_1546_135 5.785337
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_120_22 5.771977
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/Av._Mal._Floriano_Peixoto_691_22' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_691_22 5.768315
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_261_315 5.71851
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/Av._Mal._Floriano_Peixoto_480_112' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_480_112 5.686054
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_315' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_436_315 5.678751
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Ed%C3%A9sio_Silva_306_203' width='400px'>
+<div class="caption">
+R._Edésio_Silva_306_203 5.652765
+</div>
+</div>
+</div>
+<h3>
+Bottom ../percepcaoLocal/agradavel/pioresnotcampina/intersects/
+</h3>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_392_225 3.436802
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_203 3.408918
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_203 3.35499
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_135 3.308321
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_315 3.263064
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_222_22 3.202619
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_370_22 3.197855
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_315' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_315 3.15051
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_305_135 2.889654
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_188_203 2.829862
+</div>
+</div>
+</div>
+<p>Top diff 7 Tail diff 6</p>
+<p>Qualitativamente analisando estas imagens, conforme esperado, percebe-se que <strong>vegetação, melhor estado de manutenção e a rua mais larga</strong> conduziram a melhores avaliações das imagens. O <strong>céu</strong> também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 4 locais e a Edésio Silva 1 local (tipicamente residencial).</p>
+<p>Para as imagens com pior avaliação, <strong>a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto</strong>. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.</p>
+<p>Alguns pontos a se questionar olhando todas as marcações:</p>
+<ul>
+<li>Algumas imagens da Manoel Pereira de Araújo e outros locais degradados foram marcados como melhores, apresentando poucos votos 1, 2 a 5 pessoas -&gt; confusão na questão, preferência mesmo (algumas marcações no céu azul, prédios conservados)?</li>
+<li>Algumas imagens da Floriano, Maciel e Museu marcadas como piores -&gt; confusão, preferência (carros, estilos de lojas)?</li>
+</ul>
+<p>Realizando a análise da regressão dos QScores frente: # de árvores, nota de landscape, largura de rua, largura de calçada e número de prédios com identificadores</p>
+<pre><code>## Loading required package: sp</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:reshape&#39;:
+## 
+##     expand</code></pre>
+<pre><code>## Warning: replacing previous import by &#39;expm::expm&#39; when loading &#39;spdep&#39;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-2.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-3.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-4.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-5.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-6.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-7.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-8.png" width="672" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-8-9.png" width="672" /></p>
+<pre><code>## 
+##  Moran I test under randomisation
+## 
+## data:  residuals  
+## weights: neigh2  
+## 
+## Moran I statistic standard deviate = -1.1089, p-value = 0.2675
+## alternative hypothesis: two.sided
+## sample estimates:
+## Moran I statistic       Expectation          Variance 
+##     -1.031807e-02     -8.403361e-03      2.981595e-06</code></pre>
+<pre><code>##             Length Class  Mode     
+## statistic   1      -none- numeric  
+## p.value     1      -none- numeric  
+## estimate    3      -none- numeric  
+## method      1      -none- character
+## alternative 1      -none- character
+## data.name   1      -none- character</code></pre>
+<pre><code>## 
+##  Global Moran I for regression residuals
+## 
+## data:  
+## model: lm(formula = rank ~ street_wid + sidewalk_wid + landscape +
+## trees + build_ident, data = res, na.action = na.exclude)
+## weights: neigh2
+## 
+## Moran I statistic standard deviate = -1.4388, p-value = 0.1502
+## alternative hypothesis: two.sided
+## sample estimates:
+## Observed Moran I      Expectation         Variance 
+##    -1.031807e-02    -7.902098e-03     2.819546e-06</code></pre>
+<p>Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se:</p>
+<ol style="list-style-type: decimal">
+<li>Sidewalk width mais significativo e influente para moradores (média);</li>
+<li>Landscape igualmente significativo nos 3, mais influente para moradores (média);</li>
+<li>Trees mais significativo no geral e não moradores e mais influente para eles (média);</li>
+<li>Builds ids igualmente significativo nos 3, mais influente para não moradores (média);</li>
+<li>Os ICs apontam similaridade entre todos os coeficientes dos 3 grupos;</li>
+<li>R2 parecidos</li>
+</ol>
+<pre><code>## 
+## \begin{table}
+## \begin{center}
+## \begin{tabular}{l c c c }
+## \hline
+##  &amp; Model 1 &amp; Model 2 &amp; Model 3 \\
+## \hline
+## (Intercept)   &amp; $-20.386^{*}$  &amp; $-24.626^{**}$ &amp; $-10.584$      \\
+##               &amp; $(8.309)$      &amp; $(8.517)$      &amp; $(9.037)$      \\
+## street\_wid   &amp; $-0.299$       &amp; $-0.358$       &amp; $-0.242$       \\
+##               &amp; $(0.214)$      &amp; $(0.219)$      &amp; $(0.233)$      \\
+## sidewalk\_wid &amp; $3.409^{**}$   &amp; $3.740^{***}$  &amp; $3.416^{**}$   \\
+##               &amp; $(1.057)$      &amp; $(1.083)$      &amp; $(1.149)$      \\
+## landscape     &amp; $19.153^{***}$ &amp; $20.904^{***}$ &amp; $15.810^{***}$ \\
+##               &amp; $(2.328)$      &amp; $(2.386)$      &amp; $(2.532)$      \\
+## trees         &amp; $3.663^{***}$  &amp; $2.656^{*}$    &amp; $4.160^{***}$  \\
+##               &amp; $(1.014)$      &amp; $(1.040)$      &amp; $(1.103)$      \\
+## build\_ident  &amp; $-7.367^{***}$ &amp; $-6.777^{***}$ &amp; $-8.584^{***}$ \\
+##               &amp; $(1.664)$      &amp; $(1.706)$      &amp; $(1.810)$      \\
+## \hline
+## R$^2$         &amp; 0.688          &amp; 0.672          &amp; 0.631          \\
+## Adj. R$^2$    &amp; 0.674          &amp; 0.658          &amp; 0.615          \\
+## Num. obs.     &amp; 120            &amp; 120            &amp; 120            \\
+## RMSE          &amp; 19.850         &amp; 20.346         &amp; 21.587         \\
+## \hline
+## \multicolumn{4}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
+## \end{tabular}
+## \caption{Statistical models}
+## \label{table:coefficients}
+## \end{center}
+## \end{table}</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; IC Geral x Campina x Not Moradores&quot;</code></pre>
+<pre><code>##                    2.5 %    97.5 %       2.5 %      97.5 %       2.5 %
+## (Intercept)  -36.8465309 -3.924586 -41.4988210 -7.75320053 -28.4856074
+## street_wid    -0.7232968  0.124990  -0.7925152  0.07699492  -0.7034447
+## sidewalk_wid   1.3151864  5.502310   1.5943960  5.88627692   1.1391052
+## landscape     14.5412532 23.765704  16.1767874 25.63202515  10.7944047
+## trees          1.6535158  5.672336   0.5960553  4.71542249   1.9744704
+## build_ident  -10.6645804 -4.070219 -10.1567433 -3.39739746 -12.1695134
+##                  97.5 %
+## (Intercept)   7.3178714
+## street_wid    0.2190894
+## sidewalk_wid  5.6927114
+## landscape    20.8262369
+## trees         6.3450428
+## build_ident  -4.9979726</code></pre>
+<pre><code>## Loading required package: gmodels</code></pre>
+<pre><code>## Loading required package: vcd</code></pre>
+<pre><code>## Loading required package: lme4</code></pre>
+<pre><code>## 
+## Attaching package: &#39;nlme&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:lme4&#39;:
+## 
+##     lmList</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     collapse</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Classes and Methods for R developed in the
+## Political Science Computational Laboratory
+## Department of Political Science
+## Stanford University
+## Simon Jackman
+## hurdle and zeroinfl functions by Achim Zeileis</code></pre>
+<pre><code>## 
+## Attaching package: &#39;GGally&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:R.utils&#39;:
+## 
+##     wrap</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     nasa</code></pre>
+<pre><code>## 
+## Attaching package: &#39;car&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     recode</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = choice ~ 1, family = binomial(), data = the_data)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.177  -1.177   0.000   1.177   1.177  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  0.00000    0.01373       0        1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 29403  on 21209  degrees of freedom
+## Residual deviance: 29403  on 21209  degrees of freedom
+## AIC: 29405
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: choice ~ 1 + (1 | userID)
+##    Data: the_data
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##  29407.3  29423.2 -14701.7  29403.3    21208 
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     -1     -1      0      1      1 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev.
+##  userID (Intercept) 0        0       
+## Number of obs: 21210, groups:  userID, 347
+## 
+## Fixed effects:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  0.00000    0.01373       0        1</code></pre>
+<pre><code>## &#39;log Lik.&#39; 29403.3 (df=1)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 29403.3 (df=2)</code></pre>
+<pre><code>## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: choice
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##      Df Deviance Resid. Df Resid. Dev
+## NULL                 21209      29403</code></pre>
+<pre><code>## [1] &quot;Logistic model not scaled - with user being or not from campina&quot;</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = choice ~ d_swidth + d_sidewalk + d_trees + d_lands + 
+##     d_bid + bair_cat + city:(d_swidth + d_sidewalk + d_trees + 
+##     d_lands + d_bid), family = binomial(), data = the_data)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.52504  -0.97265   0.00904   0.99439   2.46970  
+## 
+## Coefficients:
+##                             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)               -0.2517089  0.0246711 -10.203  &lt; 2e-16 ***
+## d_swidth                  -0.0030221  0.0018245  -1.656 0.097643 .  
+## d_sidewalk                 0.1477897  0.0090199  16.385  &lt; 2e-16 ***
+## d_trees                    0.0444125  0.0089486   4.963 6.94e-07 ***
+## d_lands                    0.5446823  0.0197303  27.606  &lt; 2e-16 ***
+## d_bid                     -0.0303602  0.0156917  -1.935 0.053016 .  
+## bair_catcatole_centro      0.8059618  0.0493972  16.316  &lt; 2e-16 ***
+## bair_catcatole_liberdade   0.6635419  0.0662344  10.018  &lt; 2e-16 ***
+## bair_catcentro_catole     -0.3246093  0.0533078  -6.089 1.13e-09 ***
+## bair_catcentro_liberdade  -0.1254815  0.0615983  -2.037 0.041640 *  
+## bair_catliberdade_catole   0.2116445  0.0731403   2.894 0.003808 ** 
+## bair_catliberdade_centro   0.4731011  0.0617281   7.664 1.80e-14 ***
+## d_swidth:citynotcampina    0.0004564  0.0026369   0.173 0.862588    
+## d_sidewalk:citynotcampina -0.0237991  0.0134383  -1.771 0.076562 .  
+## d_trees:citynotcampina     0.0266552  0.0131056   2.034 0.041964 *  
+## d_lands:citynotcampina    -0.1333451  0.0289246  -4.610 4.02e-06 ***
+## d_bid:citynotcampina      -0.0739897  0.0205343  -3.603 0.000314 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 29403  on 21209  degrees of freedom
+## Residual deviance: 24618  on 21193  degrees of freedom
+## AIC: 24652
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre><code>## [1] &quot;Logistic model not scaled - without user being or not from campina&quot;</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = choice ~ d_swidth + d_sidewalk + d_trees + d_lands + 
+##     d_bid + bair_cat, family = binomial(), data = the_data)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.48595  -0.97499   0.00139   0.99548   2.44217  
+## 
+## Coefficients:
+##                           Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)              -0.248987   0.024631 -10.109  &lt; 2e-16 ***
+## d_swidth                 -0.002997   0.001368  -2.191  0.02842 *  
+## d_sidewalk                0.137207   0.006796  20.191  &lt; 2e-16 ***
+## d_trees                   0.055995   0.006544   8.556  &lt; 2e-16 ***
+## d_lands                   0.483119   0.014485  33.353  &lt; 2e-16 ***
+## d_bid                    -0.063933   0.012751  -5.014 5.33e-07 ***
+## bair_catcatole_centro     0.801169   0.049264  16.263  &lt; 2e-16 ***
+## bair_catcatole_liberdade  0.655027   0.066045   9.918  &lt; 2e-16 ***
+## bair_catcentro_catole    -0.324262   0.053123  -6.104 1.03e-09 ***
+## bair_catcentro_liberdade -0.121203   0.061407  -1.974  0.04841 *  
+## bair_catliberdade_catole  0.208881   0.073036   2.860  0.00424 ** 
+## bair_catliberdade_centro  0.483240   0.061591   7.846 4.30e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 29403  on 21209  degrees of freedom
+## Residual deviance: 24706  on 21198  degrees of freedom
+## AIC: 24730
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre><code>## &#39;log Lik.&#39; 24705.53 (df=12)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 24617.51 (df=17)</code></pre>
+<pre><code>## [1] &quot;Comparing deviance of models and chi-square values from table&quot;</code></pre>
+<pre><code>## &#39;log Lik.&#39; 88.01298 (df=17)</code></pre>
+<pre><code>## [1] 11.0705</code></pre>
+<pre><code>## [1] 15.08627</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = choice ~ 1, family = binomial(), data = the_data)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.177  -1.177   0.000   1.177   1.177  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  0.00000    0.01373       0        1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 29403  on 21209  degrees of freedom
+## Residual deviance: 29403  on 21209  degrees of freedom
+## AIC: 29405
+## 
+## Number of Fisher Scoring iterations: 2</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: choice ~ 1 + (1 | userID)
+##    Data: the_data
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##  29407.3  29423.2 -14701.7  29403.3    21208 
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     -1     -1      0      1      1 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev.
+##  userID (Intercept) 0        0       
+## Number of obs: 21210, groups:  userID, 347
+## 
+## Fixed effects:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  0.00000    0.01373       0        1</code></pre>
+<pre><code>## &#39;log Lik.&#39; 29403.3 (df=1)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 29403.3 (df=2)</code></pre>
+<pre><code>## [1] &quot;Random Effects scaled&quot;</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+##     bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +  
+##     d_bid + bair_cat) + (1 | userID)
+##    Data: the_data
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##  24648.3  24839.3 -12300.1  24600.3    21186 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.8950 -0.7765  0.0017  0.7936  4.3473 
+## 
+## Random effects:
+##  Groups Name        Variance  Std.Dev. 
+##  userID (Intercept) 4.091e-17 6.396e-09
+## Number of obs: 21210, groups:  userID, 347
+## 
+## Fixed effects:
+##                                         Estimate Std. Error z value
+## (Intercept)                             -0.18662    0.02456  -7.599
+## d_swidth                                -0.02830    0.02686  -1.054
+## d_sidewalk                               0.40048    0.02484  16.124
+## d_trees                                  0.14799    0.02992   4.947
+## d_lands                                  0.81760    0.02955  27.669
+## d_bid                                   -0.08857    0.03126  -2.833
+## bair_catcatole_centro                    0.81020    0.06229  13.007
+## bair_catcatole_liberdade                 0.59511    0.08381   7.101
+## bair_catcentro_catole                   -0.21646    0.06844  -3.163
+## bair_catcentro_liberdade                -0.02877    0.07864  -0.366
+## bair_catliberdade_catole                 0.17922    0.09527   1.881
+## bair_catliberdade_centro                 0.32359    0.08016   4.037
+## d_swidth:citynotcampina                 -0.02388    0.03985  -0.599
+## d_sidewalk:citynotcampina               -0.05559    0.03765  -1.476
+## d_trees:citynotcampina                   0.09302    0.04396   2.116
+## d_lands:citynotcampina                  -0.20832    0.04364  -4.774
+## d_bid:citynotcampina                    -0.05837    0.04712  -1.239
+## bair_catcatole_centro:citynotcampina    -0.01122    0.08509  -0.132
+## bair_catcatole_liberdade:citynotcampina  0.16698    0.12540   1.332
+## bair_catcentro_catole:citynotcampina    -0.24041    0.09643  -2.493
+## bair_catcentro_liberdade:citynotcampina -0.22116    0.11542  -1.916
+## bair_catliberdade_catole:citynotcampina  0.07150    0.13882   0.515
+## bair_catliberdade_centro:citynotcampina  0.32735    0.11310   2.894
+##                                         Pr(&gt;|z|)    
+## (Intercept)                             2.97e-14 ***
+## d_swidth                                 0.29196    
+## d_sidewalk                               &lt; 2e-16 ***
+## d_trees                                 7.55e-07 ***
+## d_lands                                  &lt; 2e-16 ***
+## d_bid                                    0.00461 ** 
+## bair_catcatole_centro                    &lt; 2e-16 ***
+## bair_catcatole_liberdade                1.24e-12 ***
+## bair_catcentro_catole                    0.00156 ** 
+## bair_catcentro_liberdade                 0.71445    
+## bair_catliberdade_catole                 0.05995 .  
+## bair_catliberdade_centro                5.42e-05 ***
+## d_swidth:citynotcampina                  0.54900    
+## d_sidewalk:citynotcampina                0.13983    
+## d_trees:citynotcampina                   0.03436 *  
+## d_lands:citynotcampina                  1.81e-06 ***
+## d_bid:citynotcampina                     0.21539    
+## bair_catcatole_centro:citynotcampina     0.89514    
+## bair_catcatole_liberdade:citynotcampina  0.18300    
+## bair_catcentro_catole:citynotcampina     0.01266 *  
+## bair_catcentro_liberdade:citynotcampina  0.05535 .  
+## bair_catliberdade_catole:citynotcampina  0.60654    
+## bair_catliberdade_centro:citynotcampina  0.00380 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>## 
+## Correlation matrix not shown by default, as p = 23 &gt; 12.
+## Use print(summary(agrad_random_user), correlation=TRUE)  or
+##   vcov(summary(agrad_random_user))    if you need it</code></pre>
+<pre><code>## [1] &quot;Hosmer and Lemeshow&quot;
+##       dev 
+## 0.8366493 
+## [1] &quot;Hosmer and Lemeshow&quot;
+##       dev 
+## 0.1633507 
+## [1] &quot;Cox and Snells&quot;
+##       dev 
+## 0.2026425 
+## [1] &quot;Nagelkerke&quot;
+##     dev 
+## 0.27019</code></pre>
+<pre><code>## [1] &quot;Random Effects without user moderation scaled&quot;</code></pre>
+<pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
+##   Approximation) [glmerMod]
+##  Family: binomial  ( logit )
+## Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+##     bair_cat + +(1 | userID)
+##    Data: the_data
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##  24731.5  24835.0 -12352.8  24705.5    21197 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -4.5800 -0.7801  0.0010  0.8008  4.3277 
+## 
+## Random effects:
+##  Groups Name        Variance Std.Dev.
+##  userID (Intercept) 0        0       
+## Number of obs: 21210, groups:  userID, 347
+## 
+## Fixed effects:
+##                          Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)              -0.18452    0.02452   -7.52 5.29e-14 ***
+## d_swidth                 -0.04330    0.01976   -2.19  0.02842 *  
+## d_sidewalk                0.37554    0.01860   20.19  &lt; 2e-16 ***
+## d_trees                   0.18701    0.02186    8.56  &lt; 2e-16 ***
+## d_lands                   0.72234    0.02166   33.35  &lt; 2e-16 ***
+## d_bid                    -0.11691    0.02332   -5.01 5.33e-07 ***
+## bair_catcatole_centro     0.80117    0.04926   16.26  &lt; 2e-16 ***
+## bair_catcatole_liberdade  0.65503    0.06605    9.92  &lt; 2e-16 ***
+## bair_catcentro_catole    -0.32426    0.05312   -6.10 1.03e-09 ***
+## bair_catcentro_liberdade -0.12120    0.06141   -1.97  0.04841 *  
+## bair_catliberdade_catole  0.20888    0.07304    2.86  0.00424 ** 
+## bair_catliberdade_centro  0.48324    0.06159    7.85 4.30e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##               (Intr) d_swdt d_sdwl d_tres d_lnds d_bid  br_ctctl_c
+## d_swidth       0.015                                              
+## d_sidewalk    -0.024 -0.137                                       
+## d_trees       -0.017 -0.439  0.052                                
+## d_lands       -0.007  0.029 -0.290 -0.405                         
+## d_bid         -0.038 -0.021 -0.061  0.303 -0.342                  
+## br_ctctl_cn   -0.517 -0.055  0.113  0.009 -0.031  0.352           
+## br_ctctl_lb   -0.371  0.061  0.098 -0.016 -0.011 -0.042  0.178    
+## br_ctcntr_c   -0.442  0.047 -0.101  0.006  0.051 -0.324  0.072    
+## br_ctcntr_l   -0.381  0.183 -0.005 -0.016  0.034 -0.332  0.044    
+## br_ctlbrdd_ct -0.336 -0.093 -0.054  0.055  0.024  0.029  0.174    
+## br_ctlbrdd_cn -0.415 -0.199  0.013  0.028 -0.024  0.353  0.364    
+##               br_ctctl_l br_ctcntr_c br_ctcntr_l br_ctlbrdd_ct
+## d_swidth                                                      
+## d_sidewalk                                                    
+## d_trees                                                       
+## d_lands                                                       
+## d_bid                                                         
+## br_ctctl_cn                                                   
+## br_ctctl_lb                                                   
+## br_ctcntr_c    0.177                                          
+## br_ctcntr_l    0.177      0.328                               
+## br_ctlbrdd_ct  0.111      0.149       0.109                   
+## br_ctlbrdd_cn  0.118      0.029      -0.030       0.160</code></pre>
+<p>As regressões logísticas, por outro lado, apontam uma melhoria no AIC em torno de 80 pontos quando usamos a moderação em relação a não usá-la e aponta preferências em relação a trees e landscape. De forma similar ao modelo OLS, preferências por mais árvores, calçadas mais largas, mais manutenção e menos identificadores foram percebidas em geral.</p>
+</div>
+</div>
+<div id="analise-geral-das-ruas---media-e-dispersao" class="section level1">
+<h1>Análise Geral das Ruas - Média e Dispersão</h1>
+<ol style="list-style-type: decimal">
+<li>Na média as ruas são parecidas ou não? Tem alguma rua que parece muito boa ou muito ruim?</li>
+</ol>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Geral&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Média Não Moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<ul>
+<li>A Manoel P. de Araújo realmente está bem abaixo das demais ruas;</li>
+<li>As outras 5 ruas possuem intervalos próximos, que podem ser confundíveis, apesar da Cristina e a Floriano parecerem ter uma tendência de melhores scores;</li>
+</ul>
+<p>Como essas médias se comparam com os dados que tínhamos antes (pontos aleatórios) da rua ou ainda com pontos aleatórios dos novos dados?</p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Médias V1 x Dados Atuais&quot;</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; Summary Manoel (Old x New)&quot;
+## [1] 4
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.327   3.366   3.915   3.924   4.473   4.539 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.284   3.585   3.657   3.657   3.770   3.993 
+## [1] &quot;&gt;&gt;&gt; Summary Inacio&quot;
+## [1] 2
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.685   4.147   4.609   4.609   5.072   5.534 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.968   4.418   5.081   4.842   5.233   5.404 
+## [1] &quot;&gt;&gt;&gt; Summary Edesio&quot;
+## [1] 2
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.677   4.125   4.574   4.574   5.023   5.472 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.882   4.403   4.826   4.772   5.165   5.460 
+## [1] &quot;&gt;&gt;&gt; Summary Cristina&quot;
+## [1] 2
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.500   3.927   4.354   4.354   4.781   5.208 
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.043   4.784   5.120   4.924   5.400   5.598</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Médias Simulando 3 pontos por rua&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Será que ruas que são parecidas na média, são de fato similares?</li>
+</ol>
+<p>5 das ruas selecionadas parecem bem similares de acordo com a média, mas será que são similares assim? Para isso computamos os violin plots de cada rua.</p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Todos os usuários e todas as fotos juntas&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Votos aleatórios&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Todos os usuários por rua&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-4.png" width="672" /></p>
+<pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Não moradores&quot;</code></pre>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-12-5.png" width="672" /></p>
+<p>A partir da análise dos violin plots, alguns pontos podem ser destacados:</p>
+<ul>
+<li>A Manoel P. de Araújo foi realmente a rua com as notas em gerais mais baixas o que pode ser um indicativo de problema na rua. Analisando com mais cuidado as imagens da rua na próxima Seção, pode-se perceber que esses valores baixos eram esperados, já que se trata de uma área antiga e pouco cuidada do centro da cidade (bem degradada!);</li>
+<li>A Inacio Marques, Edesio silva e Cristina tiveram valores mais espalhados com uma maior concentração em algumas regiões, o que era esperado dado variações nos tipos de locais nessas ruas (mais ou menos verde, mais ou menos conservados). Existem concentrações de medianos para bons, porém a Inácio tem uma concentração de scores ruins e a Cristina tem algunas notas muito baixas;</li>
+<li>A Maciel Pinheiro tem uma maior concentração de valores com notas parecidas, o que era esperado dado a maior semelhança de locais ao longo de toda a rua. Isso a torna mais homogênea que as outras 4, porém mais heterogênea que a Manoel P. de Araujo;</li>
+<li>A Floriano também tem uma maior concentração de valores com notas parecidas, porém um pouco mais heterogêneas que a Maciel Pinheiro;</li>
+<li>A Inacio, Edesio, Floriano e Cristina possuem QScores que variam em 1.5 ou mais pontos. Essa grande variação merece ser analisada com mais cuidado já que pode ser um indicativo de problemas em certos locais das ruas!</li>
+</ul>
+<p>Para complemento numérico dos violin plots, temos os coeficientes de dispersão/heterogeneidade e o sumário de cada rua na seguinte ordem: Inacio, Edesio, Maciel e Manoel. Aqui é importante destacar que:</p>
+<ul>
+<li>Os três pontos mais heterogêneos considerados foram, respectivamente, das ruas Inácio Marques, Edésio Silva e Cristina Procópio. É interessante observar que, apesar da ordem de heterogeneidade das ruas ser diferente, essas 3 ruas são as mais heterogêneas do nosso conjunto de dados.</li>
+</ul>
+<pre><code>##   labels variable      value
+## 1   Gini cristina 0.06451732
+## 2   Gini   edesio 0.05767443
+## 3   Gini   inacio 0.05316014
+## 4   Gini floriano 0.03804141
+## 5   Gini   maciel 0.03277675
+## 6   Gini   manoel 0.02920358</code></pre>
+<pre><code>##    labels variable       value
+## 1 Entropy cristina 0.009060597
+## 2 Entropy   edesio 0.005207376
+## 3 Entropy   inacio 0.004667139
+## 4 Entropy floriano 0.002341453
+## 5 Entropy   maciel 0.001702221
+## 6 Entropy   manoel 0.001390847</code></pre>
+<pre><code>##   labels variable     value
+## 1     SD cristina 0.6397101
+## 2     SD   edesio 0.4946799
+## 3     SD   inacio 0.4749388
+## 4     SD floriano 0.3509230
+## 5     SD   maciel 0.2875672
+## 6     SD   manoel 0.1971500</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.968   4.418   5.081   4.842   5.233   5.404</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.882   4.403   4.826   4.772   5.165   5.460</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   4.234   4.649   4.883   4.840   5.076   5.232</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.284   3.585   3.657   3.657   3.770   3.993</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   4.247   4.854   5.066   5.050   5.305   5.622</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   3.043   4.784   5.120   4.924   5.400   5.598</code></pre>
+</div>
+<div id="uma-impressao-geral-ao-longo-da-rua" class="section level1">
+<h1>Uma impressão geral ao longo da rua</h1>
+<p>Após a análise das médias por rua e de suas desigualdades, vamos dar uma olhada geral ao longo de todas as ruas sob a visão de todos os usuários, só dos moradores e só dos não moradores. Com isso podemos perceber diferenças e semelhanças entre as ruas, com a presença de locais melhor/pior avaliados ao longo das mesmas.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Considerando todos os respondentes</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<img src="analisaPorRua_files/figure-html/unnamed-chunk-14-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-14-6.png" width="1152" />
+<div class="row">
+<div class="col-xs-12">
+<img src='images/cristina_procopio.png' width='800px'>
+<div class="caption">
+Cristina Procópio
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-12">
+<img src='images/inacio_marques.png' width='800px'>
+<div class="caption">
+Inácio Marques
+</div>
+</div>
+</div>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Considerando só os moradores de Campina</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-1.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-2.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-3.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-4.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-5.png" width="1152" /><img src="analisaPorRua_files/figure-html/unnamed-chunk-15-6.png" width="1152" /></p>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Considerando só os não moradores de Campina</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-1.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-2.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-3.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-4.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-5.png" width="1152"  /><img src="analisaPorRua_files/figure-html/unnamed-chunk-16-6.png" width="1152"  /></p>
+</div>
+<div id="analisando-em-detalhe-cada-rua" class="section level1">
+<h1>Analisando em detalhe cada rua</h1>
+<p>Para entender um pouco melhor cada rua, tentamos analisar os QScores obtidos ao longo da rua e confrontá-los com as imagens para tentar responder a questão abaixo:</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Podemos descrever cada rua? Apontar pontos notáveis, problemas, se um lado da rua é diferente do outro? Esses pontos seriam identificados pela regressão ou comportamento médio?</li>
+</ol>
+<p>Vide analisaPorRua2.html!</p>
+</div>
+<div id="caracteristicas-de-usuarios-no-centro" class="section level1">
+<h1>Características de Usuários no Centro</h1>
+<p>Algumas observações:</p>
+<ul>
+<li>Para as ruas Maciel Pinheiro, Cardoso Vieira, Peregrino de Carvalho e Marquês de Herval apesar de terem características diferentes quanto á largura de rua, arborização e conservação de prédios, os usuários mostraram alta importância para Espaços Públicos, Arborização, Espaços para Circulação de Pedestres e Mobiliário Urbano;</li>
+<li>A importância dada a espaço para circulação é geralmente de média a alta, com algumas variações entre estas ruas</li>
+</ul>
+<p>[1] “&gt;&gt;&gt;&gt;&gt; Rua Maciel Pinheiro 60” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-1.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Marquês do herval 42” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-2.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Cardoso Vieira 44” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-3.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Peregrino de Carvalho 61” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-4.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Eufrosino 11” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-5.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Irineu Joffily 21” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-6.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Manoel Cavalcanti Belo 10” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-7.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Monsenhor Sales 22” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-8.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Semeão Leal 24” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-9.png" width="1152"  />[1] “&gt;&gt;&gt;&gt;&gt; Rua Venâncio neiva 46” <img src="analisaPorRua_files/figure-html/unnamed-chunk-17-10.png" width="1152"  /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

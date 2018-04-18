@@ -1,0 +1,3594 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>analisaPorRua2</title>
+
+<script src="analisaPorRua2_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="analisaPorRua2_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="analisaPorRua2_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="analisaPorRua2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="analisaPorRua2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="analisaPorRua2_files/navigation-1.1/tabsets.js"></script>
+<link href="analisaPorRua2_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="analisaPorRua2_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">analisaPorRua2</h1>
+
+</div>
+
+
+<p>Aqui apresenta-se uma análise mais detalhada, rua a rua, a partir das percepções capturadas.</p>
+<p>Alguns pontos importantes:</p>
+<ul>
+<li>O número da rua indica o que? Metros? <a href="http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf" class="uri">http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf</a></li>
+<li>Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
+<ul>
+<li>Anomalias? <a href="https://www.datascience.com/blog/python-anomaly-detection" class="uri">https://www.datascience.com/blog/python-anomaly-detection</a></li>
+<li>Derivadas, máximos e mínimos locais? Pacote features do R?</li>
+</ul></li>
+</ul>
+<p>TO DO:</p>
+<ul>
+<li>Refinar o método
+<ul>
+<li>Escrever os passos</li>
+<li>Aperfeiçoar visualização (diferença entre linhas?)</li>
+</ul></li>
+<li>Gerar mais pontos nas ruas mais heterogêneas?
+<ul>
+<li>Cristina e Inácio?</li>
+</ul></li>
+<li>Qual o nível de incerteza nos pontos?
+<ul>
+<li>Surprise Maps? <a href="https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865" class="uri">https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865</a></li>
+<li>Surprise entre ruas? Tendo como base um modelo uniforme, ou média das ruas</li>
+<li>Surprise na rua? Tendo como base um modelo uniforme, ou a média dos pontos</li>
+</ul></li>
+<li><p>Avaliar o mínimo de respostas necessárias?</p></li>
+<li>O que um especialista diria de útil na análise</li>
+<li><p>Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?</p></li>
+</ul>
+<p>De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.</p>
+<pre><code>##   labels variable      value
+## 1   Gini cristina 0.06451732
+## 2   Gini   edesio 0.05767443
+## 3   Gini   inacio 0.05316014
+## 4   Gini floriano 0.03804141
+## 5   Gini   maciel 0.03277675
+## 6   Gini   manoel 0.02920358</code></pre>
+<pre><code>##    labels variable       value
+## 1 Entropy cristina 0.009060597
+## 2 Entropy   edesio 0.005207376
+## 3 Entropy   inacio 0.004667139
+## 4 Entropy floriano 0.002341453
+## 5 Entropy   maciel 0.001702221
+## 6 Entropy   manoel 0.001390847</code></pre>
+<pre><code>##   labels variable     value
+## 1     SD cristina 0.6397101
+## 2     SD   edesio 0.4946799
+## 3     SD   inacio 0.4749388
+## 4     SD floriano 0.3509230
+## 5     SD   maciel 0.2875672
+## 6     SD   manoel 0.1971500</code></pre>
+<p>O que procurar?</p>
+<ol style="list-style-type: decimal">
+<li>Ponto mais heterogeneo/homogeneo</li>
+<li>Melhor e pior local da rua</li>
+<li>Melhor e pior área da rua (considerando os dois lados)</li>
+<li>Áreas muito diferentes entre lados</li>
+<li>Descontinuidades no mesmo lado</li>
+<li>Heterogeneidade/Homogeneidade no ponto -&gt; Isso tudo pode ser explicado pela regressão geral das features?</li>
+<li>O que é a rua?</li>
+</ol>
+<div id="cristina-procopio" class="section level1">
+<h1>Cristina Procópio</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  cristina$qscore
+## W = 0.83573, p-value = 0.003102</code></pre>
+<pre><code>##       mean          sd    
+##   4.92394878   0.62351231 
+##  (0.13942159) (0.09858595)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua: &quot;</code></pre>
+<pre><code>## [1] 0.06451732</code></pre>
+<pre><code>##   num      value
+## 1 305 0.11193874
+## 2 436 0.05106366
+## 3  66 0.03034427
+## 4   2 0.02561922
+## 5 261 0.02374617</code></pre>
+<pre><code>##   num      value
+## 1   2 -2.3776715
+## 2 436  2.3313726
+## 3 305 -0.6830362
+## 4 261  0.5183015
+## 5  66  0.4040115</code></pre>
+<pre><code>##   num value
+## 1   2   NaN
+## 2  66   NaN
+## 3 261   NaN
+## 4 305   NaN
+## 5 436   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-4-1.png" width="1152" /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">2</td>
+<td align="right">45</td>
+<td align="right">4.794746</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">2 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">6</td>
+<td align="right">293</td>
+<td align="right">4.521649</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">66 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">66</td>
+<td align="right">45</td>
+<td align="right">5.498587</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">66 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">70</td>
+<td align="right">315</td>
+<td align="right">5.445511</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">261 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">264</td>
+<td align="right">22</td>
+<td align="right">5.146898</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">261 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">268</td>
+<td align="right">315</td>
+<td align="right">5.436423</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">305 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">308</td>
+<td align="right">45</td>
+<td align="right">4.794370</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">305 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">312</td>
+<td align="right">293</td>
+<td align="right">5.248873</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">436 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">436</td>
+<td align="right">135</td>
+<td align="right">5.390811</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">436 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">440</td>
+<td align="right">22</td>
+<td align="right">5.194900</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">2 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">5</td>
+<td align="right">135</td>
+<td align="right">5.075437</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">2 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">9</td>
+<td align="right">225</td>
+<td align="right">5.093690</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">66 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">69</td>
+<td align="right">135</td>
+<td align="right">4.753867</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">66 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">73</td>
+<td align="right">225</td>
+<td align="right">5.597781</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">261 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">261</td>
+<td align="right">135</td>
+<td align="right">4.814955</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">261 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">265</td>
+<td align="right">225</td>
+<td align="right">5.243110</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">305 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">305</td>
+<td align="right">135</td>
+<td align="right">3.042971</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">305 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">309</td>
+<td align="right">225</td>
+<td align="right">3.835359</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">436 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">439</td>
+<td align="right">203</td>
+<td align="right">4.121735</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">436 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">443</td>
+<td align="right">315</td>
+<td align="right">5.427303</td>
+<td align="left">R._Cristina_Procópio_Silva</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_2_45' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_2_45-&gt; 4.794746
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_2_135-&gt; 5.075437
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_2_225' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_2_225-&gt; 5.09369
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_2_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_2_293-&gt; 4.521649
+</p>
+</div>
+</div>
+####### Sumário do Número 2 : Max. 5.09369 Min: 4.521649 Diff: 0.5720413
+<div class="row">
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_45' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_66_45-&gt; 5.498587
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_66_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_66_135-&gt; 4.753867
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_225' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_66_225-&gt; 5.597781
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_66_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_66_315-&gt; 5.445511
+</p>
+</div>
+</div>
+####### Sumário do Número 66 : Max. 5.597781 Min: 4.753867 Diff: 0.8439133
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_261_22-&gt; 5.146898
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_261_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_261_135-&gt; 4.814955
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_225' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_261_225-&gt; 5.243109
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_261_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_261_315-&gt; 5.436423
+</p>
+</div>
+</div>
+####### Sumário do Número 261 : Max. 5.436423 Min: 4.814955 Diff: 0.6214681
+<div class="row">
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_45' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_305_45-&gt; 4.79437
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#000000">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_305_135-&gt; 3.04297
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_305_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_305_225-&gt; 3.835359
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_305_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_305_293-&gt; 5.248873
+</p>
+</div>
+</div>
+####### Sumário do Número 305 : Max. 5.248873 Min: 3.04297 Diff: 2.205903
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_22-&gt; 5.1949
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_135-&gt; 5.390811
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_436_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Cristina_Procópio_Silva_436_203-&gt; 4.121735
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_436_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Cristina_Procópio_Silva_436_315-&gt; 5.427303
+</p>
+</div>
+</div>
+####### Sumário do Número 436 : Max. 5.427303 Min: 4.121735 Diff: 1.305568
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>2 side1 (terreno com lixo)</li>
+<li>305 side2 (lixo, pouca manutenção)</li>
+<li>436 side2 203 (construção/menor manutenção)</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>2 side2 (prédios bem mantidos, verde)</li>
+<li>66 inteiro (prédios bem mantidos, verde)</li>
+<li>261 inteiro (verde, prédios bem mantidos)</li>
+<li>436 menos o 203 (verde, casas bem mantidas)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>66-p2 side2 (melhor)</li>
+<li>305-p1 side2 (pior) diferença de 2.5 -&gt; boa manutenção, verde, ruas largas x falta de manutenção, lixo</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>O side1 parece ligeiramente melhor (2 side2, 66 empate, 261, 305, 436 side1)</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>66 a 261 side1 (melhor)</li>
+<li>305 a 436 side2 (pior) menor dif. de aprox. 2.1 -&gt; verde, boa manutenção x lixo, menor manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>305 a 436 menor diferenca de aprox. 1 -&gt; boa manutenção, verde x lixo, pouca manutenção, menos verde aparente (no 436 tem um ponto bacana que tem verde e boa manutenção, o outro nem tanto)</li>
+</ul></li>
+<li>Descontinuidades no mesmo lado
+<ul>
+<li>66 side2 dif de 0.8 -&gt; manutenção e verde aparente</li>
+<li>305 side2 dif de 0.8 -&gt; no meio da falta de manutenção, lixo a segunda imagem tem um prédio melhor conservado</li>
+<li>305 side1 dif. de 0.45 -&gt; mais prédios mais conservados</li>
+<li>436 side2 dif. de 1.3 -&gt; mais verde aparente, construção/manutenção</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>os pontos mais heterogêneros foram o 305 (lixo, falta de manutenção) e 436 (falta de manuteção, verde aparente).</li>
+<li>o mais homogêneo foi o 261 que é um ponto bem mantido e com verde</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>Dois (305 e 436) dos três pontos foram encontrados. Tanto no número 305 como no 436, dentre os pontos avaliados, pôde-se perceber locais que necessitam de melhoria na rua.</li>
+<li>O ponto 2 seria encontrado se seguissemos a lista de heterogeneidade (2 mais homogeneo) ou se avaliassemos diferenças entre os dois lados por ponto (complicado em vários casos).</li>
+<li>Além disso, no ponto 66 sugere-se uma melhoria com um pouco mais de verde de modo a homogenizar ainda mais o ponto.</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para boa</li>
+<li>Existe muita variação? Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local</li>
+<li>Existe um lado melhor? No final da rua side1 parece despertar maiores preferências que o outro lado. Média e mediana de side1 melhores</li>
+<li>Existe uma área melhor pior? Conforme questão 4 do número 66 ao 261 parece termos a melhor área da rua e do número 305 ao 436 a pior área.</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>66 p2 side2</li>
+<li>305 p1 side2 diferença de 2.5 -&gt; boa manutenção, verde, ruas largas x falta de manutenção, lixo</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>305, 2 lados separados: verde, manutenção x lixo, muro acabado</li>
+<li>436, 1 estranho: verde, manutenção x construção, menor manutenção, problema na pista, lixo</li>
+<li>66, 1 estranho: verde, prédios bem mantidos x verde menos destacado, manutenção</li>
+<li>261, pontos do mesmo lado separados, 135 pior: verde, boa manutenção x lixo, árvores pequenas, poste, muro cego</li>
+<li>2, 2 lados separados, mas 45 mais próximo ao side2 e 293 pior: verde, prédios mantidos x terreno, lixo</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>2 e 261 como mais homogêneos, mas ainda com dispersão</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li>Diferenças/saltos no lado?</li>
+</ol>
+<ul>
+<li>2, side1 separado</li>
+<li>66, side2 -&gt; recaem nos pontos acima</li>
+<li>261, side1 e side2 separados</li>
+<li>305, side1 melhor que side2 e cada side separados internamente</li>
+<li>436, side2 mais separado que side1</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas (minha opinião)</li>
+</ol>
+<ul>
+<li>Pesquisador: 3 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 3/3 = 1</li>
+<li>Precisão = reais / método = 4/5 = 0.8 (menos o 66 1 estranho)</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Avaliação Virtudes (minha opinião)</li>
+</ol>
+<ul>
+<li>Pesquisador: 4 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 4/4 = 1</li>
+<li>Precisão = reais / método = 4/5 = 0.75 (menos o 305 2 lados separdos)</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 4.92/5.12 &gt; 4.68/4.82 -&gt; rua de mediana para boa</li>
+<li>Variação no surprise? Variações ao longo da rua, alternando locais legais e não tão legais</li>
+<li>Lado melhor? Side1 (8) x Side2 (5)</li>
+<li>Região melhor? não fica claro no surprise, mas <strong>nos scores pode-se falar do 66 ao 261</strong></li>
+</ul>
+</div>
+<div id="edesio-silva" class="section level1">
+<h1>Edésio Silva</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  edesio$qscore
+## W = 0.93872, p-value = 0.2268</code></pre>
+<pre><code>##       mean          sd    
+##   4.77236112   0.48215430 
+##  (0.10781298) (0.07623529)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0576744342800989&quot;</code></pre>
+<pre><code>##    num       value
+## 1   70 0.070664761
+## 2  602 0.052659204
+## 3 1136 0.034716327
+## 4  306 0.022600278
+## 5 1546 0.005414004</code></pre>
+<pre><code>##    num       value
+## 1  602  3.51805338
+## 2   70 -1.06657797
+## 3  306  0.52119916
+## 4 1136 -0.38017671
+## 5 1546  0.06881856</code></pre>
+<pre><code>##    num value
+## 1   70   NaN
+## 2  306   NaN
+## 3  602   NaN
+## 4 1136   NaN
+## 5 1546   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-6-1.png" width="1152"  /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">70 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">70</td>
+<td align="right">135</td>
+<td align="right">3.881736</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">70 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">74</td>
+<td align="right">22</td>
+<td align="right">5.459569</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">306 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">306</td>
+<td align="right">135</td>
+<td align="right">4.748159</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">306 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">310</td>
+<td align="right">22</td>
+<td align="right">4.993888</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">602 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">602</td>
+<td align="right">135</td>
+<td align="right">4.537421</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">602 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">606</td>
+<td align="right">22</td>
+<td align="right">5.125127</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">1136 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">1136</td>
+<td align="right">135</td>
+<td align="right">4.508766</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">1136 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">1140</td>
+<td align="right">22</td>
+<td align="right">4.061773</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">1546 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">1546</td>
+<td align="right">135</td>
+<td align="right">5.200790</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">1546 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">1550</td>
+<td align="right">22</td>
+<td align="right">5.153065</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">70 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">73</td>
+<td align="right">203</td>
+<td align="right">4.444845</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">70 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">77</td>
+<td align="right">315</td>
+<td align="right">4.117668</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">306 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">309</td>
+<td align="right">203</td>
+<td align="right">5.316674</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">306 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">313</td>
+<td align="right">315</td>
+<td align="right">4.895543</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">602 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">605</td>
+<td align="right">203</td>
+<td align="right">4.276371</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">602 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">609</td>
+<td align="right">315</td>
+<td align="right">5.441191</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">1136 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">1139</td>
+<td align="right">203</td>
+<td align="right">4.165650</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">1136 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">1143</td>
+<td align="right">315</td>
+<td align="right">4.757140</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">1546 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">1549</td>
+<td align="right">203</td>
+<td align="right">5.114107</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">1546 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">1553</td>
+<td align="right">315</td>
+<td align="right">5.247739</td>
+<td align="left">R._Edésio_Silva</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_70_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_70_22-&gt; 5.459569
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_70_135-&gt; 3.881736
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_70_203-&gt; 4.444845
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_70_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_70_315-&gt; 4.117668
+</p>
+</div>
+</div>
+####### Sumário do Número 70 : Max. 5.459569 Min: 3.881736 Diff: 1.577833
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_306_22-&gt; 4.993888
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_306_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_306_135-&gt; 4.748159
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_306_203-&gt; 5.316674
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_306_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_306_315-&gt; 4.895543
+</p>
+</div>
+</div>
+####### Sumário do Número 306 : Max. 5.316674 Min: 4.748159 Diff: 0.5685142
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_602_22-&gt; 5.125127
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_602_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_602_135-&gt; 4.537421
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_602_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_602_203-&gt; 4.276371
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_602_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_602_315-&gt; 5.441191
+</p>
+</div>
+</div>
+####### Sumário do Número 602 : Max. 5.441191 Min: 4.276371 Diff: 1.164819
+<div class="row">
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1136_22-&gt; 4.061773
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1136_135-&gt; 4.508766
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1136_203-&gt; 4.16565
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Edésio_Silva_1136_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Edésio_Silva_1136_315-&gt; 4.75714
+</p>
+</div>
+</div>
+####### Sumário do Número 1136 : Max. 4.75714 Min: 4.061773 Diff: 0.6953668
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_22-&gt; 5.153065
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_135' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_135-&gt; 5.20079
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_203-&gt; 5.114107
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Edésio_Silva_1546_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Edésio_Silva_1546_315-&gt; 5.247739
+</p>
+</div>
+</div>
+####### Sumário do Número 1546 : Max. 5.247739 Min: 5.114107 Diff: 0.1336316
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>70 side1 135 (construção, menor manutenção, lixo) e side2 315 (menor manutenção), 203 (um pouco de lixo e menor manutenção);</li>
+<li>602 side 203 (terreno com muito lixo);</li>
+<li>1136 todos os lados (pouca manutenção, lixo, terrenos);</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>70 22 (verde, casas bem mantidas)</li>
+<li>306 menos o 315 (verde, casas bem mantidas)</li>
+<li>602 22 e 315 (verde, casas bem mantidas)</li>
+<li>1546 todo (casas bem mantidas, verde)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>602 p2 side2</li>
+<li>70 p1 side1. Dif de 1.6 -&gt; boa manutenção, algum verde x construção, pouca manutenção, sem verde</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>Não fica claro</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>confuso, não dá pra discernir facilmente</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>70 a 306 melhora em side2 e piora em side1
+<ul>
+<li>No side1 temos um ponto muito bom (70, 22) que foge do padrão de melhoria que sairia de pouca manutenção e falta de áŕvore para melhor manutenção e mais árvores.</li>
+<li>No side2 temos uma certa melhoria de manutenção + árvores aparentes</li>
+</ul></li>
+</ul></li>
+<li>Descontinuidades no mesmo lado
+<ul>
+<li>70 no side1, diferença de 1.55 -&gt; construção, falta de verde x melhor manutenção, verde</li>
+<li>602 no side1, diferença de 0.6 -&gt; falta de manutenção, menos verde aparente x melhor manutenção, verde</li>
+<li>602 no side2, diferença de 1.15 -&gt; manutenção, verde x lixão</li>
+<li>1136 no side2, diferença de 0.6 -&gt; lixão</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>os pontos mais heterogêneos foram o 70 (construção, menor manutenção x melhor manutenção e algum verde) e 602 (menor manutenção, lixão x melhor manutenção, verde)</li>
+<li>o ponto mais homogêneo foi o 1546, é bem mantido e com alguma vegetação.</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>O número 1136 no side1 não foi apontado dentre os 5 problemas levantados.</li>
+<li>O 1136 seria encontrado (diferença de 0.45) se continuássemos olhando as descontinuidades no mesmo lado da rua ou as piores notas (2 pior nota)</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para boa</li>
+<li>Existe muita variação? Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local</li>
+<li>Existe um lado melhor? Não</li>
+<li>Existe uma área melhor pior? Não</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>70 p2 side1</li>
+<li>70 p1 side1. Dif de 1.6 -&gt; boa manutenção, algum verde x construção, pouca manutenção, sem verde</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>70, 22 estranho: casa bem mantida, verde x construção, casas mal mantidas, casas mais simples, carro</li>
+<li>602, um ponto de cada side separado: casas bem mantidas, verde x terreno, muro mal mantido</li>
+<li>1136, um ponto de cada side separado: casa melhor mantida, verde x terreno, casas muito mal mantidas</li>
+<li>306, 203 estranho positivamente: casas bem mantidas, árvores</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>1546, mais homogêneo e positivo</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li>Diferenças/saltos no lado?</li>
+</ol>
+<ul>
+<li>70, side1 mais separado que side2</li>
+<li>306, side2 mais separado que side1</li>
+<li>602, um ponto de cada side separado</li>
+<li>1136, um ponto de cada side separado</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas</li>
+</ol>
+<ul>
+<li>Pesquisador: 3 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 2.5/3 = 0.833 (dois de 4 problemas faltando no 1136)</li>
+<li>Precisão = reais / método = 3/5 = 0.6 (1546 tem problema? 306 nao foi percebido) 6 Avaliação Virtudes</li>
+<li>Pesquisador: 4 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 3.75/4 = 0.93 (1 ponto do 1546 ficou como estranho negativo)</li>
+<li>Precisão = reais / método = 4/5 = 0.75 (menos o 1136)</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 4.77/4.82 &gt; 4.68/4.82 -&gt; rua de mediana para boa</li>
+<li>Variação no surprise? Variações ao longo da rua, alternando locais legais e não tão legais</li>
+<li>Lado melhor? Não fica tão claro, Side1 (5) x Side2 (6)</li>
+<li>Região melhor? não fica claro nem no surprise e nem nos scores</li>
+</ul>
+</div>
+<div id="inacio-marques" class="section level1">
+<h1>Inácio Marques</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  inacio$qscore
+## W = 0.87607, p-value = 0.01504</code></pre>
+<pre><code>##       mean          sd    
+##   4.84231882   0.46291311 
+##  (0.10351052) (0.07319299)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0531601377276022&quot;</code></pre>
+<pre><code>##   num       value
+## 1  54 0.059452874
+## 2 120 0.048669162
+## 3 360 0.030864204
+## 4 239 0.009656987
+## 5 500 0.004817261</code></pre>
+<pre><code>##   num       value
+## 1 360  6.68498596
+## 2  54 -1.53573452
+## 3 120  1.39768433
+## 4 239  0.11506616
+## 5 500 -0.04594212</code></pre>
+<pre><code>##   num value
+## 1  54   NaN
+## 2 120   NaN
+## 3 239   NaN
+## 4 360   NaN
+## 5 500   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-8-1.png" width="1152"  /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">54 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">54</td>
+<td align="right">112</td>
+<td align="right">5.056521</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">54 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">58</td>
+<td align="right">203</td>
+<td align="right">4.395569</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">120 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">120</td>
+<td align="right">112</td>
+<td align="right">5.181490</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">120 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">124</td>
+<td align="right">203</td>
+<td align="right">4.148817</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">239 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">242</td>
+<td align="right">90</td>
+<td align="right">5.404294</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">239 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">246</td>
+<td align="right">203</td>
+<td align="right">5.155989</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">360 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">360</td>
+<td align="right">90</td>
+<td align="right">4.506270</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">360 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">364</td>
+<td align="right">203</td>
+<td align="right">4.681430</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">500 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">500</td>
+<td align="right">90</td>
+<td align="right">4.425882</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">500 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">504</td>
+<td align="right">203</td>
+<td align="right">4.340677</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">54 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">57</td>
+<td align="right">22</td>
+<td align="right">5.225810</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">54 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">61</td>
+<td align="right">293</td>
+<td align="right">3.968053</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">120 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">123</td>
+<td align="right">22</td>
+<td align="right">5.337336</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">120 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">127</td>
+<td align="right">293</td>
+<td align="right">5.399040</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">239 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">239</td>
+<td align="right">22</td>
+<td align="right">5.325490</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">239 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">243</td>
+<td align="right">270</td>
+<td align="right">5.253824</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">360 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">363</td>
+<td align="right">22</td>
+<td align="right">5.165576</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">360 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">367</td>
+<td align="right">270</td>
+<td align="right">5.105879</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="odd">
+<td align="left">500 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">503</td>
+<td align="right">22</td>
+<td align="right">4.343081</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+<tr class="even">
+<td align="left">500 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">507</td>
+<td align="right">270</td>
+<td align="right">4.425348</td>
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_54_22-&gt; 5.22581
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_54_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_54_112-&gt; 5.056521
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_54_203-&gt; 4.395569
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_54_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_54_293-&gt; 3.968053
+</p>
+</div>
+</div>
+####### Sumário do Número 54 : Max. 5.22581 Min: 3.968053 Diff: 1.257757
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_120_22-&gt; 5.337336
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_120_112-&gt; 5.18149
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_120_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_120_203-&gt; 4.148817
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_120_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_120_293-&gt; 5.39904
+</p>
+</div>
+</div>
+####### Sumário do Número 120 : Max. 5.39904 Min: 4.148817 Diff: 1.250223
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_239_22-&gt; 5.32549
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_239_90-&gt; 5.404294
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_239_203-&gt; 5.155989
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_239_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_239_270-&gt; 5.253824
+</p>
+</div>
+</div>
+####### Sumário do Número 239 : Max. 5.404294 Min: 5.155989 Diff: 0.2483044
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_360_22-&gt; 5.165576
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_360_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_360_90-&gt; 4.50627
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_360_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_360_203-&gt; 4.681429
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_360_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Inácio_Marquês_da_Silva_360_270-&gt; 5.105879
+</p>
+</div>
+</div>
+####### Sumário do Número 360 : Max. 5.165576 Min: 4.50627 Diff: 0.6593053
+<div class="row">
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_22-&gt; 4.343081
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_90-&gt; 4.425882
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_203-&gt; 4.340677
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_500_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Inácio_Marquês_da_Silva_500_270-&gt; 4.425348
+</p>
+</div>
+</div>
+####### Sumário do Número 500 : Max. 4.425882 Min: 4.340677 Diff: 0.08520524
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>54 angulos 203 e 293 (falta de manutenção e verde);</li>
+<li>120 angulo 203 (falta de manutenção, lixo e verde);</li>
+<li>360 angulos 90 e 203 (terreno);</li>
+<li>todo o número 500</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>54, 22 (casas bem mantidas, verde)</li>
+<li>120, 22 e 293 (casas bem mantidas, verde)</li>
+<li>239 todo (casas bem mantidas, verde)</li>
+<li>360, 22 e 270 (museu, verde, boa manutenção)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>239 p1 side1</li>
+<li>54 p2 side2. Diferenca de 1.45 -&gt; boa manutenção, algum verde x menor manutenção, lixo</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>O side2 parece ligeiramente melhor (54 e 239 empate (uma foto de um lado e outra do outro), 500 empate com igualdade, 120 e 360 side2)</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>239 a 360 (melhor)? manutenção, verde, museu, apesar de duas visões de terreno que tiveram notas não tão ruins</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>120 a 239 -&gt; no 239 temos um maior equilíbrio bom entre todos os pontos (boa manutenção, verde), mas no 120 temos um ponto pior para o side1 (menor manutenção, lixo, ausência de verde)</li>
+</ul></li>
+<li>Descontinuidades no mesmo lado:
+<ul>
+<li>54 side1, diferenca de 1.2 -&gt; melhor manutenção x pior manutenção</li>
+<li>54 side2, diferença de 0.6 -&gt; melhor manutenção, verde x pior manutenção, falta de verde</li>
+<li>120 side1, diferença de 1.1 -&gt; melhor manutenção, verde x pior manutenção, falta de verde</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>os pontos mais heterogêneos foram o 54 (pior manutenção, falta de verde x melhor manutenção, verde) e 120 (pior manutenção, falta de verde x melhor manutenção);</li>
+<li>o mais homogêneo foi o 500 (pouca manutenção, muros, terrenos)<br />
+</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>Dos 4 pontos levantados o 360 não foi percebido pelas perguntas acima.</li>
+<li>Se olhássemos o terceiro ponto mais heterogêneo encontraríamos o problema do ponto 360 (menor diferença de 0.4) ou como os pontos de cada lado tem notas parecidas se olhássemos diferenças entre lados no ponto.</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para boa</li>
+<li>Existe muita variação? Variações de locais melhores e piores ao longo de toda a rua, alguns números com grande variação no local</li>
+<li>Existe um lado melhor? Side2 ligeiramente melhor</li>
+<li>Existe uma área melhor pior? Não</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>239 p1 side1</li>
+<li>54 p2 side2. Diferenca de 1.45 -&gt; boa manutenção, algum verde x menor manutenção, lixo</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>54, 1 ponto de cada side separado: melhor manutenção, verde x pior manutenção, lixo</li>
+<li>120, side1 p2 estranho: lixo, falta de manutenção x melhor manutenção, verde</li>
+<li>360, side1 separado de side2: visões do museu x terreno</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>239 homogêneo e positivo (boa manunteção, verde)</li>
+<li>500 homogêneo e negativo (falta de manutenção, muros, terreno) 4 Diferenças/saltos no lado?</li>
+<li>54, 1 ponto de cada side separado</li>
+<li>120, side1 separado</li>
+<li>360, side2 separado de side1</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas</li>
+</ol>
+<ul>
+<li>Pesquisador: 4 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 4/4 = 1</li>
+<li>Precisão = reais / método = 4/4 = 1</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Avaliação Virtudes</li>
+</ol>
+<ul>
+<li>Pesquisador: 4 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 4/4 = 1</li>
+<li>Precisão = reais / método = 4/4 = 1</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 4.84/5.08 &gt; 4.68/4.82, rua de mediana para boa</li>
+<li>Variação no surprise? Alguns pontos mais homogêneos ao longo da rua, um bom e outro ruim, porém existem pontos de altos e baixos ao longo da rua</li>
+<li>Lado melhor? Side1 (4) x Side2 (7), side2 ligeiramente melhor</li>
+<li>Região melhor? Pelo surprise parece ser a região de 120 a 360, mesma sensação olhando os scores.</li>
+</ul>
+</div>
+<div id="floriano-peixoto" class="section level1">
+<h1>Floriano peixoto</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  floriano$qscore
+## W = 0.97586, p-value = 0.8703</code></pre>
+<pre><code>##       mean          sd    
+##   5.04950088   0.34203741 
+##  (0.07648189) (0.05408086)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0380414099374088&quot;</code></pre>
+<pre><code>##   num      value
+## 1 913 0.04078231
+## 2 549 0.03665998
+## 3 445 0.03240166
+## 4 813 0.01452957
+## 5 691 0.01241701</code></pre>
+<pre><code>##   num      value
+## 1 445  4.1056210
+## 2 549  2.3309910
+## 3 813 -1.2978517
+## 4 913 -0.5552834
+## 5 691  0.2357708</code></pre>
+<pre><code>##   num value
+## 1 445   NaN
+## 2 549   NaN
+## 3 691   NaN
+## 4 813   NaN
+## 5 913   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-10-1.png" width="1152"  /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">445 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">448</td>
+<td align="right">22</td>
+<td align="right">5.402592</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">445 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">452</td>
+<td align="right">293</td>
+<td align="right">4.706462</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">549 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">552</td>
+<td align="right">22</td>
+<td align="right">4.937479</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">549 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">556</td>
+<td align="right">293</td>
+<td align="right">4.720322</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">691 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">694</td>
+<td align="right">22</td>
+<td align="right">5.522711</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">691 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">698</td>
+<td align="right">293</td>
+<td align="right">5.299257</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">813 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">816</td>
+<td align="right">22</td>
+<td align="right">4.855551</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">813 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">820</td>
+<td align="right">293</td>
+<td align="right">5.047525</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">913 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">916</td>
+<td align="right">22</td>
+<td align="right">4.464216</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">913 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">920</td>
+<td align="right">293</td>
+<td align="right">4.246906</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">445 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">445</td>
+<td align="right">112</td>
+<td align="right">5.400026</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">445 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">449</td>
+<td align="right">203</td>
+<td align="right">4.849774</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">549 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">549</td>
+<td align="right">112</td>
+<td align="right">5.241308</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">549 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">553</td>
+<td align="right">203</td>
+<td align="right">5.622123</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">691 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">691</td>
+<td align="right">112</td>
+<td align="right">5.320523</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">691 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">695</td>
+<td align="right">203</td>
+<td align="right">5.176836</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">813 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">813</td>
+<td align="right">112</td>
+<td align="right">5.187819</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">813 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">817</td>
+<td align="right">203</td>
+<td align="right">4.883455</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="odd">
+<td align="left">913 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">913</td>
+<td align="right">112</td>
+<td align="right">5.020493</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+<tr class="even">
+<td align="left">913 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">917</td>
+<td align="right">203</td>
+<td align="right">5.084640</td>
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_445_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_445_22-&gt; 5.402592
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_480_112-&gt; 5.400026
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_480_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_480_203-&gt; 4.849774
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_445_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_445_293-&gt; 4.706462
+</p>
+</div>
+</div>
+####### Sumário do Número 445 : Max. 5.402592 Min: 4.706462 Diff: 0.6961303
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_549_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_549_22-&gt; 4.937479
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_580_112-&gt; 5.241308
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_580_203-&gt; 5.622123
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_549_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_549_293-&gt; 4.720323
+</p>
+</div>
+</div>
+####### Sumário do Número 549 : Max. 5.622123 Min: 4.720323 Diff: 0.9018009
+<div class="row">
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_691_22-&gt; 5.522711
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_660_112-&gt; 5.320523
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_660_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_660_203-&gt; 5.176836
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_691_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_691_293-&gt; 5.299257
+</p>
+</div>
+</div>
+####### Sumário do Número 691 : Max. 5.522711 Min: 5.176836 Diff: 0.3458745
+<div class="row">
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_22' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_813_22-&gt; 4.855551
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_826_112-&gt; 5.187819
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_826_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_826_203-&gt; 4.883455
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_813_293' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_813_293-&gt; 5.047525
+</p>
+</div>
+</div>
+####### Sumário do Número 813 : Max. 5.187819 Min: 4.855551 Diff: 0.3322681
+<div class="row">
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_913_22-&gt; 4.464216
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_112' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_912_112-&gt; 5.020493
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_912_203' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av._Mal._Floriano_Peixoto_912_203-&gt; 5.084641
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/Av._Mal._Floriano_Peixoto_913_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>Av._Mal._Floriano_Peixoto_913_293-&gt; 4.246906
+</p>
+</div>
+</div>
+####### Sumário do Número 913 : Max. 5.084641 Min: 4.246906 Diff: 0.8377348
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>549 angulo 22 (manutenção no prédio)</li>
+<li>813 angulos 22 (manutenção no telegrafo/histórico)</li>
+<li>913 angulo 203 (manutenção prédio amarelo)</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>480 todo (verde, boa manutenção)</li>
+<li>580 112 e 203 (verde)</li>
+<li>660 (verde, boa manutenção)</li>
+<li>826 22 (telegrafo) e 112 (igreja)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>549 p2 side2 (muito verde bem mantido, praça)</li>
+<li>913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>O side2 parece ligeiramente melhor (445, 549, 913 side2, 691 side1, 813 empate)</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>691 a 813? verde, bem mantido e alguns pontos precisando de manutenção.</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>549 (praça x prédios mais acanhados)??</li>
+</ul></li>
+<li>Descontinuidades no mesmo lado:
+<ul>
+<li>445 side1, diferença de 0.7 -&gt; ônibus??</li>
+<li>445 side2, diferença de 0.6 -&gt; mais verde x menos verde, prédio</li>
+<li>549 side2, diferença de 0.4 -&gt; mais verde, praça x menos verde, estacionamento</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>os pontos mais heterogêneos foram o 913 (visual das lojas?) e 549 (praça, verde x estacionamento, prédio).</li>
+<li>O mais homogênero foi o 691 (prédios até bem mantidos com algumas árvores)</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>O ponto 813 dos 3 apontados não foi percebido.</li>
+<li>Se olhássemos outras descontinuidades no mesmo lado acabaríamos chegando nessa comparação apesar da baixa diferença de 0.2.</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para boa</li>
+<li>Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos</li>
+<li>Existe um lado melhor? Side2 ligeiramente melhor</li>
+<li>Existe uma área melhor pior? Não</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>549 p2 side2 (muito verde bem mantido, praça)</li>
+<li>913 p2 side1 (lojas com visual mais acanhado). Diferença de 1.4</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>913, side2 separado de side1: visual das lojas, manutenção?</li>
+<li>549, side2 separado de side1, certa separação entre cada ponto de side2: visual de lojas x praça</li>
+<li>445, 1 ponto de cada side separado: verde, praça x mais prédio?</li>
+<li>813, 1 ponto side2 separado: igreja, prédios x estilo de prédios, telegráfo?</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>660, ponto mais homogêneo e positivo: verde, prédios bem mantidos 4 Diferenças/saltos no lado?</li>
+<li>445, 1 ponto de cada side separado</li>
+<li>549, side2 separado de side1</li>
+<li>813, side2 separado</li>
+<li>913, side2 separado de side1</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas</li>
+</ol>
+<ul>
+<li>Pesquisador: 3 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 1/3 = 0.33 (menos o 549 ang 22 e o 913 ang 203 )</li>
+<li>Precisão = reais / método = 1/4 = 0.25 (913 sides afastados, 549 p2 side1 afastado, 445 1 ponto de cada side afastado)</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Avaliação Virtudes</li>
+</ol>
+<ul>
+<li>Pesquisador: 4 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 3.5/4 = 0.87 (metade do 480)</li>
+<li>Precisão = reais / método = 3/4 = 0.75 (menos o 913)</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 5.06/5.04 x 4.68/4.82 -&gt; rua de mediana para boa</li>
+<li>Variação no surprise? Em cada ponto temos algumas variações ao longo da rua e um ponto mais homogêneo positivamente</li>
+<li>Lado melhor? Side1 (6) x Side2 (8), side2 ligeiramente melhor</li>
+<li>Região melhor? Não dá para identificar pelo surprise, pelos <strong>scores poderia-se dizer do 552 ao 694?</strong></li>
+</ul>
+</div>
+<div id="maciel-pinheiro" class="section level1">
+<h1>Maciel Pinheiro</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  maciel$qscore
+## W = 0.94228, p-value = 0.2647</code></pre>
+<pre><code>##       mean          sd    
+##   4.84016850   0.28028584 
+##  (0.06267382) (0.04431708)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0327767504596409&quot;</code></pre>
+<pre><code>##   num      value
+## 1 248 0.03654238
+## 2 190 0.03569940
+## 3 130 0.02241080
+## 4 360 0.02176608
+## 5 284 0.02004100</code></pre>
+<pre><code>##   num      value
+## 1 284 -8.2407817
+## 2 248  4.1059221
+## 3 190  3.4215026
+## 4 130  1.7139650
+## 5 360 -0.6972458</code></pre>
+<pre><code>##   num value
+## 1 130   NaN
+## 2 190   NaN
+## 3 248   NaN
+## 4 284   NaN
+## 5 360   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-12-1.png" width="1152"  /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">130 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">130</td>
+<td align="right">90</td>
+<td align="right">5.167156</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">130 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">134</td>
+<td align="right">360</td>
+<td align="right">4.670898</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">190 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">190</td>
+<td align="right">90</td>
+<td align="right">5.056711</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">190 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">194</td>
+<td align="right">360</td>
+<td align="right">5.140332</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">248 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">248</td>
+<td align="right">90</td>
+<td align="right">5.143290</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">248 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">252</td>
+<td align="right">360</td>
+<td align="right">4.413008</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">284 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">284</td>
+<td align="right">90</td>
+<td align="right">4.841157</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">284 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">288</td>
+<td align="right">360</td>
+<td align="right">4.925018</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">360 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">360</td>
+<td align="right">90</td>
+<td align="right">4.695433</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">360 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">364</td>
+<td align="right">360</td>
+<td align="right">5.001745</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">130 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">133</td>
+<td align="right">180</td>
+<td align="right">5.024561</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">130 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">137</td>
+<td align="right">270</td>
+<td align="right">4.754770</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">190 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">193</td>
+<td align="right">180</td>
+<td align="right">4.234283</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">190 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">197</td>
+<td align="right">270</td>
+<td align="right">5.132187</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">248 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">251</td>
+<td align="right">180</td>
+<td align="right">5.232310</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">248 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">255</td>
+<td align="right">270</td>
+<td align="right">4.745852</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">284 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">287</td>
+<td align="right">180</td>
+<td align="right">5.017710</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">284 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">291</td>
+<td align="right">270</td>
+<td align="right">4.529582</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="odd">
+<td align="left">360 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">363</td>
+<td align="right">180</td>
+<td align="right">4.583014</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+<tr class="even">
+<td align="left">360 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">367</td>
+<td align="right">270</td>
+<td align="right">4.494353</td>
+<td align="left">R._Maciel_Pinheiro</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_130_90-&gt; 5.167156
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_130_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_130_180-&gt; 5.024561
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_130_270-&gt; 4.75477
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_130_360' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_130_360-&gt; 4.670898
+</p>
+</div>
+</div>
+####### Sumário do Número 130 : Max. 5.167156 Min: 4.670898 Diff: 0.4962581
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_90-&gt; 5.056711
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_190_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_190_180-&gt; 4.234283
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_270' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_270-&gt; 5.132187
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_190_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_190_360-&gt; 5.140332
+</p>
+</div>
+</div>
+####### Sumário do Número 190 : Max. 5.140332 Min: 4.234283 Diff: 0.9060486
+<div class="row">
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_248_90-&gt; 5.14329
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_248_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_248_180-&gt; 5.23231
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_248_270-&gt; 4.745852
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_248_360' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_248_360-&gt; 4.413008
+</p>
+</div>
+</div>
+####### Sumário do Número 248 : Max. 5.23231 Min: 4.413008 Diff: 0.8193015
+<div class="row">
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_90' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_90-&gt; 4.841157
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_180' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_180-&gt; 5.01771
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_284_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_284_270-&gt; 4.529582
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_284_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_284_360-&gt; 4.925018
+</p>
+</div>
+</div>
+####### Sumário do Número 284 : Max. 5.01771 Min: 4.529582 Diff: 0.488128
+<div class="row">
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_90' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_90-&gt; 4.695433
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_180' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_180-&gt; 4.583014
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Maciel_Pinheiro_360_270' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Maciel_Pinheiro_360_270-&gt; 4.494353
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Maciel_Pinheiro_360_360' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Maciel_Pinheiro_360_360-&gt; 5.001745
+</p>
+</div>
+</div>
+####### Sumário do Número 360 : Max. 5.001745 Min: 4.494353 Diff: 0.5073912
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>130 angulo 360 (manutenção de prédio);</li>
+<li>190 angulo 180 (manutenção de prédio);</li>
+<li>284 360 (manutenção de prédio);</li>
+<li>360 270 (manutenção de prédio).</li>
+<li>Não existem árvores na rua?</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>Em geral bem conservada</li>
+<li>360, 360 (prédio conservado + praça)</li>
+<li>190, 90 e 360 (prédios ainda mais bem conservados + estilo)</li>
+<li>130, 90, 180 e 270 (prédios ainda mais bem conservados + estilo)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>248 angulo 180 (boa manutenção)</li>
+<li>190 180 (manutenção de prédio faltando)</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>O side1 parece ligeiramente melhor (130, 284 empate, 190, 360 side1, 248 side2)</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>confuso!</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>284 a 360, com side1 ligeiramente melhor (no side2 temos um estacionamento e um caminhão na vista)</li>
+</ul></li>
+<li>Descontinuidades no mesmo lado:
+<ul>
+<li>190 side2, diferença de 0.9 -&gt; prédio precisando de manutenção x boa manutenção</li>
+<li>248 side1, diferença de 0.7 -&gt; menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos</li>
+<li>248 side2, diferença de 0.5 -&gt; menos identificadores, prédios um pouco mais novos x identificadores e prédios um pouco mais antigos</li>
+<li>284 side2, diferença de 0.5 -&gt; boa manutenção x estacionamento, prédio, carros</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>Os pontos mais heterogêneos foram o 248 (boa manutenção x mais identificadores/prédios) e 190 (boa manutenção x prédio que precisa de manutenção).</li>
+<li>O mais homogêneo foi o 284 (boa manutenção, apesar do estacionamento e prédio precisando de manutenção)</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>Apenas o 190 dos 4 pontos foi encontrado.</li>
+<li>A valorização da presença de árvores no final da rua pareceu não fazer um efeito tão alto em relação ao restante da rua.</li>
+<li>O 130 seria encontrado se continuássemos a olhar descontinuidades por lado.</li>
+<li>O 360 270 seria verificado se olhando para a praça comparássemos.</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para boa</li>
+<li>Existe muita variação? Rua mais homogênea, com pequenas variações entre alguns de seus pontos. Variações parecem estar ligadas ao estado de manutenção e identificadores</li>
+<li>Existe um lado melhor? O side1 parece ligeiramente melhor</li>
+<li>Existe uma área melhor pior? Do 190 ao 248 parece ser a melhor área, e do 248 ao 284 a pior</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>248 angulo 180 (boa manutenção)</li>
+<li>190 180 (manutenção de prédio faltando)</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>190, p1 side2 (180) afastado (prédio precisando de manutenção)</li>
+<li>248, 1 ponto de cada side separado (prédios conservados, estilo + motos, estilos)</li>
+<li>130, 1 ponto de cada side separado (prédios conservados, estilo + estilo, prédio precisando de conservação)</li>
+<li>360, p2 side1 melhor (melhor conservação, estilo, sem caminhão + praça)</li>
+<li>284, p2 side2 (270) pior (estacionamento + prédio + carros)</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>alguma heterogeneidade em todos os pontos 4 Diferenças/saltos no lado?</li>
+<li>130, 1 ponto de cada side separado</li>
+<li>190, side2 separado</li>
+<li>248, 1 ponto de cada side separado</li>
+<li>284, side2 separado</li>
+<li>360, side1 separado</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas</li>
+</ol>
+<ul>
+<li>Pesquisador: 5 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 3 de 5 (arvore no geral e 284 360 não foram percebidos) = 0.6</li>
+<li>Precisão = reais / método = 3/5 (248 1 ponto de cada side separado, 284 270 afastado) = 0.6</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Avaliação Virtudes</li>
+</ol>
+<ul>
+<li>Pesquisador: 4 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 3.66/4 = 0.91 (130 o método acha 2 pontos legais, falta 1)</li>
+<li>Precisão = reais / método = 3/5 = 0.6 (248 180, 284 3 pontos legais)</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 4.84/4.88 &gt; 4.68/4.82 -&gt; rua de mediana para boa</li>
+<li>Variação no surprise? Temos alternância de pontos melhores e piores ao longo de toda a rua</li>
+<li>Lado melhor? Side1 (7) x Side2(4) -&gt; side1 ligeiramente melhor</li>
+<li>Região melhor? O meio da rua (190 a 284) parece ter mais concentração de surpresas positivas, confirmado olhando os scores</li>
+</ul>
+</div>
+<div id="manoel-pereira" class="section level1">
+<h1>Manoel Pereira</h1>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  manoel$qscore
+## W = 0.95482, p-value = 0.4461</code></pre>
+<pre><code>##       mean          sd    
+##   3.65700904   0.19215810 
+##  (0.04296786) (0.03038286)</code></pre>
+<pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua:  0.0292035753018673&quot;</code></pre>
+<pre><code>##   num      value
+## 1 370 0.03210463
+## 2 188 0.02913573
+## 3 222 0.02658860
+## 4 300 0.02448046
+## 5 392 0.01878151</code></pre>
+<pre><code>##   num      value
+## 1 370 21.6055987
+## 2 222  2.9810238
+## 3 188 -1.7591857
+## 4 300 -1.3481720
+## 5 392  0.8133517</code></pre>
+<pre><code>##   num value
+## 1 188   NaN
+## 2 222   NaN
+## 3 300   NaN
+## 4 370   NaN
+## 5 392   NaN</code></pre>
+<pre><code>## Adding missing grouping variables: `num`</code></pre>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-14-1.png" width="1152"  /></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">xlabel</th>
+<th align="left">side</th>
+<th align="right">num</th>
+<th align="right">angle</th>
+<th align="right">V3</th>
+<th align="left">street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">188 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">188</td>
+<td align="right">135</td>
+<td align="right">3.638034</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">188 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">192</td>
+<td align="right">22</td>
+<td align="right">3.839520</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">222 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">222</td>
+<td align="right">135</td>
+<td align="right">3.676951</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">222 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">226</td>
+<td align="right">22</td>
+<td align="right">3.497591</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">300 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">300</td>
+<td align="right">135</td>
+<td align="right">3.305779</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">300 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">304</td>
+<td align="right">22</td>
+<td align="right">3.614717</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">370 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">370</td>
+<td align="right">135</td>
+<td align="right">3.978157</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">370 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">374</td>
+<td align="right">22</td>
+<td align="right">3.367666</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">392 - p1</td>
+<td align="left">Side 1</td>
+<td align="right">392</td>
+<td align="right">293</td>
+<td align="right">3.873702</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">392 - p2</td>
+<td align="left">Side 1</td>
+<td align="right">396</td>
+<td align="right">22</td>
+<td align="right">3.677024</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">188 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">191</td>
+<td align="right">203</td>
+<td align="right">3.283834</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">188 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">195</td>
+<td align="right">315</td>
+<td align="right">3.628099</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">222 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">225</td>
+<td align="right">203</td>
+<td align="right">3.992773</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">222 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">229</td>
+<td align="right">315</td>
+<td align="right">3.592702</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">300 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">303</td>
+<td align="right">203</td>
+<td align="right">3.746254</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">300 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">307</td>
+<td align="right">315</td>
+<td align="right">3.700124</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">370 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">373</td>
+<td align="right">203</td>
+<td align="right">3.676955</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">370 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">377</td>
+<td align="right">315</td>
+<td align="right">3.627112</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="odd">
+<td align="left">392 - p1</td>
+<td align="left">Side 2</td>
+<td align="right">395</td>
+<td align="right">112</td>
+<td align="right">3.862603</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+<tr class="even">
+<td align="left">392 - p2</td>
+<td align="left">Side 2</td>
+<td align="right">399</td>
+<td align="right">225</td>
+<td align="right">3.560585</td>
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+</tr>
+</tbody>
+</table>
+<p>++++++ Median all 4.82805601761 <br>++++++ Mean all 4.68088452294575 <br></p>
+<table style="width:100%;">
+<colgroup>
+<col width="31%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">street</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+<th align="right">sd</th>
+<th align="right">gini</th>
+<th align="right">upper</th>
+<th align="right">lower</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">R._Manoel_Pereira_de_Araújo</td>
+<td align="right">3.657009</td>
+<td align="right">3.657492</td>
+<td align="right">0.1971500</td>
+<td align="right">0.0292036</td>
+<td align="right">3.743414</td>
+<td align="right">3.570604</td>
+</tr>
+<tr class="even">
+<td align="left">R._Edésio_Silva</td>
+<td align="right">4.772361</td>
+<td align="right">4.826342</td>
+<td align="right">0.4946799</td>
+<td align="right">0.0576744</td>
+<td align="right">4.989164</td>
+<td align="right">4.555558</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Maciel_Pinheiro</td>
+<td align="right">4.840168</td>
+<td align="right">4.883088</td>
+<td align="right">0.2875672</td>
+<td align="right">0.0327768</td>
+<td align="right">4.966200</td>
+<td align="right">4.714137</td>
+</tr>
+<tr class="even">
+<td align="left">R._Inácio_Marquês_da_Silva</td>
+<td align="right">4.842319</td>
+<td align="right">5.081200</td>
+<td align="right">0.4749388</td>
+<td align="right">0.0531601</td>
+<td align="right">5.050470</td>
+<td align="right">4.634168</td>
+</tr>
+<tr class="odd">
+<td align="left">R._Cristina_Procópio_Silva</td>
+<td align="right">4.923949</td>
+<td align="right">5.120294</td>
+<td align="right">0.6397101</td>
+<td align="right">0.0645173</td>
+<td align="right">5.204314</td>
+<td align="right">4.643584</td>
+</tr>
+<tr class="even">
+<td align="left">Av._Mal._Floriano_Peixoto</td>
+<td align="right">5.049501</td>
+<td align="right">5.066083</td>
+<td align="right">0.3509230</td>
+<td align="right">0.0380414</td>
+<td align="right">5.203300</td>
+<td align="right">4.895702</td>
+</tr>
+</tbody>
+</table>
+<div class="row">
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_22-&gt; 3.83952
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_135-&gt; 3.638034
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_203-&gt; 3.283834
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_188_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_188_315-&gt; 3.628099
+</p>
+</div>
+</div>
+####### Sumário do Número 188 : Max. 3.83952 Min: 3.283834 Diff: 0.5556861
+<div class="row">
+<div class="col-xs-3" style="background-color:#001900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_22-&gt; 3.497591
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_135-&gt; 3.676951
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_203-&gt; 3.992773
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_222_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_222_315-&gt; 3.592702
+</p>
+</div>
+</div>
+####### Sumário do Número 222 : Max. 3.992773 Min: 3.497591 Diff: 0.4951812
+<div class="row">
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_22-&gt; 3.614718
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_135-&gt; 3.305779
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_203-&gt; 3.746254
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_300_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_300_315-&gt; 3.700124
+</p>
+</div>
+</div>
+####### Sumário do Número 300 : Max. 3.746254 Min: 3.305779 Diff: 0.4404747
+<div class="row">
+<div class="col-xs-3" style="background-color:#001900">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_22-&gt; 3.367666
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_135' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_135-&gt; 3.978157
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_203' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_203-&gt; 3.676955
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_370_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_370_315-&gt; 3.627112
+</p>
+</div>
+</div>
+####### Sumário do Número 370 : Max. 3.978157 Min: 3.367666 Diff: 0.6104911
+<div class="row">
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_22' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_22-&gt; 3.677024
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_112' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_112-&gt; 3.862603
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_225' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_225-&gt; 3.560585
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='../percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Araújo_392_293' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Manoel_Pereira_de_Araújo_392_293-&gt; 3.873702
+</p>
+</div>
+</div>
+####### Sumário do Número 392 : Max. 3.873702 Min: 3.560585 Diff: 0.3131171
+<div class='row'>
+
+<ol style="list-style-type: decimal">
+<li>Locais problemáticos na rua (olhando as fotos):
+<ul>
+<li>A rua em geral precisa de manutenção.</li>
+<li>Alguns pontos parecem ainda piores como o 222 angulo 22 (prédio acabado + itens na rua), 300 angulo 22 e 135 (barraca, itens na rua), 370 angulo 22, 203 e 315 (prédios acabados, barracas).</li>
+<li>Ausência de árvores de fato na rua.</li>
+</ul></li>
+<li>Virtudes na rua (olhando as fotos):
+<ul>
+<li>222, 203 e 315 (prédios mais bem conservados, apesar de parecerem galpões)</li>
+<li>300, 203 (prédio melhor conservado)</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando os Q-Scores ao longo da rua</p>
+</blockquote>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Melhor e pior local da rua:
+<ul>
+<li>222 p1 side2 (prédio mais conservado da sucata)</li>
+<li>188 p1 side2 (prédio acabado, carros, itens na rua)</li>
+</ul></li>
+<li>Melhor e pior lado da rua:
+<ul>
+<li>Não fica claro</li>
+</ul></li>
+<li>Melhor e pior área da rua (considerando os dois lados):
+<ul>
+<li>confuso!</li>
+</ul></li>
+<li>Áreas muito diferentes entre lados:
+<ul>
+<li>300 a 370 (um lado com alguns pontos melhor conservados, o outro lado com mais variação);</li>
+<li>222 a 300 (um lado com alguns pontos melhor conservados, o outro lado com mais variação)</li>
+</ul></li>
+<li>Descontinuidades no mesmo lado:
+<ul>
+<li>188 side2, diferença de 0.4 -&gt; manutenção um pouco melhor</li>
+<li>222 side2, diferença de 0.4 -&gt; manutenção de prédios e mais itens na rua na imagem menos preferida</li>
+<li>370 side1, diferença de 0.6 -&gt; pequena variação de manutenção, menos itens na rua na imagem preferida</li>
+</ul></li>
+<li>Heterogeneidade/Homogeneidade no ponto:
+<ul>
+<li>Os pontos mais heterogêneos foram o 370 (manutenção um pouco melhor em alguns locais e menos itens na rua) e o 188 (manutenção um pouco melhor em alguns locais).</li>
+<li>O ponto mais homogêneo foi o 392 (melhor manutenção em média dos prédios)</li>
+</ul></li>
+<li>Foram encontrados os problemas?
+<ul>
+<li>Olhando as diferenças entre lados englobamos os números 222, 300 e 370.</li>
+<li>Olhando as maiores descontinuidades aparentes englobamos 222 e 370.</li>
+<li>Como a rua toda praticamente não tem árvores fica difícil pesar este aspecto dado a pobreza de manutenção, todavia a imagem 370 315 apesar de péssima manutenção e barracas/itens na rua teve uma nota melhor que outros locais e as árvores foram marcadas junto com o céu.</li>
+</ul></li>
+<li>O que é a rua?
+<ul>
+<li>A nota média/mediana é boa ou ruim? De mediana para ruim, com notas baixas</li>
+<li>Existe muita variação? Rua mais homogênea, com alguns pontos que se destacam positivamente por ter uma melhor manutenção ou menos itens na rua e outros que se destacam negativamente por terem manutenção ainda pior e/ou mais itens na rua</li>
+<li>Existe um lado melhor? Não</li>
+<li>Existe uma área melhor pior? Não</li>
+</ul></li>
+</ol>
+<blockquote>
+<blockquote>
+<p>Olhando o surprise maps (uniforme + base rate + normal)</p>
+</blockquote>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Máximo e Mínimo?
+<ul>
+<li>222 p1 side2 (prédio mais conservado da sucata)</li>
+<li>188 p1 side2 (prédio acabado, carros, itens na rua)</li>
+</ul></li>
+<li>Mais diversidade?</li>
+</ol>
+<ul>
+<li>370, side1 separado (melhor conservação, menos itens x pior conservação, mais itens na rua)</li>
+<li>392, 1 ponto de cada side separado (prédios melhores conservados x construção, mais itens na rua)</li>
+<li>222, side2 separado, side1 pouco separado (side2 - prédio mais conservado, menos itens na rua x prédios pior conservado a direita; side1 - prédios melhor conservado, menos itens na rua)</li>
+<li>300, p1 side1 pior (muitos itens na rua)</li>
+<li>188, p1 side2 pior (prédio pior conservação, estilo dos prédios?)</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>Menor diversidade?</li>
+</ol>
+<ul>
+<li>Todos os pontos tem alguma diversidade 4 Diferenças/saltos no lado?</li>
+<li>392, 1 ponto de cada side separado</li>
+<li>370, side1 separado</li>
+<li>300, side1 separado</li>
+<li>222, side2 mais separado que side1</li>
+<li>188, side2 mais separado que side1</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Avaliação Problemas</li>
+</ol>
+<ul>
+<li>Pesquisador: 5 problemas (descritos acima)</li>
+<li>Recall = método / pesquisador = 3.66/5 = 0.73 (falta de arvore e um ponto do 370)</li>
+<li>Precisão = reais / método = 3/6 = 0.5 (188 p1 side2, 392 1 ponto de cada side, 188 homogeneo mais negativo)</li>
+</ul>
+<ol start="6" style="list-style-type: decimal">
+<li>Avaliação Virtudes</li>
+</ol>
+<ul>
+<li>Pesquisador: 2 virtudes (descritos acima)</li>
+<li>Recall = método / pesquisador = 2/2 = 1</li>
+<li>Precisão = reais / método = 2/4 = 0.5 (392 1 ponto de cada side, 370 1 ponto de cada side)</li>
+</ul>
+<ol start="7" style="list-style-type: decimal">
+<li>Descrição</li>
+</ol>
+<ul>
+<li>Média/mediana: 3.65/3.65 x 4.68/4.82 -&gt; rua de mediana para ruim</li>
+<li>Variação no surprise? Início da rua mais homogêneo, mas com alternâncias de melhores e piores pontos ao longo da rua</li>
+<li>Lado melhor? Side1 (3) x Side2 (5) -&gt; side2 ligeiramente melhor</li>
+<li>Região melhor? Não dá para dizer pelo surprise maps, olhando os scores também é complicado</li>
+</ul>
+</div>
+<div id="sumario-comparacoes-dos-surprise-maps-com-base-rate-usando-media-ou-mediana" class="section level1">
+<h1>Sumário comparações dos Surprise Maps com base rate usando média ou mediana</h1>
+<p>== Versão atual - 500 execuções do surprise e calculando média dos surprises ====</p>
+<ul>
+<li>As versões com média e mediana foram equivalentes!</li>
+</ul>
+<p>=== Versão anterior ===</p>
+<table style="width:56%;">
+<colgroup>
+<col width="22%" />
+<col width="22%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Street</th>
+<th align="center">Base Rate (median)</th>
+<th align="right">Base Rate (mean)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cristina</td>
+<td align="center">0: 2* (side2 separado e side1 mais negativo), 261 (p1 side1 em cima é estranho, 1 ponto de side2 afastado)</td>
+<td align="right">0: 2 (1 ponto de cada side separado), 261* (ordem e ponto de side2 afastado)</td>
+</tr>
+<tr class="even">
+<td>Edésio</td>
+<td align="center">X: 306 (1 ponto side2 mais positivo e demais juntos), 1546 (todos juntos)</td>
+<td align="right">1546 (p1 side2 com destaque é estranho)</td>
+</tr>
+<tr class="odd">
+<td>Inácio</td>
+<td align="center">X: 239 (p1 side1 mais positivo)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td>Floriano</td>
+<td align="center"></td>
+<td align="right">X: 691 (ordem de p2 side1 mais próximo a p1 side2), 913 (p2 side2 melhor que p1 side1)</td>
+</tr>
+<tr class="odd">
+<td>Maciel</td>
+<td align="center">X: 130 (p1 side1 melhor), 190 (p2 side1 melhor que p1), 284 (p2 side1 melhor que p1)</td>
+<td align="right"></td>
+</tr>
+<tr class="even">
+<td>Manoel</td>
+<td align="center">X: 300 (side2 ligeiramente melhor que p2 side1), 392 (1 ponto de cada side mais próximo)</td>
+<td align="right"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="sumario-comparacoes-dos-surprise-maps-com-normal-para-todas-as-ruas-x-normal-por-rua" class="section level1">
+<h1>Sumário comparações dos Surprise Maps com normal para todas as ruas x normal por rua</h1>
+<table style="width:56%;">
+<colgroup>
+<col width="22%" />
+<col width="22%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Street</th>
+<th align="center">Normal All</th>
+<th align="right">Normal Street</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cristina</td>
+<td align="center">Aceitável, mas 284 tem um ponto pouco pior que não está representado</td>
+<td align="right">X</td>
+</tr>
+<tr class="even">
+<td>Edésio</td>
+<td align="center">1546 melhor modelado</td>
+<td align="right">X - 602 e 1136 melhor modelados</td>
+</tr>
+<tr class="odd">
+<td>Inácio</td>
+<td align="center">500 não tem 1 ponto bem positivo</td>
+<td align="right">X</td>
+</tr>
+<tr class="even">
+<td>Floriano</td>
+<td align="center">549 melhor modelado</td>
+<td align="right">X - 445 e 813 melhor modelados</td>
+</tr>
+<tr class="odd">
+<td>Maciel</td>
+<td align="center"></td>
+<td align="right">X - 248, 284 e 360 melhor modelados</td>
+</tr>
+<tr class="even">
+<td>Manoel</td>
+<td align="center">188 e 300 melhor modelados</td>
+<td align="right">X - 222, 370 e 392 melhor modelados</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="novas-ideias-que-nao-foram-consideradas---q-scores" class="section level1">
+<h1>Novas Ideias que não foram consideradas - Q-Scores</h1>
+<ul>
+<li>Olhar a diferença entre os lados da rua por ponto?
+<ul>
+<li>Acharia 2 problemas não encontrados</li>
+</ul></li>
+<li>Olhar a favor/contra carros e comparar os scores?
+<ul>
+<li>Acharia 1 problema não encontrado</li>
+</ul></li>
+</ul>
+</div>
+<div id="descartaralterar---q-scores" class="section level1">
+<h1>Descartar/Alterar? - Q-Scores</h1>
+<ul>
+<li>Melhor e pior área por lado ao invés de melhor e pior área da rua?</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -56,29 +56,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-# #Creating output file for surprise calculation - streets with 40 points
-# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Cristina_Procópio_Silva")
-# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
-# result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-# colnames(result) <- sub("qscore\\.", "num", colnames(result))
-# 
-# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Inácio_Marquês_da_Silva")
-# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
-# result2 <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-# colnames(result2) <- sub("qscore\\.", "num", colnames(result2))
-# 
-# write.csv(rbind(result, result2), "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
-# 
-# #Streets with 20 points
-# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street != "R._Cristina_Procópio_Silva" & street != "R._Inácio_Marquês_da_Silva")
-# final_result <- data.frame()
-# for (name in unique(data$street)){
-#   data2 <- dplyr::filter(data, street==name) %>% arrange(num, angle) %>% mutate(rank=1:n())
-#   result <- reshape(dplyr::select(data2, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
-#   colnames(result) <- sub("qscore\\.", "num", colnames(result))
-#   final_result <- rbind(final_result, result)
-# }
-# write.csv(final_result, "surprise/street_scores.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
 ```
 
 Alguns pontos importantes:
@@ -119,6 +96,30 @@ qscoresDFNotCampina <- read.csv("qscores-df-notcampina.csv", header = TRUE)
 all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+# #Creating output file for surprise calculation - streets with 40 points
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Cristina_Procópio_Silva")
+# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+# result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+# colnames(result) <- sub("qscore\\.", "num", colnames(result))
+# 
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "R._Inácio_Marquês_da_Silva")
+# data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+# result2 <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+# colnames(result2) <- sub("qscore\\.", "num", colnames(result2))
+# 
+# write.csv(rbind(result, result2), "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
+# 
+# #Streets with 20 points
+# data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street != "R._Cristina_Procópio_Silva" & street != "R._Inácio_Marquês_da_Silva")
+# final_result <- data.frame()
+# for (name in unique(data$street)){
+#   data2 <- dplyr::filter(data, street==name) %>% arrange(num, angle) %>% mutate(rank=1:n())
+#   result <- reshape(dplyr::select(data2, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
+#   colnames(result) <- sub("qscore\\.", "num", colnames(result))
+#   final_result <- rbind(final_result, result)
+# }
+# write.csv(final_result, "surprise/street_scores.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
 
 plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   pd <- position_dodge(0.1)

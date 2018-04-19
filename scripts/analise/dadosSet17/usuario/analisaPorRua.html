@@ -244,7 +244,7 @@ Q-Score = 5.49 (posicao ??)
 <h1>Caracterização Geral</h1>
 <div id="tamanho-das-amostras" class="section level2">
 <h2>Tamanho das amostras</h2>
-<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 330 pessoas (138 pessoas que não são de Campina e 157 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).</p>
+<p>Abaixo temos, primeiramente, uma análise, para determinar o tamanho da amostra para 95% de confiança. Em seguida, temos a comparação do ranking geral da amostra atual contendo 596 pessoas (283 pessoas que não são de Campina e 278 que são daqui), com a amostra de 29 usuários (primeira amostra analisada, só de moradores) e com a amostra de 69 pessoas (sendo também todos moradores de Campina).</p>
 <pre class="r"><code>#Checking sample size
 current_data &lt;- read.table(&quot;all100/all_ordenado.dat&quot;)
 current_data$sd &lt;- apply(current_data[,4:ncol(current_data)], 1, sd)
@@ -252,9 +252,9 @@ current_data$n &lt;- ( 1.96 * current_data$sd / 0.2) ** 2  #All QScores
 print(&quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;)</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt; Maior e menor amostra necessária &quot;</code></pre>
 <pre class="r"><code>print(max(current_data$n))</code></pre>
-<pre><code>## [1] 0.1645246</code></pre>
+<pre><code>## [1] 0.1976114</code></pre>
 <pre class="r"><code>print(min(current_data$n))</code></pre>
-<pre><code>## [1] 0.003518661</code></pre>
+<pre><code>## [1] 0.00325091</code></pre>
 <pre class="r"><code>#Checking rankings similarity
 mergeSort &lt;- function(x){
   if(length(x) == 1){
@@ -307,25 +307,25 @@ print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;kendall&quot;))</code>
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  d29_cur$V3.x and d29_cur$V3.y
-## z = 9.7302, p-value &lt; 2.2e-16
+## z = 9.8216, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.7411392</code></pre>
+## 0.7481013</code></pre>
 <pre class="r"><code>print(cor.test(d29_cur$V3.x, d29_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  d29_cur$V3.x and d29_cur$V3.y
-## S = 6982, p-value &lt; 2.2e-16
+## S = 6752, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
 ##       rho 
-## 0.9181669</code></pre>
+## 0.9208626</code></pre>
 <pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d29_cur$V3.x, d29_cur$V3.y)))</code></pre>
-<pre><code>## [1] 1449
-## [1] 0.4585443
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.458544303797468&quot;</code></pre>
+<pre><code>## [1] 1556
+## [1] 0.4924051
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.492405063291139&quot;</code></pre>
 <pre class="r"><code>data69 &lt;- read.table(&quot;69users/all_ordenado.dat&quot;)
 
 d69_cur &lt;- merge(select(data69, V2, V3), select(current_data, V2, V3), by = &quot;V2&quot;)
@@ -334,25 +334,25 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  d69_cur$V3.x and d69_cur$V3.y
-## z = 10.486, p-value &lt; 2.2e-16
+## z = 10.611, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.7987342</code></pre>
+## 0.8082278</code></pre>
 <pre class="r"><code>print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;spearman&quot;))</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  d69_cur$V3.x and d69_cur$V3.y
-## S = 4658, p-value &lt; 2.2e-16
+## S = 4440, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
 ##       rho 
-## 0.9454055</code></pre>
+## 0.9479606</code></pre>
 <pre class="r"><code>print(paste(&quot;&gt;&gt;&gt;&gt; Kendall Distance &quot;, normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))</code></pre>
-<pre><code>## [1] 1298
-## [1] 0.4107595
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.410759493670886&quot;</code></pre>
+<pre><code>## [1] 1269
+## [1] 0.4015823
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.401582278481013&quot;</code></pre>
 </div>
 <div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level2">
 <h2>Comparação entre rankings de moradores e não moradores</h2>
@@ -362,28 +362,28 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 <li>Para os que não são moradores, foi verificado se ele informou se conhece a cidade e se estuda, mora ou trabalha aqui. Nestes casos, estes usuários foram adicionados ao conjunto de moradores (arquivo users_notcampina_campina.dat);</li>
 <li>Por fim, alguns usuários que não responderam ao questionário mas foram identificados pelo pesquisador como ex-moradores da cidade, também foram adicionados ao conjunto de moradores.</li>
 </ol>
-<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 157 moradores e 138 não moradores. <strong>Quão parecido é o ranking geral de moradores e não moradores?</strong></p>
+<p>Feita a seleção de quem é morador e não morador de Campina temos, atualmente, 278 moradores e 283 não moradores. <strong>Quão parecido é o ranking geral de moradores e não moradores?</strong></p>
 <pre><code>## 
 ##  Kendall&#39;s rank correlation tau
 ## 
 ## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
-## z = 14.058, p-value &lt; 2.2e-16
+## z = 14.297, p-value &lt; 2.2e-16
 ## alternative hypothesis: true tau is not equal to 0
 ## sample estimates:
 ##       tau 
-## 0.7490566</code></pre>
+## 0.7617925</code></pre>
 <pre><code>## 
 ##  Spearman&#39;s rank correlation rho
 ## 
 ## data:  camp_notcampina$V3.x and camp_notcampina$V3.y
-## S = 56782, p-value &lt; 2.2e-16
+## S = 52836, p-value &lt; 2.2e-16
 ## alternative hypothesis: true rho is not equal to 0
 ## sample estimates:
-##     rho 
-## 0.91682</code></pre>
-<pre><code>## [1] 6430
-## [1] 0.5055031
-## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.505503144654088&quot;</code></pre>
+##       rho 
+## 0.9226005</code></pre>
+<pre><code>## [1] 6153
+## [1] 0.4837264
+## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.48372641509434&quot;</code></pre>
 <p>Composição social de todos os usuários</p>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-4-1.png" width="1152"  /></p>
 <p>Composição social de moradores de Campina</p>
@@ -399,61 +399,61 @@ Top ../percepcaoLocal/agradavel/melhores/intersects/
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_210_45' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_45' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_45 6.099406
+R._Cristina_Procópio_Silva_210_45 6.067538
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_210_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_225 5.937082
+R._Cristina_Procópio_Silva_210_225 5.964036
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_210_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_135 5.872188
+R._Cristina_Procópio_Silva_210_135 5.889755
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Inácio_Marquês_da_Silva_199_112' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_315' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_199_112 5.784865
+R._Cristina_Procópio_Silva_210_315 5.795419
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_210_315' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_112' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_315 5.728927
+R._Inácio_Marquês_da_Silva_199_112 5.784873
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_160_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_160_135 5.715077
+R._Cristina_Procópio_Silva_160_135 5.734743
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_105_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_105_135 5.677544
+R._Cristina_Procópio_Silva_105_135 5.677785
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Procópio_Silva_105_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_105_225 5.637728
+R._Cristina_Procópio_Silva_105_225 5.633933
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_66_225 5.621716
+R._Cristina_Procópio_Silva_66_225 5.623546
 </div>
 </div>
 </div>
@@ -461,7 +461,7 @@ R._Cristina_Procópio_Silva_66_225 5.621716
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av._Mal._Floriano_Peixoto_580_203' width='400px'>
 <div class="caption">
-Av._Mal._Floriano_Peixoto_580_203 5.555297
+Av._Mal._Floriano_Peixoto_580_203 5.568409
 </div>
 </div>
 </div>
@@ -470,41 +470,41 @@ Bottom ../percepcaoLocal/agradavel/piores/intersects/
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Inácio_Marquês_da_Silva_2_22' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_22' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_2_22 3.598719
+R._Inácio_Marquês_da_Silva_2_22 3.580624
 </div>
 </div>
-<div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
-<div class="caption">
-R._Manoel_Pereira_de_Araújo_300_22 3.585796
-</div>
-</div>
-<div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='400px'>
-<div class="caption">
-R._Manoel_Pereira_de_Araújo_222_315 3.58498
-</div>
-</div>
-</div>
-<div class="row">
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_135 3.562807
-</div>
-</div>
-<div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
-<div class="caption">
-R._Manoel_Pereira_de_Araújo_392_225 3.546243
+R._Manoel_Pereira_de_Araújo_222_135 3.579581
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_315 3.508412
+R._Manoel_Pereira_de_Araújo_370_315 3.573322
+</div>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_293' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_2_293 3.570865
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_22 3.569044
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_392_225 3.553466
 </div>
 </div>
 </div>
@@ -512,19 +512,19 @@ R._Manoel_Pereira_de_Araújo_370_315 3.508412
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_135 3.375664
+R._Manoel_Pereira_de_Araújo_300_135 3.38245
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_22 3.321632
+R._Manoel_Pereira_de_Araújo_370_22 3.37482
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/piores/intersects/R._Cristina_Procópio_Silva_350_203' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_203' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_350_203 3.193076
+R._Cristina_Procópio_Silva_350_203 3.178503
 </div>
 </div>
 </div>
@@ -532,7 +532,7 @@ R._Cristina_Procópio_Silva_350_203 3.193076
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_305_135 3.002633
+R._Cristina_Procópio_Silva_305_135 3.030011
 </div>
 </div>
 </div>
@@ -541,69 +541,69 @@ Top ../percepcaoLocal/agradavel/melhorescampina/intersects/
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_210_315' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_315' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_315 6.292451
+R._Cristina_Procópio_Silva_210_315 6.386912
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_210_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_225 6.246674
+R._Cristina_Procópio_Silva_210_225 6.243907
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_210_45' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_45' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_45 6.138831
+R._Cristina_Procópio_Silva_210_45 6.141103
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_210_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_135 6.089571
+R._Cristina_Procópio_Silva_210_135 6.078009
 </div>
 </div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_135' width='400px'>
+<div class="caption">
+R._Cristina_Procópio_Silva_105_135 5.947858
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_199_112' width='400px'>
+<div class="caption">
+R._Inácio_Marquês_da_Silva_199_112 5.893648
+</div>
+</div>
+</div>
+<div class="row">
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_66_225 5.92305
+R._Cristina_Procópio_Silva_66_225 5.892938
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_160_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_160_135 5.889587
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Inácio_Marquês_da_Silva_199_112' width='400px'>
-<div class="caption">
-R._Inácio_Marquês_da_Silva_199_112 5.867447
+R._Cristina_Procópio_Silva_160_135 5.890058
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_120_22' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_120_22 5.819992
-</div>
-</div>
-<div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_105_135' width='400px'>
-<div class="caption">
-R._Cristina_Procópio_Silva_105_135 5.787326
+R._Inácio_Marquês_da_Silva_120_22 5.781339
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Procópio_Silva_105_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_105_225 5.742066
+R._Cristina_Procópio_Silva_160_225 5.701908
 </div>
 </div>
 </div>
@@ -614,39 +614,39 @@ Bottom ../percepcaoLocal/agradavel/piorescampina/intersects/
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_188_22 3.463754
+R._Manoel_Pereira_de_Araújo_188_22 3.472993
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_135 3.463115
+R._Manoel_Pereira_de_Araújo_222_135 3.472119
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_315 3.461393
+R._Inácio_Marquês_da_Silva_2_22 3.396353
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/piorescampina/intersects/R._Inácio_Marquês_da_Silva_2_293' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._In%C3%A1cio_Marqu%C3%AAs_da_Silva_2_293' width='400px'>
 <div class="caption">
-R._Inácio_Marquês_da_Silva_2_293 3.41618
+R._Inácio_Marquês_da_Silva_2_293 3.33598
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_22 3.326327
+R._Manoel_Pereira_de_Araújo_370_22 3.309346
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_203' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_188_203 3.259755
+R._Manoel_Pereira_de_Araújo_188_203 3.228093
 </div>
 </div>
 </div>
@@ -654,19 +654,19 @@ R._Manoel_Pereira_de_Araújo_188_203 3.259755
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_305_135 3.183321
+R._Cristina_Procópio_Silva_305_135 3.201446
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_315' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_315 2.973941
+R._Manoel_Pereira_de_Araújo_370_315 3.160847
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/piorescampina/intersects/R._Cristina_Procópio_Silva_350_203' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_203' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_350_203 2.94815
+R._Cristina_Procópio_Silva_350_203 2.946601
 </div>
 </div>
 </div>
@@ -674,7 +674,7 @@ R._Cristina_Procópio_Silva_350_203 2.94815
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piorescampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_135' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_135 2.893841
+R._Manoel_Pereira_de_Araújo_300_135 2.868823
 </div>
 </div>
 </div>
@@ -683,41 +683,41 @@ Top ../percepcaoLocal/agradavel/melhoresnotcampina/intersects/
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_210_45' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_45' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_45 6.432693
+R._Cristina_Procópio_Silva_210_45 6.268105
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_160_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_160_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_160_135 6.232378
+R._Cristina_Procópio_Silva_160_135 6.2343
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_105_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_105_225 6.152018
+R._Cristina_Procópio_Silva_105_225 6.171822
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_210_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_135 6.104191
+R._Cristina_Procópio_Silva_210_135 6.110933
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_210_225' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_210_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_210_225 6.048
+R._Cristina_Procópio_Silva_210_225 6.043878
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Procópio_Silva_105_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_105_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_105_135 6.030102
+R._Cristina_Procópio_Silva_105_135 6.036599
 </div>
 </div>
 </div>
@@ -725,19 +725,19 @@ R._Cristina_Procópio_Silva_105_135 6.030102
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_436_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_436_135 5.882519
-</div>
-</div>
-<div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/Av._Mal._Floriano_Peixoto_580_203' width='400px'>
-<div class="caption">
-Av._Mal._Floriano_Peixoto_580_203 5.879432
+R._Cristina_Procópio_Silva_436_135 5.88633
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_66_225' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_66_225 5.864811
+R._Cristina_Procópio_Silva_66_225 5.87361
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/Av._Mal._Floriano_Peixoto_580_203' width='400px'>
+<div class="caption">
+Av._Mal._Floriano_Peixoto_580_203 5.854218
 </div>
 </div>
 </div>
@@ -745,7 +745,7 @@ R._Cristina_Procópio_Silva_66_225 5.864811
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhoresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_261_315' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_261_315 5.802028
+R._Cristina_Procópio_Silva_261_315 5.814897
 </div>
 </div>
 </div>
@@ -754,21 +754,21 @@ Bottom ../percepcaoLocal/agradavel/pioresnotcampina/intersects/
 </h3>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_135' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_203' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_135 3.387198
+R._Manoel_Pereira_de_Araújo_222_203 3.386159
+</div>
+</div>
+<div class="col-xs-4">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_203' width='400px'>
+<div class="caption">
+R._Manoel_Pereira_de_Araújo_300_203 3.38152
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_188_315' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_188_315 3.379278
-</div>
-</div>
-<div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
-<div class="caption">
-R._Manoel_Pereira_de_Araújo_392_225 3.353776
+R._Manoel_Pereira_de_Araújo_188_315 3.371822
 </div>
 </div>
 </div>
@@ -776,39 +776,39 @@ R._Manoel_Pereira_de_Araújo_392_225 3.353776
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_315' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_315 3.350462
+R._Manoel_Pereira_de_Araújo_222_315 3.365577
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_203' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_392_225' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_203 3.324616
+R._Manoel_Pereira_de_Araújo_392_225 3.348615
 </div>
 </div>
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_222_22 3.302781
+R._Manoel_Pereira_de_Araújo_300_22 3.277662
 </div>
 </div>
 </div>
 <div class="row">
 <div class="col-xs-4">
-<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_300_22' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_222_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_300_22 3.279067
+R._Manoel_Pereira_de_Araújo_222_22 3.262684
 </div>
 </div>
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Manoel_Pereira_de_Ara%C3%BAjo_370_22' width='400px'>
 <div class="caption">
-R._Manoel_Pereira_de_Araújo_370_22 3.085902
+R._Manoel_Pereira_de_Araújo_370_22 3.105447
 </div>
 </div>
 <div class="col-xs-4">
-<img src='../percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Cristina_Procópio_Silva_350_203' width='400px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_350_203' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_350_203 2.981125
+R._Cristina_Procópio_Silva_350_203 2.977727
 </div>
 </div>
 </div>
@@ -816,11 +816,11 @@ R._Cristina_Procópio_Silva_350_203 2.981125
 <div class="col-xs-4">
 <img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/pioresnotcampina/intersects/R._Cristina_Proc%C3%B3pio_Silva_305_135' width='400px'>
 <div class="caption">
-R._Cristina_Procópio_Silva_305_135 2.852571
+R._Cristina_Procópio_Silva_305_135 2.847389
 </div>
 </div>
 </div>
-<p>Top diff 3 Tail diff 5</p>
+<p>Top diff 4 Tail diff 7</p>
 <p>Qualitativamente analisando estas imagens, conforme esperado, percebe-se que <strong>vegetação, melhor estado de manutenção e a rua mais larga</strong> conduziram a melhores avaliações das imagens. O <strong>céu</strong> também foi um fator apontado em 4 das 10 fotos e que não foi computado em nossas avaliações anteriores. É importante destacar que a Cristina Procópio (tipicamente residencial) teve 5 dos 10 melhores, a Floriano Peixoto (comercial) teve 4 locais e a Edésio Silva 1 local (tipicamente residencial).</p>
 <p>Para as imagens com pior avaliação, <strong>a presença de itens na rua (barracas mal cuidadas, itens velhos, itens de venda, lixo, etc.) juntamente com prédios mal cuidados geraram maior desconforto</strong>. É importante destacar que os 9 dos 10 locais com pior avaliação se localizam na Manoel Araújo, uma rua de comércio antiga e pouco cuidada no centro da cidade.</p>
 <p>Alguns pontos a se questionar olhando todas as marcações:</p>
@@ -844,11 +844,11 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 ## data:  residuals  
 ## weights: neigh2  
 ## 
-## Moran I statistic standard deviate = -1.5303, p-value = 0.1259
+## Moran I statistic standard deviate = 0.27211, p-value = 0.7855
 ## alternative hypothesis: two.sided
 ## sample estimates:
 ## Moran I statistic       Expectation          Variance 
-##     -1.104724e-02     -8.403361e-03      2.984845e-06</code></pre>
+##     -5.700561e-03     -6.289308e-03      4.681299e-06</code></pre>
 <pre><code>##             Length Class  Mode     
 ## statistic   1      -none- numeric  
 ## p.value     1      -none- numeric  
@@ -864,11 +864,11 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 ## trees + build_ident, data = res, na.action = na.exclude)
 ## weights: neigh2
 ## 
-## Moran I statistic standard deviate = -1.8731, p-value = 0.06106
+## Moran I statistic standard deviate = 0.12036, p-value = 0.9042
 ## alternative hypothesis: two.sided
 ## sample estimates:
 ## Observed Moran I      Expectation         Variance 
-##    -1.104724e-02    -7.902098e-03     2.819546e-06</code></pre>
+##    -5.700561e-03    -5.943248e-03     4.065820e-06</code></pre>
 <p>Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se:</p>
 <ol style="list-style-type: decimal">
 <li>Sidewalk width mais significativo e influente para moradores (média);</li>
@@ -885,23 +885,23 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 ## \hline
 ##  &amp; Model 1 &amp; Model 2 &amp; Model 3 \\
 ## \hline
-## (Intercept)   &amp; $-19.208^{*}$  &amp; $-23.528^{**}$  &amp; $-11.077$      \\
-##               &amp; $(8.732)$      &amp; $(8.795)$       &amp; $(9.170)$      \\
-## street\_wid   &amp; $-0.268$       &amp; $-0.297$        &amp; $-0.301$       \\
-##               &amp; $(0.225)$      &amp; $(0.227)$       &amp; $(0.236)$      \\
-## sidewalk\_wid &amp; $3.080^{**}$   &amp; $3.433^{**}$    &amp; $3.100^{**}$   \\
-##               &amp; $(1.111)$      &amp; $(1.119)$       &amp; $(1.166)$      \\
-## landscape     &amp; $19.483^{***}$ &amp; $21.432^{***}$  &amp; $16.956^{***}$ \\
-##               &amp; $(2.447)$      &amp; $(2.464)$       &amp; $(2.569)$      \\
-## trees         &amp; $3.228^{**}$   &amp; $2.010^{\cdot}$ &amp; $3.977^{***}$  \\
-##               &amp; $(1.066)$      &amp; $(1.074)$       &amp; $(1.119)$      \\
-## build\_ident  &amp; $-7.463^{***}$ &amp; $-7.918^{***}$  &amp; $-7.916^{***}$ \\
-##               &amp; $(1.749)$      &amp; $(1.762)$       &amp; $(1.837)$      \\
+## (Intercept)   &amp; $-24.063^{*}$  &amp; $-28.197^{**}$  &amp; $-16.567$      \\
+##               &amp; $(10.523)$     &amp; $(10.690)$      &amp; $(11.231)$     \\
+## street\_wid   &amp; $-0.401$       &amp; $-0.368$        &amp; $-0.230$       \\
+##               &amp; $(0.260)$      &amp; $(0.264)$       &amp; $(0.277)$      \\
+## sidewalk\_wid &amp; $4.000^{**}$   &amp; $4.316^{**}$    &amp; $3.787^{**}$   \\
+##               &amp; $(1.322)$      &amp; $(1.343)$       &amp; $(1.411)$      \\
+## landscape     &amp; $25.118^{***}$ &amp; $26.718^{***}$  &amp; $21.336^{***}$ \\
+##               &amp; $(2.610)$      &amp; $(2.652)$       &amp; $(2.786)$      \\
+## trees         &amp; $3.737^{***}$  &amp; $2.570^{*}$     &amp; $4.395^{***}$  \\
+##               &amp; $(0.970)$      &amp; $(0.985)$       &amp; $(1.035)$      \\
+## build\_ident  &amp; $-9.201^{***}$ &amp; $-10.128^{***}$ &amp; $-9.673^{***}$ \\
+##               &amp; $(2.103)$      &amp; $(2.136)$       &amp; $(2.244)$      \\
 ## \hline
-## R$^2$         &amp; 0.655          &amp; 0.651           &amp; 0.620          \\
-## Adj. R$^2$    &amp; 0.640          &amp; 0.635           &amp; 0.603          \\
-## Num. obs.     &amp; 120            &amp; 120             &amp; 120            \\
-## RMSE          &amp; 20.860         &amp; 21.010          &amp; 21.904         \\
+## R$^2$         &amp; 0.660          &amp; 0.649           &amp; 0.612          \\
+## Adj. R$^2$    &amp; 0.649          &amp; 0.637           &amp; 0.600          \\
+## Num. obs.     &amp; 160            &amp; 160             &amp; 160            \\
+## RMSE          &amp; 27.464         &amp; 27.898          &amp; 29.310         \\
 ## \hline
 ## \multicolumn{4}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -910,20 +910,20 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 ## \end{center}
 ## \end{table}</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; IC Geral x Campina x Not Moradores&quot;</code></pre>
-<pre><code>##                    2.5 %     97.5 %       2.5 %     97.5 %       2.5 %
-## (Intercept)  -36.5066033 -1.9094953 -40.9510965 -6.1056629 -29.2419177
-## street_wid    -0.7140604  0.1773896  -0.7463972  0.1514513  -0.7688616
-## sidewalk_wid   0.8803950  5.2805709   1.2166447  5.6484036   0.7898664
-## landscape     14.6362497 24.3300671  16.5502268 26.3136229  11.8667410
-## trees          1.1160874  5.3393967  -0.1163773  4.1372454   1.7597659
-## build_ident  -10.9281157 -3.9982144 -11.4082189 -4.4285773 -11.5542201
+<pre><code>##                   2.5 %     97.5 %       2.5 %     97.5 %       2.5 %
+## (Intercept)  -44.851914 -3.2739922 -49.3145648 -7.0785084 -38.7532808
+## street_wid    -0.913877  0.1124027  -0.8895431  0.1529815  -0.7780588
+## sidewalk_wid   1.388297  6.6117321   1.6631872  6.9693041   0.9994988
+## landscape     19.961553 30.2752954  21.4798426 31.9568404  15.8323730
+## trees          1.820688  5.6535137   0.6229860  4.5164807   2.3492730
+## build_ident  -13.354757 -5.0474403 -14.3473466 -5.9085339 -14.1060956
 ##                  97.5 %
-## (Intercept)   7.0877374
-## street_wid    0.1672303
-## sidewalk_wid  5.4103934
-## landscape    22.0460034
-## trees         6.1945693
-## build_ident  -4.2772845</code></pre>
+## (Intercept)   5.6199167
+## street_wid    0.3172175
+## sidewalk_wid  6.5741048
+## landscape    26.8395062
+## trees         6.4397783
+## build_ident  -5.2402797</code></pre>
 <pre><code>## Loading required package: gmodels</code></pre>
 <pre><code>## Loading required package: vcd</code></pre>
 <pre><code>## Loading required package: lme4</code></pre>
@@ -1297,25 +1297,25 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.327   3.366   3.915   3.924   4.473   4.539 
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.322   3.579   3.637   3.672   3.773   4.046 
+##   3.375   3.578   3.644   3.691   3.806   4.070 
 ## [1] &quot;&gt;&gt;&gt; Summary Inacio&quot;
 ## [1] 2
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.685   4.147   4.609   4.609   5.072   5.534 
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.599   4.293   4.859   4.714   5.133   5.785 
+##   3.571   4.313   4.837   4.720   5.112   5.785 
 ## [1] &quot;&gt;&gt;&gt; Summary Edesio&quot;
 ## [1] 2
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.677   4.125   4.574   4.574   5.023   5.472 
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.807   4.363   4.700   4.711   5.062   5.391 
+##   3.846   4.357   4.732   4.708   5.039   5.379 
 ## [1] &quot;&gt;&gt;&gt; Summary Cristina&quot;
 ## [1] 2
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   3.500   3.927   4.354   4.354   4.781   5.208 
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.003   4.552   5.205   4.980   5.439   6.099</code></pre>
+##   3.030   4.495   5.214   4.979   5.446   6.068</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt; Médias Simulando 3 pontos por rua&quot;</code></pre>
 <p><img src="analisaPorRua_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
@@ -1346,38 +1346,38 @@ R._Cristina_Procópio_Silva_305_135 2.852571
 <li>Os três pontos mais heterogêneos considerados foram, respectivamente, das ruas Inácio Marques, Edésio Silva e Cristina Procópio. É interessante observar que, apesar da ordem de heterogeneidade das ruas ser diferente, essas 3 ruas são as mais heterogêneas do nosso conjunto de dados.</li>
 </ul>
 <pre><code>##   labels variable      value
-## 1   Gini cristina 0.07784902
-## 2   Gini   inacio 0.06499596
-## 3   Gini   edesio 0.05558386
-## 4   Gini floriano 0.03507198
-## 5   Gini   manoel 0.02760162
-## 6   Gini   maciel 0.02734805</code></pre>
+## 1   Gini cristina 0.07866857
+## 2   Gini   inacio 0.06449985
+## 3   Gini   edesio 0.05505192
+## 4   Gini floriano 0.03625431
+## 5   Gini   maciel 0.02877131
+## 6   Gini   manoel 0.02787024</code></pre>
 <pre><code>##    labels variable       value
-## 1 Entropy cristina 0.011161129
-## 2 Entropy   inacio 0.006824837
-## 3 Entropy   edesio 0.004873370
-## 4 Entropy floriano 0.002176359
-## 5 Entropy   manoel 0.001241221
-## 6 Entropy   maciel 0.001149303</code></pre>
+## 1 Entropy cristina 0.011272603
+## 2 Entropy   inacio 0.006778966
+## 3 Entropy   edesio 0.004741204
+## 4 Entropy floriano 0.002272689
+## 5 Entropy   manoel 0.001275784
+## 6 Entropy   maciel 0.001268588</code></pre>
 <pre><code>##   labels variable     value
-## 1     SD cristina 0.7201075
-## 2     SD   inacio 0.5487980
-## 3     SD   edesio 0.4719678
-## 4     SD floriano 0.3305999
-## 5     SD   maciel 0.2344981
-## 6     SD   manoel 0.1883041</code></pre>
+## 1     SD cristina 0.7246290
+## 2     SD   inacio 0.5468982
+## 3     SD   edesio 0.4657048
+## 4     SD floriano 0.3386793
+## 5     SD   maciel 0.2462220
+## 6     SD   manoel 0.1922078</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.599   4.293   4.859   4.714   5.133   5.785</code></pre>
+##   3.571   4.313   4.837   4.720   5.112   5.785</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.807   4.363   4.700   4.711   5.062   5.391</code></pre>
+##   3.846   4.357   4.732   4.708   5.039   5.379</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.421   4.589   4.799   4.778   4.986   5.123</code></pre>
+##   4.377   4.581   4.772   4.778   4.998   5.133</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.322   3.579   3.637   3.672   3.773   4.046</code></pre>
+##   3.375   3.578   3.644   3.691   3.806   4.070</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   4.088   4.802   5.028   4.957   5.125   5.555</code></pre>
+##   4.109   4.794   5.007   4.964   5.165   5.568</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   3.003   4.552   5.205   4.980   5.439   6.099</code></pre>
+##   3.030   4.495   5.214   4.979   5.446   6.068</code></pre>
 </div>
 <div id="uma-impressao-geral-ao-longo-da-rua" class="section level1">
 <h1>Uma impressão geral ao longo da rua</h1>

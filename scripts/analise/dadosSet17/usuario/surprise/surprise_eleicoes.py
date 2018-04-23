@@ -67,7 +67,7 @@ def KL(pmd,pm):
 def standard_normal(x):
 	std = 1.0
 	mean = 0.0
-	return (1.0 / np.sqrt( 2.0 * np.pi * (std**2.0)) ) * np.exp(- ( (x - mean)**2.0/(2.0 * (std**2.0)) ) ) 
+	return ( 1.0 / np.sqrt( 2.0 * np.pi * (std**2.0)) ) * np.exp( - ( (x - mean)**2.0 / (2.0 * (std**2.0)) ) ) 
 
 def deMoivre_funnel(current_val, i, data):
 	values = []

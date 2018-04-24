@@ -844,11 +844,11 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## data:  residuals  
 ## weights: neigh2  
 ## 
-## Moran I statistic standard deviate = 0.27211, p-value = 0.7855
+## Moran I statistic standard deviate = 0.27873, p-value = 0.7804
 ## alternative hypothesis: two.sided
 ## sample estimates:
 ## Moran I statistic       Expectation          Variance 
-##     -5.700561e-03     -6.289308e-03      4.681299e-06</code></pre>
+##     -5.686281e-03     -6.289308e-03      4.680498e-06</code></pre>
 <pre><code>##             Length Class  Mode     
 ## statistic   1      -none- numeric  
 ## p.value     1      -none- numeric  
@@ -861,14 +861,15 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## 
 ## data:  
 ## model: lm(formula = rank ~ street_wid + sidewalk_wid + landscape +
-## trees + build_ident, data = res, na.action = na.exclude)
+## trees + build_ident + cyclists + mov_cars + people + park_cars,
+## data = res, na.action = na.exclude)
 ## weights: neigh2
 ## 
-## Moran I statistic standard deviate = 0.12036, p-value = 0.9042
+## Moran I statistic standard deviate = 0.0553, p-value = 0.9559
 ## alternative hypothesis: two.sided
 ## sample estimates:
 ## Observed Moran I      Expectation         Variance 
-##    -5.700561e-03    -5.943248e-03     4.065820e-06</code></pre>
+##    -5.686281e-03    -5.794518e-03     3.830867e-06</code></pre>
 <p>Realizando a mesma regressão acima para moradores e não moradores de forma separada, percebe-se:</p>
 <ol style="list-style-type: decimal">
 <li>Sidewalk width mais significativo e influente para moradores (média);</li>
@@ -885,23 +886,31 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## \hline
 ##  &amp; Model 1 &amp; Model 2 &amp; Model 3 \\
 ## \hline
-## (Intercept)   &amp; $-24.063^{*}$  &amp; $-28.197^{**}$  &amp; $-16.567$      \\
-##               &amp; $(10.523)$     &amp; $(10.690)$      &amp; $(11.231)$     \\
-## street\_wid   &amp; $-0.401$       &amp; $-0.368$        &amp; $-0.230$       \\
-##               &amp; $(0.260)$      &amp; $(0.264)$       &amp; $(0.277)$      \\
-## sidewalk\_wid &amp; $4.000^{**}$   &amp; $4.316^{**}$    &amp; $3.787^{**}$   \\
-##               &amp; $(1.322)$      &amp; $(1.343)$       &amp; $(1.411)$      \\
-## landscape     &amp; $25.118^{***}$ &amp; $26.718^{***}$  &amp; $21.336^{***}$ \\
-##               &amp; $(2.610)$      &amp; $(2.652)$       &amp; $(2.786)$      \\
-## trees         &amp; $3.737^{***}$  &amp; $2.570^{*}$     &amp; $4.395^{***}$  \\
-##               &amp; $(0.970)$      &amp; $(0.985)$       &amp; $(1.035)$      \\
-## build\_ident  &amp; $-9.201^{***}$ &amp; $-10.128^{***}$ &amp; $-9.673^{***}$ \\
-##               &amp; $(2.103)$      &amp; $(2.136)$       &amp; $(2.244)$      \\
+## (Intercept)   &amp; $-25.782^{*}$  &amp; $-31.623^{**}$ &amp; $-19.245$      \\
+##               &amp; $(11.008)$     &amp; $(11.251)$     &amp; $(11.749)$     \\
+## street\_wid   &amp; $-0.344$       &amp; $-0.255$       &amp; $-0.157$       \\
+##               &amp; $(0.273)$      &amp; $(0.279)$      &amp; $(0.291)$      \\
+## sidewalk\_wid &amp; $3.870^{**}$   &amp; $3.976^{**}$   &amp; $3.767^{*}$    \\
+##               &amp; $(1.361)$      &amp; $(1.391)$      &amp; $(1.453)$      \\
+## landscape     &amp; $26.309^{***}$ &amp; $27.514^{***}$ &amp; $22.810^{***}$ \\
+##               &amp; $(2.686)$      &amp; $(2.745)$      &amp; $(2.866)$      \\
+## trees         &amp; $3.513^{***}$  &amp; $2.694^{*}$    &amp; $4.094^{***}$  \\
+##               &amp; $(1.030)$      &amp; $(1.053)$      &amp; $(1.099)$      \\
+## build\_ident  &amp; $-9.291^{***}$ &amp; $-9.565^{***}$ &amp; $-8.569^{**}$  \\
+##               &amp; $(2.765)$      &amp; $(2.826)$      &amp; $(2.952)$      \\
+## cyclists      &amp; $-7.636$       &amp; $-4.472$       &amp; $-7.255$       \\
+##               &amp; $(7.038)$      &amp; $(7.193)$      &amp; $(7.511)$      \\
+## mov\_cars     &amp; $-0.575$       &amp; $-1.670$       &amp; $-0.801$       \\
+##               &amp; $(1.496)$      &amp; $(1.529)$      &amp; $(1.596)$      \\
+## people        &amp; $0.664$        &amp; $0.578$        &amp; $0.298$        \\
+##               &amp; $(0.665)$      &amp; $(0.679)$      &amp; $(0.709)$      \\
+## park\_cars    &amp; $-1.431$       &amp; $-0.391$       &amp; $-1.656$       \\
+##               &amp; $(1.123)$      &amp; $(1.148)$      &amp; $(1.199)$      \\
 ## \hline
-## R$^2$         &amp; 0.660          &amp; 0.649           &amp; 0.612          \\
-## Adj. R$^2$    &amp; 0.649          &amp; 0.637           &amp; 0.600          \\
-## Num. obs.     &amp; 160            &amp; 160             &amp; 160            \\
-## RMSE          &amp; 27.464         &amp; 27.898          &amp; 29.310         \\
+## R$^2$         &amp; 0.671          &amp; 0.657          &amp; 0.625          \\
+## Adj. R$^2$    &amp; 0.651          &amp; 0.636          &amp; 0.603          \\
+## Num. obs.     &amp; 160            &amp; 160            &amp; 160            \\
+## RMSE          &amp; 27.354         &amp; 27.957         &amp; 29.195         \\
 ## \hline
 ## \multicolumn{4}{l}{\scriptsize{$^{***}p&lt;0.001$, $^{**}p&lt;0.01$, $^*p&lt;0.05$, $^{\cdot}p&lt;0.1$}}
 ## \end{tabular}
@@ -910,20 +919,28 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## \end{center}
 ## \end{table}</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; IC Geral x Campina x Not Moradores&quot;</code></pre>
-<pre><code>##                   2.5 %     97.5 %       2.5 %     97.5 %       2.5 %
-## (Intercept)  -44.851914 -3.2739922 -49.3145648 -7.0785084 -38.7532808
-## street_wid    -0.913877  0.1124027  -0.8895431  0.1529815  -0.7780588
-## sidewalk_wid   1.388297  6.6117321   1.6631872  6.9693041   0.9994988
-## landscape     19.961553 30.2752954  21.4798426 31.9568404  15.8323730
-## trees          1.820688  5.6535137   0.6229860  4.5164807   2.3492730
-## build_ident  -13.354757 -5.0474403 -14.3473466 -5.9085339 -14.1060956
+<pre><code>##                    2.5 %     97.5 %       2.5 %     97.5 %       2.5 %
+## (Intercept)  -47.5325347 -4.0319416 -53.8533746 -9.3933620 -42.4595795
+## street_wid    -0.8837412  0.1951244  -0.8067896  0.2958708  -0.7324625
+## sidewalk_wid   1.1804381  6.5594317   1.2274431  6.7250721   0.8966708
+## landscape     21.0028923 31.6156293  22.0910021 32.9378063  17.1464011
+## trees          1.4777369  5.5486651   0.6140221  4.7747359   1.9215652
+## build_ident  -14.7555143 -3.8269799 -15.1496647 -3.9800980 -14.4013742
+## cyclists     -21.5413817  6.2699411 -18.6848026  9.7399078 -22.0966219
+## mov_cars      -3.5308644  2.3802290  -4.6904824  1.3509819  -3.9559744
+## people        -0.6494810  1.9768885  -0.7646318  1.9196631  -1.1034393
+## park_cars     -3.6506647  0.7891264  -2.6593847  1.8783274  -4.0256052
 ##                  97.5 %
-## (Intercept)   5.6199167
-## street_wid    0.3172175
-## sidewalk_wid  6.5741048
-## landscape    26.8395062
-## trees         6.4397783
-## build_ident  -5.2402797</code></pre>
+## (Intercept)   3.9694229
+## street_wid    0.4190311
+## sidewalk_wid  6.6377720
+## landscape    28.4735752
+## trees         6.2665435
+## build_ident  -2.7371436
+## cyclists      7.5869267
+## mov_cars      2.3530468
+## people        1.6997343
+## park_cars     0.7130675</code></pre>
 <pre><code>## Loading required package: gmodels</code></pre>
 <pre><code>## Loading required package: vcd</code></pre>
 <pre><code>## Loading required package: lme4</code></pre>
@@ -957,13 +974,13 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)  0.00000    0.01373       0        1
+## (Intercept)  0.00000    0.01091       0        1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 29403  on 21209  degrees of freedom
-## Residual deviance: 29403  on 21209  degrees of freedom
-## AIC: 29405
+##     Null deviance: 46596  on 33611  degrees of freedom
+## Residual deviance: 46596  on 33611  degrees of freedom
+## AIC: 46598
 ## 
 ## Number of Fisher Scoring iterations: 2</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
@@ -973,7 +990,7 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ##    Data: the_data
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##  29407.3  29423.2 -14701.7  29403.3    21208 
+##  46600.1  46617.0 -23298.1  46596.1    33610 
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
@@ -982,13 +999,13 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## Random effects:
 ##  Groups Name        Variance Std.Dev.
 ##  userID (Intercept) 0        0       
-## Number of obs: 21210, groups:  userID, 347
+## Number of obs: 33612, groups:  userID, 561
 ## 
 ## Fixed effects:
 ##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)  0.00000    0.01373       0        1</code></pre>
-<pre><code>## &#39;log Lik.&#39; 29403.3 (df=1)</code></pre>
-<pre><code>## &#39;log Lik.&#39; 29403.3 (df=2)</code></pre>
+## (Intercept)  0.00000    0.01091       0        1</code></pre>
+<pre><code>## &#39;log Lik.&#39; 46596.13 (df=1)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 46596.13 (df=2)</code></pre>
 <pre><code>## Analysis of Deviance Table
 ## 
 ## Model: binomial, link: logit
@@ -999,87 +1016,102 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## 
 ## 
 ##      Df Deviance Resid. Df Resid. Dev
-## NULL                 21209      29403</code></pre>
+## NULL                 33611      46596</code></pre>
 <pre><code>## [1] &quot;Logistic model not scaled - with user being or not from campina&quot;</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = choice ~ d_swidth + d_sidewalk + d_trees + d_lands + 
-##     d_bid + bair_cat + city:(d_swidth + d_sidewalk + d_trees + 
-##     d_lands + d_bid), family = binomial(), data = the_data)
+##     d_bid + d_people + d_mvciclyst + d_mvcars + d_pcars + bair_cat + 
+##     city:(d_swidth + d_sidewalk + d_trees + d_lands + d_bid + 
+##         d_people + d_mvciclyst + d_mvcars + d_pcars), family = binomial(), 
+##     data = the_data)
 ## 
 ## Deviance Residuals: 
 ##      Min        1Q    Median        3Q       Max  
-## -2.52504  -0.97265   0.00904   0.99439   2.46970  
+## -2.56250  -0.97553   0.00249   0.99302   2.86165  
 ## 
 ## Coefficients:
 ##                             Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)               -0.2517089  0.0246711 -10.203  &lt; 2e-16 ***
-## d_swidth                  -0.0030221  0.0018245  -1.656 0.097643 .  
-## d_sidewalk                 0.1477897  0.0090199  16.385  &lt; 2e-16 ***
-## d_trees                    0.0444125  0.0089486   4.963 6.94e-07 ***
-## d_lands                    0.5446823  0.0197303  27.606  &lt; 2e-16 ***
-## d_bid                     -0.0303602  0.0156917  -1.935 0.053016 .  
-## bair_catcatole_centro      0.8059618  0.0493972  16.316  &lt; 2e-16 ***
-## bair_catcatole_liberdade   0.6635419  0.0662344  10.018  &lt; 2e-16 ***
-## bair_catcentro_catole     -0.3246093  0.0533078  -6.089 1.13e-09 ***
-## bair_catcentro_liberdade  -0.1254815  0.0615983  -2.037 0.041640 *  
-## bair_catliberdade_catole   0.2116445  0.0731403   2.894 0.003808 ** 
-## bair_catliberdade_centro   0.4731011  0.0617281   7.664 1.80e-14 ***
-## d_swidth:citynotcampina    0.0004564  0.0026369   0.173 0.862588    
-## d_sidewalk:citynotcampina -0.0237991  0.0134383  -1.771 0.076562 .  
-## d_trees:citynotcampina     0.0266552  0.0131056   2.034 0.041964 *  
-## d_lands:citynotcampina    -0.1333451  0.0289246  -4.610 4.02e-06 ***
-## d_bid:citynotcampina      -0.0739897  0.0205343  -3.603 0.000314 ***
+## (Intercept)                -0.188117   0.019363  -9.715  &lt; 2e-16 ***
+## d_swidth                   -0.001865   0.001513  -1.233   0.2177    
+## d_sidewalk                  0.123384   0.007559  16.323  &lt; 2e-16 ***
+## d_trees                     0.034992   0.006310   5.545 2.93e-08 ***
+## d_lands                     0.496798   0.015938  31.170  &lt; 2e-16 ***
+## d_bid                      -0.082727   0.014429  -5.733 9.84e-09 ***
+## d_people                    0.036801   0.003846   9.568  &lt; 2e-16 ***
+## d_mvciclyst                -0.095874   0.035096  -2.732   0.0063 ** 
+## d_mvcars                    0.006989   0.008521   0.820   0.4121    
+## d_pcars                    -0.002358   0.006097  -0.387   0.6990    
+## bair_catcatole_centro       0.889163   0.047743  18.624  &lt; 2e-16 ***
+## bair_catcatole_liberdade    0.416500   0.049803   8.363  &lt; 2e-16 ***
+## bair_catcentro_catole      -0.567548   0.049469 -11.473  &lt; 2e-16 ***
+## bair_catcentro_liberdade   -0.405710   0.060140  -6.746 1.52e-11 ***
+## bair_catliberdade_catole    0.032615   0.054829   0.595   0.5519    
+## bair_catliberdade_centro    0.539678   0.060930   8.857  &lt; 2e-16 ***
+## d_swidth:citynotcampina    -0.003141   0.002176  -1.443   0.1489    
+## d_sidewalk:citynotcampina  -0.005514   0.011246  -0.490   0.6239    
+## d_trees:citynotcampina      0.038577   0.009461   4.077 4.55e-05 ***
+## d_lands:citynotcampina     -0.102126   0.023160  -4.410 1.04e-05 ***
+## d_bid:citynotcampina       -0.017414   0.021099  -0.825   0.4092    
+## d_people:citynotcampina    -0.001340   0.005172  -0.259   0.7956    
+## d_mvciclyst:citynotcampina -0.012449   0.051543  -0.242   0.8091    
+## d_mvcars:citynotcampina    -0.007500   0.011607  -0.646   0.5182    
+## d_pcars:citynotcampina     -0.035913   0.008972  -4.003 6.26e-05 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 29403  on 21209  degrees of freedom
-## Residual deviance: 24618  on 21193  degrees of freedom
-## AIC: 24652
+##     Null deviance: 46596  on 33611  degrees of freedom
+## Residual deviance: 39207  on 33587  degrees of freedom
+## AIC: 39257
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <pre><code>## [1] &quot;Logistic model not scaled - without user being or not from campina&quot;</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = choice ~ d_swidth + d_sidewalk + d_trees + d_lands + 
-##     d_bid + bair_cat, family = binomial(), data = the_data)
+##     d_bid + d_people + d_mvciclyst + d_mvcars + d_pcars + bair_cat, 
+##     family = binomial(), data = the_data)
 ## 
 ## Deviance Residuals: 
 ##      Min        1Q    Median        3Q       Max  
-## -2.48595  -0.97499   0.00139   0.99548   2.44217  
+## -2.60701  -0.97808   0.00221   0.99814   2.85930  
 ## 
 ## Coefficients:
 ##                           Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)              -0.248987   0.024631 -10.109  &lt; 2e-16 ***
-## d_swidth                 -0.002997   0.001368  -2.191  0.02842 *  
-## d_sidewalk                0.137207   0.006796  20.191  &lt; 2e-16 ***
-## d_trees                   0.055995   0.006544   8.556  &lt; 2e-16 ***
-## d_lands                   0.483119   0.014485  33.353  &lt; 2e-16 ***
-## d_bid                    -0.063933   0.012751  -5.014 5.33e-07 ***
-## bair_catcatole_centro     0.801169   0.049264  16.263  &lt; 2e-16 ***
-## bair_catcatole_liberdade  0.655027   0.066045   9.918  &lt; 2e-16 ***
-## bair_catcentro_catole    -0.324262   0.053123  -6.104 1.03e-09 ***
-## bair_catcentro_liberdade -0.121203   0.061407  -1.974  0.04841 *  
-## bair_catliberdade_catole  0.208881   0.073036   2.860  0.00424 ** 
-## bair_catliberdade_centro  0.483240   0.061591   7.846 4.30e-15 ***
+## (Intercept)              -0.185541   0.019331  -9.598  &lt; 2e-16 ***
+## d_swidth                 -0.003191   0.001164  -2.743  0.00609 ** 
+## d_sidewalk                0.120565   0.005653  21.329  &lt; 2e-16 ***
+## d_trees                   0.051774   0.004748  10.904  &lt; 2e-16 ***
+## d_lands                   0.450312   0.011895  37.857  &lt; 2e-16 ***
+## d_bid                    -0.089468   0.010984  -8.145 3.79e-16 ***
+## d_people                  0.035748   0.002987  11.967  &lt; 2e-16 ***
+## d_mvciclyst              -0.101943   0.025861  -3.942 8.08e-05 ***
+## d_mvcars                  0.003261   0.006533   0.499  0.61762    
+## d_pcars                  -0.018569   0.004481  -4.143 3.42e-05 ***
+## bair_catcatole_centro     0.885036   0.047638  18.578  &lt; 2e-16 ***
+## bair_catcatole_liberdade  0.413453   0.049714   8.317  &lt; 2e-16 ***
+## bair_catcentro_catole    -0.561923   0.049327 -11.392  &lt; 2e-16 ***
+## bair_catcentro_liberdade -0.402972   0.059986  -6.718 1.84e-11 ***
+## bair_catliberdade_catole  0.030475   0.054759   0.557  0.57785    
+## bair_catliberdade_centro  0.546813   0.060837   8.988  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 29403  on 21209  degrees of freedom
-## Residual deviance: 24706  on 21198  degrees of freedom
-## AIC: 24730
+##     Null deviance: 46596  on 33611  degrees of freedom
+## Residual deviance: 39321  on 33596  degrees of freedom
+## AIC: 39353
 ## 
 ## Number of Fisher Scoring iterations: 4</code></pre>
-<pre><code>## &#39;log Lik.&#39; 24705.53 (df=12)</code></pre>
-<pre><code>## &#39;log Lik.&#39; 24617.51 (df=17)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 39321.26 (df=16)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 39206.51 (df=25)</code></pre>
 <pre><code>## [1] &quot;Comparing deviance of models and chi-square values from table&quot;</code></pre>
-<pre><code>## &#39;log Lik.&#39; 88.01298 (df=17)</code></pre>
-<pre><code>## [1] 11.0705</code></pre>
-<pre><code>## [1] 15.08627</code></pre>
+<pre><code>## &#39;log Lik.&#39; 114.7502 (df=25)</code></pre>
+<pre><code>## [1] 16.91898</code></pre>
+<pre><code>## [1] 21.66599</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = choice ~ 1, family = binomial(), data = the_data)
@@ -1090,13 +1122,13 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## 
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)  0.00000    0.01373       0        1
+## (Intercept)  0.00000    0.01091       0        1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 29403  on 21209  degrees of freedom
-## Residual deviance: 29403  on 21209  degrees of freedom
-## AIC: 29405
+##     Null deviance: 46596  on 33611  degrees of freedom
+## Residual deviance: 46596  on 33611  degrees of freedom
+## AIC: 46598
 ## 
 ## Number of Fisher Scoring iterations: 2</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
@@ -1106,7 +1138,7 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ##    Data: the_data
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##  29407.3  29423.2 -14701.7  29403.3    21208 
+##  46600.1  46617.0 -23298.1  46596.1    33610 
 ## 
 ## Scaled residuals: 
 ##    Min     1Q Median     3Q    Max 
@@ -1115,163 +1147,164 @@ R._Cristina_Procópio_Silva_305_135 2.847389
 ## Random effects:
 ##  Groups Name        Variance Std.Dev.
 ##  userID (Intercept) 0        0       
-## Number of obs: 21210, groups:  userID, 347
+## Number of obs: 33612, groups:  userID, 561
 ## 
 ## Fixed effects:
 ##             Estimate Std. Error z value Pr(&gt;|z|)
-## (Intercept)  0.00000    0.01373       0        1</code></pre>
-<pre><code>## &#39;log Lik.&#39; 29403.3 (df=1)</code></pre>
-<pre><code>## &#39;log Lik.&#39; 29403.3 (df=2)</code></pre>
+## (Intercept)  0.00000    0.01091       0        1</code></pre>
+<pre><code>## &#39;log Lik.&#39; 46596.13 (df=1)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 46596.13 (df=2)</code></pre>
 <pre><code>## [1] &quot;Random Effects scaled&quot;</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
 ##  Family: binomial  ( logit )
 ## Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
-##     bair_cat + city:(d_swidth + d_sidewalk + d_trees + d_lands +  
-##     d_bid + bair_cat) + (1 | userID)
+##     d_people + d_mvciclyst + d_mvcars + d_pcars + bair_cat +  
+##     city:(d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
+##         d_people + d_mvciclyst + d_mvcars + d_pcars + bair_cat) +  
+##     (1 | userID)
 ##    Data: the_data
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##  24648.3  24839.3 -12300.1  24600.3    21186 
+##  39246.5  39516.0 -19591.3  39182.5    33580 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -4.8950 -0.7765  0.0017  0.7936  4.3473 
+## -5.2990 -0.7791 -0.0006  0.7975  7.6997 
 ## 
 ## Random effects:
-##  Groups Name        Variance  Std.Dev. 
-##  userID (Intercept) 4.091e-17 6.396e-09
-## Number of obs: 21210, groups:  userID, 347
+##  Groups Name        Variance Std.Dev.
+##  userID (Intercept) 0        0       
+## Number of obs: 33612, groups:  userID, 561
 ## 
 ## Fixed effects:
-##                                         Estimate Std. Error z value
-## (Intercept)                             -0.18662    0.02456  -7.599
-## d_swidth                                -0.02830    0.02686  -1.054
-## d_sidewalk                               0.40048    0.02484  16.124
-## d_trees                                  0.14799    0.02992   4.947
-## d_lands                                  0.81760    0.02955  27.669
-## d_bid                                   -0.08857    0.03126  -2.833
-## bair_catcatole_centro                    0.81020    0.06229  13.007
-## bair_catcatole_liberdade                 0.59511    0.08381   7.101
-## bair_catcentro_catole                   -0.21646    0.06844  -3.163
-## bair_catcentro_liberdade                -0.02877    0.07864  -0.366
-## bair_catliberdade_catole                 0.17922    0.09527   1.881
-## bair_catliberdade_centro                 0.32359    0.08016   4.037
-## d_swidth:citynotcampina                 -0.02388    0.03985  -0.599
-## d_sidewalk:citynotcampina               -0.05559    0.03765  -1.476
-## d_trees:citynotcampina                   0.09302    0.04396   2.116
-## d_lands:citynotcampina                  -0.20832    0.04364  -4.774
-## d_bid:citynotcampina                    -0.05837    0.04712  -1.239
-## bair_catcatole_centro:citynotcampina    -0.01122    0.08509  -0.132
-## bair_catcatole_liberdade:citynotcampina  0.16698    0.12540   1.332
-## bair_catcentro_catole:citynotcampina    -0.24041    0.09643  -2.493
-## bair_catcentro_liberdade:citynotcampina -0.22116    0.11542  -1.916
-## bair_catliberdade_catole:citynotcampina  0.07150    0.13882   0.515
-## bair_catliberdade_centro:citynotcampina  0.32735    0.11310   2.894
+##                                           Estimate Std. Error z value
+## (Intercept)                             -0.1184167  0.0192271  -6.159
+## d_swidth                                -0.0179093  0.0219394  -0.816
+## d_sidewalk                               0.3409114  0.0207749  16.410
+## d_trees                                  0.1282197  0.0243070   5.275
+## d_lands                                  0.7425576  0.0240841  30.832
+## d_bid                                   -0.1487895  0.0258828  -5.749
+## d_people                                 0.2548503  0.0281797   9.044
+## d_mvciclyst                             -0.0536324  0.0194732  -2.754
+## d_mvcars                                 0.0239194  0.0260800   0.917
+## d_pcars                                 -0.0105662  0.0200576  -0.527
+## bair_catcatole_centro                    0.9683455  0.0617959  15.670
+## bair_catcatole_liberdade                 0.3466777  0.0645243   5.373
+## bair_catcentro_catole                   -0.5683273  0.0640817  -8.869
+## bair_catcentro_liberdade                -0.3178454  0.0789740  -4.025
+## bair_catliberdade_catole                 0.0079128  0.0715922   0.111
+## bair_catliberdade_centro                 0.4263664  0.0806328   5.288
+## d_swidth:citynotcampina                 -0.0615239  0.0328867  -1.871
+## d_sidewalk:citynotcampina               -0.0240622  0.0311416  -0.773
+## d_trees:citynotcampina                   0.1607692  0.0366965   4.381
+## d_lands:citynotcampina                  -0.1535088  0.0357615  -4.293
+## d_bid:citynotcampina                    -0.0225010  0.0389602  -0.578
+## d_people:citynotcampina                 -0.0113909  0.0413171  -0.276
+## d_mvciclyst:citynotcampina              -0.0056309  0.0287026  -0.196
+## d_mvcars:citynotcampina                 -0.0296400  0.0381653  -0.777
+## d_pcars:citynotcampina                  -0.1116083  0.0295805  -3.773
+## bair_catcatole_centro:citynotcampina    -0.1731016  0.0862194  -2.008
+## bair_catcatole_liberdade:citynotcampina  0.1576062  0.0927340   1.700
+## bair_catcentro_catole:citynotcampina     0.0002194  0.0934209   0.002
+## bair_catcentro_liberdade:citynotcampina -0.2036296  0.1161902  -1.753
+## bair_catliberdade_catole:citynotcampina  0.0554045  0.1032883   0.536
+## bair_catliberdade_centro:citynotcampina  0.2392440  0.1149931   2.081
 ##                                         Pr(&gt;|z|)    
-## (Intercept)                             2.97e-14 ***
-## d_swidth                                 0.29196    
+## (Intercept)                             7.33e-10 ***
+## d_swidth                                0.414323    
 ## d_sidewalk                               &lt; 2e-16 ***
-## d_trees                                 7.55e-07 ***
+## d_trees                                 1.33e-07 ***
 ## d_lands                                  &lt; 2e-16 ***
-## d_bid                                    0.00461 ** 
+## d_bid                                   9.00e-09 ***
+## d_people                                 &lt; 2e-16 ***
+## d_mvciclyst                             0.005884 ** 
+## d_mvcars                                0.359061    
+## d_pcars                                 0.598337    
 ## bair_catcatole_centro                    &lt; 2e-16 ***
-## bair_catcatole_liberdade                1.24e-12 ***
-## bair_catcentro_catole                    0.00156 ** 
-## bair_catcentro_liberdade                 0.71445    
-## bair_catliberdade_catole                 0.05995 .  
-## bair_catliberdade_centro                5.42e-05 ***
-## d_swidth:citynotcampina                  0.54900    
-## d_sidewalk:citynotcampina                0.13983    
-## d_trees:citynotcampina                   0.03436 *  
-## d_lands:citynotcampina                  1.81e-06 ***
-## d_bid:citynotcampina                     0.21539    
-## bair_catcatole_centro:citynotcampina     0.89514    
-## bair_catcatole_liberdade:citynotcampina  0.18300    
-## bair_catcentro_catole:citynotcampina     0.01266 *  
-## bair_catcentro_liberdade:citynotcampina  0.05535 .  
-## bair_catliberdade_catole:citynotcampina  0.60654    
-## bair_catliberdade_centro:citynotcampina  0.00380 ** 
+## bair_catcatole_liberdade                7.75e-08 ***
+## bair_catcentro_catole                    &lt; 2e-16 ***
+## bair_catcentro_liberdade                5.71e-05 ***
+## bair_catliberdade_catole                0.911992    
+## bair_catliberdade_centro                1.24e-07 ***
+## d_swidth:citynotcampina                 0.061375 .  
+## d_sidewalk:citynotcampina               0.439716    
+## d_trees:citynotcampina                  1.18e-05 ***
+## d_lands:citynotcampina                  1.77e-05 ***
+## d_bid:citynotcampina                    0.563576    
+## d_people:citynotcampina                 0.782782    
+## d_mvciclyst:citynotcampina              0.844470    
+## d_mvcars:citynotcampina                 0.437383    
+## d_pcars:citynotcampina                  0.000161 ***
+## bair_catcatole_centro:citynotcampina    0.044677 *  
+## bair_catcatole_liberdade:citynotcampina 0.089215 .  
+## bair_catcentro_catole:citynotcampina    0.998126    
+## bair_catcentro_liberdade:citynotcampina 0.079679 .  
+## bair_catliberdade_catole:citynotcampina 0.591678    
+## bair_catliberdade_centro:citynotcampina 0.037479 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre><code>## 
-## Correlation matrix not shown by default, as p = 23 &gt; 12.
+## Correlation matrix not shown by default, as p = 31 &gt; 12.
 ## Use print(summary(agrad_random_user), correlation=TRUE)  or
 ##   vcov(summary(agrad_random_user))    if you need it</code></pre>
 <pre><code>## [1] &quot;Hosmer and Lemeshow&quot;
 ##       dev 
-## 0.8366493 
+## 0.8408966 
 ## [1] &quot;Hosmer and Lemeshow&quot;
 ##       dev 
-## 0.1633507 
+## 0.1591034 
 ## [1] &quot;Cox and Snells&quot;
 ##       dev 
-## 0.2026425 
+## 0.1979338 
 ## [1] &quot;Nagelkerke&quot;
-##     dev 
-## 0.27019</code></pre>
+##       dev 
+## 0.2639118</code></pre>
 <pre><code>## [1] &quot;Random Effects without user moderation scaled&quot;</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
 ##  Family: binomial  ( logit )
 ## Formula: choice ~ d_swidth + d_sidewalk + d_trees + d_lands + d_bid +  
-##     bair_cat + +(1 | userID)
+##     d_people + d_mvciclyst + d_mvcars + d_pcars + bair_cat +  
+##     +(1 | userID)
 ##    Data: the_data
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##  24731.5  24835.0 -12352.8  24705.5    21197 
+##  39355.3  39498.4 -19660.6  39321.3    33595 
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -4.5800 -0.7801  0.0010  0.8008  4.3277 
+## -5.3770 -0.7832  0.0016  0.8035  7.6557 
 ## 
 ## Random effects:
 ##  Groups Name        Variance Std.Dev.
 ##  userID (Intercept) 0        0       
-## Number of obs: 21210, groups:  userID, 347
+## Number of obs: 33612, groups:  userID, 561
 ## 
 ## Fixed effects:
-##                          Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)              -0.18452    0.02452   -7.52 5.29e-14 ***
-## d_swidth                 -0.04330    0.01976   -2.19  0.02842 *  
-## d_sidewalk                0.37554    0.01860   20.19  &lt; 2e-16 ***
-## d_trees                   0.18701    0.02186    8.56  &lt; 2e-16 ***
-## d_lands                   0.72234    0.02166   33.35  &lt; 2e-16 ***
-## d_bid                    -0.11691    0.02332   -5.01 5.33e-07 ***
-## bair_catcatole_centro     0.80117    0.04926   16.26  &lt; 2e-16 ***
-## bair_catcatole_liberdade  0.65503    0.06605    9.92  &lt; 2e-16 ***
-## bair_catcentro_catole    -0.32426    0.05312   -6.10 1.03e-09 ***
-## bair_catcentro_liberdade -0.12120    0.06141   -1.97  0.04841 *  
-## bair_catliberdade_catole  0.20888    0.07304    2.86  0.00424 ** 
-## bair_catliberdade_centro  0.48324    0.06159    7.85 4.30e-15 ***
+##                           Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)              -0.115931   0.019192   -6.04 1.54e-09 ***
+## d_swidth                 -0.044741   0.016312   -2.74  0.00609 ** 
+## d_sidewalk                0.329349   0.015441   21.33  &lt; 2e-16 ***
+## d_trees                   0.198057   0.018163   10.90  &lt; 2e-16 ***
+## d_lands                   0.671915   0.017749   37.86  &lt; 2e-16 ***
+## d_bid                    -0.157132   0.019291   -8.15 3.79e-16 ***
+## d_people                  0.246073   0.020562   11.97  &lt; 2e-16 ***
+## d_mvciclyst              -0.056262   0.014273   -3.94 8.08e-05 ***
+## d_mvcars                  0.009476   0.018982    0.50  0.61762    
+## d_pcars                  -0.060915   0.014701   -4.14 3.42e-05 ***
+## bair_catcatole_centro     0.885036   0.047637   18.58  &lt; 2e-16 ***
+## bair_catcatole_liberdade  0.413453   0.049715    8.32  &lt; 2e-16 ***
+## bair_catcentro_catole    -0.561923   0.049327  -11.39  &lt; 2e-16 ***
+## bair_catcentro_liberdade -0.402972   0.059985   -6.72 1.84e-11 ***
+## bair_catliberdade_catole  0.030475   0.054760    0.56  0.57786    
+## bair_catliberdade_centro  0.546813   0.060837    8.99  &lt; 2e-16 ***
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Correlation of Fixed Effects:
-##               (Intr) d_swdt d_sdwl d_tres d_lnds d_bid  br_ctctl_c
-## d_swidth       0.015                                              
-## d_sidewalk    -0.024 -0.137                                       
-## d_trees       -0.017 -0.439  0.052                                
-## d_lands       -0.007  0.029 -0.290 -0.405                         
-## d_bid         -0.038 -0.021 -0.061  0.303 -0.342                  
-## br_ctctl_cn   -0.517 -0.055  0.113  0.009 -0.031  0.352           
-## br_ctctl_lb   -0.371  0.061  0.098 -0.016 -0.011 -0.042  0.178    
-## br_ctcntr_c   -0.442  0.047 -0.101  0.006  0.051 -0.324  0.072    
-## br_ctcntr_l   -0.381  0.183 -0.005 -0.016  0.034 -0.332  0.044    
-## br_ctlbrdd_ct -0.336 -0.093 -0.054  0.055  0.024  0.029  0.174    
-## br_ctlbrdd_cn -0.415 -0.199  0.013  0.028 -0.024  0.353  0.364    
-##               br_ctctl_l br_ctcntr_c br_ctcntr_l br_ctlbrdd_ct
-## d_swidth                                                      
-## d_sidewalk                                                    
-## d_trees                                                       
-## d_lands                                                       
-## d_bid                                                         
-## br_ctctl_cn                                                   
-## br_ctctl_lb                                                   
-## br_ctcntr_c    0.177                                          
-## br_ctcntr_l    0.177      0.328                               
-## br_ctlbrdd_ct  0.111      0.149       0.109                   
-## br_ctlbrdd_cn  0.118      0.029      -0.030       0.160</code></pre>
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>## 
+## Correlation matrix not shown by default, as p = 16 &gt; 12.
+## Use print(...., correlation=TRUE)  or
+##   vcov(....)  if you need it</code></pre>
 <p>As regressões logísticas, por outro lado, apontam uma melhoria no AIC em torno de 80 pontos quando usamos a moderação em relação a não usá-la e aponta preferências em relação a trees e landscape. De forma similar ao modelo OLS, preferências por mais árvores, calçadas mais largas, mais manutenção e menos identificadores foram percebidas em geral.</p>
 </div>
 </div>

@@ -69,15 +69,16 @@ def standard_normal(x):
 	mean = 0.0
 	return ( 1.0 / np.sqrt( 2.0 * np.pi * (std**2.0)) ) * np.exp( - ( (x - mean)**2.0 / (2.0 * (std**2.0)) ) ) 
 
-def deMoivre_funnel(current_val, i, data):
-	values = []
-	num_of_values = 0.0
-	for prop in data:
-		values.append(data[prop][i])
-		num_of_values = num_of_values + 1.0
+def deMoivre_funnel(votes, people, data, num_of_points):
+	total_votes = []
+	#for j in range(0, num_of_points):
+        for prop in data:
+		total_votes.append(data[prop][0] * 1.0 / data[prop][1])#Percent for each city
 
-	std_error = np.std(values) / np.sqrt(num_of_values)
-	zs = (current_val - np.mean(values)) / std_error
+	mean_of_votes = np.mean(total_votes)
+
+	std_error = np.sqrt( people * mean_of_votes * (1-mean_of_votes) )#np.std(values) / np.sqrt(num_of_values)
+	zs = (votes - (mean_of_votes * people)) / std_error
 	
 	integrate_result = integrate.quad(standard_normal, 0, zs)
 	p_de_moivre = 1.0 - ( 2.0 * integrate_result[0] )
@@ -118,12 +119,13 @@ def calcSurprise(num_of_points):
 
   #Integration using python (for De moivre) - https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
 
-  for i in range(0, num_of_points):
-
-    sum_diffs = [0,0,0]
-
+  sum_diffs = [0,0,0]
+  for prop in data:
+    
+      current_row = data[prop]
+ 
     #Calculate per state surprise
-    for prop in data:
+    #for prop in data:
 
       #norm_data = normal_fit[prop]
       #norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
@@ -137,13 +139,13 @@ def calcSurprise(num_of_points):
       #uniform
       #diffs[0] = ((data[prop][i]/total_street) - (avg_street/total_street))
       #pDMs[0] = 1 - abs(diffs[0])
-      pDMs[0] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(data[prop][i], i, data) )
+      pDMs[0] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(current_row[0], current_row[1], data, num_of_points) )
       #Average per num
       #diffs[1] = ((data[prop][i]/total_street) - (avg_num/total_street))
-      pDMs[1] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(data[prop][i], i, data) )
+      pDMs[1] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(current_row[0], current_row[1], data, num_of_points) )
       #normal
       #diffs[2] = ((data[prop][i]/total_street) - (norm_estimate/total_street))
-      pDMs[2] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(data[prop][i], i, data) )
+      pDMs[2] = 1.0 / num_of_points * ( num_of_points * deMoivre_funnel(current_row[0], current_row[1], data, num_of_points) )
 
       #Estimate P(M|D)
       #uniform
@@ -162,27 +164,27 @@ def calcSurprise(num_of_points):
         sum_diffs[j] = sum_diffs[j] + abs(diffs[j])
       
       if voteSum >= 0:
-	surprise_data[prop][i] = abs(kl) 
+	surprise_data[prop] = abs(kl) 
       else: 
-	surprise_data[prop][i] = -1 * abs(kl)
+	surprise_data[prop] = -1 * abs(kl)
 
-      uniform_data[prop][i] = pMs[0]
-      base_data[prop][i] = pMs[1]
+      uniform_data[prop] = pMs[0]
+      base_data[prop] = pMs[1]
     
-    #Now lets globally update our model belief.
-    for j in range(0, len(pMs)):
-      pDMs[j] = 1 - 0.5 * sum_diffs[j]
-      pMDs[j] = pMs[j] * pDMs[j]
-      pMs[j] = pMDs[j]
+      #Now lets globally update our model belief.
+      for j in range(0, len(pMs)):
+        pDMs[j] = 1 - 0.5 * sum_diffs[j]
+        pMDs[j] = pMs[j] * pDMs[j]
+        pMs[j] = pMDs[j]
     
-    #Normalize
-    summ = np.sum(pMs)
-    for j in range(0, len(pMs)):
-      pMs[j] = pMs[j] / summ
+      #Normalize
+      summ = np.sum(pMs)
+      for j in range(0, len(pMs)):
+        pMs[j] = pMs[j] / summ
     
-    uniform_pM.append(pMs[0])
-    boom_pM.append(pMs[1])
-    bust_pM.append(pMs[2])
+      uniform_pM.append(pMs[0])
+      boom_pM.append(pMs[1])
+      bust_pM.append(pMs[2])
 
   return [surprise_data, uniform_data, base_data]
 
@@ -205,9 +207,10 @@ if __name__ == "__main__":
 	input_data = pd.read_table(sys.argv[1], sep=',', encoding='utf8', header=0)
 
 	data = {}
-	num_of_points = 18
+	num_of_points = input_data.shape[0]
 	for index, row in input_data.iterrows():
-		 data[row['State']] = [row['1981'], row['1982'], row['1983'], row['1984'], row['1985'], row['1986'], row['1987'], row['1988'], row['1989'], row['1990'], row['1991'], row['1992'], row['1993'], row['1994'], row['1995'], row['1996'], row['1997'], row['1998']]
+		 #data[row['State']] = [row['1981'], row['1982'], row['1983'], row['1984'], row['1985'], row['1986'], row['1987'], row['1988'], row['1989'], row['1990'], row['1991'], row['1992'], row['1993'], row['1994'], row['1995'], row['1996'], row['1997'], row['1998']]
+		data[row['id_cidade']] = [row['votos_do_candidato'], row['eleitores'], row['votes_nominais']]
 
 	#Creating variables to store values over iterations
 	all_surprise = {}
@@ -217,14 +220,14 @@ if __name__ == "__main__":
 	uniform_summary = {}
 	base_summary = {}
 
-	for prop in input_data['State']:
-		all_surprise[prop] = [[] for x in range(num_of_points)]
-		all_uniform[prop] = [[] for x in range(num_of_points)]
-		all_base[prop] = [[] for x in range(num_of_points)]
-
-		surprise_summary[prop] = [[] for x in range(num_of_points)]
-		uniform_summary[prop] = [[] for x in range(num_of_points)]
-		base_summary[prop] = [[] for x in range(num_of_points)]
+	#for prop in input_data['id_cidade']:
+	#	all_surprise[prop] = [[] for x in range(num_of_points)]
+	#	all_uniform[prop] = [[] for x in range(num_of_points)]
+	#	all_base[prop] = [[] for x in range(num_of_points)]
+#
+#		surprise_summary[prop] = [[] for x in range(num_of_points)]
+#		uniform_summary[prop] = [[] for x in range(num_of_points)]
+#		base_summary[prop] = [[] for x in range(num_of_points)]
 
 
 	#Calculations of surprise values and storing calculus results
@@ -236,11 +239,11 @@ if __name__ == "__main__":
 
 	print str(surprise_data)
 
-	for prop in input_data['State']:
-		for i in range(0, num_of_points):
-			all_surprise[prop][i].append(surprise_data[prop][i])
-			all_uniform[prop][i].append(uniform_data[prop][i])
-			all_base[prop][i].append(base_data[prop][i])
+	for prop in input_data['id_cidade']:
+#		for i in range(0, num_of_points):
+		all_surprise[prop] = surprise_data[prop]
+		all_uniform[prop] = uniform_data[prop]
+		all_base[prop] = base_data[prop]
 
 	#Calculating summaries
 	#for prop in input_data['State']:
@@ -251,7 +254,4 @@ if __name__ == "__main__":
 
 	#Printing surprise values summaries
 	for prop in surprise_data:
-		print prop + "," + ','.join(str(i) for i in surprise_data[prop])
-
-  
-
+		print str(prop) + "," + str(all_surprise[prop])

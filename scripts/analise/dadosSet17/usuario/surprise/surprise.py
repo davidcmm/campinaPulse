@@ -139,7 +139,13 @@ def calcSurprise(num_of_points):
       kl = 0
       voteSum = 0
       for j in range(0, len(pMDs)):
-        kl = kl + pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2))
+	if pMDs[j] != 0 and pMs[j] == 0:
+		raise Exception("DKL is undefined que P(i) != 0 and Q(i) == 0")
+	if pMDs[j] == 0:
+		current_kl = 0.0
+	else:
+		current_kl = pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2))
+        kl = kl + current_kl
         voteSum = voteSum + diffs[j]*pMs[j]
         sum_diffs[j] = sum_diffs[j] + abs(diffs[j])
       

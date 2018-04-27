@@ -81,7 +81,7 @@ def deMoivre_funnel(votes, people, data, num_of_points, debug):
 	zs = (votes - (mean_of_votes * people)) / std_error
 
 	integrate_result = integrate.quad(standard_normal, 0, zs)
-	p_de_moivre = 1.0 - ( 2.0 * integrate_result[0] )
+	p_de_moivre = max(1.0 - ( 2.0 * integrate_result[0] ), 0)
 	#print str(std_error) + "\t" + str(zs) + "\t" + str(i) + "\t" + str(integrate_result) + "\t" + str(p_de_moivre)
 
 	if debug:
@@ -117,16 +117,16 @@ def calcSurprise(num_of_points):
 
   #Start with equiprobably P(M)s
   #Initially, everything is equiprobable.
-  pMs =[(1.0/3),(1.0/3),(1.0/3)]
+  pMs =[(1.0/3)]#,(1.0/3),(1.0/3)]
 
   uniform_pM = [pMs[0]]
-  boom_pM = [pMs[1]]
-  bust_pM = [pMs[2]]
+#  boom_pM = [pMs[1]]
+ # bust_pM = [pMs[2]]
 
   percents = find_boom_bust()
   
-  pDMs = [0,0,0]
-  pMDs = [0,0,0]
+  pDMs = [0.0]#,0.0,0.0]
+  pMDs = [0.0]#,0.0,0.0]
   avg = 0
   total = 0
 
@@ -134,8 +134,8 @@ def calcSurprise(num_of_points):
   
   #Bayesian surprise is the KL divergence from prior to posterior
   kl = 0
-  diffs = [0,0,0]
-  sum_diffs = [0,0,0]
+  diffs = [0]#,0,0]
+  sum_diffs = [0]#,0,0]
 
   #Integration using python (for De moivre) - https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
   for prop in data:
@@ -164,17 +164,17 @@ def calcSurprise(num_of_points):
       #pDMs[0] = 1 - abs(diffs[0])
       pDMs[0] = 1.0 / num_of_points * ( num_of_points *  result[0])
       #Boom
-      diffs[1] = ((current_row[0]* 1.0/current_row[2]) - percents[0])
-      pDMs[1] = 1 - abs(diffs[1])
+      #diffs[1] = ((current_row[0]* 1.0/current_row[2]) - percents[0])
+      #pDMs[1] = 1 - abs(diffs[1])
       #Bust
-      diffs[2] = ((current_row[0]* 1.0/current_row[2]) - percents[1])
-      pDMs[2] = 1 - abs(diffs[2])
+      #diffs[2] = ((current_row[0]* 1.0/current_row[2]) - percents[1])
+      #pDMs[2] = 1 - abs(diffs[2])
 
       #Estimate P(M|D)
       #uniform
       pMDs[0] = pMs[0]*pDMs[0]
-      pMDs[1] = pMs[1]*pDMs[1]
-      pMDs[2] = pMs[2]*pDMs[2]
+      #pMDs[1] = pMs[1]*pDMs[1]
+      #pMDs[2] = pMs[2]*pDMs[2]
 
       if prop == 61778:
 	print "Num points " + str(num_of_points)
@@ -189,12 +189,18 @@ def calcSurprise(num_of_points):
       kl = 0
       voteSum = 0
       for j in range(0, len(pMDs)):
-        kl = kl + pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2))
+	if pMDs[j] != 0 and pMs[j] == 0:
+		raise Exception("DKL is undefined que P(i) != 0 and Q(i) == 0")
+	if pMDs[j] == 0:
+		current_kl = 0.0
+	else:
+		current_kl = pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2))
+        kl = kl + current_kl#https://math.stackexchange.com/questions/1228408/kullback-leibler-divergence-when-the-q-distribution-has-zero-values
         voteSum = voteSum + diffs[j]*pMs[j]
         sum_diffs[j] = sum_diffs[j] + abs(diffs[j])
 
         if prop == 61778:
-		print "KL " + str(pMDs[j] * (np.log( pMDs[j] / pMs[j])/np.log(2)))
+		print "KL " + str(current_kl)
 		print "VotesSUM " + str(diffs[j]*pMs[j])
       
       if voteSum >= 0:
@@ -203,7 +209,7 @@ def calcSurprise(num_of_points):
 	surprise_data[prop] = -1 * abs(kl)
 
       uniform_data[prop] = pMs[0]
-      base_data[prop] = pMs[1]
+      #base_data[prop] = pMs[1]
     
   #Now lets globally update our model belief.
   for j in range(0, len(pMs)):
@@ -217,12 +223,12 @@ def calcSurprise(num_of_points):
 	pMs[j] = pMs[j] / summ
 
   uniform_pM.append(pMs[0])
-  boom_pM.append(pMs[1])
-  bust_pM.append(pMs[2])
+  #boom_pM.append(pMs[1])
+  #bust_pM.append(pMs[2])
 
   print ">> Confiança De moivre " + str(uniform_pM)
-  print ">> Confiança boom " + str(boom_pM)
-  print ">> Confiança bust " + str(bust_pM)
+  #print ">> Confiança boom " + str(boom_pM)
+ # print ">> Confiança bust " + str(bust_pM)
 
   return [surprise_data, uniform_data, base_data]
 
@@ -248,7 +254,7 @@ if __name__ == "__main__":
 	num_of_points = input_data.shape[0]
 	for index, row in input_data.iterrows():
 		 #data[row['State']] = [row['1981'], row['1982'], row['1983'], row['1984'], row['1985'], row['1986'], row['1987'], row['1988'], row['1989'], row['1990'], row['1991'], row['1992'], row['1993'], row['1994'], row['1995'], row['1996'], row['1997'], row['1998']]
-		data[row['id_cidade']] = [row['votos_do_candidato'], row['eleitores'], row['votes_nominais']]
+		data[row['city_id']] = [row['total_votes'], row['attendances'], row['valid_votes'], row['city_name'], row['display_name']]
 
 	#Creating variables to store values over iterations
 	all_surprise = {}
@@ -277,7 +283,7 @@ if __name__ == "__main__":
 
 	print str(surprise_data)
 
-	for prop in input_data['id_cidade']:
+	for prop in input_data['city_id']:
 #		for i in range(0, num_of_points):
 		all_surprise[prop] = surprise_data[prop]
 		all_uniform[prop] = uniform_data[prop]
@@ -292,4 +298,4 @@ if __name__ == "__main__":
 
 	#Printing surprise values summaries
 	for prop in surprise_data:
-		print str(prop) + "," + str(all_surprise[prop])
+		print str(prop) + "," + str(data[prop][3].encode("utf-8")) + "," + str(data[prop][4].encode("utf-8")) + "," + str(all_surprise[prop])

@@ -254,7 +254,8 @@ if __name__ == "__main__":
 	num_of_points = input_data.shape[0]
 	for index, row in input_data.iterrows():
 		 #data[row['State']] = [row['1981'], row['1982'], row['1983'], row['1984'], row['1985'], row['1986'], row['1987'], row['1988'], row['1989'], row['1990'], row['1991'], row['1992'], row['1993'], row['1994'], row['1995'], row['1996'], row['1997'], row['1998']]
-		data[row['city_id']] = [row['total_votes'], row['attendances'], row['valid_votes'], row['city_name'], row['display_name']]
+		data[row['full_ibge_code']] = [row['total_votes'], row['attendances'], row['valid_votes'], row['city_name'], row['display_name'], row['candidate_id']]
+		#print ">>> Lendo " + str(row['full_ibge_code']) + " " + str(data[row['full_ibge_code']])
 
 	#Creating variables to store values over iterations
 	all_surprise = {}
@@ -283,7 +284,7 @@ if __name__ == "__main__":
 
 	print str(surprise_data)
 
-	for prop in input_data['city_id']:
+	for prop in input_data['full_ibge_code']:
 #		for i in range(0, num_of_points):
 		all_surprise[prop] = surprise_data[prop]
 		all_uniform[prop] = uniform_data[prop]
@@ -298,4 +299,4 @@ if __name__ == "__main__":
 
 	#Printing surprise values summaries
 	for prop in surprise_data:
-		print str(prop) + "," + str(data[prop][3].encode("utf-8")) + "," + str(data[prop][4].encode("utf-8")) + "," + str(all_surprise[prop])
+		print str(prop) + "," + str(data[prop][5]) + "," + str(data[prop][3].encode("utf-8")) + "," + str(data[prop][4].encode("utf-8")) + "," + str(all_surprise[prop])

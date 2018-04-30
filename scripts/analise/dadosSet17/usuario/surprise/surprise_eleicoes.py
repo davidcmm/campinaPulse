@@ -163,6 +163,8 @@ def calcSurprise(num_of_points):
       diffs[0] = ((current_row[0] * 1.0/current_row[2]) - result[1])
       #pDMs[0] = 1 - abs(diffs[0])
       pDMs[0] = 1.0 / (num_of_points**2) * ( num_of_points *  result[0])
+      #Multi-modal in R? mixmdl2 = normalmixEM(data2$total_votes, maxit=10000, mu=c(10, 60, 120), sigma=5); mixmdl[c("lambda","mu","sigma")]; plot(mixmdl,which=2); library(mixtools)
+
       #Boom
       #diffs[1] = ((current_row[0]* 1.0/current_row[2]) - percents[0])
       #pDMs[1] = 1 - abs(diffs[1])

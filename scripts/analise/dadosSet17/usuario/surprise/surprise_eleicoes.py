@@ -162,7 +162,7 @@ def calcSurprise(num_of_points):
       result = deMoivre_funnel(current_row[0], current_row[2], data, num_of_points, debug)
       diffs[0] = ((current_row[0] * 1.0/current_row[2]) - result[1])
       #pDMs[0] = 1 - abs(diffs[0])
-      pDMs[0] = 1.0 / num_of_points * ( num_of_points *  result[0])
+      pDMs[0] = 1.0 / (num_of_points**2) * ( num_of_points *  result[0])
       #Boom
       #diffs[1] = ((current_row[0]* 1.0/current_row[2]) - percents[0])
       #pDMs[1] = 1 - abs(diffs[1])

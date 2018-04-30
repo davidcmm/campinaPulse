@@ -101,19 +101,19 @@ def calcSurprise(num_of_points):
 
   #Integration using python (for De moivre) - https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
 
-  for i in range(0, num_of_points):
+  for prop in data:
 
     sum_diffs = [0,0,0]
 
-    #Calculate per state surprise
-    for prop in data:
+    for i in range(0, num_of_points):
+    #Calculate per street surprise
 
       norm_data = normal_fit[prop]
       norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
 
       avg_street  = average_street(prop, num_of_points)#For whole street
       total_street = sumU_street(prop, num_of_points)
-      avg_num = average_num(prop, i)#median_num;//For current point
+      avg_num = median_num(prop, i)#average_num;//For current point
       total_num = sumU_num(prop, i)
       
       #Estimate P(D|M) as 1 - |O - E|

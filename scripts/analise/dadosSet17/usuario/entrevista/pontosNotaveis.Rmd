@@ -69,8 +69,8 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 best_folder <- "../../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../../percepcaoLocal/agradavel/piores/intersects/"
 
-show_street_data <- function (current_df, all_data, force_split, highlighted_positive, best_folder, worst_folder){
-    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
+show_street_data <- function (current_df, all_data, force_split, highlighted_positive, best_folder, worst_folder, highlighted_neutral){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00", "#ffffff")
     step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
     thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
     
@@ -80,32 +80,47 @@ show_street_data <- function (current_df, all_data, force_split, highlighted_pos
       row <- current_df[i,]
       
       street <- as.character(row$street)
-      photo_name <- as.character(row$photo_name)#photo_name <- as.character(row$url)
+      photo_name <- as.character(row$url) #as.character(row$photo_name)
       number <- row$num
       angl <- row$angle
       score <- row$qscore
       angleData <- append(angleData, score)
       
       filtered <- filter(highlighted_positive, num==number & angle == angl)
+      filtered_neutral <- filter(highlighted_neutral, num==number & angle == angl)
       folder <- "none"
+      font_color <- "white"
       if (nrow(filtered) > 0){
          color_index <- 11
         if (file.exists(paste(best_folder, photo_name, sep=""))){
-          url <- paste(best_folder, photo_name, sep="")
+          url <- photo_name#paste(best_folder, photo_name, sep="")
           folder <- "best"
         }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
-          url <- paste(worst_folder, photo_name, sep="")
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
           folder <- "worst"
         }else{
            url <- as.character(row$url)
         }
-      }else{
+      }else if (nrow(filtered_neutral) > 0){
+        color_index <- 12
+        font_color <- "black"
+        if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- photo_name#paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else{
+           url <- as.character(row$url)
+        }
+      }
+      else{
          color_index <- 1
         if (file.exists(paste(worst_folder, photo_name, sep=""))){
-          url <- paste(worst_folder, photo_name, sep="")
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
           folder <- "worst"
         }else if (file.exists(paste(best_folder, photo_name, sep=""))){
-          url <- paste(best_folder, photo_name, sep="")
+          url <- photo_name#paste(best_folder, photo_name, sep="")
           folder <- "best"
         }else{
            url <- as.character(row$url)
@@ -114,7 +129,7 @@ show_street_data <- function (current_df, all_data, force_split, highlighted_pos
       
       cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\">", sep=""))
       cat("<img src='", url,"' width='300px'>", sep = "")
-      cat("<p style=\"color:white;font-size:90%\">", folder, "-", number, "-", angl, "-> ", score,  "</p>", sep="")
+      cat("<p style=\"color:",font_color,";font-size:90%\">", number, "-", angl, "-> ", score,  "</p>", sep="")#folder, "-",
       cat("</div>")
       
       #End of row with 4 images
@@ -178,9 +193,10 @@ Pontos notáveis destacados por ponto na rua
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
 cat("<br/>")
 
-highlighted_positive <- data.frame(num=c(2,2, 66, 66, 66, 105, 105, 160, 160, 160, 160, 210, 210, 210, 210, 261, 261, 261, 305, 305, 350, 350, 436, 436, 436), angle=c(135, 225, 45, 315, 225, 135, 225, 45, 135, 225, 315, 45, 135, 225, 315, 22, 315, 225, 45, 293, 45, 315, 22, 135, 315))
+highlighted_positive <- data.frame(num=c(2,2, 66, 66, 66, 105, 105, 160, 160, 160, 160, 210, 210, 210, 210, 261, 261, 261, 305, 305, 350, 436, 436, 436), angle=c(135, 225, 45, 315, 225, 135, 225, 45, 135, 225, 315, 45, 135, 225, 315, 22, 315, 225, 45, 293, 45, 22, 135, 315))
+highlighted_neutral <- data.frame(num=c(350), angle=c(315))
 
-show_street_data(cristina, all_data, TRUE, highlighted_positive, best_folder, worst_folder)
+show_street_data(cristina, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
 cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
 ```
 
@@ -221,8 +237,9 @@ Pontos notáveis destacados por ponto na rua
 cat("<br/>")
 
 highlighted_positive <- data.frame(num=c(445, 445, 549, 549, 691, 691, 691, 691, 813, 913, 913), angle=c(22, 112, 112, 203, 22, 112, 203, 293, 112, 112, 203))
+highlighted_neutral <- data.frame(num=c(), angle=c())
 
-show_street_data(floriano, all_data, TRUE, highlighted_positive, best_folder, worst_folder)
+show_street_data(floriano, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
 cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
 ```
 

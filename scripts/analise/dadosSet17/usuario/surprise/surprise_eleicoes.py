@@ -9,6 +9,7 @@ import csv
 import pandas as pd
 import numpy as np
 import scipy.integrate as integrate
+import scipy.stats as stats
 
 def average_num(prop, i):
 	#Average scores for current street point.
@@ -73,17 +74,22 @@ def deMoivre_funnel(votes, people, data, num_of_points, debug):
 	total_votes = []
 	#for j in range(0, num_of_points):
         for prop in data:
-		total_votes.append(data[prop][0] * 1.0 / data[prop][2])#Percent for each city
+		total_votes.append(data[prop][0])#Percent for each city: * 1.0 / data[prop][2]
 
-	mean_of_votes = np.mean(total_votes)#mean proportion (success of voting in candidate A)
+	#According to Correl Excel Table
+	mean_diff = votes - np.mean(total_votes)
+	sampling_std = np.std(total_votes) / np.sqrt(people)
+	z_score = mean_diff / sampling_std
 
-	std_error = np.sqrt( people * mean_of_votes * (1-mean_of_votes) )#np.std(values) / np.sqrt(num_of_values)
-	zs = (votes - (mean_of_votes * people)) / std_error
+	#mean_of_votes = np.mean(total_votes)#mean proportion (success of voting in candidate A)
+	#std_error = np.sqrt( people * mean_of_votes * (1-mean_of_votes) )#np.std(values) / np.sqrt(num_of_values)
+	#zs = (votes - (mean_of_votes * people)) / std_error
 
-	integrate_result = integrate.quad(standard_normal, 0, zs)
-	p_de_moivre = max(1.0 - ( 2.0 * integrate_result[0] ), 0)
+	integrate_result = stats.norm.cdf(z_score, loc=0, scale=1) - 0.5#integrate.quad(standard_normal, 0, z_score)
+	p_de_moivre = max(1.0 - ( 2.0 * integrate_result ), 0)
 	#print str(std_error) + "\t" + str(zs) + "\t" + str(i) + "\t" + str(integrate_result) + "\t" + str(p_de_moivre)
 
+	print ">>> PDMi " + str(integrate_result)
 	if debug:
 		print "All votes prop " + str(total_votes)
 		print "Current votes " + str(votes)
@@ -93,7 +99,7 @@ def deMoivre_funnel(votes, people, data, num_of_points, debug):
 		print "Integrate " + str(integrate_result)
 		print "De moivre " + str(p_de_moivre)
 
-	return [p_de_moivre, mean_of_votes]
+	return [p_de_moivre, np.mean(total_votes) / people]
 	
 
 def find_boom_bust():
@@ -117,7 +123,7 @@ def calcSurprise(num_of_points):
 
   #Start with equiprobably P(M)s
   #Initially, everything is equiprobable.
-  pMs =[(1.0/3)]#,(1.0/3),(1.0/3)]
+  pMs =[1.0]#,(1.0/3),(1.0/3)]
 
   uniform_pM = [pMs[0]]
 #  boom_pM = [pMs[1]]

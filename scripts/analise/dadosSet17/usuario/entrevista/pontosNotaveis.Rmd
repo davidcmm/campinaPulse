@@ -175,13 +175,13 @@ cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>%
 cat("<br/>")
 max_point <- filter(cristina, qscore == max(cristina$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
-cat("<img src='", paste(best_folder, max_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(max_point$url)
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#paste(best_folder, max_point$photo_name, sep="")
 cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
 cat("</div>")
 
 min_point <- filter(cristina, qscore == min(cristina$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
-cat("<img src='", paste(worst_folder, min_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(min_point$url)
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#as.character(min_point$url)
 cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
 cat("</div>")
 
@@ -218,13 +218,13 @@ floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% d
 cat("<br/>")
 max_point <- filter(floriano, qscore == max(floriano$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
-cat("<img src='", paste(best_folder, max_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(max_point$url)
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#paste(best_folder, max_point$photo_name, sep="")
 cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
 cat("</div>")
 
 min_point <- filter(floriano, qscore == min(floriano$qscore))
 cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
-cat("<img src='", paste(worst_folder, min_point$photo_name, sep=""),"' width='600px'>", sep = "")#as.character(min_point$url)
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#as.character(min_point$url)
 cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
 cat("</div>")
 
@@ -245,7 +245,176 @@ cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
 
 Descrição da rua
 
-   * Média/mediana: 5.06/5.04 x 4.68/4.82 -> rua de mediana para boa
+   * Média/mediana: 5.06/5.04 x 4.69/4.80 -> rua de mediana para boa
    * Variação no surprise? Em cada ponto temos algumas variações ao longo da rua e um ponto mais homogêneo positivamente
    * Lado melhor? Side1 (6) x Side2 (8), side2 ligeiramente melhor
    * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
+   
+   
+#\#\#\# Rua 3
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(edesio, qscore == max(edesio$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#as.character(max_point$url)
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(edesio, qscore == min(edesio$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#as.character(min_point$url)
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(70, 306, 306, 602, 602, 1546, 1546, 1546, 1546), angle=c(22, 22, 203, 22, 315, 22, 135, 203, 315))
+highlighted_neutral <- data.frame(num=c(306, 602, 1136), angle=c(135, 135, 315))
+
+show_street_data(edesio, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+   * Média/mediana: 4.70/4.73 x 4.69/4.80 -> mediana
+   * Variação no surprise? 3 lugar (heterogenea)
+   * Lado melhor? 
+   * Região melhor? 1546
+   
+#\#\#\# Rua 4
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(maciel, qscore == max(maciel$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(maciel, qscore == min(maciel$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(130, 190, 190, 190, 248, 248, 284, 360), angle=c(90, 90, 360, 270, 90, 180, 180, 360))
+highlighted_neutral <- data.frame(num=c(130, 130, 284, 284, 360), angle=c(180, 270, 90, 360, 90))
+
+show_street_data(maciel, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+   * Média/mediana: 4.77/4.77 x 4.69/4.80 -> mediana para boa?
+   * Variação no surprise? 2 menor (homogenea)
+   * Lado melhor? 
+   * Região melhor? 130, 190
+   
+#\#\#\# Rua 5
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(inacio, qscore == max(inacio$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(inacio, qscore == min(inacio$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(2, 54, 54, 120, 120, 120, 199, 199, 199, 239, 239, 239, 239, 300, 300, 300, 360, 360, 434), angle=c(203, 112, 22, 112, 22, 293, 112, 180, 293, 22, 90, 203, 270, 10, 293, 180, 22, 270, 112))
+highlighted_neutral <- data.frame(num=c(160, 160, 160, 160, 199, 360, 360, 500, 500), angle=c(22, 112, 203, 293, 10, 90, 203, 90, 270))
+
+show_street_data(inacio, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+   * Média/mediana: 4.72/4.83 x 4.69/4.80 -> mediana
+   * Variação no surprise? 2 maior (heterogenea)
+   * Lado melhor? 
+   * Região melhor? 199, 239, 300
+
+#\#\#\# Rua 6
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(manoel, qscore == max(manoel$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:black;font-size:90%\">", max_point$num, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(manoel, qscore == min(manoel$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='600px'>", sep = "")#
+cat("<p style=\"color:white;font-size:90%\">", min_point$num, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(188, 222, 300, 370, 392, 392), angle=c(22, 203, 315, 135, 293, 112))
+highlighted_neutral <- data.frame(num=c(188, 188, 222, 300, 370, 392), angle=c(135, 315, 315, 203, 203, 22))
+
+show_street_data(manoel, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+   * Média/mediana: 3.69/3.64 x 4.69/4.80 -> ruim
+   * Variação no surprise? mais homogenea
+   * Lado melhor? 
+   * Região melhor? 188, 222 e 392

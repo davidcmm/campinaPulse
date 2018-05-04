@@ -153,33 +153,6 @@ floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% d
 
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
 cat("<br/>")
-
-show_street_data <- function (current_df, force_split){
-    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
-    
-    angleData = c()
-    for(i in 1:nrow(current_df)) {
-      row <- current_df[i,]
-      
-      street <- as.character(row$street)
-      photo_name <- as.character(row$url)
-      num <- row$num
-      angle <- row$angle
-      score <- row$qscore
-      angleData <- append(angleData, score)
-      
-      cat(paste("<div class='col-xs-3' \">", sep=""))
-      cat("<img src='", photo_name,"' width='400px'>", sep = "")
-      cat("<p style=\"color:black;font-size:90%\">", num, "- ", angle,  "</p>", sep="")
-      cat("</div>")
-      
-      #End of row with 4 images
-      if(force_split && i%%4 == 0){
-        cat("<div class=\"col-xs-12\" style=\"height:1000px;\"></div>")
-      }
-    }
-}
-
 show_street_data(floriano, TRUE)
 ```
 
@@ -188,4 +161,86 @@ Recapitulando toda a rua
 ```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
 cat("<br/>")
 show_street_data(floriano, FALSE)
+```
+
+
+#\#\#\# Rua 3
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(edesio, TRUE)
+```
+
+Recapitulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(edesio, FALSE)
+```
+
+#\#\#\# Rua 4
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(maciel, TRUE)
+```
+
+Recapitulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(maciel, FALSE)
+```
+
+
+#\#\#\# Rua 5
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(inacio, TRUE)
+```
+
+Recapitulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(inacio, FALSE)
+```
+
+#\#\#\# Rua 6
+
+Vamos analisar primeiramente cada ponto da rua de forma isolada.
+
+```{r echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+```
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(manoel, TRUE)
+```
+
+Recapitulando toda a rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+show_street_data(manoel, FALSE)
 ```

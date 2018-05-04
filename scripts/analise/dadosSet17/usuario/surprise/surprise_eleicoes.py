@@ -85,30 +85,37 @@ def deMoivre_funnel(votes, people, data, num_of_points, debug):
 	#std_error = np.sqrt( people * mean_of_votes * (1-mean_of_votes) )#np.std(values) / np.sqrt(num_of_values)
 	#zs = (votes - (mean_of_votes * people)) / std_error
 
-	integrate_result = stats.norm.cdf(z_score, loc=0, scale=1) - 0.5#integrate.quad(standard_normal, 0, z_score)
-	p_de_moivre = max(1.0 - ( 2.0 * integrate_result ), 0)
+	integrate_result = abs(stats.norm.cdf(z_score, loc=0, scale=1) - 0.5)#integrate.quad(standard_normal, 0, z_score)
+	p_de_moivre = 1.0 - ( 2.0 * integrate_result )#max(1.0 - ( 2.0 * integrate_result ), 0)
 	#print str(std_error) + "\t" + str(zs) + "\t" + str(i) + "\t" + str(integrate_result) + "\t" + str(p_de_moivre)
 
-	print ">>> PDMi " + str(integrate_result)
 	if debug:
+		print ">>> PDMi " + str(integrate_result)
 		print "All votes prop " + str(total_votes)
 		print "Current votes " + str(votes)
-		print "mean votes " + str(mean_of_votes)
-		print "std error " + str(std_error) + " " + str(people)
-		print "zs " + str(zs)
+		print "mean diff and votes " + str(mean_diff) + " " + str(np.mean(total_votes)) + " " + str(np.std(total_votes))
+		print "std error " + str(sampling_std) + " " + str(people)
+		print "zs " + str(z_score)
 		print "Integrate " + str(integrate_result)
 		print "De moivre " + str(p_de_moivre)
 
 	return [p_de_moivre, np.mean(total_votes) / people]
 	
 
-def find_boom_bust():
-	total_votes = []
-	#for j in range(0, num_of_points):
+def estimate_votes():
+	expected = {}
+	total_voters = 0
+	total_votes = 0
+	#Summing total votes of candidate
         for prop in data:
-		total_votes.append(data[prop][0] * 1.0 / data[prop][2])#Percent for each city
+		total_voters = total_voters + data[prop][2]
+		total_votes = total_votes + data[prop][0]
 
-	return [np.max(total_votes), np.min(total_votes)]
+	#Find percent in each city
+	for prop in data:
+		expected[prop] = data[prop][2] * 1.0 / total_voters * total_votes
+
+	return expected	
 
 def calcSurprise(num_of_points):
   
@@ -123,16 +130,16 @@ def calcSurprise(num_of_points):
 
   #Start with equiprobably P(M)s
   #Initially, everything is equiprobable.
-  pMs =[1.0]#,(1.0/3),(1.0/3)]
+  pMs =[(1.0/2), (1.0/2)]#,(1.0/3),(1.0/3)]
 
-  uniform_pM = [pMs[0]]
-#  boom_pM = [pMs[1]]
+  moivre_pM = [pMs[0]]
+  base_pM = [pMs[1]]
  # bust_pM = [pMs[2]]
 
-  percents = find_boom_bust()
+  expected = estimate_votes()
   
-  pDMs = [0.0]#,0.0,0.0]
-  pMDs = [0.0]#,0.0,0.0]
+  pDMs = [0.0, 0.0]#,0.0]
+  pMDs = [0.0, 0.0]#,0.0]
   avg = 0
   total = 0
 
@@ -140,8 +147,8 @@ def calcSurprise(num_of_points):
   
   #Bayesian surprise is the KL divergence from prior to posterior
   kl = 0
-  diffs = [0]#,0,0]
-  sum_diffs = [0]#,0,0]
+  diffs = [0,0]#,0]
+  sum_diffs = [0,0]#,0]
 
   #Integration using python (for De moivre) - https://docs.scipy.org/doc/scipy/reference/tutorial/integrate.html
   for prop in data:
@@ -149,8 +156,8 @@ def calcSurprise(num_of_points):
       current_row = data[prop]
       debug = False
       if prop == 61778:
-	print ">>>> Cheguei com " + str(current_row)
-	debug = True
+      	print ">>>> Cheguei com " + str(current_row)
+      	debug = True
  
     #Calculate per state surprise
     #for prop in data:
@@ -172,9 +179,9 @@ def calcSurprise(num_of_points):
       #Multi-modal in R? mixmdl2 = normalmixEM(data2$total_votes, maxit=10000, mu=c(10, 60, 120), sigma=5); mixmdl[c("lambda","mu","sigma")]; plot(mixmdl,which=2); library(mixtools)
       #np.max(0, 0.8028698 * np.random.normal(loc=115.7006, scale=123.6779) + 0.1971302 * np.random.normal(loc=2659.6456, scale=8084.2473))
 	
-      #Boom
-      #diffs[1] = ((current_row[0]* 1.0/current_row[2]) - percents[0])
-      #pDMs[1] = 1 - abs(diffs[1])
+      #Base Rate
+      diffs[1] = ( (current_row[0]* 1.0/current_row[2]) - (expected[prop]*1.0 / current_row[2]) )
+      pDMs[1] = 1 - abs(diffs[1])
       #Bust
       #diffs[2] = ((current_row[0]* 1.0/current_row[2]) - percents[1])
       #pDMs[2] = 1 - abs(diffs[2])
@@ -182,15 +189,15 @@ def calcSurprise(num_of_points):
       #Estimate P(M|D)
       #uniform
       pMDs[0] = pMs[0]*pDMs[0]
-      #pMDs[1] = pMs[1]*pDMs[1]
+      pMDs[1] = pMs[1]*pDMs[1]
       #pMDs[2] = pMs[2]*pDMs[2]
 
       if prop == 61778:
-	print "Num points " + str(num_of_points)
-	print "Diffs " + str(diffs)
-	print "PM " + str(pMs)
-	print "PMD " + str(pMDs)
-	print "PDM " + str(pDMs)
+      	print "Num points " + str(num_of_points)
+      	print "Diffs " + str(diffs)
+      	print "PM " + str(pMs)
+      	print "PMD " + str(pMDs)
+      	print "PDM " + str(pDMs)
       
       
       #Surprise is the sum of KL divergance across model space
@@ -218,7 +225,7 @@ def calcSurprise(num_of_points):
 	surprise_data[prop] = -1 * abs(kl)
 
       uniform_data[prop] = pMs[0]
-      #base_data[prop] = pMs[1]
+      base_data[prop] = pMs[1]
     
   #Now lets globally update our model belief.
   for j in range(0, len(pMs)):
@@ -231,12 +238,12 @@ def calcSurprise(num_of_points):
   for j in range(0, len(pMs)):
 	pMs[j] = pMs[j] / summ
 
-  uniform_pM.append(pMs[0])
-  #boom_pM.append(pMs[1])
+  moivre_pM.append(pMs[0])
+  base_pM.append(pMs[1])
   #bust_pM.append(pMs[2])
 
-  print ">> Confiança De moivre " + str(uniform_pM)
-  #print ">> Confiança boom " + str(boom_pM)
+  print ">> Confiança De moivre " + str(moivre_pM)
+  print ">> Confiança base " + str(base_pM)
  # print ">> Confiança bust " + str(bust_pM)
 
   return [surprise_data, uniform_data, base_data]
@@ -268,7 +275,7 @@ if __name__ == "__main__":
 
 	#Creating variables to store values over iterations
 	all_surprise = {}
-	all_uniform = {}
+	all_moivre = {}
 	all_base = {}
 	surprise_summary = {}
 	uniform_summary = {}
@@ -276,7 +283,7 @@ if __name__ == "__main__":
 
 	#for prop in input_data['id_cidade']:
 	#	all_surprise[prop] = [[] for x in range(num_of_points)]
-	#	all_uniform[prop] = [[] for x in range(num_of_points)]
+	#	all_moivre[prop] = [[] for x in range(num_of_points)]
 	#	all_base[prop] = [[] for x in range(num_of_points)]
 #
 #		surprise_summary[prop] = [[] for x in range(num_of_points)]
@@ -288,22 +295,22 @@ if __name__ == "__main__":
 	result = calcSurprise(num_of_points)
 	#print str(result)
 	surprise_data = result[0]
-	uniform_data = result[1]
+	moivre_data = result[1]
 	base_data = result[2]
 
-	print str(surprise_data)
+	#print str(surprise_data)
 
 	for prop in input_data['full_ibge_code']:
 #		for i in range(0, num_of_points):
 		all_surprise[prop] = surprise_data[prop]
-		all_uniform[prop] = uniform_data[prop]
+		all_moivre[prop] = moivre_data[prop]
 		all_base[prop] = base_data[prop]
 
 	#Calculating summaries
 	#for prop in input_data['State']:
 	#	for i in range(0, num_of_points):
 	#		surprise_summary[prop][i] = np.mean(all_surprise[prop][i])
-	#		uniform_summary[prop][i] =  np.mean(all_uniform[prop][i])
+	#		uniform_summary[prop][i] =  np.mean(all_moivre[prop][i])
 	#		base_summary[prop][i] =  np.mean(all_base[prop][i])
 
 	#Printing surprise values summaries

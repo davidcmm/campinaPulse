@@ -251,9 +251,9 @@ if __name__ == "__main__":
 			base_summary[prop][i] =  np.mean(all_base[prop][i])
 
 	#Printing confidence in models
-	print ">>> Uniform pM " + str(np.mean(all_uniform_pM))
-	print ">>> Base Rate pM " + str(np.mean(all_base_pM))
-	print ">>> Normal pM " + str(np.mean(all_normal_pM))
+	print ">>> Uniform pM " + str(np.mean(all_uniform_pM)) + " " + str(np.std(all_uniform_pM)) + " [" + str( np.mean(all_uniform_pM) + 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "," + str( np.mean(all_uniform_pM) - 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "]"
+	print ">>> Base Rate pM " + str(np.mean(all_base_pM)) + " " + str(np.std(all_base_pM)) + " [" + str( np.mean(all_base_pM) + 1.96 * np.std(all_base_pM) / len(all_base_pM) ) + "," + str( np.mean(all_base_pM) - 1.96 * np.std(all_base_pM) / len(all_base_pM) ) + "]"
+	print ">>> Normal pM " + str(np.mean(all_normal_pM)) + " " + str(np.std(all_normal_pM)) + " [" + str( np.mean(all_normal_pM) + 1.96 * np.std(all_normal_pM) / len(all_normal_pM) ) + "," + str( np.mean(all_normal_pM) - 1.96 * np.std(all_normal_pM) / len(all_normal_pM) ) + "]"
 
 	#Printing surprise values summaries
 	for prop in surprise_summary:

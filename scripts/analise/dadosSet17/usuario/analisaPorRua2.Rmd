@@ -19,6 +19,7 @@ library(R.utils)
 library("spdep")
 library("reshape")
 library("fitdistrplus")
+library("plotly")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -252,8 +253,10 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
   #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, size=3)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") + ylim(c(-0.02, 0.02))
-   g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, size=3)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylim(c(-0.02, 0.02))
+  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+   g4_new <- hide_legend(ggplotly(g4, tooltip = c("angle")))
+   g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+   g5_new <- hide_legend(ggplotly(g5, tooltip = c("angle")))
    #g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
@@ -283,9 +286,9 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
 # geom_polygon(data = dat2, aes(y = qscore, group = group), alpha = 0.3)
 #     
 #       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
-  
-  multiplot(g1, g4, g5, cols=1)
-  return (mapping)
+  #multiplot(g1, g4, g5, cols=1)
+  new_list <- list("mapping" = mapping, "g1" = g1, "g4" = g4_new, "g5" = g5_new)
+  return (new_list)
 }
 
 ```
@@ -358,9 +361,15 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 203, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
+#fig.height=30, fig.width=12
+#fig.height=15, fig.width=12
+new_list <- plot_ci_per_photo(cristina, "Cristina Procopio", c(22, 45, 293, 315), c(135, 203, 225))#Street 6 -> At number 436, 22 x 315 and 135 x 203. ADD 203 in side2
+
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data <- function (current_df, all_data, best_folder, worst_folder){
     color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00")
@@ -528,7 +537,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
    
 #Edésio Silva
 
-```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
 #edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
@@ -553,9 +562,13 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
+new_list <- plot_ci_per_photo(edesio, "Edésio Silva", c(22, 135), c(315, 203))#Street 1
+
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data(edesio, all_data,  best_folder, worst_folder)
 
@@ -634,7 +647,7 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 
 
 #Inácio Marques
-```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 #inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
@@ -660,9 +673,12 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 180, 90), c(293, 270, 22, 10))#Street 2. ADD 180 in side1 
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
+new_list <- plot_ci_per_photo(inacio, "Inacio", c(203, 112, 180, 90), c(293, 270, 22, 10))#Street 2. ADD 180 in side1 
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data(inacio, all_data,  best_folder, worst_folder)
 
@@ -737,7 +753,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
    * Região melhor? Pelo surprise parece ser a região de 120 a 360, mesma sensação olhando os scores.
 
 #Floriano peixoto
-```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 #floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
@@ -762,9 +778,12 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
+new_list <- plot_ci_per_photo(floriano, "Floriano Peixoto", c(22,293), c(112,203))#Street 5
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data(floriano, all_data,  best_folder, worst_folder)
 ```
@@ -839,7 +858,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
    * Região melhor? Não dá para identificar pelo surprise, pelos **scores poderia-se dizer do 552 ao 694?**
 
 #Maciel Pinheiro
-```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 #maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
@@ -864,9 +883,12 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
+new_list <- plot_ci_per_photo(maciel, "Maciel Pinheiro", c(360, 90), c(270, 180))#Street 3
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data(maciel, all_data,  best_folder, worst_folder)
 ```
@@ -948,7 +970,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
    * Região melhor? O meio da rua (190 a 284) parece ter mais concentração de surpresas positivas, confirmado olhando os scores
 
 #Manoel Pereira
-```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
+```{r echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 #manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
@@ -973,9 +995,12 @@ arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 ```
 
-```{r results='asis', echo=FALSE, out.extra='', fig.height=15, fig.width=12, warning=FALSE}
-mapping <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
-kable(mapping, format = "markdown")
+```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
+new_list <- plot_ci_per_photo(manoel, "Manoel Pereira", c(22, 135, 293), c(315, 112, 203, 225))#Street 4
+new_list$g1
+new_list$g4
+new_list$g5
+kable(new_list$mapping, format = "markdown")
 
 show_street_data(manoel, all_data,  best_folder, worst_folder)
 ```

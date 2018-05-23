@@ -74,7 +74,7 @@ Os estudos de percepção realizados até o momento têm focado em capturar dive
 * Na segunda versão do Place Pulse tem-se 2984 pontos coletados em São Paulo e se considerarmos o total de 48.623 ruas da cidade, mesmo se fosse um ponto por rua **foram cobertos 6,1% das ruas (pouca cobertura!)**.
 
 ```{r}
-  teste <- read.csv("/local/david//workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
+  teste <- read.csv("~/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv", header=TRUE)#/local/david/workspace_doutorado/Place Pulse/pp2_20161010/votes.csv
   lat_min <- -23.401371#Sao Paulo
   lat_max <- -24.006227
   lon_min <- -46.334217
@@ -241,6 +241,12 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = "kendall"))
 print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = "spearman"))
 
 print(paste(">>>> Kendall Distance ", normalizedKendallTauDistance2(d69_cur$V3.x, d69_cur$V3.y)))
+
+men <- read.table("all100/all_masculino_ordenado.dat")
+women <- read.table("all100/all_feminino_ordenado.dat")
+men_wo <- merge(select(men, V2, V3), select(women, V2, V3), by = "V2")
+print(cor.test(men_wo$V3.x, men_wo$V3.y, method = "kendall"))
+print(cor.test(men_wo$V3.x, men_wo$V3.y, method = "spearman"))
 ```
 
 ## Comparação entre rankings de moradores e não moradores
@@ -445,7 +451,7 @@ plotRegAndLinear(reg_geral, reg_input)
 
 #test for spatial autocorrelation using residuals: http://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-statistics-toolbox/h-how-spatial-autocorrelation-moran-s-i-spatial-st.htm
 moran <- lm.morantest(reg_geral, neigh2, alternative="two.sided")
-moran.test(residuals,neigh2, alternative="two.sided")
+moran.test(residuals, neigh2, alternative="two.sided")
 summary(moran)
 moran
 

@@ -84,8 +84,8 @@ def calcSurprise(num_of_points):
   pMs =[(1.0/3),(1.0/3),(1.0/3)]
 
   uniform_pM = [pMs[0]]
-  boom_pM = [pMs[1]]
-  bust_pM = [pMs[2]]
+  base_rate_pM = [pMs[1]]
+  normal_pM = [pMs[2]]
   
   pDMs = [0,0,0]
   pMDs = [0,0,0]
@@ -113,7 +113,7 @@ def calcSurprise(num_of_points):
 
       avg_street  = average_street(prop, num_of_points)#For whole street
       total_street = sumU_street(prop, num_of_points)
-      avg_num = median_num(prop, i)#average_num;//For current point
+      avg_num = average_num(prop, i)#median_num;//For current point
       total_num = sumU_num(prop, i)
       
       #Estimate P(D|M) as 1 - |O - E|
@@ -132,7 +132,6 @@ def calcSurprise(num_of_points):
       pMDs[0] = pMs[0]*pDMs[0];
       pMDs[1] = pMs[1]*pDMs[1];
       pMDs[2] = pMs[2]*pDMs[2];
-      
       
       #Surprise is the sum of KL divergance across model space
       #Each model also gets a weighted "vote" on what the sign should be
@@ -169,10 +168,10 @@ def calcSurprise(num_of_points):
       pMs[j] = pMs[j] / summ
     
     uniform_pM.append(pMs[0])
-    boom_pM.append(pMs[1])
-    bust_pM.append(pMs[2])
+    base_rate_pM.append(pMs[1])
+    normal_pM.append(pMs[2])
 
-  return [surprise_data, uniform_data, base_data]
+  return [surprise_data, uniform_data, base_data, uniform_pM, base_rate_pM, normal_pM]
 
 if __name__ == "__main__":
 
@@ -206,6 +205,9 @@ if __name__ == "__main__":
 	all_surprise = {}
 	all_uniform = {}
 	all_base = {}
+	all_uniform_pM = []
+	all_base_pM = []
+	all_normal_pM = []
 	surprise_summary = {}
 	uniform_summary = {}
 	base_summary = {}
@@ -227,6 +229,13 @@ if __name__ == "__main__":
 	  surprise_data = result[0]
 	  uniform_data = result[1]
 	  base_data = result[2]
+          uniform_pM = result[3]
+	  base_rate_pM = result[4]
+          normal_pM = result[5]
+
+	  all_uniform_pM.append(uniform_pM[-1])
+	  all_base_pM.append(base_rate_pM[-1])
+	  all_normal_pM.append(normal_pM[-1])
 
 	  for prop in input_data['street']:
 		for i in range(0, num_of_points):
@@ -240,6 +249,11 @@ if __name__ == "__main__":
 			surprise_summary[prop][i] = np.mean(all_surprise[prop][i])
 			uniform_summary[prop][i] =  np.mean(all_uniform[prop][i])
 			base_summary[prop][i] =  np.mean(all_base[prop][i])
+
+	#Printing confidence in models
+	print ">>> Uniform pM " + str(np.mean(all_uniform_pM)) + " " + str(np.std(all_uniform_pM)) + " [" + str( np.mean(all_uniform_pM) + 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "," + str( np.mean(all_uniform_pM) - 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "]"
+	print ">>> Base Rate pM " + str(np.mean(all_base_pM)) + " " + str(np.std(all_base_pM)) + " [" + str( np.mean(all_base_pM) + 1.96 * np.std(all_base_pM) / len(all_base_pM) ) + "," + str( np.mean(all_base_pM) - 1.96 * np.std(all_base_pM) / len(all_base_pM) ) + "]"
+	print ">>> Normal pM " + str(np.mean(all_normal_pM)) + " " + str(np.std(all_normal_pM)) + " [" + str( np.mean(all_normal_pM) + 1.96 * np.std(all_normal_pM) / len(all_normal_pM) ) + "," + str( np.mean(all_normal_pM) - 1.96 * np.std(all_normal_pM) / len(all_normal_pM) ) + "]"
 
 	#Printing surprise values summaries
 	for prop in surprise_summary:

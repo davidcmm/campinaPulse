@@ -20,6 +20,7 @@ library("spdep")
 library("reshape")
 library("fitdistrplus")
 library("plotly")
+library("caret")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -254,9 +255,9 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
   g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
-   g4_new <- hide_legend(ggplotly(g4, tooltip = c("angle")))
+   g4_new <- hide_legend(ggplotly(g4, tooltip = c("num", "angle")))
    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
-   g5_new <- hide_legend(ggplotly(g5, tooltip = c("angle")))
+   g5_new <- hide_legend(ggplotly(g5, tooltip = c("num", "angle")))
    #g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
 #Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
 # mperson <-function(x) {
@@ -359,6 +360,51 @@ for (value in unique(cristina$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialistas: http://www.lee.dante.br/pesquisa/kappa/
+aida <- read.csv("entrevista/aida_cristina.csv", header=FALSE)
+mariana <- read.csv("entrevista/mariana_cristina.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_cristina.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Aida x Mariana")
+confusionMatrix(aida$V2, mariana$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(aida$V2, method$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(mariana$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- aida
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- mariana
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Aida x Mariana")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- aida
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- mariana
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Aida x Mariana")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
 ```
 
 ```{r results='asis', echo=FALSE, fig.height=5, fig.width=10, warning=FALSE}
@@ -457,8 +503,8 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
 }
 
 show_street_data(cristina, all_data, best_folder, worst_folder)
-
 ```
+
 
 1. Locais problemáticos na rua (olhando as fotos): 
     * 2 side1 (terreno com lixo)
@@ -560,6 +606,50 @@ for (value in unique(edesio$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialistas
+livia <- read.csv("entrevista/livia_edesio.csv", header=FALSE)
+kainara <- read.csv("entrevista/kainara_edesio.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_edesio.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Livia x Kainara")
+confusionMatrix(livia$V2, kainara$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(livia$V2, method$V2)
+print(">>>> kainara x Surprise")
+confusionMatrix(kainara$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- livia
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- kainara
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Livia x Kainara")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Kainara x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- livia
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- kainara
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Livia x Kainara")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Kainara x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -671,6 +761,50 @@ for (value in unique(inacio$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialistas
+mauro <- read.csv("entrevista/mauro_inacio.csv", header=FALSE)
+bea <- read.csv("entrevista/bea_inacio.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_inacio.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Mauro x bea")
+confusionMatrix(mauro$V2, bea$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(mauro$V2, method$V2)
+print(">>>> bea x Surprise")
+confusionMatrix(bea$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- mauro
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- bea
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Mauro x Bea")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Bea x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- mauro
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- bea
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Mauro x Bea")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Bea x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -776,6 +910,50 @@ for (value in unique(floriano$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialistas
+aida <- read.csv("entrevista/aida_floriano.csv", header=FALSE)
+mariana <- read.csv("entrevista/mariana_floriano.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_floriano.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Aida x Mariana")
+confusionMatrix(aida$V2, mariana$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(aida$V2, method$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(mariana$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- aida
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- mariana
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Aida x Mariana")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- aida
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- mariana
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Aida x Mariana")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Aida x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> Mariana x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -786,6 +964,7 @@ new_list$g5
 kable(new_list$mapping, format = "markdown")
 
 show_street_data(floriano, all_data,  best_folder, worst_folder)
+
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
@@ -881,6 +1060,50 @@ for (value in unique(maciel$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialistas
+livia <- read.csv("entrevista/livia_maciel.csv", header=FALSE)
+kainara <- read.csv("entrevista/kainara_maciel.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_maciel.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Livia x Kainara")
+confusionMatrix(livia$V2, kainara$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(livia$V2, method$V2)
+print(">>>> kainara x Surprise")
+confusionMatrix(kainara$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- livia
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- kainara
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Livia x kainara")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> kainara x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- livia
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- kainara
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Livia x kainara")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Livia x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> kainara x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -891,6 +1114,7 @@ new_list$g5
 kable(new_list$mapping, format = "markdown")
 
 show_street_data(maciel, all_data,  best_folder, worst_folder)
+
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 
@@ -993,6 +1217,50 @@ for (value in unique(manoel$num)){
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
+
+#Confusion Matrix between Specialists and method x specialists
+mauro <- read.csv("entrevista/mauro_manoel.csv", header=FALSE)
+bea <- read.csv("entrevista/bea_manoel.csv", header=FALSE)
+method <- read.csv("entrevista/surprise_manoel.csv", header=FALSE)
+print(">>>> Matriz confusao 3 niveis: 1,0,-1")
+print(">>>> Mauro x bea")
+confusionMatrix(mauro$V2, bea$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(mauro$V2, method$V2)
+print(">>>> bea x Surprise")
+confusionMatrix(bea$V2, method$V2)
+
+#Confusion matrix with 1 and -1 (0, -1)
+spec1 <- mauro
+spec1[spec1$V2<=0,]$V2 <- -1
+spec2 <- bea
+spec2[spec2$V2<=0,]$V2 <- -1
+method_modified <- method
+method_modified[method_modified$V2<=0,]$V2 <- -1
+
+print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
+print(">>>> Mauro x bea")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> bea x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
+
+#Confusion matrix with 1 (1,0) and -1
+spec1 <- mauro
+spec1[spec1$V2>=0,]$V2 <- 1
+spec2 <- bea
+spec2[spec2$V2>=0,]$V2 <- 1
+method_modified <- method
+method_modified[method_modified$V2>=0,]$V2 <- 1
+
+print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
+print(">>>> Mauro x bea")
+confusionMatrix(spec1$V2, spec2$V2)
+print(">>>> Mauro x Surprise")
+confusionMatrix(spec1$V2, method_modified$V2)
+print(">>>> bea x Surprise")
+confusionMatrix(spec2$V2, method_modified$V2)
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -1003,6 +1271,7 @@ new_list$g5
 kable(new_list$mapping, format = "markdown")
 
 show_street_data(manoel, all_data,  best_folder, worst_folder)
+
 ```
 
 1. Locais problemáticos na rua (olhando as fotos): 

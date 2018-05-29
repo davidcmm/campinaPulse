@@ -275,7 +275,7 @@ count_profile <- function(listOfFiles) {
   counters = data.frame(key=listOfFiles, value=listOfValues)
   
   gender_data <-filter(counters, grepl("masculino", key) | grepl("feminino", key)) %>% mutate(type="gender") %>% mutate(percent=value/sum(value))
-  ge_data <-filter(counters, grepl("jovem", key) | grepl("adulto", key)) %>% mutate(type="age") %>% mutate(percent=value/sum(value))
+  age_data <-filter(counters, grepl("jovem", key) | grepl("adulto", key)) %>% mutate(type="age") %>% mutate(percent=value/sum(value))
   income_data <-filter(counters, grepl("baixa", key) | grepl("media", key)) %>% mutate(type="income") %>% mutate(percent=value/sum(value))
   counters <- rbind(gender_data, income_data, age_data)
   

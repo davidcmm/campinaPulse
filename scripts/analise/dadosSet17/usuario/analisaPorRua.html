@@ -353,6 +353,29 @@ print(cor.test(d69_cur$V3.x, d69_cur$V3.y, method = &quot;kendall&quot;))</code>
 <pre><code>## [1] 1269
 ## [1] 0.4015823
 ## [1] &quot;&gt;&gt;&gt;&gt; Kendall Distance  0.401582278481013&quot;</code></pre>
+<pre class="r"><code>men &lt;- read.table(&quot;all100/all_masculino_ordenado.dat&quot;)
+women &lt;- read.table(&quot;all100/all_feminino_ordenado.dat&quot;)
+men_wo &lt;- merge(select(men, V2, V3), select(women, V2, V3), by = &quot;V2&quot;)
+print(cor.test(men_wo$V3.x, men_wo$V3.y, method = &quot;kendall&quot;))</code></pre>
+<pre><code>## 
+##  Kendall&#39;s rank correlation tau
+## 
+## data:  men_wo$V3.x and men_wo$V3.y
+## z = 9.8895, p-value &lt; 2.2e-16
+## alternative hypothesis: true tau is not equal to 0
+## sample estimates:
+##       tau 
+## 0.6106443</code></pre>
+<pre class="r"><code>print(cor.test(men_wo$V3.x, men_wo$V3.y, method = &quot;spearman&quot;))</code></pre>
+<pre><code>## 
+##  Spearman&#39;s rank correlation rho
+## 
+## data:  men_wo$V3.x and men_wo$V3.y
+## S = 56820, p-value &lt; 2.2e-16
+## alternative hypothesis: true rho is not equal to 0
+## sample estimates:
+##       rho 
+## 0.8026946</code></pre>
 </div>
 <div id="comparacao-entre-rankings-de-moradores-e-nao-moradores" class="section level2">
 <h2>Comparação entre rankings de moradores e não moradores</h2>

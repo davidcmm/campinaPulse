@@ -98,11 +98,57 @@ qscoresDFGeral <- read.csv("qscores-df-geral.csv", header = TRUE)
 all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
 all_data$street <- as.character(all_data$street)
 all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+#Simulating numbers in street
+aprigio <- arrange(filter(all_data, street == "Av_Aprigio_Veloso"), -num)
+aprigio$num2 <- 0
+aprigio[3,]$num2 <- 1
+aprigio[4,]$num2 <- 1
+for (i in seq(5, nrow(aprigio), 4) ) { 
+      cur_num <- aprigio[i,]$num
+      cur_num2 <- aprigio[i+1,]$num
+      cur_num3 <- aprigio[i+2,]$num
+      cur_num4 <- aprigio[i+3,]$num
+      
+      base_num <- aprigio[1,]$num
+      base_num2 <- aprigio[2,]$num
+      base_num3 <- aprigio[3,]$num
+      base_num4 <- aprigio[4,]$num
+      
+      aprigio[i,]$num2 <- abs(cur_num - base_num)
+      aprigio[i+1,]$num2 <- abs(cur_num2 - base_num2)
+      aprigio[i+2,]$num2 <- abs(cur_num3 - base_num3)+1
+      aprigio[i+3,]$num2 <- abs(cur_num4 - base_num4)+1
+} 
+
+rodrigues <- arrange(filter(all_data, street == "R._Rodrigues_Alves"), -num)
+rodrigues$num2 <- 315 + 163
+for (i in seq(5, nrow(rodrigues), 4) ) { 
+      cur_num <- rodrigues[i,]$num
+      cur_num2 <- rodrigues[i+1,]$num
+      cur_num3 <- rodrigues[i+2,]$num
+      cur_num4 <- rodrigues[i+3,]$num
+      
+      base_num <- rodrigues[1,]$num
+      base_num2 <- rodrigues[2,]$num
+      base_num3 <- rodrigues[3,]$num
+      base_num4 <- rodrigues[4,]$num
+      
+      rodrigues[i,]$num2 <- rodrigues[i,]$num2 + abs(cur_num - base_num)
+      rodrigues[i+1,]$num2 <- rodrigues[i+1,]$num2 + abs(cur_num2 - base_num2)
+      rodrigues[i+2,]$num2 <- rodrigues[i+2,]$num2 + abs(cur_num3 - base_num3)
+      rodrigues[i+3,]$num2 <- rodrigues[i+3,]$num2 + abs(cur_num4 - base_num4)
+} 
+
+#Merging both streets into one
+all_data <- filter(all_data, street != "R._Rodrigues_Alves" & street != "Av_Aprigio_Veloso")
+all_data$num2 <- 0
+all_data <- rbind(all_data, aprigio, rodrigues)
 all_data[all_data$street == "R._Rodrigues_Alves",]$street <- "Av_Aprigio_Veloso"
 
 #Creating output file for surprise calculation - streets with 28 points
-data <- dplyr::filter(dplyr::select(all_data, street, qscore, num, angle), street == "Av_Aprigio_Veloso" | street == "R._Rodrigues_Alves")
-data <- data %>% arrange(num, angle) %>% mutate(rank=1:n())
+data <- dplyr::filter(dplyr::select(all_data, street, qscore, num2, angle), street == "Av_Aprigio_Veloso" | street == "R._Rodrigues_Alves")
+data <- data %>% arrange(num2, angle) %>% mutate(rank=1:n())
 result <- reshape(dplyr::select(data, street, qscore, rank), idvar="street", timevar = "rank", direction="wide")
 colnames(result) <- sub("qscore\\.", "num", colnames(result))
 write.csv(result, "surprise/street_scores_added.csv", quote = FALSE, row.names = FALSE, col.names = TRUE)
@@ -114,55 +160,22 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data$side[data$angle %in% ids1] <- "Side 1"
   data$side[data$angle %in% ids2] <- "Side 2"
 
-  if(plotTitle == "Cristina Procopio"){
-    data$side[data$num == 436 & (data$angle == 22 | data$angle == 135)] <- "Side 1"
-    data$side[data$num == 436 & (data$angle == 203 | data$angle == 315)] <- "Side 2"
+  if (plotTitle == "Aprigio Veloso"){
+    data1 <- arrange(filter(data, side == "Side 1"), num2, angle)
+    data2 <- arrange(filter(data, side == "Side 2"), num2, angle)
   }
-  
-  if(plotTitle == "Edésio Silva" || plotTitle == "Manoel Pereira"){
-    data1 <- arrange(filter(data, side == "Side 1"), num, -angle)
-    data2 <- arrange(filter(data, side == "Side 2"), num, angle)
-  }else if (plotTitle == "Inacio"  || plotTitle == "Maciel Pinheiro" || plotTitle == "Cristina Procopio" || plotTitle == "Floriano Peixoto" || plotTitle == "Aprigio Veloso"){
-    data1 <- arrange(filter(data, side == "Side 1"), num, angle)
-    data2 <- arrange(filter(data, side == "Side 2"), num, angle)
-    
-    if (plotTitle == "Cristina Procopio"){
-        to_change <- data1[nrow(data1)-1,]
-        data1[nrow(data1)-1,] <- data1[nrow(data1),]
-        data1[nrow(data1),] <- to_change
-    }
-  }
-  
-  #Creating sorted data info for area plot
-  # data$ymin <- 0
-  # data$ymax <- 0
-  # sorted_data <- arrange(data, num)
-  # for (i in seq(1, nrow(sorted_data), by = 4)) { 
-  #   ymin <- min(sorted_data[i,]$qscore, sorted_data[i+1,]$qscore, sorted_data[i+2,]$qscore, sorted_data[i+3,]$qscore)
-  #   ymax <- max(sorted_data[i,]$qscore, sorted_data[i+1,]$qscore, sorted_data[i+2,]$qscore, sorted_data[i+3,]$qscore)
-  #   
-  #   sorted_data[i,]$ymin <- ymin
-  #   sorted_data[i,]$ymax <- ymax
-  #   sorted_data[i+1,]$ymin <- ymin
-  #   sorted_data[i+1,]$ymax <- ymax
-  #   sorted_data[i+2,]$ymin <- ymin
-  #   sorted_data[i+2,]$ymax <- ymax
-  #   sorted_data[i+3,]$ymin <- ymin
-  #   sorted_data[i+3,]$ymax <- ymax
-  # }
-  
   
   #Labeling first and second points of each street number in each side
-  data1$xlabel <- paste(data1$num, "-", "p1") 
-  data2$xlabel <- paste(data2$num, "-", "p1")
+  data1$xlabel <- paste(data1$num2, "-", "p1") 
+  data2$xlabel <- paste(data2$num2, "-", "p1")
   cur_num <- 0
   occurred <- FALSE
   for (i in 1:nrow(data1)) { 
     if(occurred == FALSE && cur_num == 0){
-        cur_num <- data1[i,]$num
+        cur_num <- data1[i,]$num2
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data1[i,]$xlabel <- paste(data1[i,]$num, "-", "p2")
+        data1[i,]$xlabel <- paste(data1[i,]$num2, "-", "p2")
         cur_num <- 0
         occurred <- FALSE
     }
@@ -171,27 +184,27 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   occurred <- FALSE
   for (i in 1:nrow(data2)) {
     if(occurred == FALSE && cur_num == 0){
-        cur_num <- data2[i,]$num
+        cur_num <- data2[i,]$num2
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data2[i,]$xlabel <- paste(data2[i,]$num, "-", "p2")
+        data2[i,]$xlabel <- paste(data2[i,]$num2, "-", "p2")
         cur_num <- 0
         occurred <- FALSE
     }
   }
-  numbers_to_show <- unique(append(data1$num, data2$num))
+  numbers_to_show <- unique(append(data1$num2, data2$num2))
   #Pair values in side1 and odd values in side2
   cur_num <- 0
   occurred <- FALSE
   for (i in 1:nrow(data1)) { 
-    if(data1[i,]$num %% 2 != 0){
-        data1[i,]$num <- data1[i,]$num + 3
+    if(data1[i,]$num2 %% 2 != 0){
+        data1[i,]$num2 <- data1[i,]$num2 + 3
     }
     if(occurred == FALSE && cur_num == 0){
-        cur_num <- data1[i,]$num
+        cur_num <- data1[i,]$num2
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data1[i,]$num <- data1[i,]$num + 4
+        data1[i,]$num2 <- data1[i,]$num2 + 4
         cur_num <- 0
         occurred <- FALSE
     }   
@@ -199,14 +212,14 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   cur_num <- 0
   occurred <- FALSE
   for (i in 1:nrow(data2)) { 
-    if(data2[i,]$num %% 2 == 0){
-        data2[i,]$num <- data2[i,]$num + 3
+    if(data2[i,]$num2 %% 2 == 0){
+        data2[i,]$num2 <- data2[i,]$num2 + 3
     }
     if(occurred == FALSE && cur_num == 0){
-        cur_num <- data2[i,]$num
+        cur_num <- data2[i,]$num2
         occurred <- TRUE
     }else if(occurred == TRUE){
-        data2[i,]$num <- data2[i,]$num + 4
+        data2[i,]$num2 <- data2[i,]$num2 + 4
         cur_num <- 0
         occurred <- FALSE
     }
@@ -223,12 +236,10 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   data2$upper <- data2$mean + (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
   data2$lower <- data2$mean - (sd(data2$V3) * 1.96 / sqrt(nrow(data2)))
   
-  #side_summary <- data.frame(side=c(rep("side1",4), rep("side2",4)), upper=c(rep(unique(data1$upper),4), rep(unique(data2$upper),4)), lower= c(rep(unique(data1$lower),4), rep(unique(data2$lower),4)), x=rep(seq(max(numbers_to_show), max(numbers_to_show)+30, 10), 1) )  
-  
   data <- rbind(data1, data2)
   data$side <- factor(data$side)
 
-  mapping <- dplyr::select(data, xlabel, side, num, angle, V3, street)
+  mapping <- dplyr::select(data, xlabel, side, num2, angle, V3, street)
   
   if (plotTitle == "Inacio" || plotTitle == "Cristina Procopio" ){
     labels_to_show <- dplyr::select(dplyr::filter(data, side=="Side 1"), xlabel)[[1]][c(1,3,5,7,9,11,13,15,17,19)]
@@ -237,43 +248,9 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   }
   numbers_to_show <- numbers_to_show[c(1,2,3,4,5,6,7)]
   
-  g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
-  #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
-  #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
-   g4_new <- hide_legend(ggplotly(g4, tooltip = c("num", "angle")))
-   #g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
-   #g5_new <- hide_legend(ggplotly(g5, tooltip = c("num", "angle")))
-   #g6 <- ggplot(data, aes(x=num, y=surprise_unif_base_normAll, size=3)) + geom_point(aes(colour = surprise_unif_base_normAll, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for all data") + ylim(c(-0.1, 0.1))
-#Difference area plot: https://mcfromnz.wordpress.com/tag/ggplot/  
-# mperson <-function(x) {
-#     x <-x[order(x$num), ]
-#     y <-x[-c(1, 2, nrow(x) -1, nrow(x)), ]
-#     x <-rbind(x, y)
-#     x <-x[order(x$num), ]
-#     x$group <-rep(letters[1:(nrow(x)/4)], each = 4)
-#     return(x)
-# }
-# data2 <-ddply(data, .(), mperson)
-# mgroup <-function(x) {
-#     x <-x[order(x$qscore), ]
-#     left <-x[x$num ==min(x$num), ]
-#     right <-x[x$num ==max(x$num), ]
-#     if (all(left$side ==right$side)) {
-#         left <-left[order(left$qscore, decreasing = T), ]
-#         right <-right[order(right$qscore, decreasing = F), ]
-#         return(rbind(left, right))
-#     } else {
-#         return(x[order(x$num), ])
-#     }
-# }
-# data2 <-ddply(data2, .(group), mgroup)
-#   
-#   ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line(aes(colour=side)) + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+10), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") +
-# geom_polygon(data = dat2, aes(y = qscore, group = group), alpha = 0.3)
-#     
-#       geom_ribbon(data = sorted_data, aes(x = num, ymin = ymin, ymax = ymax), fill = "grey", alpha = 0.4)
-  #multiplot(g1, g4, g5, cols=1)
+  g1 <- ggplot(data, aes(x=num2, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
+  g4 <- ggplot(data, aes(x=num2, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+   g4_new <- hide_legend(ggplotly(g4, tooltip = c("num2", "angle")))
   new_list <- list("mapping" = mapping, "g1" = g1, "g4" = g4_new)#, "g5" = g5_new)
   return (new_list)
 }
@@ -320,7 +297,7 @@ surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm
 best_folder <- "../../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../../percepcaoLocal/agradavel/piores/intersects/"
 
-cristina <- dplyr::filter(all_data, street == "Av_Aprigio_Veloso") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
+cristina <- dplyr::filter(all_data, street == "Av_Aprigio_Veloso") %>% dplyr::group_by(num2) %>% dplyr::arrange(street, num2, angle) %>% dplyr::select(url, photo_name, street, num2, angle, qscore, V3, ci)
 cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "Av_Aprigio_Veloso"), id.vars = "street")$value
 
 shapiro.test(cristina$qscore)
@@ -331,10 +308,10 @@ ineq(cristina$qscore, type="Gini")
 gini <- data.frame("num"=integer(), "value"=double())
 gini_surp_num <- data.frame("num"=integer(), "value"=double())
 gini_surp_st <- data.frame("num"=integer(), "value"=double())
-for (value in unique(cristina$num)){
-  gini[nrow(gini) + 1,] = list(value, ineq(filter(cristina, num == value)$qscore, type="Gini"))
-  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(cristina, num == value)$surprise_num, type="Gini"))
-  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(cristina, num == value)$surprise_street, type="Gini"))
+for (value in unique(cristina$num2)){
+  gini[nrow(gini) + 1,] = list(value, ineq(filter(cristina, num2 == value)$qscore, type="Gini"))
+  gini_surp_num[nrow(gini_surp_num) + 1,] = list(value, ineq(filter(cristina, num2 == value)$surprise_num, type="Gini"))
+  gini_surp_st[nrow(gini_surp_st) + 1,] = list(value, ineq(filter(cristina, num2 == value)$surprise_street, type="Gini"))
 }
 arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
@@ -382,13 +359,13 @@ show_street_data <- function (current_df, all_data, best_folder, worst_folder){
       lower_points <- rows[1:(max_index-1),]
       upper_points <- rows[max_index:4,]
       
-      rows <- current_df[i:(i+3),] %>% arrange(num, angle)
+      rows <- current_df[i:(i+3),] %>% arrange(num2, angle)
       for (j in 1:4){
         row <- rows[j,]
         
         street <- as.character(row$street)
         photo_name <- as.character(row$photo_name)
-        num <- row$num
+        num <- row$num2
         angle <- row$angle
         score <- row$qscore
         surprise <- row$surprise_unif_base_norm_fixed

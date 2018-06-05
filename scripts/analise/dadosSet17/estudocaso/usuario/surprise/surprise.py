@@ -92,7 +92,7 @@ def calcSurprise(num_of_points):
   avg = 0
   total = 0
 
-  normal_fit = {"all" : [4.68061858, 0.68803926], u'Av_Aprigio_Veloso': [4.6340706, 0.8303223]}
+  normal_fit = {"all" : [4.66427796, 0.67126352], u'Av_Aprigio_Veloso': [4.51102784, 0.73482458]}
   
   #Bayesian surprise is the KL divergence from prior to posterior
   kl = 0

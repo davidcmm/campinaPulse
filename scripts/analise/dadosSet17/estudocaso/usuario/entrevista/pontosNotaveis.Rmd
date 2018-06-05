@@ -1,0 +1,253 @@
+---
+title: "Pontos Notáveis"
+output:
+  html_document:
+    self_contained: no
+  pdf_document: default
+---
+
+<style>
+    body .main-container {
+         max-width: 100%;
+        margin-left: 20px;
+        margin-right: auto;
+    }
+</style>
+
+Pontos notáveis (positivos e negativos) apontados por nosso método e descrição.   
+
+```{r setup, include=FALSE}
+cat("<br/>")
+
+library("ggplot2")
+library("dplyr")
+library("knitr")
+library("texreg")
+library("ineq")
+library(R.utils)
+library("knitr")
+library("spdep")
+library("reshape")
+library("fitdistrplus")
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+best_folder <- "../../percepcaoLocal/agradavel/melhores/intersects/"
+worst_folder <- "../../percepcaoLocal/agradavel/piores/intersects/"
+
+show_street_data <- function (current_df, all_data, force_split, highlighted_positive, best_folder, worst_folder, highlighted_neutral){
+    color_space <- c("#000000", "#001900", "#003300", "#004c00", "#006600", "#007f00", "#009900", "#00b200", "#00cc00", "#00e500", "#00ff00", "#ffffff")
+    step <- (max(all_data$qscore) - min(all_data$qscore)) / length(color_space)
+    thresholds <- seq(min(all_data$qscore), max(all_data$qscore), step)
+    
+    cat("<div class='row'>")
+    angleData = c()
+    for(i in 1:nrow(current_df)) {
+      row <- current_df[i,]
+      
+      street <- as.character(row$street)
+      photo_name <- as.character(row$url) #as.character(row$photo_name)
+      number <- row$num2
+      angl <- row$angle
+      score <- row$qscore
+      angleData <- append(angleData, score)
+      
+      filtered <- filter(highlighted_positive, num==number & angle == angl)
+      filtered_neutral <- filter(highlighted_neutral, num==number & angle == angl)
+      folder <- "none"
+      font_color <- "white"
+      if (nrow(filtered) > 0){
+         color_index <- 11
+        if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- photo_name#paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else{
+           url <- as.character(row$url)
+        }
+      }else if (nrow(filtered_neutral) > 0){
+        color_index <- 12
+        font_color <- "black"
+        if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- photo_name#paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else{
+           url <- as.character(row$url)
+        }
+      }
+      else{
+         color_index <- 1
+        if (file.exists(paste(worst_folder, photo_name, sep=""))){
+          url <- photo_name#paste(worst_folder, photo_name, sep="")
+          folder <- "worst"
+        }else if (file.exists(paste(best_folder, photo_name, sep=""))){
+          url <- photo_name#paste(best_folder, photo_name, sep="")
+          folder <- "best"
+        }else{
+           url <- as.character(row$url)
+        }
+      }
+      
+      cat(paste("<div class='col-xs-3' style=\"background-color:", color_space[color_index],"\"align=\"center\">", sep=""))
+      cat("<img src='", url,"' width='400px'>", sep = "")
+      cat("<p style=\"color:",font_color,";font-size:90%\">", number, "-", angl, "-> ", score,  "</p>", sep="")#folder, "-",
+      cat("</div>")
+      
+      #End of row with 4 images
+      if(force_split && i%%4 == 0){
+        cat("<div class=\"col-xs-12\" style=\"height:1000px;\"></div>")
+      }
+    }
+}
+```
+
+```{r results='asis', echo=FALSE, out.extra='', fig.height=10, fig.width=12, warning=FALSE}
+#Checking sample size
+scores_data <- read.table("../all100/all_ordenado.dat")
+scores_data$sd <- apply(scores_data[,4:ncol(scores_data)], 1, sd)
+scores_data$n <- ( 1.96 * scores_data$sd / 0.2) ** 2  #All QScores
+scores_data$ci <- scores_data$sd * 1.96 / sqrt(100)
+novoV2 <- lapply(as.character(scores_data$V2), function (x) strsplit(x, split="/", fixed=TRUE)[[1]][7])
+novoV2 <- unlist(lapply(novoV2, '[[', 1))
+novoV2 <- strsplit(novoV2, split="\\.jpg")
+photo <- unlist(lapply(novoV2, '[[', 1))
+scores_data$photo_name <- photo
+scores_data <- arrange(scores_data, photo_name)
+
+qscoresDFGeral <- read.csv("../qscores-df-geral.csv", header = TRUE)
+
+#Plotting Q-Scores through the street
+#Plotting Q-Scores through the street
+all_data <- merge(qscoresDFGeral, scores_data, by.x = "url", by.y="V2")#qscoresDFGeral
+all_data$street <- as.character(all_data$street)
+all_data$street <- factor(all_data$street, levels=unique(all_data$street))
+
+#Simulating numbers in street
+aprigio <- arrange(filter(all_data, street == "Av_Aprigio_Veloso"), -num)
+aprigio$num2 <- 0
+aprigio[3,]$num2 <- 1
+aprigio[4,]$num2 <- 1
+for (i in seq(5, nrow(aprigio), 4) ) { 
+      cur_num <- aprigio[i,]$num
+      cur_num2 <- aprigio[i+1,]$num
+      cur_num3 <- aprigio[i+2,]$num
+      cur_num4 <- aprigio[i+3,]$num
+      
+      base_num <- aprigio[1,]$num
+      base_num2 <- aprigio[2,]$num
+      base_num3 <- aprigio[3,]$num
+      base_num4 <- aprigio[4,]$num
+      
+      aprigio[i,]$num2 <- abs(cur_num - base_num)
+      aprigio[i+1,]$num2 <- abs(cur_num2 - base_num2)
+      aprigio[i+2,]$num2 <- abs(cur_num3 - base_num3)+1
+      aprigio[i+3,]$num2 <- abs(cur_num4 - base_num4)+1
+} 
+
+rodrigues <- arrange(filter(all_data, street == "R._Rodrigues_Alves"), -num)
+rodrigues$num2 <- 315 + 163
+for (i in seq(5, nrow(rodrigues), 4) ) { 
+      cur_num <- rodrigues[i,]$num
+      cur_num2 <- rodrigues[i+1,]$num
+      cur_num3 <- rodrigues[i+2,]$num
+      cur_num4 <- rodrigues[i+3,]$num
+      
+      base_num <- rodrigues[1,]$num
+      base_num2 <- rodrigues[2,]$num
+      base_num3 <- rodrigues[3,]$num
+      base_num4 <- rodrigues[4,]$num
+      
+      rodrigues[i,]$num2 <- rodrigues[i,]$num2 + abs(cur_num - base_num)
+      rodrigues[i+1,]$num2 <- rodrigues[i+1,]$num2 + abs(cur_num2 - base_num2)
+      rodrigues[i+2,]$num2 <- rodrigues[i+2,]$num2 + abs(cur_num3 - base_num3)
+      rodrigues[i+3,]$num2 <- rodrigues[i+3,]$num2 + abs(cur_num4 - base_num4)
+} 
+
+#MErging both streets into one
+all_data <- rbind(aprigio, rodrigues)
+all_data[all_data$street == "R._Rodrigues_Alves",]$street <- "Av_Aprigio_Veloso"
+```
+
+
+#\#\#\# Rua 1
+
+Ponto máximo e mínimo
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cristina <- dplyr::filter(all_data, street == "Av_Aprigio_Veloso") %>% dplyr::group_by(num2) %>% dplyr::arrange(street, num2, angle) %>% dplyr::select(url, photo_name, street, num2, angle, qscore, V3, ci)
+
+cat("<br/>")
+max_point <- filter(cristina, qscore == max(cristina$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#00ff00","\"align=\"center\">", sep=""))
+cat("<img src='", as.character(max_point$url),"' width='800px'>", sep = "")# paste(best_folder, max_point$photo_name, sep="")
+cat("<p style=\"color:black;font-size:90%\">", max_point$num2, "- ", max_point$angle, "-", max_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+min_point <- filter(cristina, qscore == min(cristina$qscore))
+cat(paste("<div class='col-xs-6' style=\"background-color:", "#000000","\"align=\"center\">", sep=""))
+cat("<img src='", as.character(min_point$url),"' width='800px'>", sep = "")#as.character(min_point$url)
+cat("<p style=\"color:white;font-size:90%\">", min_point$num2, "- ", min_point$angle, "-", min_point$qscore,  "</p>", sep="")
+cat("</div>")
+
+cat("<br/>")
+```
+
+Pontos notáveis destacados por ponto na rua
+
+```{r results='asis', echo=FALSE, fig.height=20, fig.width=12, warning=FALSE}
+cat("<br/>")
+
+highlighted_positive <- data.frame(num=c(1, 1, 199, 199, 315, 315, 716, 716, 891, 891, 891), angle=c(60, 315, 60, 315, 60, 315, 55, 240, 325, 240, 145))
+highlighted_neutral <- data.frame(num=c(0, 314, 478, 1138), angle=c(135, 240, 235, 55))
+
+show_street_data(cristina, all_data, TRUE, highlighted_positive, best_folder, worst_folder, highlighted_neutral)
+cat("<div class=\"col-xs-12\" style=\"height:300px;\"></div>")
+```
+
+Descrição da rua
+
+* Média/mediana: 4.51/4.35 x 4.68/4.74 -> mediana para ruim? (por conta da alta variação, parecida com Edésio)
+* Variação no surprise? 2 Maior variação (heterogênea)
+* Lado melhor? Side1 (8) x Side2 (3) -> side1 claramente melhor no começo da rua (6 x 0)
+* Região melhor? 4, 318, 894
+   
+   

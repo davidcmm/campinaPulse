@@ -20,9 +20,9 @@
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="analisaPorRua2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
 <script src="analisaPorRua2_files/navigation-1.1/tabsets.js"></script>
-<link href="analisaPorRua2_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="analisaPorRua2_files/highlightjs-9.12.0/highlight.js"></script>
-<script src="analisaPorRua2_files/htmlwidgets-1.0/htmlwidgets.js"></script>
+<link href="analisaPorRua2_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="analisaPorRua2_files/highlightjs-1.1/highlight.js"></script>
+<script src="analisaPorRua2_files/htmlwidgets-0.9/htmlwidgets.js"></script>
 <script src="analisaPorRua2_files/plotly-binding-4.7.1/plotly.js"></script>
 <script src="analisaPorRua2_files/typedarray-0.1/typedarray.min.js"></script>
 <link href="analisaPorRua2_files/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
@@ -37,12 +37,10 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
 }
 </script>
 
@@ -131,6 +129,13 @@ $(document).ready(function () {
 
 <p>Aqui apresenta-se uma análise mais detalhada, rua a rua, a partir das percepções capturadas.</p>
 <p>Composição social de todos os usuários</p>
+<pre><code>##         key value
+## 1    Adulto    15
+## 2     Baixa     6
+## 3  Feminino    14
+## 4     Jovem     9
+## 5 Masculino    30
+## 6     Média    16</code></pre>
 <p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-1-1.png" width="1152"  /></p>
 <p>De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.</p>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; Especi 3 classes [ 0.444937714751903 , 0.595062285248097 ]  0.52&quot;</code></pre>
@@ -138,52 +143,52 @@ $(document).ready(function () {
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; Especi x surp 3classes [ 0.338140979134151 , 0.470192354199182 ]  0.404166666666667&quot;</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt;&gt;&gt;&gt; Especi x surp 2classes [ 0.583709032447156 , 0.65170763421951 ]  0.617708333333333&quot;</code></pre>
 <pre><code>##   labels variable      value
-## 1   Gini  aprigio 0.09188599
-## 2   Gini cristina 0.08287326
-## 3   Gini   inacio 0.06572851
-## 4   Gini   edesio 0.05599737
-## 5   Gini floriano 0.03668643
-## 6   Gini   maciel 0.03102084
-## 7   Gini   manoel 0.02769236</code></pre>
+## 1   Gini  aprigio 0.09176004
+## 2   Gini cristina 0.08301648
+## 3   Gini   inacio 0.06625731
+## 4   Gini   edesio 0.05585886
+## 5   Gini floriano 0.03636267
+## 6   Gini   maciel 0.03184839
+## 7   Gini   manoel 0.02818887</code></pre>
 <pre><code>##    labels variable       value
-## 1 Entropy  aprigio 0.012987856
-## 2 Entropy cristina 0.012357450
-## 3 Entropy   inacio 0.006880980
-## 4 Entropy   edesio 0.004950757
-## 5 Entropy floriano 0.002320337
-## 6 Entropy   maciel 0.001510849
-## 7 Entropy   manoel 0.001240248</code></pre>
+## 1 Entropy  aprigio 0.012943273
+## 2 Entropy cristina 0.012368021
+## 3 Entropy   inacio 0.006999790
+## 4 Entropy   edesio 0.004891596
+## 5 Entropy floriano 0.002297100
+## 6 Entropy   maciel 0.001578640
+## 7 Entropy   manoel 0.001291064</code></pre>
 <pre><code>##   labels variable     value
-## 1     SD cristina 0.7604671
-## 2     SD  aprigio 0.7500333
-## 3     SD   inacio 0.5508268
-## 4     SD   edesio 0.4736205
-## 5     SD floriano 0.3427302
-## 6     SD   maciel 0.2688553
-## 7     SD   manoel 0.1883643</code></pre>
+## 1     SD cristina 0.7613286
+## 2     SD  aprigio 0.7474712
+## 3     SD   inacio 0.5552198
+## 4     SD   edesio 0.4713140
+## 5     SD floriano 0.3410144
+## 6     SD   maciel 0.2751042
+## 7     SD   manoel 0.1920258</code></pre>
 <div id="aprigio-veloso" class="section level1">
 <h1>Aprigio Veloso</h1>
 <pre><code>## 
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  cristina$qscore
-## W = 0.95333, p-value = 0.24</code></pre>
+## W = 0.95345, p-value = 0.2417</code></pre>
 <pre><code>##       mean          sd    
-##   4.51167753   0.73651805 
-##  (0.13918883) (0.09842136)</code></pre>
+##   4.50597922   0.73400215 
+##  (0.13871337) (0.09808516)</code></pre>
 <pre><code>## [1] &quot;&gt;&gt;&gt; GINI da rua: &quot;</code></pre>
-<pre><code>## [1] 0.09188599</code></pre>
+<pre><code>## [1] 0.09176004</code></pre>
 <pre><code>##     num      value
-## 1   891 0.06402735
-## 2   716 0.06071498
-## 3   478 0.04590074
-## 4   314 0.04320194
-## 5   198 0.03533321
-## 6  1138 0.03426045
-## 7   199 0.02541077
-## 8     0 0.02099565
-## 9   315 0.01591288
-## 10    1 0.01531969</code></pre>
+## 1   891 0.06380311
+## 2   716 0.06052212
+## 3   478 0.04599947
+## 4   314 0.04454148
+## 5  1138 0.03489865
+## 6   198 0.03436149
+## 7   199 0.02409360
+## 8     0 0.02044595
+## 9   315 0.01528901
+## 10    1 0.01469023</code></pre>
 <pre><code>##     num value
 ## 1     0   NaN
 ## 2     1   NaN
@@ -209,8 +214,8 @@ $(document).ready(function () {
 <pre><code>## Adding missing grouping variables: `num2`</code></pre>
 <pre><code>## We recommend that you use the dev version of ggplot2 with `ggplotly()`
 ## Install it with: `devtools::install_github(&#39;hadley/ggplot2&#39;)`</code></pre>
-<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-5-1.png" width="960" /><div id="6be13712069" style="width:960px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="6be13712069">{"x":{"data":[{"x":[4,8,202,206,318,322,478,482,716,720,894,898,1138,1142],"y":[0.0092910634918,0.00529903819583,0.00557314441835,0.0111100057932,0.0163489420415,0.0125308241592,-0.0104939481403,-0.00677587494262,0.00655410112824,-0.00846367764733,-0.00574517822258,0.00190261255228,-0.00213962467394,0.000632964532523],"text":["num2:    4<br />angle:  60","num2:    8<br />angle: 315","num2:  202<br />angle:  60","num2:  206<br />angle: 315","num2:  318<br />angle:  60","num2:  322<br />angle: 315","num2:  478<br />angle:  60","num2:  482<br />angle: 315","num2:  716<br />angle:  55","num2:  720<br />angle: 325","num2:  894<br />angle:  55","num2:  898<br />angle: 325","num2: 1138<br />angle:  55","num2: 1142<br />angle: 325"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":["rgba(150,216,0,1)","rgba(181,192,0,1)","rgba(179,194,0,1)","rgba(132,226,0,1)","rgba(0,255,0,1)","rgba(115,234,0,1)","rgba(250,59,0,1)","rgba(238,104,0,1)","rgba(172,200,0,1)","rgba(243,87,0,1)","rgba(234,114,0,1)","rgba(201,171,0,1)","rgba(220,143,0,1)","rgba(207,162,0,1)"],"opacity":1,"size":17.1421753925017,"symbol":"circle","line":{"width":1.88976377952756,"color":["rgba(150,216,0,1)","rgba(181,192,0,1)","rgba(179,194,0,1)","rgba(132,226,0,1)","rgba(0,255,0,1)","rgba(115,234,0,1)","rgba(250,59,0,1)","rgba(238,104,0,1)","rgba(172,200,0,1)","rgba(243,87,0,1)","rgba(234,114,0,1)","rgba(201,171,0,1)","rgba(220,143,0,1)","rgba(207,162,0,1)"]}},"hoveron":"points","name":"Side 1","legendgroup":"Side 1","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3,7,201,205,317,321,481,485,719,723,891,895,1141,1145],"y":[-0.00100094575922,-0.00647495559976,-0.0123607277692,-0.00684384459333,-0.0102869572231,-0.000979823071351,-0.00442545043955,-0.00146911161686,-0.00246509828298,0.0048426792601,0.0141333657146,0.00216307227284,-0.0063564495528,-0.00653751282015],"text":["num2:    3<br />angle: 135","num2:    7<br />angle: 240","num2:  201<br />angle: 135","num2:  205<br />angle: 240","num2:  317<br />angle: 125","num2:  321<br />angle: 240","num2:  481<br />angle: 150","num2:  485<br />angle: 235","num2:  719<br />angle: 145","num2:  723<br />angle: 240","num2:  891<br />angle: 145","num2:  895<br />angle: 240","num2: 1141<br />angle: 145","num2: 1145<br />angle: 240"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":["rgba(215,151,0,1)","rgba(237,107,0,1)","rgba(255,0,0,1)","rgba(238,104,0,1)","rgba(249,63,0,1)","rgba(215,151,0,1)","rgba(229,125,0,1)","rgba(217,148,0,1)","rgba(221,140,0,1)","rgba(184,189,0,1)","rgba(89,243,0,1)","rgba(199,172,0,1)","rgba(236,108,0,1)","rgba(237,107,0,1)"],"opacity":1,"size":17.1421753925017,"symbol":"triangle-up","line":{"width":1.88976377952756,"color":["rgba(215,151,0,1)","rgba(237,107,0,1)","rgba(255,0,0,1)","rgba(238,104,0,1)","rgba(249,63,0,1)","rgba(215,151,0,1)","rgba(229,125,0,1)","rgba(217,148,0,1)","rgba(221,140,0,1)","rgba(184,189,0,1)","rgba(89,243,0,1)","rgba(199,172,0,1)","rgba(236,108,0,1)","rgba(237,107,0,1)"]}},"hoveron":"points","name":"Side 2","legendgroup":"Side 2","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0],"y":[-0.02],"name":"99_7b4c95ebcdfeb3861d5382e179d7cef9","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"none","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#FE1700"],[0.0714285714285714,"#F84300"],[0.142857142857143,"#F25C00"],[0.214285714285714,"#EB7000"],[0.285714285714286,"#E38100"],[0.357142857142857,"#DB9000"],[0.428571428571429,"#D29E00"],[0.5,"#C8AB00"],[0.571428571428571,"#BDB800"],[0.642857142857143,"#B0C400"],[0.714285714285714,"#A1D000"],[0.785714285714286,"#90DC00"],[0.857142857142857,"#7AE700"],[0.928571428571429,"#5CF200"],[1,"#22FD00"]],"colorbar":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"thickness":23.04,"title":"surprise_unif_base_norm_fixed","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickmode":"array","ticktext":["-0.01","0.00","0.01"],"tickvals":[0.0714285714285714,0.428571428571429,0.785714285714286],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"ticklen":2,"len":0.5,"yanchor":"top","y":1}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":48.1461187214612,"r":7.30593607305936,"b":44.5662100456621,"l":54.7945205479452},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":"Uniform + Base Rate + Normal for each street - fixed PM","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"tickmode":"array","range":[-54.1,1202.1],"ticktext":["0","300","600","900","1200"],"tickvals":[0,300,600,900,1200],"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Street number","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"tickmode":"array","range":[-0.022,0.022],"ticktext":["-0.02","-0.01","0.00","0.01","0.02"],"tickvals":[-0.02,-0.01,0,0.01,0.02],"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Surprise","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.326771653543307,"yanchor":"top"},"annotations":[],"hovermode":"closest"},"source":"A","attrs":{"6be11fc6937":{"colour":{},"shape":{},"x":{},"y":{},"label":{},"size":{},"type":"ggplotly"}},"cur_data":"6be11fc6937","visdat":{"6be11fc6937":["function (y) ","x"]},"config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},".hideLegend":true,"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>NULL</p>
+<p><img src="analisaPorRua2_files/figure-html/unnamed-chunk-5-1.png" width="960" /><div id="2b851138bf75" style="width:960px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="2b851138bf75">{"x":{"data":[{"x":[4,8,202,206,318,322,478,482,716,720,894,898,1138,1142],"y":[0.0092910634918,0.00529903819583,0.00557314441835,0.0111100057932,0.0163489420415,0.0125308241592,-0.0104939481403,-0.00677587494262,0.00655410112824,-0.00846367764733,-0.00574517822258,0.00190261255228,-0.00213962467394,0.000632964532523],"text":["num2:    4<br />angle:  60","num2:    8<br />angle: 315","num2:  202<br />angle:  60","num2:  206<br />angle: 315","num2:  318<br />angle:  60","num2:  322<br />angle: 315","num2:  478<br />angle:  60","num2:  482<br />angle: 315","num2:  716<br />angle:  55","num2:  720<br />angle: 325","num2:  894<br />angle:  55","num2:  898<br />angle: 325","num2: 1138<br />angle:  55","num2: 1142<br />angle: 325"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":["rgba(150,216,0,1)","rgba(181,192,0,1)","rgba(179,194,0,1)","rgba(132,226,0,1)","rgba(0,255,0,1)","rgba(115,234,0,1)","rgba(250,59,0,1)","rgba(238,104,0,1)","rgba(172,200,0,1)","rgba(243,87,0,1)","rgba(234,114,0,1)","rgba(201,171,0,1)","rgba(220,143,0,1)","rgba(207,162,0,1)"],"opacity":1,"size":17.1421753925017,"symbol":"circle","line":{"width":1.88976377952756,"color":["rgba(150,216,0,1)","rgba(181,192,0,1)","rgba(179,194,0,1)","rgba(132,226,0,1)","rgba(0,255,0,1)","rgba(115,234,0,1)","rgba(250,59,0,1)","rgba(238,104,0,1)","rgba(172,200,0,1)","rgba(243,87,0,1)","rgba(234,114,0,1)","rgba(201,171,0,1)","rgba(220,143,0,1)","rgba(207,162,0,1)"]}},"hoveron":"points","name":"Side 1","legendgroup":"Side 1","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3,7,201,205,317,321,481,485,719,723,891,895,1141,1145],"y":[-0.00100094575922,-0.00647495559976,-0.0123607277692,-0.00684384459333,-0.0102869572231,-0.000979823071351,-0.00442545043955,-0.00146911161686,-0.00246509828298,0.0048426792601,0.0141333657146,0.00216307227284,-0.0063564495528,-0.00653751282015],"text":["num2:    3<br />angle: 135","num2:    7<br />angle: 240","num2:  201<br />angle: 135","num2:  205<br />angle: 240","num2:  317<br />angle: 125","num2:  321<br />angle: 240","num2:  481<br />angle: 150","num2:  485<br />angle: 235","num2:  719<br />angle: 145","num2:  723<br />angle: 240","num2:  891<br />angle: 145","num2:  895<br />angle: 240","num2: 1141<br />angle: 145","num2: 1145<br />angle: 240"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":["rgba(215,151,0,1)","rgba(237,107,0,1)","rgba(255,0,0,1)","rgba(238,104,0,1)","rgba(249,63,0,1)","rgba(215,151,0,1)","rgba(229,125,0,1)","rgba(217,148,0,1)","rgba(221,140,0,1)","rgba(184,189,0,1)","rgba(89,243,0,1)","rgba(199,172,0,1)","rgba(236,108,0,1)","rgba(237,107,0,1)"],"opacity":1,"size":17.1421753925017,"symbol":"triangle-up","line":{"width":1.88976377952756,"color":["rgba(215,151,0,1)","rgba(237,107,0,1)","rgba(255,0,0,1)","rgba(238,104,0,1)","rgba(249,63,0,1)","rgba(215,151,0,1)","rgba(229,125,0,1)","rgba(217,148,0,1)","rgba(221,140,0,1)","rgba(184,189,0,1)","rgba(89,243,0,1)","rgba(199,172,0,1)","rgba(236,108,0,1)","rgba(237,107,0,1)"]}},"hoveron":"points","name":"Side 2","legendgroup":"Side 2","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0],"y":[-0.02],"name":"99_7b4c95ebcdfeb3861d5382e179d7cef9","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"none","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#FE1700"],[0.0714285714285714,"#F84300"],[0.142857142857143,"#F25C00"],[0.214285714285714,"#EB7000"],[0.285714285714286,"#E38100"],[0.357142857142857,"#DB9000"],[0.428571428571429,"#D29E00"],[0.5,"#C8AB00"],[0.571428571428571,"#BDB800"],[0.642857142857143,"#B0C400"],[0.714285714285714,"#A1D000"],[0.785714285714286,"#90DC00"],[0.857142857142857,"#7AE700"],[0.928571428571429,"#5CF200"],[1,"#22FD00"]],"colorbar":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"thickness":23.04,"title":"surprise_unif_base_norm_fixed","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickmode":"array","ticktext":["-0.01","0.00","0.01"],"tickvals":[0.0714285714285714,0.428571428571429,0.785714285714286],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"ticklen":2,"len":0.5,"yanchor":"top","y":1}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":48.1461187214612,"r":7.30593607305936,"b":44.5662100456621,"l":54.7945205479452},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":"Uniform + Base Rate + Normal for each street - fixed PM","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"xaxis":{"domain":[0,1],"type":"linear","autorange":false,"tickmode":"array","range":[-54.1,1202.1],"ticktext":["0","300","600","900","1200"],"tickvals":[0,300,600,900,1200],"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"Street number","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"type":"linear","autorange":false,"tickmode":"array","range":[-0.022,0.022],"ticktext":["-0.02","-0.01","0.00","0.01","0.02"],"tickvals":[-0.02,-0.01,0,0.01,0.02],"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"Surprise","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.326771653543307,"yanchor":"top"},"annotations":[],"hovermode":"closest"},"source":"A","attrs":{"2b8551f2b24a":{"colour":{},"shape":{},"x":{},"y":{},"label":{},"size":{},"type":"ggplotly"}},"cur_data":"2b8551f2b24a","visdat":{"2b8551f2b24a":["function (y) ","x"]},"config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},".hideLegend":true,"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>NULL</p>
 <table>
 <thead>
 <tr class="header">
@@ -228,7 +233,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">4</td>
 <td align="right">60</td>
-<td align="right">5.350176</td>
+<td align="right">5.348976</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -236,7 +241,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">8</td>
 <td align="right">315</td>
-<td align="right">5.032071</td>
+<td align="right">5.043636</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -244,7 +249,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">202</td>
 <td align="right">60</td>
-<td align="right">4.908266</td>
+<td align="right">4.905137</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -252,7 +257,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">206</td>
 <td align="right">315</td>
-<td align="right">5.433869</td>
+<td align="right">5.401799</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -260,7 +265,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">318</td>
 <td align="right">60</td>
-<td align="right">6.177026</td>
+<td align="right">6.155895</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -268,7 +273,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">322</td>
 <td align="right">315</td>
-<td align="right">5.795976</td>
+<td align="right">5.790596</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -276,7 +281,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">478</td>
 <td align="right">60</td>
-<td align="right">3.374478</td>
+<td align="right">3.367037</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -284,7 +289,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">482</td>
 <td align="right">315</td>
-<td align="right">3.698290</td>
+<td align="right">3.693236</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -292,7 +297,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">716</td>
 <td align="right">55</td>
-<td align="right">5.056516</td>
+<td align="right">5.039792</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -300,7 +305,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">720</td>
 <td align="right">325</td>
-<td align="right">3.806157</td>
+<td align="right">3.798084</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -308,7 +313,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">894</td>
 <td align="right">55</td>
-<td align="right">4.199582</td>
+<td align="right">4.191824</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -316,7 +321,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">898</td>
 <td align="right">325</td>
-<td align="right">4.823155</td>
+<td align="right">4.824537</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -324,7 +329,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">1138</td>
 <td align="right">55</td>
-<td align="right">4.149843</td>
+<td align="right">4.149255</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -332,7 +337,7 @@ $(document).ready(function () {
 <td align="left">Side 1</td>
 <td align="right">1142</td>
 <td align="right">325</td>
-<td align="right">4.462849</td>
+<td align="right">4.465248</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -340,7 +345,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">3</td>
 <td align="right">135</td>
-<td align="right">4.443384</td>
+<td align="right">4.431912</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -348,7 +353,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">7</td>
 <td align="right">240</td>
-<td align="right">4.085255</td>
+<td align="right">4.083693</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -356,7 +361,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">201</td>
 <td align="right">135</td>
-<td align="right">3.404076</td>
+<td align="right">3.412468</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -364,7 +369,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">205</td>
 <td align="right">240</td>
-<td align="right">3.921767</td>
+<td align="right">3.916110</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -372,7 +377,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">317</td>
 <td align="right">125</td>
-<td align="right">3.858580</td>
+<td align="right">3.851781</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -380,7 +385,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">321</td>
 <td align="right">240</td>
-<td align="right">4.588435</td>
+<td align="right">4.605149</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -388,7 +393,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">481</td>
 <td align="right">150</td>
-<td align="right">3.969978</td>
+<td align="right">3.947977</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -396,7 +401,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">485</td>
 <td align="right">235</td>
-<td align="right">4.217881</td>
+<td align="right">4.215858</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -404,7 +409,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">719</td>
 <td align="right">145</td>
-<td align="right">4.284972</td>
+<td align="right">4.276450</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -412,7 +417,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">723</td>
 <td align="right">240</td>
-<td align="right">4.922380</td>
+<td align="right">4.916343</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -420,7 +425,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">891</td>
 <td align="right">145</td>
-<td align="right">5.883606</td>
+<td align="right">5.868449</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -428,7 +433,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">895</td>
 <td align="right">240</td>
-<td align="right">4.822488</td>
+<td align="right">4.824382</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="odd">
@@ -436,7 +441,7 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">1141</td>
 <td align="right">145</td>
-<td align="right">3.829419</td>
+<td align="right">3.824842</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 <tr class="even">
@@ -444,12 +449,12 @@ $(document).ready(function () {
 <td align="left">Side 2</td>
 <td align="right">1145</td>
 <td align="right">240</td>
-<td align="right">3.826497</td>
+<td align="right">3.816955</td>
 <td align="left">Av_Aprigio_Veloso</td>
 </tr>
 </tbody>
 </table>
-<p>++++++ Median all 4.74011605825 <br>++++++ Mean all 4.66405290544117 <br></p>
+<p>++++++ Median all 4.75553036609 <br>++++++ Mean all 4.66377704443564 <br></p>
 <table style="width:100%;">
 <colgroup>
 <col width="31%" />
@@ -474,236 +479,236 @@ $(document).ready(function () {
 <tbody>
 <tr class="odd">
 <td align="left">R._Manoel_Pereira_de_Araújo</td>
-<td align="right">3.669890</td>
-<td align="right">3.629022</td>
-<td align="right">0.1883643</td>
-<td align="right">0.0276924</td>
-<td align="right">3.752444</td>
-<td align="right">3.587336</td>
+<td align="right">3.671131</td>
+<td align="right">3.642869</td>
+<td align="right">0.1920258</td>
+<td align="right">0.0281889</td>
+<td align="right">3.755290</td>
+<td align="right">3.586972</td>
 </tr>
 <tr class="even">
 <td align="left">Av_Aprigio_Veloso</td>
-<td align="right">4.511678</td>
-<td align="right">4.364178</td>
-<td align="right">0.7500333</td>
-<td align="right">0.0918860</td>
-<td align="right">4.840394</td>
-<td align="right">4.182961</td>
+<td align="right">4.505979</td>
+<td align="right">4.354181</td>
+<td align="right">0.7474712</td>
+<td align="right">0.0917600</td>
+<td align="right">4.833573</td>
+<td align="right">4.178386</td>
 </tr>
 <tr class="odd">
 <td align="left">R._Edésio_Silva</td>
-<td align="right">4.692799</td>
-<td align="right">4.711481</td>
-<td align="right">0.4736205</td>
-<td align="right">0.0559974</td>
-<td align="right">4.900372</td>
-<td align="right">4.485226</td>
+<td align="right">4.694867</td>
+<td align="right">4.726529</td>
+<td align="right">0.4713140</td>
+<td align="right">0.0558589</td>
+<td align="right">4.901430</td>
+<td align="right">4.488305</td>
 </tr>
 <tr class="even">
 <td align="left">R._Inácio_Marquês_da_Silva</td>
-<td align="right">4.702325</td>
-<td align="right">4.701720</td>
-<td align="right">0.5508268</td>
-<td align="right">0.0657285</td>
-<td align="right">4.943735</td>
-<td align="right">4.460914</td>
+<td align="right">4.701000</td>
+<td align="right">4.737504</td>
+<td align="right">0.5552198</td>
+<td align="right">0.0662573</td>
+<td align="right">4.944336</td>
+<td align="right">4.457664</td>
 </tr>
 <tr class="odd">
 <td align="left">R._Maciel_Pinheiro</td>
-<td align="right">4.791367</td>
-<td align="right">4.808287</td>
-<td align="right">0.2688553</td>
-<td align="right">0.0310208</td>
-<td align="right">4.909198</td>
-<td align="right">4.673536</td>
+<td align="right">4.794466</td>
+<td align="right">4.815088</td>
+<td align="right">0.2751042</td>
+<td align="right">0.0318484</td>
+<td align="right">4.915035</td>
+<td align="right">4.673896</td>
 </tr>
 <tr class="even">
 <td align="left">Av._Mal._Floriano_Peixoto</td>
-<td align="right">4.984328</td>
-<td align="right">5.025432</td>
-<td align="right">0.3427302</td>
-<td align="right">0.0366864</td>
-<td align="right">5.134536</td>
-<td align="right">4.834120</td>
+<td align="right">4.983194</td>
+<td align="right">5.042439</td>
+<td align="right">0.3410144</td>
+<td align="right">0.0363627</td>
+<td align="right">5.132650</td>
+<td align="right">4.833738</td>
 </tr>
 <tr class="odd">
 <td align="left">R._Cristina_Procópio_Silva</td>
-<td align="right">4.991358</td>
-<td align="right">5.217433</td>
-<td align="right">0.7604671</td>
-<td align="right">0.0828733</td>
-<td align="right">5.324647</td>
-<td align="right">4.658068</td>
+<td align="right">4.992737</td>
+<td align="right">5.232174</td>
+<td align="right">0.7613286</td>
+<td align="right">0.0830165</td>
+<td align="right">5.326404</td>
+<td align="right">4.659070</td>
 </tr>
 </tbody>
 </table>
 <div class='row'>
 <div class="col-xs-3" style="background-color:#006600">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_647_135' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_647_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_647_135-&gt; 4.443384(-0.001000946)
+worst<br>Av_Aprigio_Veloso_647_135-&gt; 4.431912(-0.001000946)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_647_240' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_647_240' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_647_240-&gt; 4.085256(-0.006474956)
+worst<br>Av_Aprigio_Veloso_647_240-&gt; 4.083693(-0.006474956)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00cc00">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_646_60' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_646_60' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_646_60-&gt; 5.350176(0.009291063)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_646_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_646_315-&gt; 5.032071(0.005299038)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_449_135' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_449_135-&gt; 3.404076(-0.01236073)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_449_240' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_449_240-&gt; 3.921767(-0.006843845)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_448_60' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_448_60-&gt; 4.908266(0.005573144)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00cc00">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_448_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_448_315-&gt; 5.433869(0.01111001)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_333_125' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_333_125-&gt; 3.85858(-0.01028696)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#007f00">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_333_240' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>Av_Aprigio_Veloso_333_240-&gt; 4.588435(-0.0009798231)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00ff00">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_332_60' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_332_60-&gt; 6.177026(0.01634894)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_332_315' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>Av_Aprigio_Veloso_332_315-&gt; 5.795976(0.01253082)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#001900">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_60' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_2100_60-&gt; 3.374478(-0.01049395)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#004c00">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_150' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_2100_150-&gt; 3.969977(-0.00442545)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_2100_235' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_2100_235-&gt; 4.217881(-0.001469112)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_315' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_2100_315-&gt; 3.69829(-0.006775875)
+best<br>Av_Aprigio_Veloso_646_60-&gt; 5.348976(0.009291063)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#00b200">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1862_55' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_646_315' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_1862_55-&gt; 5.056516(0.006554101)
+best<br>Av_Aprigio_Veloso_646_315-&gt; 5.043636(0.005299038)
 </p>
 </div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1862_145' width='300px'>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_449_135' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1862_145-&gt; 4.284972(-0.002465098)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1862_240' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_1862_240-&gt; 4.92238(0.004842679)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1862_325' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1862_325-&gt; 3.806157(-0.008463678)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#006600">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_55' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1687_55-&gt; 4.199582(-0.005745178)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#00e500">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1687_145' width='300px'>
-<p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_1687_145-&gt; 5.883606(0.01413337)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_240' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1687_240-&gt; 4.822488(0.002163072)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#009900">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_325' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1687_325-&gt; 4.823155(0.001902613)
+worst<br>Av_Aprigio_Veloso_449_135-&gt; 3.412468(-0.01236073)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#004c00">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1440_55' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_449_240' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_1440_55-&gt; 4.149843(-0.002139625)
+worst<br>Av_Aprigio_Veloso_449_240-&gt; 3.916109(-0.006843845)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_448_60' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av_Aprigio_Veloso_448_60-&gt; 4.905137(0.005573144)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00cc00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_448_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av_Aprigio_Veloso_448_315-&gt; 5.401799(0.01111001)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#003300">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1440_145' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_333_125' width='300px'>
 <p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1440_145-&gt; 3.829419(-0.00635645)
-</p>
-</div>
-<div class="col-xs-3" style="background-color:#003300">
-<img src='../../percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1440_240' width='300px'>
-<p style="color:white;font-size:90%">
-worst<br>R._Rodrigues_Alves_1440_240-&gt; 3.826497(-0.006537513)
+worst<br>Av_Aprigio_Veloso_333_125-&gt; 3.851781(-0.01028696)
 </p>
 </div>
 <div class="col-xs-3" style="background-color:#007f00">
-<img src='../../percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1440_325' width='300px'>
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/Av_Aprigio_Veloso_333_240' width='300px'>
 <p style="color:white;font-size:90%">
-best<br>R._Rodrigues_Alves_1440_325-&gt; 4.462849(0.0006329645)
+worst<br>Av_Aprigio_Veloso_333_240-&gt; 4.605149(-0.0009798231)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00ff00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_332_60' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av_Aprigio_Veloso_332_60-&gt; 6.155896(0.01634894)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/Av_Aprigio_Veloso_332_315' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>Av_Aprigio_Veloso_332_315-&gt; 5.790596(0.01253082)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#001900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_60' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_2100_60-&gt; 3.367037(-0.01049395)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_150' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_2100_150-&gt; 3.947977(-0.00442545)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_2100_235' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_2100_235-&gt; 4.215858(-0.001469112)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_2100_315' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_2100_315-&gt; 3.693236(-0.006775875)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00b200">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1862_55' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_1862_55-&gt; 5.039792(0.006554101)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1862_145' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1862_145-&gt; 4.27645(-0.002465098)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1862_240' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_1862_240-&gt; 4.916343(0.004842679)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1862_325' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1862_325-&gt; 3.798084(-0.008463678)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#006600">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_55' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1687_55-&gt; 4.191824(-0.005745178)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#00e500">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1687_145' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_1687_145-&gt; 5.868449(0.01413337)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_240' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1687_240-&gt; 4.824382(0.002163072)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#009900">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1687_325' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1687_325-&gt; 4.824537(0.001902613)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#004c00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1440_55' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_1440_55-&gt; 4.149255(-0.002139625)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1440_145' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1440_145-&gt; 3.824842(-0.00635645)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#003300">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/piores/intersects/R._Rodrigues_Alves_1440_240' width='300px'>
+<p style="color:white;font-size:90%">
+worst<br>R._Rodrigues_Alves_1440_240-&gt; 3.816955(-0.006537513)
+</p>
+</div>
+<div class="col-xs-3" style="background-color:#007f00">
+<img src='/home/davidcmm/workspace_doutorado/campinaPulse/scripts/analise/dadosSet17/percepcaoLocal/agradavel/melhores/intersects/R._Rodrigues_Alves_1440_325' width='300px'>
+<p style="color:white;font-size:90%">
+best<br>R._Rodrigues_Alves_1440_325-&gt; 4.465248(0.0006329645)
 </p>
 </div>
 </div>

@@ -72,29 +72,49 @@ count_profile <- function(listOfFiles, ufcg_users) {
      data <- read.table(file, skip=1)
      valid_users <- filter(data, V1 %in% ufcg_users$V1)
      
-     keys <- append(keys, file)
+     key_to_save <- ""
+     if(grepl("media", file)){
+       key_to_save <- "Média"
+     }else if(grepl("baixa", file)){
+       key_to_save <- "Baixa"
+     }else if(grepl("masculino", file)){
+       key_to_save <- "Masculino"
+     }else if(grepl("feminino", file)){
+       key_to_save <- "Feminino"
+     }else if(grepl("jovem", file)){
+       key_to_save <- "Jovem"
+     }else if(grepl("adulto", file)){
+       key_to_save <- "Adulto"
+     }
+     keys <- append(keys, key_to_save)
      n_users <- append(n_users, nrow(valid_users))
   }
   
   counters = data.frame("key"=keys, "value"=n_users)
-  gender_data <-filter(counters, grepl("masculino", key) | grepl("feminino", key)) %>% mutate(type="gender") %>% mutate(percent=value/sum(value))
-  age_data <-filter(counters, grepl("jovem", key) | grepl("adulto", key)) %>% mutate(type="age") %>% mutate(percent=value/sum(value))
-  income_data <-filter(counters, grepl("baixa", key) | grepl("media", key)) %>% mutate(type="income") %>% mutate(percent=value/sum(value))
+  
+  print(counters)
+  
+  gender_data <-filter(counters, grepl("Masculino", key) | grepl("Feminino", key)) %>% mutate(type="Gênero") %>% mutate(percent=value/sum(value))
+  age_data <-filter(counters, grepl("Jovem", key) | grepl("Adulto", key)) %>% mutate(type="Idade") %>% mutate(percent=value/sum(value))
+  income_data <-filter(counters, grepl("Baixa", key) | grepl("Média", key)) %>% mutate(type="Renda") %>% mutate(percent=value/sum(value))
   counters <- rbind(gender_data, income_data, age_data)
   
-  ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y")
+  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + ylab("") + xlab("")
   
   #Gráficos de barras para tese
-  genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("masculino", key))$value, filter(counters, grepl("feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))
-  ggplot(genero, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Gênero") + ylab("Percentual")
+  genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("Masculino", key))$value, filter(counters, grepl("Feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))
+  gen_plot <- ggplot(genero, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Gênero") + ylab("Percentual")
   
   renda <- data.frame( classe=c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"), valor=c(72, 47,  83, 51, 50) ) %>% mutate(percent=valor/sum(valor))
   renda$classe <- factor(renda$classe, levels = c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"))
-  ggplot(renda, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Renda") + ylab("Percentual")
+  ren_plot <- ggplot(renda, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Renda") + ylab("Percentual")
   
   idade <- data.frame( classe=c("18-", "18 a 24", "25 a 34", "35 a 44", "45 a 54", "55+"), valor=c(72, 77, 89, 27, 22, 17) ) %>% mutate(percent=valor/sum(valor))
   idade$classe <- factor(idade$classe, levels = c("18-", "18 a 24", "25 a 34", "35 a 44", "45 a 54", "55+"))
-  ggplot(idade, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Idade") + ylab("Percentual")
+  ida_plot <- ggplot(idade, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Idade") + ylab("Percentual")
+  
+  multiplot(polar, gen_plot, ren_plot, ida_plot, cols=1)
+  ggsave("polar_ufcg.pdf", plot=polar, width=10, height=5)
 }
 
 ufcg_users <- read.csv("../backupBanco/ufcg-users.csv", header=FALSE)

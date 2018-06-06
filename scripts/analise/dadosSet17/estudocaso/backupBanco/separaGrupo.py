@@ -88,9 +88,6 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 			elif str(userID) in manual_gender_ids:
 				sex = manual_gender_ids[str(userID)]
 
-			if userID == 523:
-				sys.exit(1)
-			
 			if sex[0] == 'f':
 				feminine.add(userID)
 				tasks_fem.update(tasksIDSeg)

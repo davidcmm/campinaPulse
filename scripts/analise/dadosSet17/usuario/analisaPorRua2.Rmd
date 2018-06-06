@@ -21,6 +21,8 @@ library("reshape")
 library("fitdistrplus")
 library("plotly")
 library("caret")
+library("psych")
+library("irr")
 
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   library(grid)
@@ -345,6 +347,28 @@ O que procurar?
 6. Heterogeneidade/Homogeneidade no ponto -> Isso tudo pode ser explicado pela regressão geral das features?
 7. O que é a rua?
 
+#Retestes
+```{r , echo=FALSE, warning=FALSE}
+aida_old <- read.csv("entrevista/retestes/aida_floriano.csv")
+aida_new <- read.csv("entrevista/retestes/aida_floriano2.csv")
+kripp.alpha(x=rbind(aida_old$V2, aida_new$V2))
+cohen.kappa(cbind(aida_old$V2, aida_new$V2))
+
+mariana_old <- read.csv("entrevista/retestes/mariana_cristina.csv")
+mariana_new <- read.csv("entrevista/retestes/mariana_cristina2.csv")
+kripp.alpha(x=rbind(mariana_old$V2, mariana_new$V2))
+cohen.kappa(cbind(mariana_old$V2, mariana_new$V2))
+
+bea_old <- read.csv("entrevista/retestes/bea_inacio.csv")
+bea_new <- read.csv("entrevista/retestes/bea_inacio2.csv")
+kripp.alpha(x=rbind(bea_old$V2, bea_new$V2))
+cohen.kappa(cbind(bea_old$V2, bea_new$V2))
+
+livia_old <- read.csv("entrevista/retestes/livia_maciel.csv")
+livia_new <- read.csv("entrevista/retestes/livia_maciel2.csv")
+kripp.alpha(x=rbind(livia_old$V2, livia_new$V2))
+cohen.kappa(cbind(livia_old$V2, livia_new$V2))
+```
 
 #Cristina Procópio
 
@@ -376,7 +400,7 @@ arrange(gini, desc(abs(value)))
 arrange(gini_surp_st, desc(abs(value)))
 arrange(gini_surp_num, desc(abs(value)))
 
-#Confusion Matrix between Specialists and method x specialistas: http://www.lee.dante.br/pesquisa/kappa/
+#Confusion Matrix between Specialists and method x specialists: http://www.lee.dante.br/pesquisa/kappa/
 aida <- read.csv("entrevista/aida_cristina.csv", header=FALSE)
 mariana <- read.csv("entrevista/mariana_cristina.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_cristina.csv", header=FALSE)

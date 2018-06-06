@@ -18,7 +18,7 @@ notKnown = 'notknown'
 def readTasksExecution(lines, tasksDefinitions, usersDefinitions, imagesDefinitions, output_file):
 
 	#Header
-	output_file.write("question\tphoto1\tphoto2\tchoice\tuserID\tage\tgender\tincome\teducation\tcity\tmarital\tstreet_wid1\tsidewalk_wid1\tlandscape1\tbuild_ident1\ttrees1\tstreet_wid2\tsidewalk_wid2\tlandscape2\tbuild_ident2\ttrees2\n")
+	output_file.write("question\tphoto1\tphoto2\tchoice\tuserID\tage\tgender\tincome\teducation\tcity\tmarital\tstreet_wid1\tsidewalk_wid1\tlandscape1\tbuild_ident1\ttrees1\tcyclists1\tmov_cars1\tpeople1\tpark_cars1\tstreet_wid2\tsidewalk_wid2\tlandscape2\tbuild_ident2\ttrees2\tcyclists2\tmov_cars2\tpeople2\tpark_cars2\n")
 
 	for line in lines:
 		data = line.split("+")
@@ -195,7 +195,7 @@ def readUsersDefinitions(linesUsers, not_local_ids):
 def readImagesDefinitions(lines):
 	imagesDef = {}
 	for line in lines:
-		data = line.split(" ")
+		data = line.split(",")
 		imagesDef[urllib.unquote(data[0]).decode('utf8')] = data[1:]
 
 	return imagesDef
@@ -236,6 +236,8 @@ if __name__ == "__main__":
 		not_local_ids_file.close()
 		usersDef = readUsersDefinitions(open(sys.argv[4], 'r').readlines(), not_local_ids)
 		imagesDef = readImagesDefinitions(open(sys.argv[6], 'r').readlines())
+
+		print str(imagesDef)
 
 		tasksExecution = readTasksExecution(open(sys.argv[2], 'r').readlines(), tasksDef, usersDef, imagesDef, output_file)
 	elif sys.argv[1].lower() == 'convert':

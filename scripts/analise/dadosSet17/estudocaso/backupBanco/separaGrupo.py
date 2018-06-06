@@ -66,7 +66,7 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 		
 		tasksIDAgra = eval(data[2])
 		tasksIDSeg = eval(data[3])
-
+		
 		if len(data[1]) > 0:
 			#Separating by age
 			if len(profile[0]) > 0 and profile[0] != "None":
@@ -88,6 +88,9 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 			elif str(userID) in manual_gender_ids:
 				sex = manual_gender_ids[str(userID)]
 
+			if userID == 523:
+				sys.exit(1)
+			
 			if sex[0] == 'f':
 				feminine.add(userID)
 				tasks_fem.update(tasksIDSeg)
@@ -97,7 +100,6 @@ def parseUserData(lines, not_local_ids, manual_gender_ids):
 				tasks_masc.update(tasksIDSeg)
 				tasks_masc.update(tasksIDAgra)
 				
-		
 			#Separating by income
 			if len(profile[2]) > 0 and profile[2] != "None":
 				income = profile[2]

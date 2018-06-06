@@ -60,22 +60,51 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 ```
 
-Alguns pontos importantes:
 
-* O número da rua indica o que? Metros? http://campinagrandepb.com.br/wp-content/uploads/2014/10/codigo-de-obras-Lei-5410.131.pdf
-* Índices de dispersão/quebra (entre números da rua, entre lados da rua, no mesmo lado, etc.)? Séries temporais?
-    * Anomalias? https://www.datascience.com/blog/python-anomaly-detection
-    * Derivadas, máximos e mínimos locais? Pacote features do R?
-* Dados surpreendentes?
-    * Surprise Maps? https://medium.com/@uwdata/surprise-maps-showing-the-unexpected-e92b67398865
-    * Surprise na rua? Tendo como base um modelo uniforme, um base rate (pela média e pela mediana dos pontos) e um modelo normal extraído (média e desvio) de todos os pontos da rua.
-    * Como temos o sorteio de valores pelo modelo normal, foram feitas 500 iterações para cálculo da média e da mediana. Os gráficos abaixo apresentam a média das médias/medianas nos surprise maps.
+Composição social de todos os usuários
 
-TO DO: 
+```{r, echo=FALSE, out.extra='',fig.height=10, fig.width=12, warning=FALSE}
+count_profile <- function(listOfFiles, ufcg_users) {
+  
+  keys <- c()
+  n_users <- c()
+  for (file in listOfFiles){
+     data <- read.table(file, skip=1)
+     valid_users <- filter(data, V1 %in% ufcg_users$V1)
+     
+     keys <- append(keys, file)
+     n_users <- append(n_users, nrow(valid_users))
+  }
+  
+  counters = data.frame("key"=keys, "value"=n_users)
+  gender_data <-filter(counters, grepl("masculino", key) | grepl("feminino", key)) %>% mutate(type="gender") %>% mutate(percent=value/sum(value))
+  age_data <-filter(counters, grepl("jovem", key) | grepl("adulto", key)) %>% mutate(type="age") %>% mutate(percent=value/sum(value))
+  income_data <-filter(counters, grepl("baixa", key) | grepl("media", key)) %>% mutate(type="income") %>% mutate(percent=value/sum(value))
+  counters <- rbind(gender_data, income_data, age_data)
+  
+  ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y")
+  
+  #Gráficos de barras para tese
+  genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("masculino", key))$value, filter(counters, grepl("feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))
+  ggplot(genero, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Gênero") + ylab("Percentual")
+  
+  renda <- data.frame( classe=c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"), valor=c(72, 47,  83, 51, 50) ) %>% mutate(percent=valor/sum(valor))
+  renda$classe <- factor(renda$classe, levels = c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"))
+  ggplot(renda, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Renda") + ylab("Percentual")
+  
+  idade <- data.frame( classe=c("18-", "18 a 24", "25 a 34", "35 a 44", "45 a 54", "55+"), valor=c(72, 77, 89, 27, 22, 17) ) %>% mutate(percent=valor/sum(valor))
+  idade$classe <- factor(idade$classe, levels = c("18-", "18 a 24", "25 a 34", "35 a 44", "45 a 54", "55+"))
+  ggplot(idade, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Idade") + ylab("Percentual")
+}
 
-* Avaliar o mínimo de respostas necessárias?
-* O que um especialista diria de útil na análise
-* Comparação de modelo treinado x pessoas respondendo? Vantagens e desvantagens?
+ufcg_users <- read.csv("../backupBanco/ufcg-users.csv", header=FALSE)
+
+folder <- "../backupBanco/idsGerais/"
+files <- c("adulto.dat", "baixa.dat", "feminino.dat", "jovem.dat", "masculino.dat", "media.dat")
+listOfFiles <- paste(folder, files, sep="")
+count_profile(listOfFiles, ufcg_users)
+```
+
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=30, fig.width=12, warning=FALSE}
 #Checking sample size

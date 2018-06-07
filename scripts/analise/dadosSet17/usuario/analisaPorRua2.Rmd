@@ -349,23 +349,23 @@ O que procurar?
 
 #Retestes
 ```{r , echo=FALSE, warning=FALSE}
-aida_old <- read.csv("entrevista/retestes/aida_floriano.csv")
-aida_new <- read.csv("entrevista/retestes/aida_floriano2.csv")
+aida_old <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
+aida_new <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
 kripp.alpha(x=rbind(aida_old$V2, aida_new$V2))
 cohen.kappa(cbind(aida_old$V2, aida_new$V2))
 
-mariana_old <- read.csv("entrevista/retestes/mariana_cristina.csv")
-mariana_new <- read.csv("entrevista/retestes/mariana_cristina2.csv")
+mariana_old <- read.csv("entrevista/retestes/mariana_cristina.csv", header=FALSE)
+mariana_new <- read.csv("entrevista/retestes/mariana_cristina.csv", header=FALSE)
 kripp.alpha(x=rbind(mariana_old$V2, mariana_new$V2))
 cohen.kappa(cbind(mariana_old$V2, mariana_new$V2))
 
-bea_old <- read.csv("entrevista/retestes/bea_inacio.csv")
-bea_new <- read.csv("entrevista/retestes/bea_inacio2.csv")
+bea_old <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
+bea_new <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
 kripp.alpha(x=rbind(bea_old$V2, bea_new$V2))
 cohen.kappa(cbind(bea_old$V2, bea_new$V2))
 
-livia_old <- read.csv("entrevista/retestes/livia_maciel.csv")
-livia_new <- read.csv("entrevista/retestes/livia_maciel2.csv")
+livia_old <- read.csv("entrevista/retestes/livia_maciel.csv", header=FALSE)
+livia_new <- read.csv("entrevista/retestes/livia_maciel.csv", header=FALSE)
 kripp.alpha(x=rbind(livia_old$V2, livia_new$V2))
 cohen.kappa(cbind(livia_old$V2, livia_new$V2))
 ```
@@ -406,11 +406,11 @@ mariana <- read.csv("entrevista/mariana_cristina.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_cristina.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Aida x Mariana")
-confusionMatrix(aida$V2, mariana$V2)
+confusionMatrix(factor(aida$V2), factor(mariana$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix(method$V2, aida$V2)
+confusionMatrix(factor(method$V2), factor(aida$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix(method$V2, mariana$V2)
+confusionMatrix(factor(method$V2), factor(mariana$V2))
 
 merge <- filter(merge(aida, mariana, by="V1"), V2.x != 0 & V2.x == -1 * V2.y)
 print(merge)
@@ -425,11 +425,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Aida x Mariana")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix(method_modified$V2, spec1$V2)
+confusionMatrix(factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix(method_modified$V2, spec2$V2)
+confusionMatrix(factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- aida
@@ -441,11 +441,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Aida x Mariana")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 ```
 
@@ -655,11 +655,11 @@ kainara <- read.csv("entrevista/kainara_edesio.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_edesio.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Livia x Kainara")
-confusionMatrix(livia$V2, kainara$V2)
+confusionMatrix(factor(livia$V2), factor(kainara$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method$V2, livia$V2)
+confusionMatrix( factor(method$V2), factor(livia$V2))
 print(">>>> kainara x Surprise")
-confusionMatrix( method$V2, kainara$V2)
+confusionMatrix( factor(method$V2), factor(kainara$V2))
 
 #Confusion matrix with 1 and -1 (0, -1)
 spec1 <- livia
@@ -671,11 +671,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Livia x Kainara")
-confusionMatrix( spec2$V2, spec1$V2)
+confusionMatrix( factor(spec2$V2), factor(spec1$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Kainara x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- livia
@@ -687,11 +687,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Livia x Kainara")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Kainara x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -810,11 +810,11 @@ bea <- read.csv("entrevista/bea_inacio.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_inacio.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Mauro x bea")
-confusionMatrix(mauro$V2, bea$V2)
+confusionMatrix(factor(mauro$V2), factor(bea$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix( method$V2, mauro$V2)
+confusionMatrix( factor(method$V2), factor(mauro$V2))
 print(">>>> bea x Surprise")
-confusionMatrix(method$V2, bea$V2)
+confusionMatrix(factor(method$V2), factor(bea$V2))
 
 merge <- filter(merge(mauro, bea, by="V1"), V2.x != 0 & V2.x == -1 * V2.y)
 print(merge)
@@ -829,11 +829,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Mauro x Bea")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Bea x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- mauro
@@ -845,11 +845,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Mauro x Bea")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Bea x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -962,11 +962,11 @@ mariana <- read.csv("entrevista/mariana_floriano.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_floriano.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Aida x Mariana")
-confusionMatrix(aida$V2, mariana$V2)
+confusionMatrix(factor(aida$V2), factor(mariana$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix( method$V2, aida$V2)
+confusionMatrix( factor(method$V2), factor(aida$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix( method$V2, mariana$V2)
+confusionMatrix( factor(method$V2), factor(mariana$V2))
 
 merge <- filter(merge(aida, mariana, by="V1"), V2.x != 0 & V2.x == -1 * V2.y)
 print(merge)
@@ -981,11 +981,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Aida x Mariana")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- aida
@@ -997,11 +997,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Aida x Mariana")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Aida x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> Mariana x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -1115,11 +1115,11 @@ kainara <- read.csv("entrevista/kainara_maciel.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_maciel.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Livia x Kainara")
-confusionMatrix(livia$V2, kainara$V2)
+confusionMatrix(factor(livia$V2), factor(kainara$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method$V2, livia$V2)
+confusionMatrix( factor(method$V2), factor(livia$V2))
 print(">>>> kainara x Surprise")
-confusionMatrix( method$V2, kainara$V2)
+confusionMatrix( factor(method$V2), factor(kainara$V2))
 
 #Confusion matrix with 1 and -1 (0, -1)
 spec1 <- livia
@@ -1131,11 +1131,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Livia x kainara")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> kainara x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- livia
@@ -1147,11 +1147,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Livia x kainara")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Livia x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> kainara x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}
@@ -1272,11 +1272,11 @@ bea <- read.csv("entrevista/bea_manoel.csv", header=FALSE)
 method <- read.csv("entrevista/surprise_manoel.csv", header=FALSE)
 print(">>>> Matriz confusao 3 niveis: 1,0,-1")
 print(">>>> Mauro x bea")
-confusionMatrix(mauro$V2, bea$V2)
+confusionMatrix(factor(mauro$V2), factor(bea$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix(method$V2, mauro$V2)
+confusionMatrix(factor(method$V2), factor(mauro$V2))
 print(">>>> bea x Surprise")
-confusionMatrix( method$V2, bea$V2)
+confusionMatrix( factor(method$V2), factor(bea$V2))
 
 #Confusion matrix with 1 and -1 (0, -1)
 spec1 <- mauro
@@ -1288,11 +1288,11 @@ method_modified[method_modified$V2<=0,]$V2 <- -1
 
 print(">>>> Matriz confusao 2 niveis: 1, (0,-1)")
 print(">>>> Mauro x bea")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix( method_modified$V2, spec1$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec1$V2))
 print(">>>> bea x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 
 #Confusion matrix with 1 (1,0) and -1
 spec1 <- mauro
@@ -1304,11 +1304,11 @@ method_modified[method_modified$V2>=0,]$V2 <- 1
 
 print(">>>> Matriz confusao 2 niveis: (1, 0),-1")
 print(">>>> Mauro x bea")
-confusionMatrix(spec1$V2, spec2$V2)
+confusionMatrix(factor(spec1$V2), factor(spec2$V2))
 print(">>>> Mauro x Surprise")
-confusionMatrix(method_modified$V2, spec1$V2)
+confusionMatrix(factor(method_modified$V2), factor(spec1$V2))
 print(">>>> bea x Surprise")
-confusionMatrix( method_modified$V2, spec2$V2)
+confusionMatrix( factor(method_modified$V2), factor(spec2$V2))
 ```
 
 ```{r results='asis', echo=FALSE, out.extra='', fig.height=5, fig.width=10, warning=FALSE}

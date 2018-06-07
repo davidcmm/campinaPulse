@@ -21,6 +21,7 @@ library(broom)
 library(car)
 library(readr)
 library(caret)
+library(extraTrees)
 ```
 
 ```{r lib}
@@ -92,9 +93,9 @@ split.dataset <- function(dataset, train.perc) {
 #Explanatory Model Using all data
 data$chroma_diff <- (data$simple_chroma_AB - data$simple_chroma_AC) / data$simple_chroma_BC
 data$mfcc_diff <- (data$simple_mfcc_AB - data$simple_mfcc_AC) / data$simple_mfcc_BC
+
 intercept_model <- create_model_only_int(data)
 complete_model <- create_model_w_interact(data)
-
 summary(intercept_model)
 summary(complete_model)
 logLik(intercept_model)*-2 
@@ -123,13 +124,6 @@ for(i in 1:ncol(Train)){
   #mod_fit <- train(sim.A.B....sim.A.C. ~ simple_chroma_AB + simple_chroma_AC + simple_chroma_BC + simple_mfcc_AB + simple_mfcc_AC + simple_mfcc_BC, data=train.set, method="glm", family="binomial")
   #exp(coef(mod_fit$finalModel))
   
-  #Predicting and accuracy
-  #predict(mod_fit, newdata=testing)
-  #predict(mod_fit, newdata=testing, type="prob")
-  #pred = predict(mod_fit, newdata=test.set)
-  #accuracy <- table(pred, test.set[,"sim.A.B....sim.A.C."])
-  #sum(diag(accuracy))/sum(accuracy)
-  
   #Confusion matrix to explore false positives and negatives
   #pred = predict(mod_fit, newdata=test.set)
   #confusion <- confusionMatrix(data=pred, test.set$sim.A.B....sim.A.C.)#https://en.wikipedia.org/wiki/Sensitivity_and_specificity
@@ -137,19 +131,15 @@ for(i in 1:ncol(Train)){
   #Using 10-fold cross-validation
   ctrl <- trainControl(method = "repeatedcv", number = 5, savePredictions = TRUE, search = "grid")
   #tunegrid <- expand.grid(.mtry=c(1:15))#Tuning: https://machinelearningmastery.com/tune-machine-learning-algorithms-in-r/
-  
-  #mod_fit <- train(sim.A.B....sim.A.C. ~ chroma_diff + mfcc_diff, data=training, method="glm", family="binomial", trControl = ctrl)#, tuneLength = 5) chroma_diff + mfcc_diff
   #pred = predict(mod_fit, newdata=testing)
   
-  #accuracy <- table(pred, testing$sim.A.B....sim.A.C)
-  #accuracy_value <- sum(diag(accuracy))/sum(accuracy)
-  #confusion <- confusionMatrix(data=pred, testing$sim.A.B....sim.A.C)
-  #results_values[nrow(results_values)+1,] <- list(accuracy=accuracy_value, precision=confusion$byClass["Precision"], recall=confusion$byClass["Recall"], f1=confusion$byClass["F1"])
-  
   #Random Forest
-  set.seed(7)
-  mod_fit <- train(sim.A.B....sim.A.C. ~ chroma_diff + mfcc_diff, data=training, method="rf", trControl = ctrl, ntree = 500, tunelength = 10, importance = TRUE)
-  pred = predict(mod_fit, newdata=testing)
+  #set.seed(7)
+  #mod_fit <- train(sim.A.B....sim.A.C. ~ chroma_diff + mfcc_diff, data=training, method="rf", trControl = ctrl, ntree = 500, tunelength = 10, importance = TRUE)
+  #mod_fit <- train(sim.A.B....sim.A.C. ~ chroma_diff + mfcc_diff, data=training, method="glm", family="binomial", trControl = ctrl)
+  et_grid =  expand.grid(mtry = 4:7, numRandomCuts = 1:10)
+  mod_fit <- train(sim.A.B....sim.A.C. ~ chroma_diff + mfcc_diff, data=training, method="extraTrees", trControl = ctrl, tuneGrid = et_grid, numThreads = 1)
+  pred = predict(mod_fit, newdata=testing)#https://daviddalpiaz.github.io/stat430fa17/labs/enslab/enslab.html
   
   accuracy <- table(pred, testing$sim.A.B....sim.A.C)
   accuracy_value <- sum(diag(accuracy))/sum(accuracy)

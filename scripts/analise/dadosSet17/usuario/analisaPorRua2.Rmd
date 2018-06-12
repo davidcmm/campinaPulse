@@ -328,12 +328,12 @@ arrange(SD, desc(value))
 
 #Surprise data for 20 points in streets
 surprise_street <- read.csv("./surprise/surprise_data_street.csv")
-surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
-surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed.csv")
+#surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
+surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed_new.csv")
 surprise_unif_baseMed_norm <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed.csv")
-surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
+#surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
 
-surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added.csv")
+surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added_new.csv")
 surprise_unif_baseMed_norm_40 <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed_added.csv")
 ```
 
@@ -787,7 +787,6 @@ inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% 
 inacio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 inacio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 #inacio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-
 
 shapiro.test(inacio$qscore)
 fitdistr(inacio$qscore, "normal")

@@ -8,6 +8,7 @@ import json
 import csv
 import pandas as pd
 import numpy as np
+import scipy.stats
 
 def average_num(prop, i):
 	#Average scores for current street point.
@@ -92,7 +93,7 @@ def calcSurprise(num_of_points):
   avg = 0
   total = 0
 
-  normal_fit = {"all" : [4.66427796, 0.67126352], u'Av_Aprigio_Veloso': [4.51102784, 0.73482458]}
+  normal_fit = {"all" : [4.68814353, 0.64067694], u'R._Cristina_Proc\xf3pio_Silva' : [4.97966875, 0.71104919], u'R._Maciel_Pinheiro' : [4.77777896, 0.22856043], u'R._In\xe1cio_Marqu\xeas_da_Silva': [4.71353096, 0.54189458], u'R._Manoel_Pereira_de_Ara\xfajo': [3.67248457, 0.18353610], u'Av._Mal._Floriano_Peixoto': [ 4.95739065, 0.32222894], u'R._Ed\xe9sio_Silva': [4.71109467, 0.46001726], u'Av_Aprigio_Veloso': [4.51102784, 0.73482458]}
   
   #Bayesian surprise is the KL divergence from prior to posterior
   kl = 0
@@ -105,12 +106,11 @@ def calcSurprise(num_of_points):
 
     sum_diffs = [0,0,0]
 
+    norm_data = normal_fit[prop]
+    norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
+
     for i in range(0, num_of_points):
-    #Calculate per street surprise
-
-      norm_data = normal_fit[prop]
-      norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
-
+      #Calculate per street surprise
       avg_street  = average_street(prop, num_of_points)#For whole street
       total_street = sumU_street(prop, num_of_points)
       avg_num = average_num(prop, i)#median_num;//For current point
@@ -126,6 +126,8 @@ def calcSurprise(num_of_points):
       #normal
       diffs[2] = ((data[prop][i]/total_street) - (norm_estimate/total_street))
       pDMs[2] = 1 - abs(diffs[2])
+
+      #print ">>> PDM " + str(scipy.stats.norm.cdf(data[prop][i]+0.01, norm_data[0], norm_data[1]) - scipy.stats.norm.cdf(data[prop][i]-0.01, norm_data[0], norm_data[1])) + " " + str(scipy.stats.norm.pdf(data[prop][i], norm_data[0], norm_data[1])) + " " + str(pDMs[2])
       
       #Estimate P(M|D)
       #uniform
@@ -147,6 +149,9 @@ def calcSurprise(num_of_points):
         kl = kl + current_kl
         voteSum = voteSum + diffs[j]*pMs[j]
         sum_diffs[j] = sum_diffs[j] + abs(diffs[j])
+
+	#if j == 2:
+	#	print ">>> Normal " + str(norm_estimate) + " " + str(current_kl) + " " + str(kl)
       
       if voteSum >= 0:
 	surprise_data[prop][i] = abs(kl) 
@@ -197,11 +202,12 @@ if __name__ == "__main__":
 		if num_of_points == 20:
 			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20']]
 		elif num_of_points == 28:
-			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28']]	
+			data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28']]
+
 		else:
 			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28'], row['num29'], row['num30'], row['num31'], row['num32'], row['num33'], row['num34'], row['num35'], row['num36'], row['num37'], row['num38'], row['num39'], row['num40']]
 
-	print str(data)
+	#print str(data)
 
 	#Creating variables to store values over iterations
 	all_surprise = {}
@@ -225,7 +231,7 @@ if __name__ == "__main__":
 
 
 	#Multiple calculations of surprise values and storing calculus results
-	for i in range(0, 10000):
+	for i in range(0, 1):
 	  result = calcSurprise(num_of_points)
 	  #print str(result)
 	  surprise_data = result[0]
@@ -259,7 +265,4 @@ if __name__ == "__main__":
 
 	#Printing surprise values summaries
 	for prop in surprise_summary:
-		print prop + "," + ','.join(str(i) for i in surprise_summary[prop])
-
-  
-
+		print prop.encode("utf-8") + "," + ','.join(str(i) for i in surprise_summary[prop])

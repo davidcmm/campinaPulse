@@ -108,7 +108,7 @@ def calcSurprise(num_of_points):
     for i in range(0, num_of_points):
     #Calculate per street surprise
 
-      norm_data = normal_fit[prop]
+      norm_data = normal_fit["all"]#prop
       norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
 
       avg_street  = average_street(prop, num_of_points)#For whole street

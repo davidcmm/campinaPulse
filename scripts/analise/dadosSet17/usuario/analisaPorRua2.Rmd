@@ -59,7 +59,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
     }
   }
 }
-
 ```
 
 Alguns pontos importantes:
@@ -293,17 +292,16 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   new_list <- list("mapping" = mapping, "g1" = g1, "g4" = g4_new, "g5" = g5_new)
   return (new_list)
 }
-
 ```
 
 De acordo com a heterogeneidade de cada rua (abaixo) vamos apresentar a discussão, a partir da próxima seção, da mais heterogênea para a mais homogênea.
 
 ```{r , echo=FALSE, warning=FALSE}
 #Checking accuracies between specialists and specialists x surprises
-spec_3cls  <- c(0.67, 0.4, 0.45, 0.5, 0.55, 0.55)
-spec_2cls  <- c(0.8, 0.72, 0.7, 0.6, 0.65, 0.7, 0.75, 0.7, 0.85, 0.67, 0.85, 0.7)
-spec_sur_3cls <- c(0.475, 0.475, 0.4, 0.55, 0.45, 0.3, 0.15, 0.45, 0.375, 0.475, 0.25, 0.5)
-spec_sur_2cls <- c(0.525, 0.7, 0.57, 0.52, 0.55, 0.8, 0.7, 0.6, 0.6, 0.65, 0.55, 0.6, 0.55, 0.5, 0.6, 0.75, 0.57, 0.67, 0.67, 0.5, 0.65, 0.55, 0.7, 0.75)
+spec_3cls  <- c(0.675, 0.45, 0.55, 0.4, 0.5, 0.55)
+spec_2cls  <- c(0.8, 0.725, 0.65, 0.7, 0.85, 0.675, 0.75, 0.6, 0.75, 0.75, 0.85, 0.7)
+spec_sur_3cls <- c(0.475, 0.475, 0.45, 0.3, 0.375, 0.475, 0.4, 0.55, 0.15, 0.45, 0.25, 0.5)
+spec_sur_2cls <- c(0.525, 0.575, 0.7, 0.525, 0.6, 0.55, 0.65, 0.65, 0.575, 0.675, 0.675, 0.65, 0.55, 0.7, 0.8, 0.6, 0.55, 0.6, 0.5, 0.75, 0.65, 0.7, 0.55, 0.75)
 
 ci <- sd(spec_3cls) * 1.96 / sqrt(length(spec_3cls))
 print(paste(">>>>>> Especi 3 classes [", mean(spec_3cls) - ci, ",", mean(spec_3cls) + ci, "] ", mean(spec_3cls)))
@@ -328,13 +326,14 @@ arrange(SD, desc(value))
 
 #Surprise data for 20 points in streets
 surprise_street <- read.csv("./surprise/surprise_data_street.csv")
-surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
-surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed.csv")
+#surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
+surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed_new.csv")
 surprise_unif_baseMed_norm <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed.csv")
-surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
-
-surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added.csv")
+surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added_new.csv")
 surprise_unif_baseMed_norm_40 <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed_added.csv")
+
+surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
+surprise_unif_base_normAll_40 <- read.csv("./surprise/surprise_unif_base_normAll_added.csv")
 ```
 
 O que procurar?
@@ -349,31 +348,58 @@ O que procurar?
 
 #Retestes
 ```{r , echo=FALSE, warning=FALSE}
+#Aida
 aida_old <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
 aida_new <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
 kripp.alpha(x=rbind(aida_old$V2, aida_new$V2))
 cohen.kappa(cbind(aida_old$V2, aida_new$V2))
 
+#Mariana
 mariana_old <- read.csv("entrevista/retestes/mariana_cristina.csv", header=FALSE)
 mariana_new <- read.csv("entrevista/retestes/mariana_cristina2.csv", header=FALSE)#max,66-225;66-315 min,2-45;2-293;305-135;305-225
 kripp.alpha(x=rbind(mariana_old$V2, mariana_new$V2))
 cohen.kappa(cbind(mariana_old$V2, mariana_new$V2))
 confusionMatrix(mariana_old$V2, mariana_new$V2)
 
+spec1 <- mariana_old
+spec1[spec1$V2 == "0" | spec1$V2 == "-1",]$V2 <- -1
+spec2 <- mariana_new
+spec2[spec2$V2 == "0" | spec2$V2 == "-1",]$V2 <- -1
+confusionMatrix(spec1$V2, spec2$V2)
+
+spec1 <- mariana_old
+spec1[spec1$V2 == "0" | spec1$V2 == "1",]$V2 <- 1
+spec2 <- mariana_new
+spec2[spec2$V2 == "0" | spec2$V2 == "1",]$V2 <- 1
+confusionMatrix(spec1$V2, spec2$V2)
+
+#bea
 bea_old <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
 bea_new <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
 kripp.alpha(x=rbind(bea_old$V2, bea_new$V2))
 cohen.kappa(cbind(bea_old$V2, bea_new$V2))
 
+#Livia
 livia_old <- read.csv("entrevista/retestes/livia_maciel.csv", header=FALSE)
 livia_new <- read.csv("entrevista/retestes/livia_maciel2.csv", header=FALSE)
 kripp.alpha(x=rbind(livia_old$V2, livia_new$V2))
 cohen.kappa(cbind(livia_old$V2, livia_new$V2))
 confusionMatrix(factor(livia_old$V2), factor(livia_new$V2))#Trocar o mínimo por 0/1
+
+spec1 <- livia_old
+spec1[spec1$V2 == "0" | spec1$V2 == "-1",]$V2 <- -1
+spec2 <- livia_new
+spec2[spec2$V2 == "0" | spec2$V2 == "-1",]$V2 <- -1
+confusionMatrix(spec1$V2, spec2$V2)
+
+spec1 <- livia_old
+spec1[spec1$V2 == "0" | spec1$V2 == "1",]$V2 <- 1
+spec2 <- livia_new
+spec2[spec2$V2 == "0" | spec2$V2 == "1",]$V2 <- 1
+confusionMatrix(spec1$V2, spec2$V2)
 ```
 
 #Cristina Procópio
-
 ```{r echo=FALSE, fig.height=30, fig.width=12, warning=FALSE}
 best_folder <- "../percepcaoLocal/agradavel/melhores/intersects/"
 worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
@@ -381,7 +407,7 @@ worst_folder <- "../percepcaoLocal/agradavel/piores/intersects/"
 cristina <- dplyr::filter(all_data, street == "R._Cristina_Procópio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #cristina$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 #cristina$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
-cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
+cristina$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value#surprise_unif_base_normAll_40
 cristina$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm_40, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 #cristina$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Cristina_Procópio_Silva"), id.vars = "street")$value
 
@@ -631,7 +657,7 @@ show_street_data(cristina, all_data, best_folder, worst_folder)
 edesio <- dplyr::filter(all_data, street == "R._Edésio_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #edesio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Edésio_Silva"), id.vars = "street")$value
 #edesio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
-edesio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Edésio_Silva"), id.vars = "street")$value
+edesio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Edésio_Silva"), id.vars = "street")$value#surprise_unif_base_normAll
 edesio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Edésio_Silva"), id.vars = "street")$value
 #edesio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Edésio_Silva"), id.vars = "street")$value
 
@@ -785,10 +811,9 @@ show_street_data(edesio, all_data,  best_folder, worst_folder)
 inacio <- dplyr::filter(all_data, street == "R._Inácio_Marquês_da_Silva") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #inacio$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 #inacio$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-inacio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
+inacio$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value#surprise_unif_base_normAll_40
 inacio$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm_40, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
 #inacio$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Inácio_Marquês_da_Silva"), id.vars = "street")$value
-
 
 shapiro.test(inacio$qscore)
 fitdistr(inacio$qscore, "normal")
@@ -938,7 +963,7 @@ show_street_data(inacio, all_data,  best_folder, worst_folder)
 floriano <- dplyr::filter(all_data, street == "Av._Mal._Floriano_Peixoto") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #floriano$surprise_street <- melt(dplyr::filter(surprise_street, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 #floriano$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
-floriano$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
+floriano$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value#surprise_unif_base_normAll
 floriano$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 #floriano$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "Av._Mal._Floriano_Peixoto"), id.vars = "street")$value
 
@@ -1091,7 +1116,7 @@ show_street_data(floriano, all_data,  best_folder, worst_folder)
 maciel <- dplyr::filter(all_data, street == "R._Maciel_Pinheiro") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #maciel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 #maciel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
-maciel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
+maciel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Maciel_Pinheiro"), id.vars = "street")$value#surprise_unif_base_normAll
 maciel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 #maciel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Maciel_Pinheiro"), id.vars = "street")$value
 
@@ -1248,7 +1273,7 @@ show_street_data(maciel, all_data,  best_folder, worst_folder)
 manoel <- dplyr::filter(all_data, street == "R._Manoel_Pereira_de_Araújo") %>% dplyr::group_by(num) %>% dplyr::arrange(street, num, angle) %>% dplyr::select(url, photo_name, street, num, angle, qscore, V3, ci)
 #manoel$surprise_street <- melt(dplyr::filter(surprise_street, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 #manoel$surprise_unif_base_norm <- melt(dplyr::filter(surprise_unif_base_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
-manoel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
+manoel$surprise_unif_base_norm_fixed <- melt(dplyr::filter(surprise_unif_base_norm_fixed, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value#surprise_unif_base_normAll
 manoel$surprise_unif_baseMed_norm <- melt(dplyr::filter(surprise_unif_baseMed_norm, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 #manoel$surprise_unif_base_normAll <- melt(dplyr::filter(surprise_unif_base_normAll, street == "R._Manoel_Pereira_de_Araújo"), id.vars = "street")$value
 

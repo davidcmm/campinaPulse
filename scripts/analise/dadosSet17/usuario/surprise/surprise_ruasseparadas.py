@@ -69,25 +69,20 @@ def deMoivre_funnel(all_points):
 	
 	
 
-def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_normal_pM):
+def calcSurprise(num_of_points):
   
   uniform_data = {}
   surprise_data = {}
   base_data = {}
 
   for prop in data:
-	street_size = street_sizes[prop]
+	surprise_data[prop] = [0 for x in range(num_of_points)]
+	uniform_data[prop] = [0 for x in range(num_of_points)]
+	base_data[prop] = [0 for x in range(num_of_points)]
 
-	surprise_data[prop] = [0 for x in range(street_size)]
-	uniform_data[prop] = [0 for x in range(street_size)]
-	base_data[prop] = [0 for x in range(street_size)]
-
-  #Start with equiprobably P(M)s: Uniform, base rate, normal
+  #Start with equiprobably P(M)s
   #Initially, everything is equiprobable.
-  #if len(all_uniform_pM) == 0:
-  pMs = [(1.0/3),(1.0/3),(1.0/3)]
-  #else:
-#	  pMs = [all_uniform_pM[-1], all_base_pM[-1], all_normal_pM[-1]]
+  pMs =[(1.0/3),(1.0/3),(1.0/3)]
 
   uniform_pM = [pMs[0]]
   base_rate_pM = [pMs[1]]
@@ -112,15 +107,14 @@ def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_n
   for prop in data:
 
     sum_diffs = [0,0,0]
-    street_size = street_sizes[prop]
 
-    for i in range(0, street_size):
-      norm_data = normal_fit[prop]#prop
+    for i in range(0, num_of_points):
+      norm_data = normal_fit["all"]#prop
       norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
 
       #Calculate per street surprise
-      avg_street  = average_street(prop, street_size)#For whole street
-      total_street = sumU_street(prop, street_size)
+      avg_street  = average_street(prop, num_of_points)#For whole street
+      total_street = sumU_street(prop, num_of_points)
       avg_num = average_num(prop, i)#median_num;//For current point
       total_num = sumU_num(prop, i)
       
@@ -188,8 +182,8 @@ def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_n
 
 if __name__ == "__main__":
 
-	if len(sys.argv) < 4:
-		print "Uso: <3 arquivos com scores a considerar: 20, 28 e 40 pontos>"
+	if len(sys.argv) < 3:
+		print "Uso: <arquivo com scores a considerar> <quantidade de pontos de coleta na rua>"
 		sys.exit(1)
 
 	#Init algorithm
@@ -203,26 +197,17 @@ if __name__ == "__main__":
 	min_street = {}
 
 	input_data = pd.read_table(sys.argv[1], sep=',', encoding='utf8', header=0)
-	input_data2 = pd.read_table(sys.argv[2], sep=',', encoding='utf8', header=0)
-	input_data3 = pd.read_table(sys.argv[3], sep=',', encoding='utf8', header=0)
-
-	num_of_points = max(len(input_data.columns), len(input_data2.columns), len(input_data3.columns))
+	num_of_points = int(sys.argv[2])
 
 	data = {}
-	street_sizes = {}
-	for dataframe in [input_data, input_data2, input_data3]:
-		current_num_of_points = len(dataframe.columns)-1
+	for index, row in input_data.iterrows():
+		if num_of_points == 20:
+			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20']]
+		elif num_of_points == 28:
+			data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28']]
 
-		for index, row in dataframe.iterrows():
-			if current_num_of_points == 20:
-				 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-				 street_sizes[row['street']] = 20
-			elif current_num_of_points == 28:
-				data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28'], -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-				street_sizes[row['street']] = 28
-			else:
-				 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28'], row['num29'], row['num30'], row['num31'], row['num32'], row['num33'], row['num34'], row['num35'], row['num36'], row['num37'], row['num38'], row['num39'], row['num40']]
-				 street_sizes[row['street']] = 40
+		else:
+			 data[row['street']] = [row['num1'], row['num2'], row['num3'], row['num4'], row['num5'], row['num6'], row['num7'], row['num8'], row['num9'], row['num10'], row['num11'], row['num12'], row['num13'], row['num14'], row['num15'], row['num16'], row['num17'], row['num18'], row['num19'], row['num20'], row['num21'], row['num22'], row['num23'], row['num24'], row['num25'], row['num26'], row['num27'], row['num28'], row['num29'], row['num30'], row['num31'], row['num32'], row['num33'], row['num34'], row['num35'], row['num36'], row['num37'], row['num38'], row['num39'], row['num40']]
 
 	#print str(data)
 
@@ -237,21 +222,19 @@ if __name__ == "__main__":
 	uniform_summary = {}
 	base_summary = {}
 
-	for dataframe in [input_data, input_data2, input_data3]:
-		for prop in dataframe['street']:
-			street_size = street_sizes[prop]
+	for prop in input_data['street']:
+		all_surprise[prop] = [[] for x in range(num_of_points)]
+		all_uniform[prop] = [[] for x in range(num_of_points)]
+		all_base[prop] = [[] for x in range(num_of_points)]
 
-			all_surprise[prop] = [[] for x in range(street_size)]
-			all_uniform[prop] = [[] for x in range(street_size)]
-			all_base[prop] = [[] for x in range(street_size)]
+		surprise_summary[prop] = [[] for x in range(num_of_points)]
+		uniform_summary[prop] = [[] for x in range(num_of_points)]
+		base_summary[prop] = [[] for x in range(num_of_points)]
 
-			surprise_summary[prop] = [[] for x in range(street_size)]
-			uniform_summary[prop] = [[] for x in range(street_size)]
-			base_summary[prop] = [[] for x in range(street_size)]
 
 	#Multiple calculations of surprise values and storing calculus results
-	for i in range(0, 100000):
-	  result = calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_normal_pM)
+	for i in range(0, 10000):
+	  result = calcSurprise(num_of_points)
 	  #print str(result)
 	  surprise_data = result[0]
 	  uniform_data = result[1]
@@ -264,22 +247,18 @@ if __name__ == "__main__":
 	  all_base_pM.append(base_rate_pM[-1])
 	  all_normal_pM.append(normal_pM[-1])
 
-	for dataframe in [input_data, input_data2, input_data3]:
-		  for prop in dataframe['street']:
-			street_size = street_sizes[prop]
-			for i in range(0, street_size):
-				all_surprise[prop][i].append(surprise_data[prop][i])
-				all_uniform[prop][i].append(uniform_data[prop][i])
-				all_base[prop][i].append(base_data[prop][i])
+	  for prop in input_data['street']:
+		for i in range(0, num_of_points):
+			all_surprise[prop][i].append(surprise_data[prop][i])
+			all_uniform[prop][i].append(uniform_data[prop][i])
+			all_base[prop][i].append(base_data[prop][i])
 
 	#Calculating summaries
-	for dataframe in [input_data, input_data2, input_data3]:
-		for prop in dataframe['street']:
-			street_size = street_sizes[prop]
-			for i in range(0, street_size):
-				surprise_summary[prop][i] = np.mean(all_surprise[prop][i])
-				uniform_summary[prop][i] =  np.mean(all_uniform[prop][i])
-				base_summary[prop][i] =  np.mean(all_base[prop][i])
+	for prop in input_data['street']:
+		for i in range(0, num_of_points):
+			surprise_summary[prop][i] = np.mean(all_surprise[prop][i])
+			uniform_summary[prop][i] =  np.mean(all_uniform[prop][i])
+			base_summary[prop][i] =  np.mean(all_base[prop][i])
 
 	#Printing confidence in models
 	print ">>> Uniform pM " + str(np.mean(all_uniform_pM)) + " " + str(np.std(all_uniform_pM)) + " [" + str( np.mean(all_uniform_pM) + 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "," + str( np.mean(all_uniform_pM) - 1.96 * np.std(all_uniform_pM) / len(all_uniform_pM) ) + "]"
@@ -288,4 +267,4 @@ if __name__ == "__main__":
 
 	#Printing surprise values summaries
 	for prop in surprise_summary:
-		print prop.encode("utf-8") + "," + ','.join(str(i) for i in surprise_summary[prop])
+print prop.encode("utf-8") + "," + ','.join(str(i) for i in surprise_summary[prop])

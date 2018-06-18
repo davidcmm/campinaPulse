@@ -109,14 +109,18 @@ def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_n
   streets = data.keys()
   random.shuffle(streets)
 
-  for prop in data:
+  #for prop in streets:
+  for street_index in range(0, len(streets)):
 
+    prop = streets[street_index]
     sum_diffs = [0,0,0]
     street_size = street_sizes[prop]
 
+    norm_estimate = -1
     for i in range(0, street_size):
-      norm_data = normal_fit[prop]#prop
-      norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
+      if i % 4 == 0:
+	norm_data = normal_fit[prop]#prop
+      	norm_estimate = np.random.normal(loc=norm_data[0], scale=norm_data[1])
 
       #Calculate per street surprise
       avg_street  = average_street(prop, street_size)#For whole street
@@ -162,9 +166,11 @@ def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_n
 	#	print ">>> Normal " + str(norm_estimate) + " " + str(current_kl) + " " + str(kl)
       
       if voteSum >= 0:
-	surprise_data[prop][i] = abs(kl) 
+	if street_index == len(streets) - 1:
+		surprise_data[prop][i] = abs(kl) 
       else: 
-	surprise_data[prop][i] = -1 * abs(kl)
+	if street_index == len(streets) - 1:
+		surprise_data[prop][i] = -1 * abs(kl)
 
       uniform_data[prop][i] = pMs[0]
       base_data[prop][i] = pMs[1]
@@ -250,7 +256,7 @@ if __name__ == "__main__":
 			base_summary[prop] = [[] for x in range(street_size)]
 
 	#Multiple calculations of surprise values and storing calculus results
-	for i in range(0, 100000):
+	for i in range(0, 700000):
 	  result = calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_normal_pM)
 	  #print str(result)
 	  surprise_data = result[0]
@@ -262,15 +268,16 @@ if __name__ == "__main__":
 
 	  all_uniform_pM.append(uniform_pM[-1])
 	  all_base_pM.append(base_rate_pM[-1])
-	  all_normal_pM.append(normal_pM[-1])
+	  all_normal_pM.append(normal_pM[-1]) 
 
-	for dataframe in [input_data, input_data2, input_data3]:
+	  for dataframe in [input_data, input_data2, input_data3]:
 		  for prop in dataframe['street']:
 			street_size = street_sizes[prop]
-			for i in range(0, street_size):
-				all_surprise[prop][i].append(surprise_data[prop][i])
-				all_uniform[prop][i].append(uniform_data[prop][i])
-				all_base[prop][i].append(base_data[prop][i])
+			if prop in surprise_data:
+				for i in range(0, street_size):
+					all_surprise[prop][i].append(surprise_data[prop][i])
+					all_uniform[prop][i].append(uniform_data[prop][i])
+					all_base[prop][i].append(base_data[prop][i])
 
 	#Calculating summaries
 	for dataframe in [input_data, input_data2, input_data3]:

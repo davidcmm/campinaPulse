@@ -842,9 +842,17 @@ print(">>>> Mauro x Surprise")
 confusionMatrix( factor(method$V2), factor(mauro$V2))
 print(">>>> bea x Surprise")
 confusionMatrix(factor(method$V2), factor(bea$V2))
+kripp.alpha(x=rbind(mauro$V2, bea$V2))
+cohen.kappa(cbind(mauro$V2, bea$V2))
 
 merge <- filter(merge(mauro, bea, by="V1"), V2.x != 0 & V2.x == -1 * V2.y)
 print(merge)
+
+#All specialists for Inácio
+livia <- read.csv("entrevista/livia_inacio.csv", header=FALSE)
+mariana <- read.csv("entrevista/mariana_inacio.csv", header=FALSE)
+kripp.alpha(x=rbind(livia$V2, mariana$V2, mauro$V2, bea$V2))
+cohen.kappa(cbind(livia$V2, mariana$V2, mauro$V2, bea$V2))
 
 #Confusion matrix with 1 and -1 (0, -1)
 spec1 <- mauro

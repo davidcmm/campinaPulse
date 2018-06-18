@@ -255,7 +255,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
   #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.002, 0.002))
    g4_new <- hide_legend(ggplotly(g4, tooltip = c("num", "angle")))
    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
    g5_new <- hide_legend(ggplotly(g5, tooltip = c("num", "angle")))
@@ -327,9 +327,9 @@ arrange(SD, desc(value))
 #Surprise data for 20 points in streets
 surprise_street <- read.csv("./surprise/surprise_data_street.csv")
 #surprise_unif_base_norm <- read.csv("./surprise/surprise_unif_base_norm.csv")
-surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed_new.csv")
+surprise_unif_base_norm_fixed <- read.csv("./surprise/surprise_unif_base_norm_fixed_last.csv")
 surprise_unif_baseMed_norm <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed.csv")
-surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added_new.csv")
+surprise_unif_base_norm_fixed_40 <- read.csv("./surprise/surprise_unif_base_norm_fixed_added_last.csv")
 surprise_unif_baseMed_norm_40 <- read.csv("./surprise/surprise_unif_baseMedian_norm_fixed_added.csv")
 
 surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
@@ -349,24 +349,28 @@ O que procurar?
 #Retestes
 ```{r , echo=FALSE, warning=FALSE}
 #Aida
+print(">>> Aida Floriano")
 aida_old <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
 aida_new <- read.csv("entrevista/retestes/aida_floriano.csv", header=FALSE)
 kripp.alpha(x=rbind(aida_old$V2, aida_new$V2))
 cohen.kappa(cbind(aida_old$V2, aida_new$V2))
 
 #Mariana
+print(">>> Mariana Cristina")
 mariana_old <- read.csv("entrevista/retestes/mariana_cristina.csv", header=FALSE)
 mariana_new <- read.csv("entrevista/retestes/mariana_cristina2.csv", header=FALSE)#max,66-225;66-315 min,2-45;2-293;305-135;305-225
 kripp.alpha(x=rbind(mariana_old$V2, mariana_new$V2))
 cohen.kappa(cbind(mariana_old$V2, mariana_new$V2))
 confusionMatrix(mariana_old$V2, mariana_new$V2)
 
+print("## Non-positives")
 spec1 <- mariana_old
 spec1[spec1$V2 == "0" | spec1$V2 == "-1",]$V2 <- -1
 spec2 <- mariana_new
 spec2[spec2$V2 == "0" | spec2$V2 == "-1",]$V2 <- -1
 confusionMatrix(spec1$V2, spec2$V2)
 
+print("## Non-negatives")
 spec1 <- mariana_old
 spec1[spec1$V2 == "0" | spec1$V2 == "1",]$V2 <- 1
 spec2 <- mariana_new
@@ -374,24 +378,28 @@ spec2[spec2$V2 == "0" | spec2$V2 == "1",]$V2 <- 1
 confusionMatrix(spec1$V2, spec2$V2)
 
 #bea
+print(">>> Bea Inácio")
 bea_old <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
 bea_new <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
 kripp.alpha(x=rbind(bea_old$V2, bea_new$V2))
 cohen.kappa(cbind(bea_old$V2, bea_new$V2))
 
 #Livia
+print(">>> Lívia Maciel")
 livia_old <- read.csv("entrevista/retestes/livia_maciel.csv", header=FALSE)
 livia_new <- read.csv("entrevista/retestes/livia_maciel2.csv", header=FALSE)
 kripp.alpha(x=rbind(livia_old$V2, livia_new$V2))
 cohen.kappa(cbind(livia_old$V2, livia_new$V2))
 confusionMatrix(factor(livia_old$V2), factor(livia_new$V2))#Trocar o mínimo por 0/1
 
+print("## Non-positives")
 spec1 <- livia_old
 spec1[spec1$V2 == "0" | spec1$V2 == "-1",]$V2 <- -1
 spec2 <- livia_new
 spec2[spec2$V2 == "0" | spec2$V2 == "-1",]$V2 <- -1
 confusionMatrix(spec1$V2, spec2$V2)
 
+print("## Non-negatives")
 spec1 <- livia_old
 spec1[spec1$V2 == "0" | spec1$V2 == "1",]$V2 <- 1
 spec2 <- livia_new

@@ -392,9 +392,24 @@ confusionMatrix(spec1$V2, spec2$V2)
 #bea
 print(">>> Bea Inácio")
 bea_old <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
-bea_new <- read.csv("entrevista/retestes/bea_inacio.csv", header=FALSE)
+bea_new <- read.csv("entrevista/retestes/bea_inacio2.csv", header=FALSE)
 kripp.alpha(x=rbind(bea_old$V2, bea_new$V2))
 cohen.kappa(cbind(bea_old$V2, bea_new$V2))
+confusionMatrix(factor(bea_old$V2), factor(bea_new$V2))#Trocar max e reg
+
+print("## Non-positives")
+spec1 <- bea_old
+spec1[spec1$V2 == "0" | spec1$V2 == "-1",]$V2 <- -1
+spec2 <- bea_new
+spec2[spec2$V2 == "0" | spec2$V2 == "-1",]$V2 <- -1
+confusionMatrix(spec1$V2, spec2$V2)
+
+print("## Non-negatives")
+spec1 <- bea_old
+spec1[spec1$V2 == "0" | spec1$V2 == "1",]$V2 <- 1
+spec2 <- bea_new
+spec2[spec2$V2 == "0" | spec2$V2 == "1",]$V2 <- 1
+confusionMatrix(spec1$V2, spec2$V2)
 
 #Livia
 print(">>> Lívia Maciel")

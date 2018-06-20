@@ -1,0 +1,133 @@
+> print(">>>> Mauro x bea")
+[1] ">>>> Mauro x bea"
+> confusionMatrix(factor(mauro$V2), factor(bea$V2))
+Confusion Matrix and Statistics
+
+          Reference
+Prediction -1  0  1
+        -1  9  0  0
+        0  12  6  3
+        1   1  2  7
+
+Overall Statistics
+                                          
+               Accuracy : 0.55            
+                 95% CI : (0.3849, 0.7074)
+    No Information Rate : 0.55            
+    P-Value [Acc > NIR] : 0.565054        
+                                          
+                  Kappa : 0.3651          
+ Mcnemar's Test P-Value : 0.004223        
+
+Statistics by Class:
+
+                     Class: -1 Class: 0 Class: 1
+Sensitivity             0.4091   0.7500    0.700
+Specificity             1.0000   0.5312    0.900
+Pos Pred Value          1.0000   0.2857    0.700
+Neg Pred Value          0.5806   0.8947    0.900
+Prevalence              0.5500   0.2000    0.250
+Detection Rate          0.2250   0.1500    0.175
+Detection Prevalence    0.2250   0.5250    0.250
+Balanced Accuracy       0.7045   0.6406    0.800
+> print(">>>> Mauro x Surprise")
+[1] ">>>> Mauro x Surprise"
+> confusionMatrix( factor(method$V2), factor(mauro$V2))
+Confusion Matrix and Statistics
+
+          Reference
+Prediction -1 0 1
+        -1  4 7 1
+        0   1 5 3
+        1   4 9 6
+
+Overall Statistics
+                                         
+               Accuracy : 0.375          
+                 95% CI : (0.2273, 0.542)
+    No Information Rate : 0.525          
+    P-Value [Acc > NIR] : 0.98047        
+                                         
+                  Kappa : 0.1015         
+ Mcnemar's Test P-Value : 0.02556        
+
+Statistics by Class:
+
+                     Class: -1 Class: 0 Class: 1
+Sensitivity             0.4444   0.2381   0.6000
+Specificity             0.7419   0.7895   0.5667
+Pos Pred Value          0.3333   0.5556   0.3158
+Neg Pred Value          0.8214   0.4839   0.8095
+Prevalence              0.2250   0.5250   0.2500
+Detection Rate          0.1000   0.1250   0.1500
+Detection Prevalence    0.3000   0.2250   0.4750
+Balanced Accuracy       0.5932   0.5138   0.5833
+> print(">>>> bea x Surprise")
+[1] ">>>> bea x Surprise"
+> confusionMatrix(factor(method$V2), factor(bea$V2))
+Confusion Matrix and Statistics
+
+          Reference
+Prediction -1 0 1
+        -1  9 1 2
+        0   6 1 2
+        1   7 6 6
+
+Overall Statistics
+                                          
+               Accuracy : 0.4             
+                 95% CI : (0.2486, 0.5667)
+    No Information Rate : 0.55            
+    P-Value [Acc > NIR] : 0.98042         
+                                          
+                  Kappa : 0.1061          
+ Mcnemar's Test P-Value : 0.03932         
+
+Statistics by Class:
+
+                     Class: -1 Class: 0 Class: 1
+Sensitivity             0.4091   0.1250   0.6000
+Specificity             0.8333   0.7500   0.5667
+Pos Pred Value          0.7500   0.1111   0.3158
+Neg Pred Value          0.5357   0.7742   0.8095
+Prevalence              0.5500   0.2000   0.2500
+Detection Rate          0.2250   0.0250   0.1500
+Detection Prevalence    0.3000   0.2250   0.4750
+Balanced Accuracy       0.6212   0.4375   0.5833
+
+
+> kripp.alpha(x=rbind(mauro$V2, bea$V2))
+ Krippendorff's alpha
+
+ Subjects = 40 
+   Raters = 2 
+    alpha = 0.323 
+
+> cohen.kappa(cbind(mauro$V2, bea$V2))
+Call: cohen.kappa1(x = x, w = w, n.obs = n.obs, alpha = alpha, levels = levels)
+
+Cohen Kappa and Weighted Kappa correlation coefficients and confidence boundaries 
+                 lower estimate upper
+unweighted kappa  0.17     0.37  0.56
+weighted kappa    0.33     0.59  0.86
+
+ Number of subjects = 40 
+
+
+########################## 4 specialists
+
+ Krippendorff's alpha
+
+ Subjects = 40 
+   Raters = 4 
+    alpha = 0.196 
+
+> cohen.kappa(cbind(livia$V2, mariana$V2, mauro$V2, bea$V2))
+
+Cohen Kappa (below the diagonal) and Weighted Kappa (above the diagonal) 
+For confidence intervals and detail print with all=TRUE
+      R1   R2    R3   R4
+R1  1.00 0.43 0.013 0.41
+R2  0.35 1.00 0.246 0.68
+R3 -0.15 0.13 1.000 0.59
+R4  0.14 0.51 0.365 1.00

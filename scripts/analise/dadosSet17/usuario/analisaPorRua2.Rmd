@@ -346,6 +346,17 @@ O que procurar?
 6. Heterogeneidade/Homogeneidade no ponto -> Isso tudo pode ser explicado pela regressão geral das features?
 7. O que é a rua?
 
+#Concordância Leigos
+```{r , echo=FALSE, warning=FALSE}
+jair <- read.csv("entrevista/jair_aprigio.csv", header=FALSE)
+jeff <- read.csv("entrevista/jefferson_aprigio.csv", header=FALSE)
+caio <- read.csv("entrevista/caio_aprigio.csv", header=FALSE)
+hadrizia <- read.csv("entrevista/hadrizia_aprigio.csv", header=FALSE)
+lorena <- read.csv("entrevista/lorena_aprigio.csv", header=FALSE)
+kripp.alpha(x=rbind(jair$V2, jeff$V2, caio$V2, hadrizia$V2, lorena$V2))
+cohen.kappa(cbind(jair$V2, jeff$V2, caio$V2, hadrizia$V2, lorena$V2))
+```
+
 #Retestes
 ```{r , echo=FALSE, warning=FALSE}
 #Aida

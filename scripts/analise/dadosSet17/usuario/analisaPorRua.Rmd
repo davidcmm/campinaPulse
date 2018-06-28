@@ -531,7 +531,7 @@ crd <- cbind(res$long, res$lat)
 
 reg_geral <- lm(rank ~ street_wid + sidewalk_wid + landscape + trees + build_ident + cyclists + mov_cars + people + park_cars, na.action = na.exclude, data = res)#rank ~ .*.
 residuals <- resid(reg_geral)
-#texreg(list(reg_geral), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
+texreg(list(reg_geral), stars = c(0.1, 0.05, 0.01, 0.001), digits=3)
 #Analysing regression! http://data.library.virginia.edu/diagnostic-plots/
 plotRegAndLinear(reg_geral, reg_input)
 

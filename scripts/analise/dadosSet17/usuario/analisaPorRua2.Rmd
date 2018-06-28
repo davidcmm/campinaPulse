@@ -255,7 +255,7 @@ plot_ci_per_photo <- function(data, plotTitle, ids1, ids2){
   g1 <- ggplot(data, aes(x=num, y=V3, fill=side, group=side)) + ylim(c(0,7)) + geom_line() + geom_point(aes(shape = side, colour=side), size=2.5) + geom_errorbar(aes(ymin=V3-ci, ymax=V3+ci), colour="black", width=.1, position=pd) + geom_area(position = "identity", alpha = 0.4) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1), plot.title = element_text(vjust=10)) + labs(x = "Street points", title = plotTitle, y = "Q-Score") +  scale_x_continuous(limits=c(min(numbers_to_show)-10, max(numbers_to_show)+30), breaks=numbers_to_show, labels=labels_to_show) + geom_vline(data = data.frame(marks=numbers_to_show), aes(xintercept=marks), linetype="dashed") + geom_hline(aes(yintercept=mean, color=side), linetype="dashed") + geom_hline(aes(yintercept=median, color=side), linetype="dotdash") 
   #g2 <- ggplot(data, aes(x=num, y=surprise_street, size=3)) + geom_point(aes(colour = surprise_street, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform for Street") + ylim(c(-0.05, 0.05))
   #g3 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm, size=3)) + geom_point(aes(colour = surprise_unif_base_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate + Normal for each street") + ylim(c(-0.05, 0.05))
-  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green", name = "Surpresa") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.002, 0.002))
+  g4 <- ggplot(data, aes(x=num, y=surprise_unif_base_norm_fixed, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_base_norm_fixed, shape=side)) + scale_colour_continuous(low="red", high="green", name = "Surpresa") + labs(title = "Uniform + Base Rate + Normal for each street - fixed PM") +  ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
    ggsave(paste("images/", plotTitle, ".pdf"), plot=g4, width=10, height=5)
    g4_new <- hide_legend(ggplotly(g4, tooltip = c("num", "angle")))
    g5 <- ggplot(data, aes(x=num, y=surprise_unif_baseMed_norm, label = angle, size=2)) + geom_point(aes(colour = surprise_unif_baseMed_norm, shape=side)) + scale_colour_continuous(low="red", high="green") + labs(title = "Uniform + Base Rate (Median) + Normal for each street - fixed PM") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
@@ -336,6 +336,9 @@ surprise_unif_baseMed_norm_40 <- read.csv("./surprise/surprise_unif_baseMedian_n
 
 surprise_unif_base_normAll <- read.csv("./surprise/surprise_unif_base_normAll.csv")
 surprise_unif_base_normAll_40 <- read.csv("./surprise/surprise_unif_base_normAll_added.csv")
+
+print(">>>>> CI for each point")
+
 ```
 
 O que procurar?
@@ -347,6 +350,41 @@ O que procurar?
 5. Descontinuidades no mesmo lado
 6. Heterogeneidade/Homogeneidade no ponto -> Isso tudo pode ser explicado pela regressão geral das features?
 7. O que é a rua?
+
+#Intervalos de confiança para surpresas
+```{r , echo=FALSE, warning=FALSE}
+#Surprise stds
+surprise_std <- read.table("./surprise/surprise_std.dat")
+surprise_std$ci <- surprise_std$V3 * 1.96 / sqrt(surprise_std$V4)
+
+inacio <- filter(surprise_std, V1 == "R._Inácio_Marquês_da_Silva")
+inacio <- inacio %>% mutate(index=1:n())
+ggplot(inacio, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Inacio") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+cristina <- filter(surprise_std, V1 == "R._Cristina_Procópio_Silva")
+cristina <- cristina %>% mutate(index=1:n())
+ggplot(cristina, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Cristina") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+maciel <- filter(surprise_std, V1 == "R._Maciel_Pinheiro")
+maciel <- maciel %>% mutate(index=1:n())
+ggplot(maciel, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Maciel") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+manoel <- filter(surprise_std, V1 == "R._Manoel_Pereira_de_Araújo")
+manoel <- manoel %>% mutate(index=1:n())
+ggplot(manoel, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Manoel") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+floriano <- filter(surprise_std, V1 == "Av._Mal._Floriano_Peixoto")
+floriano <- floriano %>% mutate(index=1:n())
+ggplot(floriano, aes(x=index, y=V2, size=2, colour=V2), colour=V2) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Floriano") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+aprigio <- filter(surprise_std, V1 == "Av_Aprigio_Veloso")
+aprigio <- aprigio %>% mutate(index=1:n())
+ggplot(aprigio, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Aprigio") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+
+edesio <- filter(surprise_std, V1 == "R._Edésio_Silva")
+edesio <- edesio %>% mutate(index=1:n())
+ggplot(edesio, aes(x=index, y=V2, size=2, colour=V2)) + geom_point(aes(colour = V2)) + geom_errorbar(aes(ymin=V2-ci, ymax=V2+ci)) + labs(title = "Uniform + Base Rate (Median) + Normal for each street - Edésio") + ylab("Surprise") + xlab("Street number") + ylim(c(-0.02, 0.02))
+```
 
 #Concordância Leigos
 ```{r , echo=FALSE, warning=FALSE}

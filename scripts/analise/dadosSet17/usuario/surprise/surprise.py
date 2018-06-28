@@ -78,9 +78,9 @@ def calcSurprise(num_of_points, street_sizes, all_uniform_pM, all_base_pM, all_n
   for prop in data:
 	street_size = street_sizes[prop]
 
-	surprise_data[prop] = [0 for x in range(street_size)]
-	uniform_data[prop] = [0 for x in range(street_size)]
-	base_data[prop] = [0 for x in range(street_size)]
+	surprise_data[prop] = [-999 for x in range(street_size)]
+	uniform_data[prop] = [-999 for x in range(street_size)]
+	base_data[prop] = [-999 for x in range(street_size)]
 
   #Start with equiprobably P(M)s: Uniform, base rate, normal
   #Initially, everything is equiprobable.
@@ -266,18 +266,21 @@ if __name__ == "__main__":
 	  base_rate_pM = result[4]
           normal_pM = result[5]
 
+
 	  all_uniform_pM.append(uniform_pM[-1])
 	  all_base_pM.append(base_rate_pM[-1])
 	  all_normal_pM.append(normal_pM[-1]) 
 
+	  #print ">>> Surprise data " + str(surprise_data)
 	  for dataframe in [input_data, input_data2, input_data3]:
 		  for prop in dataframe['street']:
 			street_size = street_sizes[prop]
 			if prop in surprise_data:
-				for i in range(0, street_size):
-					all_surprise[prop][i].append(surprise_data[prop][i])
-					all_uniform[prop][i].append(uniform_data[prop][i])
-					all_base[prop][i].append(base_data[prop][i])
+				if surprise_data[prop][0] != -999:
+					for i in range(0, street_size):
+						all_surprise[prop][i].append(surprise_data[prop][i])
+						all_uniform[prop][i].append(uniform_data[prop][i])
+						all_base[prop][i].append(base_data[prop][i])
 
 	#Calculating summaries
 	for dataframe in [input_data, input_data2, input_data3]:
@@ -296,3 +299,11 @@ if __name__ == "__main__":
 	#Printing surprise values summaries
 	for prop in surprise_summary:
 		print prop.encode("utf-8") + "," + ','.join(str(i) for i in surprise_summary[prop])
+
+	#Printing mean and std values for surprise
+	std_file = open("surprise_std.dat", "w")
+	for prop in all_surprise:
+		street_size = street_sizes[prop]
+		for i in range(0, street_size):
+			std_file.write(prop.encode("utf-8") + "\t" + str(np.mean(np.mean(all_surprise[prop][i]))) + "\t" + str(np.std(all_surprise[prop][i])) + "\t" + str(len(all_surprise[prop][i])) + "\n")
+	std_file.close()

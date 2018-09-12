@@ -99,7 +99,7 @@ count_profile <- function(listOfFiles, ufcg_users) {
   income_data <-filter(counters, grepl("Baixa", key) | grepl("Média", key)) %>% mutate(type="Renda") %>% mutate(percent=value/sum(value))
   counters <- rbind(gender_data, income_data, age_data)
   
-  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + ylab("") + xlab("") + theme(legend.title=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
+  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + ylab("") + xlab("") + theme(legend.title=element_blank(), legend.text=element_text(size=12), axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.text.x=element_text(size=10), strip.text.x=element_text(size=15))
   
   #Gráficos de barras para tese
   genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("Masculino", key))$value, filter(counters, grepl("Feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))

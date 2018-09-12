@@ -1,0 +1,1444 @@
+<link rel="stylesheet" href="https://contribua.org/comoecampina-static/imgs/fonts/cg.css">
+<!-- background-image: linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E), 
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E); background-image:  url("https://contribua.org/comoecampina-static/imgs/building2.png"); -->
+<style>
+	body {
+		background-color: #334759;
+		background-image: linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(30deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(150deg, #314456 12%, transparent 12.5%, transparent 87%, #314456 87.5%, #314456),
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E), 
+		linear-gradient(60deg, #34495E 25%, transparent 25.5%, transparent 75%, #34495E 75%, #34495E);
+		background-size:80px 140px;
+		background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
+	}
+	p.title-cg {
+		font-size: 28px;
+		line-height: 75px;
+		text-transform: uppercase;
+		color: #fff;
+	}
+	p.subtitle-cg {
+		font-size: 24px;
+		line-height: 64px;
+		color: #fff;
+	}
+	@media (max-width: 768px) {
+		p.title-cg {
+			font-size: 22px;
+			line-height: 32px;
+		}
+		p.subtitle-cg {
+			font-size: 18px;
+			line-height: 28px;
+		}	
+	}
+	@media screen and (min-width: 768px) {
+		#taskpresenter {
+			margin-bottom: -50px;
+		}
+	}
+	.up {
+		color: #2ecc71;
+	}
+	.down {
+		color: #e74c3c;
+	}
+	div#skeleton {
+		margin-bottom: 20px;
+	}
+	div#skeleton .col-xs-6 {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	div#skeleton-finished {
+		margin-bottom: 40px;
+		color: #fff;
+	}
+	div#logo {
+		margin-top: 40px;
+		margin-bottom: 40px;
+	}
+	#imgs-wrapper {
+		margin: auto;
+	}
+	#imgs-wrapper-2 {
+		margin: auto;
+	}
+	#imgs-wrapper-3 {
+		margin: auto;
+	}
+	p.big {
+		font-size: 1.3em;
+	}
+	div.div-thumbnail:hover {
+		cursor: pointer;
+	}
+	canvas { 
+		border: 1px solid #ccc 
+	}
+	img.img-thumbnail {
+		border-color: #fff;
+	}
+	img.img-safety-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-safety-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	img.img-nice-up {
+		background-color: #2ecc71;
+		border-color: #2ecc71;
+	}
+	img.img-nice-down {
+		background-color: #e74c3c;
+		border-color: #e74c3c;
+	}
+	div.score {
+		margin-top: 20px;
+		margin-bottom: 10px;
+	}
+	div.separator {
+		height: 23px;
+	}
+	.btn-rounded {
+	    position: relative;
+	    top: -75px;
+	    width: 180px;
+	    height: 180px;
+		border-radius: 50%;
+	    margin-bottom: -50px;
+	    font-size: 28px;
+	    z-index: 1;
+	    background-color: #d8ce02;
+	    border: solid 6px #fff;
+	    transition: all 1s;
+	    color: #fff;
+	     display: inline-flex;
+  		flex-direction: row;
+  		justify-content: center;
+  		align-items: center;
+	}
+	@media (max-width: 768px) {
+		.btn-rounded {
+			width: 130px;
+	    		height: 130px;	
+			font-size: 20px;
+		}
+	}
+	.btn-rounded:hover {
+	    background-color: #f9f03b;
+	    border: solid 6px #fff;
+	}
+	span.icon-cg {
+		font-size: 7em;
+	    transition: all 0.5s;
+	    color: #fff;
+	}
+	span.icon-cg-up {
+		font-size: 5em;
+		color: #2ecc71;
+	}
+	span.icon-cg-up-lg {
+		font-size: 4em;
+		color: #2ecc71;
+	}
+	span.icon-cg-down {
+		font-size: 5em;
+		color: #e74c3c;
+	}
+	span.icon-cg-down-lg {
+		font-size: 4em;
+		color: #e74c3c;
+	}
+	@media(max-width: 768px) {
+		span.icon-cg-down-lg,
+		span.icon-cg-up-lg {
+			font-size: 3em;
+			line-height: 67px;
+		}
+	}
+	div.icon-wrapper {
+		position: absolute;
+		text-align: center;
+		width: 100%;
+		top: 50%;
+		margin-top: -45px;
+		margin-left: -15px;
+	}
+	@media(max-width: 768px) {
+		div.icon-wrapper {
+			margin-left: -5px;
+		}
+	}
+	.alert {
+		position: fixed;
+		z-index: 999;
+		right: 20px;
+	}
+	.modal p {
+		font-size: 14px;
+		line-height: 16px;
+	}
+	.modal-sm .modal-header {
+		padding: 0;
+	}
+	.modal-sm .modal-header .close {
+		position: absolute;
+		top: 5px;
+		right: 8px;
+		color: #fff;
+		opacity: 1;
+	}
+	.modal-sm .modal-header img {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+	@media (min-width: 768px) {
+		.modal-sm {
+		  width: 450px;
+		}
+	}
+	.modal-backdrop.in {
+		opacity: 0.8;
+	}
+	.carousel-indicators {
+		bottom: 0;
+		margin-bottom: 0;
+	}
+	.carousel-indicators li {
+		border-color: #34495E;
+	}
+	.carousel-indicators .active {
+		background-color: #34495E;
+	}
+	label {
+		font-weight: bold;
+	}
+	#userProgress {
+		margin-top: 10px;
+	}
+</style>
+<div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl" style="display:none;">
+	<!-- Success and Error Messages for the user -->
+	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
+		<li class="fa fa-2x fa-check pull-left"></li> <strong id="i18n_welldone_text"> Your answer has been saved!</strong>
+	</div>
+	<div id="stop_option" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+		<!--<i class="icon-ok"></i><strong> Sua resposta foi salva!</strong> -->
+		<li class="fa fa-2x fa-check pull-left"></li> <strong id="i18n_stop_text"> Your profile form has been saved! You're not requested to answer all comparisons, feel comfortable to stop when you want</strong>
+	</div>
+	<div id="loading" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+		<span id="i18n_loading_next_task">Loading next task...</span>
+	</div>
+	<div id="why" class="alert alert-info alert-dismissible" role="alert" style="display:none;">
+		<li class="fa fa-exclamation-triangle"></li> <span id="i18n_action_missed">Circle at least one element in the picture that helps explaining why you choose it!</span>
+	</div>
+	<div id="error" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+		<strong id="i18n_error">Ops! Something wrong.</strong>
+		<br/>
+		<div class="alert-actions">
+			<a id="i18n_reload" class="btn btn-danger" href="/project/comoecampinanaomoradores/newtask">Reload</a>
+		</div>
+	</div>
+	<!-- End Success and Error Messages for the user -->
+
+	<!-- Tutorial -->
+	<div id="modalTutorial" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
+	  <div class="modal-dialog modal-sm">
+	    <div class="modal-content" ng-init="tab = 1">
+		  <!-- tab1 -->
+	      <div id="tab1" ng-show="tab === 1">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_01.png" alt="Como é Campina" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p align="justify"><strong id="i18n_welcome">Welcome</strong>. <span id="i18n_welcome_msg">Your contribution is very important to us so that we can build information about pleasant streets in Campina Grande, Paraíba. </span></p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 2"><span id="i18n_next">Next</span></button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab1 -->
+		  <!-- tab2 -->
+	      <div id="tab2" ng-show="tab === 2">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_02.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p align="justify"><span id="i18n_tutorial1">Give your opinion by choosing from the four pictures</span> <span class="up" id="i18n_most_pleasant1">the most pleasant</span> <span id="i18n_and">and</span> <span class="down" id="i18n_least_pleasant1">the least pleasant</span>, <span id="i18n_confirm">confirming then</span>.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 3"><span id="i18n_next2">Next</span></button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab2 -->
+		  <!-- tab3 -->
+<!--
+	      <div id="tab3" ng-show="tab === 3">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_03.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p align="justify">Faça o mesmo para os lugares <span class="up">mais seguros</span> e <span class="down">menos seguros</span>. </p>
+			<!-- <p><b>É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!</b></p> --> 
+			<!--<p align="justify"><b>As questões sobre agradabilidade e segurança irão aparecer misturadas, então tenha cuidado em qual questão você está respondendo!</b></p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 4">Próximo</button>
+		      	</div>
+		      </div>
+	      </div> -->
+	      <div id="tab4" ng-show="tab === 3">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar" style="color:#334759"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_04.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p align="justify"> <span id="i18n_place">For</span> <span class="up" id="i18n_most_pleasant2">the most pleasant</span>, <span id="i18n_mark_image">you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element</span>!</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" ng-click="tab = 4"><span id="i18n_next3">Next</span></button>
+		      	</div>
+		      </div>
+	      </div>
+	      <div id="tab5" ng-show="tab === 4">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar" style="color:#334759"><span aria-hidden="true">&times;</span></button>
+		        <img src="https://contribua.org/comoecampina-static/imgs/tutorial_05.gif" alt="" width="100%">
+		      </div>
+		      <div class="modal-body">
+		      	<p align="justify"><span id="i18n_same">Do the same for</span> <span class="down" id="i18n_least_pleasant2">the least pleasant</span>! </p>
+			<p align="justify"><span id="i18n_tutorial2">Depending on the amount of answers already given by other contributors a lot of comparisons may be available for being answered, but you're not requested to answer them all! The amount of comparisons that you feel comfortable to answer is a great help to us</span>.</p>
+		      	<div class="text-center">
+		      		<button class="btn btn-default" data-dismiss="modal" aria-label="Começar"><span id="i18n_start">Start</span></button>
+		      	</div>
+		      </div>
+	      </div>
+	      <!--  END tab3 -->
+
+	      <div class="modal-footer">
+	      	<ol class="carousel-indicators">
+				<li ng-click="tab = 1" ng-class="{active:tab === 1}"></li>
+				<li ng-click="tab = 2" ng-class="{active:tab === 2}"></li>
+				<!--<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li> -->
+				<li ng-click="tab = 3" ng-class="{active:tab === 3}"></li>
+				<li ng-click="tab = 4" ng-class="{active:tab === 4}"></li>
+			</ol>
+	      </div>
+
+	    </div>
+	  </div>
+	</div>
+	<!-- END Tutorial -->
+
+	<!-- Profile -->
+	<div id="modalProfile" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Instruções" aria-hidden="true">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content active" ng-init="tabprof = 1">
+				<div id="tab1" ng-show="tabprof === 1">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+				        </div>
+					<div class="modal-body">
+						<p align="justify" style="font-size:120%;"> <span id="i18n_info">We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them? Our analysis will be completely performed with anonymized data, so we will not take a look specifically at your data and neither relate them to you.</span></p>
+						<div class="text-center">
+							<button class="btn btn-primary" ng-click="tabprof = 2"><span id="i18n_yes">Yes</span></button>
+							<button type="button" class="btn btn-default" data-dismiss="modal"><span id="i18n_no">No</span></button>
+						</div>
+					</div>
+				</div>
+				 <div id="tab2" ng-show="tabprof === 2">
+					<div class="modal-header">
+						<h4 class="modal-title"> <span id="i18n_more">Tell us a bit more about you </span></h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label for="userage"><span id="i18n_age">Age</span>:</label>
+								<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
+							</div>
+							<div class="form-group">
+								<label for="usersex"><span id="i18n_sex">Sex</span>:</label>
+								<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
+									<option value="M" id="i18n_men">Man</option>  
+									<option value="F" id="i18n_women"> Woman</option>  				
+								</select>
+							</div>
+							<div class="form-group">
+								<!--<label for="userclass">Classe Social (renda mensal):</label> -->
+								<label for="userclass"><span id="i18n_income">Considering those responsible for the maintenance of your house, the sum of their income in a month fits into which range</span>?</label>
+								<select class="form-control" id="userclass" name="userclass" ng-model="userProfile.clas">
+									<option value="alta" id="i18n_alta">$ 4,422.89 (R$ 14.500) or more</option>  
+									<option value="media alta" id="i18n_med_alta">$ 2,211.45 (R$ 7.250) to $ 4,422.88 (R$ 14.499,99)</option>  
+									<option value="media" selected id="i18n_media">$ 884.58 (R$ 2.900) to $ 2,211.44 (R$ 7.249,99)</option>  
+									<option value="media baixa" id="i18n_med_baixa">$ 442.29 (R$ 1.450) to $ 884.57 (R$ 2.899,99)</option>  
+									<option value="baixa" id="i18n_baixa"> less than $ 442.28 (R$ 1.449,99)</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="usercity"><span id="i18n_city">In which city do you currently live</span>:</label>
+								<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
+							</div>
+							<div class="form-group">
+								<label for="knowcampina"><span id="i18n_know_campina">Do you know the city of Campina Grande, Paraíba</span>?</label>
+								<select class="form-control" id="knowcampina" name="knowcampina" ng-model="userProfile.knowcampina">
+									<option value="yes" id="i18n_yes2">Yes</span></option>  
+									<option value="no" id="i18n_no2">No</span></option>  				
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="howknowcampina"><span id="i18n_how_know_campina">Which of these alternatives fits you best</span>?</label>
+								<select class="form-control" id="howknowcampina" name="howknowcampina" ng-model="userProfile.howknowcampina">
+									<option value="live" id="i18n_live">Live in the city</option>  
+									<option value="study" id="i18n_study">Only study in the city</option>  				
+									<option value="work" id="i18n_work">Only work in the city</option>  				
+									<option value="turism" id="i18n_turism">I visit or visited the city sporadically</option>  				
+									<option value="never"id="i18n_never">Never visited the city</option>  				
+								</select>
+							</div>
+							<label for="neig"><span id="i18n_neig">Do you travel to or from any of these neighborhoods in Campina Grande, Paraíba</span>?</label>
+							<div class="row">
+								<div class="col-sm-4" ng-repeat="item in neighborhood">
+									<div class="checkbox">
+										<label for="{{item.id}}">
+											<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} -->
+		                                <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
+										</label>
+									</div>
+								</div>
+							</div>
+						</form>
+						<br>
+						<div class="text-center">
+							<button type="button" class="btn btn-primary" ng-click="tabprof = 3"><span id="i18n_continue">Continue</span></button>
+						</div>
+					</div>
+					<!--<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">Continuar</button>
+					</div>-->
+			</div>
+			<div id="tab3" ng-show="tabprof === 3">
+				<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Fechar"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<p align="justify" style="font-size:120%;"><span id="i18n_form_thanks">Thanks for answering these questions! Now for us to save your data please answer the next photo comparison</span>.</p>
+					<div class="text-center">
+						<button type="button" class="btn btn-primary" data-dismiss="modal"><span id="i18n_continue2">Continue</span></button>
+					</div>
+				</div>
+				
+			</div>
+
+			<div class="modal-footer">
+			      	<ol class="carousel-indicators">
+						<li ng-click="tabprof = 1" ng-class="{active:tabprof === 1}"></li>
+						<li ng-click="tabprof = 2" ng-class="{active:tabprof === 2}"></li>
+						<li ng-click="tabprof = 3" ng-class="{active:tabprof === 3}"></li>
+				</ol>
+		      </div>
+		</div>
+	     </div>
+	</div><!-- /.modal -->
+	<!-- END Profile -->
+
+	<!-- Task skeleton -->
+	<div id="skeleton">
+		
+		<div class="score" ng-style="readyToAnswer() && {'display': 'none'} || {'display': 'block'}">
+			<div class="row" ng-show="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-safety-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg"><span id="i18n_question1">Which place looks</span> <strong class="up"><span id="i18n_safer">safer</span></strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-safety-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg"><span id="i18n_question2">Which place looks</span> <strong class="down"><span id="i18n_less_safe">less safe</span></strong>?</p>
+					</div>
+				</div>
+			</div>
+			<div class="row" ng-hide="isSelectingSafety()">
+				<div ng-show="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-up-lg iconcg-nice-up"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg"><span id="i18n_question3">Which place looks</span> <strong class="up"><span id="i18n_more_pleasant1">more pleasant</span></strong>?</p>
+					</div>
+				</div>
+				<div ng-hide="selectingTheMost()">
+					<div class="col-xs-2 col-sm-3 text-right">
+						<span class="icon-cg-lg icon-cg-down-lg iconcg-nice-down"></span>
+					</div>
+					<div class="col-xs-10 col-sm-9">
+						<p class="title-cg"><span id="i18n_question4">Which place looks</span> <strong class="down"><span id="i18n_less_pleasant1">less pleasant</span></strong>?</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div resize class="col-sm-12" ng-show="task_phase === 1">
+			<p class="title-cg" align="center"><span id="i18n_mark_question1">What in the picture makes it</span> <strong class="up"><span id="i18n_more_pleasant2">more pleasant</span></strong>?</p>
+		</div>
+		<div resize class="col-sm-12" ng-show="task_phase === 2">
+			<p class="title-cg" align="center"><span id="i18n_mark_question2">What in the picture makes it</span> <strong class="down"><span id="i18n_less_pleasant2">less pleasant</span></strong>?</p>
+		</div>
+
+		<div id="imgs-wrapper" resize ng-style="style()" ng-show="task_phase === 0">
+			<div class="row">
+				<div
+					id="imgA"
+					class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+					ng-click="select(task.info.url_a)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_a)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_a}}"
+						ng-class="isSelected(task.info.url_a)">
+				</div>
+				<div
+					id="imgB"
+					class="col-xs-6 col-lg-5 div-thumbnail"
+					ng-click="select(task.info.url_b)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_b)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_b}}"
+						ng-class="isSelected(task.info.url_b)">
+				</div>
+			</div>
+			<div class="separator text-center" resize ng-style="style()">
+				<button
+					id="btn-answer"
+					class="btn btn-rounded"
+					ng-show="readyToAnswer()"
+					ng-click="nextPhase()"><span class="fa fa-check-circle-o"></span>&nbsp<span id="i18n_confirm2">Confirm</span></button>
+			</div>
+			<div class="row">
+				<div
+					id="imgC"
+					class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+					ng-click="select(task.info.url_c)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_c)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_c}}"
+						ng-class="isSelected(task.info.url_c)">
+				</div>
+				<div
+					id="imgD"
+					class="col-xs-6 col-lg-5 div-thumbnail"
+					ng-click="select(task.info.url_d)">
+					<div class="icon-wrapper">
+						<span
+							class="icon-cg"
+							ng-class="isSelectedIcon(task.info.url_d)"></span>
+					</div>
+					<img
+						class="img-thumbnail" width="100%" alt=""
+						ng-src="{{task.info.url_d}}"
+						ng-class="isSelected(task.info.url_d)">
+				</div>
+			</div>
+		</div>
+		
+		<div id="imgs-wrapper-2" resize ng-style="style()" ng-show="task_phase === 1">
+			<div class="row">
+				<!--<div class="col-md-8 col-md-offset-2"> -->
+				<div class="col-sm-12" align="center">
+						<canvas id="canvas1"></canvas>
+				</div>	
+			</div>
+			<br> <br>
+			<div class="row">
+				<div class="col-sm-12">
+					<p class="subtitle-cg" align="center"> <span id="i18n_mark_instruction1">Click or touch and drag to circle</span> <font color="yellow"><span id="i18n_mark_instruction2">up to 3 elements</span></font> <span id="i18n_mark_instruction3">in the picture</span>.</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<button id="reset" class="btn btn-warning btn-block"><span id="i18n_restart1">Reset marks</span></button>
+				</div>
+				<div class="col-sm-6">
+					<button id="nextImage" class="btn btn-success btn-block" ng-click="nextPhase()"><span id="i18n_finish_mark1">Finished marking</span></button>
+				</div>
+			</div>
+					
+		</div>
+
+		<div id="imgs-wrapper-3" resize ng-style="style()" ng-show="task_phase === 2">
+			<div class="row">
+				<!--<div class="col-md-8 col-md-offset-2">	-->
+				<div class="col-sm-12" align="center">
+						<canvas id="canvas2"></canvas>
+				</div>	
+			</div>
+			<br> <br>
+			<div class="row">
+				<div class="col-sm-12">
+					<p class="subtitle-cg" align="center"> <span id="i18n_mark_instruction1_2">Click or touch and drag to circle</span> <font color="yellow"><span id="i18n_mark_instruction2_2">up to 3 elements</span></font> <span id="i18n_mark_instruction3_2">in the picture</span>.</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<button id="reset2" class="btn btn-warning btn-block"><span id="i18n_restart2">Reset marks</span></button>
+				</div>
+				<div class="col-sm-6">
+					<button id="taskFinished" class="btn btn-success btn-block" ng-click="saveTask()"><span id="i18n_finish_mark2">Finished marking</span></button>
+				</div>
+			</div>
+		</div>
+	<br> <br>
+
+	</div>
+	<!-- END Task skeleton -->
+	<!-- Task skeleton finished -->
+	<div id="skeleton-finished" class="text-center" style="display:none;">
+		<div class="row">
+			<div id="logo" class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+				<img src="https://contribua.org/comoecampina-static/imgs/logo.png" alt="Como é Campina?" width="100%">
+			</div>
+		</div>
+		<p class="big"><span id="i18n_congrat">Congratulations! You have completed all tasks</span>.</p>
+		<p><span id="i18n_help">But this project still needs your help</span>.<br><span id="i18n_help2">Help us to spread about the project</span>.</p>
+		<p class="big">
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-twitter"></span></a>
+			&nbsp;&nbsp;
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-facebook"></span></a>
+			&nbsp;&nbsp;
+			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-google-plus"></span></a>
+		</p>
+	</div>
+	<!-- User progress -->
+	<div id="others-controls">
+		<!--<div class="row">
+			<div id="userProgress" class="col-lg-10 col-lg-offset-1">
+				<div class="progress">
+					<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{userProgress.done}}" aria-valuemin="0" aria-valuemax="{{userProgress.total}}" ng-style="{'width': (userProgress.progress | number : 2) + '%'}">
+						<span class="sr-only">{{userProgress.progress | number : 2}}%</span>
+					</div>
+				</div>
+			</div>
+		</div> -->
+		<div class="row">
+			<div class="col-sm-9 col-sm-offset-1 text-center">
+				      <a id="cantchoose" href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()" ng-show="task_phase === 0"><font size="5" style="color:white"><span id="i18n_equals">I can't choose</span></font></a> 
+			</div>
+			<div class="col-sm-2 text-right">
+             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5" style="color:white"><span id="i18n_help_btn">Help</span></font></a>
+			</div>
+		</div>
+	</div>
+	<br> <br> <br>
+	<!-- END User progress -->
+</div>
+<!-- END ALL -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-cookies.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+<script src="https://contribua.org/comoecampina-static/imgs/dist/fabric.js"></script>
+<!--<script src="https://contribua.org/comoecampina-static/imgs/kinetic-v4.7.2.min.js" type="text/javascript"></script>
+<script src="https://contribua.org/comoecampina-static/imgs/game.js"></script> -->
+<script>
+// Default language
+var userLocale = "pt_br";
+// Translations
+var messages = {"en": {
+                        "i18n_welldone_text": "Your answer has been saved!",
+                        "i18n_stop_text": "Your profile form has been saved! You're not requested to answer all comparisons, feel comfortable to stop when you want",
+                        "i18n_loading_next_task": "Loading next task...",
+                        "i18n_action_missed": "Circle at least one element in the picture that helps explaining why you choose it!",
+                        "i18n_error": "Ops! Something wrong.",
+                        "i18n_reload": "Reload",
+                        "i18n_welcome": "Welcome",
+                        "i18n_welcome_msg": "Your contribution is very important to us so that we can build information about pleasant streets in Campina Grande, Paraíba.",
+                        "i18n_next": "Next",
+                        "i18n_tutorial1": "Give your opinion by choosing from the four pictures",
+                        "i18n_most_pleasant1": "the most pleasant",
+                        "i18n_most_pleasant2": "the most pleasant",
+                        "i18n_and": "and",
+                        "i18n_least_pleasant1": "the least pleasant",
+                        "i18n_least_pleasant2": "the least pleasant",
+			"i18n_tutorial2" : "Depending on the amount of answers already given by other contributors a lot of comparisons may be available for being answered, but you're not requested to answer them all! The amount of comparisons that you feel comfortable to answer is a great help to us",
+                        "i18n_confirm": "confirming then",
+                        "i18n_next2": "Next",
+			"i18n_next3": "Next", 
+			"i18n_place": "For the",
+			"i18n_mark_image": "you can now mark in the picture the main elements that motivated you to choose that picture. For that you may click, or touch, and drag to circle each element",
+			"i18n_same": "Do the same for the",
+			"i18n_start": "Start",
+			"i18n_info": "We would like to know a bit more about you and for this we would like to ask you some questions, can you answer them? Our analysis will be completely performed with anonymized data, so we will not take a look specifically at your data and neither relate them to you.",
+			"i18n_yes": "Yes",
+			"i18n_no": "No",
+			"i18n_yes2": "Yes",
+			"i18n_no2": "No",
+			"i18n_more": "Tell us a bit more about you",
+			"i18n_age": "Age",
+			"i18n_sex": "Sex",
+			"i18n_men": "Man",
+			"i18n_women": "Woman",
+			"i18n_income": "Considering those responsible for the maintenance of your house, the sum of their income in a month fits into which range",
+			"i18n_alta": "$ 4,422.89 (R$ 14.500) or more",
+			"i18n_med_alta": "$ 2,211.45 (R$ 7.250) to $ 4,422.88 (R$ 14.499,99)",
+			"i18n_media": "$ 884.58 (R$ 2.900) to $ 2,211.44 (R$ 7.249,99)",
+			"i18n_med_baixa": "$ 442.29 (R$ 1.450) to $884.57 (R$ 2.899,99)",
+			"i18n_baixa": "less than $ 442.28 (R$ 1.449,99)",
+			"i18n_city": "In which city do you currently live",
+			"i18n_know_campina": "Do you know the city of Campina Grande, Paraíba",
+			"i18n_how_know_campina": "Which of these alternatives fits you best",
+			"i18n_live": "Live in the city",
+			"i18n_study": "Only study in the city",
+			"i18n_work": "Only work in the city",
+			"i18n_turism": "I visit or visited the city sporadically",
+			"i18n_never": "Never visited the city",
+			"i18n_neig": "Do you travel to or from any of these neighborhoods in Campina Grande, Paraíba",
+			"i18n_continue": "Continue",
+			"i18n_continue2": "Continue",
+			"i18n_form_thanks": "Thanks for answering these questions! Now for us to save your data please answer the next photo comparison",
+			"i18n_question1": "Which place looks",
+			"i18n_question2": "Which place looks",
+			"i18n_question3": "Which place looks",
+			"i18n_question4": "Which place looks",
+			"i18n_safer": "safer",
+			"i18n_less_safe": "less safe",
+			"i18n_more_pleasant1": "more pleasant",
+			"i18n_more_pleasant2": "more pleasant",
+			"i18n_less_pleasant1": "less pleasant",
+			"i18n_less_pleasant2": "less pleasant",
+			"i18n_mark_question1": "What in the picture makes it",
+			"i18n_mark_question2": "What in the picture makes it",
+			"i18n_confirm2": "Confirm",
+			"i18n_mark_instruction1": "Click or touch and drag to circle",
+			"i18n_mark_instruction1_2": "Click or touch and drag to circle",
+			"i18n_mark_instruction2": "up to 3 elements",
+			"i18n_mark_instruction2_2": "up to 3 elements",
+			"i18n_mark_instruction3": "in the picture",
+			"i18n_mark_instruction3_2": "in the picture",
+			"i18n_restart1": "Reset marks",
+			"i18n_restart2": "Reset marks",
+			"i18n_finish_mark1": "Finished marking",
+			"i18n_finish_mark2": "Finished marking",
+			"i18n_congrat": "Congratulations! You have completed all tasks",
+			"i18n_help": "But this project still needs your help",
+			"i18n_help2": "Help us to spread about the project",
+			"i18n_equals": "I can't choose",
+			"i18n_help_btn": "Help",								
+                      },
+        "pt_br": {
+                        "i18n_welldone_text": "Sua resposta foi salva!",
+                        "i18n_stop_text": "Seu questionário foi salvo! Lembre-se que você não é obrigado a responder todas as comparações, você pode parar assim que desejar",
+                        "i18n_loading_next_task": "Carregando próxima tarefa...",
+                        "i18n_action_missed": "Circule ao menos um elemento na imagem que ajude a explicar o porquê você a escolheu!",
+                        "i18n_error": "Ops! Algo errado.",
+                        "i18n_reload": "Recarregar",
+                        "i18n_welcome": "Seja bem-vindo",
+                        "i18n_welcome_msg": "Sua contribuição é muito importante para podermos construir informação sobre ruas agradáveis em Campina Grande, Paraíba.",
+                        "i18n_next": "Próximo",
+                        "i18n_tutorial1": "Dê sua opinião escolhendo dentre as quatro imagens o lugar",
+                          "i18n_most_pleasant1": "o mais agradável",
+                        "i18n_most_pleasant2": "o mais agradável",
+                        "i18n_and": "e o",
+                        "i18n_least_pleasant1": "menos agradável",
+                        "i18n_least_pleasant2": "menos agradável", 
+			"i18n_tutorial2" : "Dependendo da quantidade de respostas já fornecidas pelos outros contribuidores uma grande quantidade de comparações podem estar disponíveis para serem respondidas. Você não é obrigado a responder todas! A quantidade de respostas que você se sentir confortável de nos fornecer é uma grande ajuda para nós",
+                        "i18n_confirm": "confirmando em seguida",
+                        "i18n_next2": "Próximo",
+			"i18n_next3": "Próximo",
+			"i18n_place": "Para o local",
+			"i18n_mark_image": "você agora pode marcar na imagem os principais elementos que motivaram essa escolha. Para isso basta clicar, ou tocar, e arrastar para circular cada elemento",
+			"i18n_same": "Faça o mesmo para o local",
+			"i18n_start": "Começar",
+			"i18n_info": "Gostaríamos de conhecer um pouco mais sobre você e para isso gostaríamos de lhe fazer algumas perguntas, você poderia respondê-las? Nossa análise irá trabalhar com dados anonimizados, então não iremos avaliar especificamente seus dados e nem relacioná-los a você.",
+			"i18n_yes": "Sim",
+			"i18n_no": "Não",
+			"i18n_yes2": "Sim",
+			"i18n_no2": "Não",
+			"i18n_more": "Conte-nos um pouco mais sobre você",
+			"i18n_age": "Idade",
+			"i18n_sex": "Sexo",
+			"i18n_men": "Masculino",
+			"i18n_women": "Feminino",
+			"i18n_income": "Considerando os responsáveis pelo sustento da sua casa, a soma de seus rendimentos mensais se enquadra em que faixa",
+			"i18n_alta": "R$ 14.500ou mais",
+			"i18n_med_alta": "R$ 7.250 a R$ 14.499,99",
+			"i18n_media": "R$ 2.900 a R$ 7.249,99",
+			"i18n_med_baixa": "R$ 1.450 a R$ 2.899,99",
+			"i18n_baixa": "menos de R$ 1.449,99",
+			"i18n_city": "Em qual cidade você mora atualmente",
+			"i18n_know_campina": "Você conhece a cidade de Campina Grande - Paraíba",
+			"i18n_how_know_campina": "Qual destas alternativas se enquadra melhor para você",
+			"i18n_live": "Moro na cidade",
+			"i18n_study": "Apenas estudo na cidade",
+			"i18n_work": "Apenas trabalho na cidade",
+			"i18n_turism": "Visito ou visitei esporadicamente a cidade",
+			"i18n_never": "Nunca visitei a cidade",
+			"i18n_neig": "Você frequenta ou frequentou algum destes bairros em Campina Grande - Paraíba",
+			"i18n_continue": "Continuar",
+			"i18n_continue2": "Continuar",
+			"i18n_form_thanks": "Muito obrigado por responder a estas perguntas! Agora para que possamos salvar os seus dados por favor responda à próxima comparação de fotos",
+			"i18n_question1": "Qual lugar lhe parece",
+			"i18n_question2": "Qual lugar lhe parece",
+			"i18n_question3": "Qual lugar lhe parece",
+			"i18n_question4": "Qual lugar lhe parece",
+			"i18n_safer": "mais seguro",
+			"i18n_less_safe": "menos seguro",
+			"i18n_more_pleasant1": "mais agradável",
+			"i18n_more_pleasant2": "mais agradável",
+			"i18n_less_pleasant1": "menos agradável",
+			"i18n_less_pleasant2": "menos agradável",
+			"i18n_mark_question1": "O que na imagem a torna",
+			"i18n_mark_question2": "O que na imagem a torna",
+			"i18n_confirm2": "Confirmar",
+			"i18n_mark_instruction1": "Clique ou toque e arraste para circular",
+			"i18n_mark_instruction1_2": "Clique ou toque e arraste para circular",
+			"i18n_mark_instruction2": "até 3 elementos",
+			"i18n_mark_instruction2_2": "até 3 elementos",
+			"i18n_mark_instruction3": "na imagem",
+			"i18n_mark_instruction3_2": "na imagem",
+			"i18n_restart1": "Reiniciar marcação",
+			"i18n_restart2": "Reiniciar marcação",
+			"i18n_finish_mark1": "Terminei de marcar",
+			"i18n_finish_mark2": "Terminei de marcar",
+			"i18n_congrat": "Parabéns! Você completou todas as tarefas",
+			"i18n_help": "Mas esse projeto ainda precisa de ajuda",
+			"i18n_help2": "Ajude-nos a divulgar o projeto",
+			"i18n_equals": "Não consigo escolher",
+			"i18n_help_btn": "Ajuda",
+                      },
+               };
+
+function i18n_translate() { 
+    // Update userLocale with server side information
+    pybossaLocale = document.getElementById('PYBOSSA_USER_LOCALE').textContent.trim();
+    if (pybossaLocale !== null && pybossaLocale !== undefined){
+	if (pybossaLocale.length > 0 && messages.hasOwnProperty(pybossaLocale)){
+		userLocale = pybossaLocale;
+	}
+    }
+
+    var ids = Object.keys(messages[userLocale]);
+    for (i=0; i<ids.length; i++) {
+        //console.log("Translating: " + ids[i] + " to " + userLocale);
+        // document.getElementById(ids[i]).innerHTML = messages[userLocale][ids[i]]; -> Error!
+	document.getElementById(ids[i]).textContent = messages[userLocale][ids[i]];
+    }
+}
+
+	var apiUrl = 'https://contribua.org/api/';
+	var projectId = '583';
+	var formProfileStep = 6;
+	var app = angular.module('CampinaApp', ['ngCookies']);
+	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
+		$scope.height = window.innerHeight;
+		$scope.width = window.innerWidth;
+		$scope.tab = 1;
+		$scope.tabprof = 1;
+		$scope.userProgress = {
+			user_id: '',
+			total: 0,
+			done: 0,
+			progress: 0 
+		}
+		$scope.userProfile = {
+			age: 0,
+			sex: '',
+			rel: '',
+			clas: '',
+			educ: '',
+			city: '',
+			knowcampina: '',
+			howknowcampina: '',
+			neig: []
+		}
+		$scope.shouldSaveProfile = false;
+		$scope.neighborhood = [
+			{
+				id: 'cen',
+				name: 'Centro'
+			},
+			{
+				id: 'lib',
+				name: 'Liberdade'
+			},
+			{
+				id: 'cat',
+				name: 'Catolé'
+			}
+		];
+		$scope.setNeighborhood = function(add, item) {
+			if (add) {
+				$scope.userProfile.neig.push(item)
+			} else {
+				for (var i=0; i < $scope.userProfile.neig.length; i++) {
+					if ($scope.userProfile.neig[i] == item) {
+						$scope.userProfile.neig.splice(i, 1);
+					}
+				}
+			}
+		};
+		$scope.task_phase = 0;//Used to controll task phases: select best and worst image, mark points in best image, mark points in worst image
+
+		var showTutorial = function() {
+  			var hasDisplayedTutorial = $cookies.get('cg-tutorial');
+  			if (typeof hasDisplayedTutorial == "undefined") {
+	    			$cookies.put('cg-tutorial', 'true');
+				$('#modalTutorial').modal();
+    			} else {
+    				return;
+    			}
+		}
+		var showProfileForm = function() {
+			$('#modalProfile').modal();
+		}
+		var getUserProfile = function() {
+			//Iterating through previous profiles
+			var foundInPrevious = false;
+			/*for (i = 0; i < previousProfilesData.length; i++){
+				var currentProfile = previousProfilesData[i];
+				if (currentProfile.id == $scope.userProgress.user_id){//previous answer found
+					$scope.userProfile = currentProfile.userProfile;
+					$scope.userProfile.age = parseInt($scope.userProfile.age);
+					foundInPrevious = true;
+                  			//alert("Encontrei!");
+				}
+			}*/
+
+			
+			if (!foundInPrevious){//Profile not found in previous version, searching at task-run
+				var finishTime;
+				var offset = 0;
+
+				$http.get(apiUrl+'taskrun?project_id='+projectId+'&user_id='+$scope.userProgress.user_id+'&offset='+offset)
+					.then(function(response) {
+						var i;
+						if (response.data.length !== 0) {
+							for (i = 0; i < response.data.length; i++) {
+								var currentData = response.data[i];
+								// Checks if already have any profile data
+								if (typeof currentData.info.userProfile != "undefined") {
+									var currentFinishTime = new Date(currentData.finish_time);
+									if (finishTime == null || currentFinishTime > finishTime) {
+										finishTime = currentFinishTime;
+										$scope.userProfile = currentData.info.userProfile;
+										$scope.userProfile.age = parseInt($scope.userProfile.age);
+									}
+								}
+							}
+						}
+						// Calls the form profile if still have data to fill
+						if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
+								$scope.userProfile.sex === '' ||
+								$scope.userProfile.clas === '' ||
+								$scope.userProfile.knowcampina === '' ||
+								$scope.userProfile.howknowcampina === '' ||
+								$scope.userProfile.city === '' || $scope.userProfile.neig.length === 0) {
+							$scope.shouldSaveProfile = true;
+							showProfileForm();
+						} else {
+							$scope.shouldSaveProfile = false;
+						}
+					});
+			}else{//Checking if profile found in previous version is complete
+              	
+				if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
+					$scope.userProfile.sex === '' ||
+					$scope.userProfile.clas === '' ||
+					$scope.userProfile.knowcampina === '' ||
+					$scope.userProfile.howknowcampina === '' ||
+					$scope.userProfile.city === '' || $scope.userProfile.neig.length === 0) {
+						$scope.shouldSaveProfile = true;
+						showProfileForm();
+				} else {
+                  			//alert("Encontrei prev cheio!");
+					$scope.shouldSaveProfile = false;
+				}
+			}
+			return;
+		}
+
+		var getUserProgress = function() {
+			// console.log('Loading user progress...');
+			$http.get(apiUrl+'project/'+projectId+'/userprogress').then(function(response) {
+					$scope.userProgress.user_id = response.data.user_id;
+					$scope.userProgress.total = response.data.total;
+					$scope.userProgress.done = response.data.done;
+					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
+
+					// Get user profile (10 steps)
+					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
+						getUserProfile();
+					}
+				}, function getUserProgressErrorCallback(response) {
+					console.log('Request failed');
+					$('#error').show();
+					$('#skeleton').hide();
+				});
+		}
+
+		//Variables related to marking images!
+		var allowedPointsSize = 3;
+		var avoidPath = false;
+		var selectedPoints = [[],[],[]];
+		var selectedPointsMost = [[],[],[]];//[[],[],[]]?
+		var selectedPointsLess = [[],[],[]];//[[],[],[]]?
+		var canvas = null;
+		var markedElements = 0;
+
+		var newTask = function() {
+			$scope.task_phase = 0;
+			getUserProgress();
+			i18n_translate();
+
+			$('#loading').fadeIn();
+			$http.get(apiUrl+'project/'+projectId+'/newtask').then(function(response) {
+					// Checks if theres no more tasks for the user
+					if (typeof response.data.id != 'undefined') {
+						$('#loading').hide();
+						document.getElementById("taskpresenter").style.display = "block";
+
+						$scope.task = response.data;
+						console.log('Loaded task '+$scope.task.id+' '+$scope.task.info.question);
+						$scope.answer = {
+							question: $scope.task.info.question,
+							theMost: '',
+							theLess: '',
+							markMost: '',
+							markLess: ''
+						}
+						$scope.selectingTheMost = function() {
+							return ($scope.answer.theMost === '' && $scope.answer.theLess === '');
+						}
+						$scope.selectingTheLess = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess === '');
+						}
+						$scope.readyToAnswer = function() {
+							return ($scope.answer.theMost !== '' && $scope.answer.theLess !== '');
+						}
+						$scope.isSelectingSafety = function() {
+							return ($scope.task.info.question === 'seguro');
+						}
+						$scope.isSelected = function(answer) {
+							return {
+								'img-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'img-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'img-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'img-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+						//Choosing icon to be presented for pleasantness or safety according to best or worst image selected
+						$scope.isSelectedIcon = function(answer) {
+							return {
+								'icon-cg-up iconcg-safety-up': ($scope.isSelectingSafety() && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-safety-down': ($scope.isSelectingSafety() && $scope.answer.theLess === answer),
+								'icon-cg-up iconcg-nice-up': (!($scope.isSelectingSafety()) && $scope.answer.theMost === answer),
+								'icon-cg-down iconcg-nice-down': (!($scope.isSelectingSafety()) && $scope.answer.theLess === answer)
+							}
+						}
+
+						//Selecting best or worst image
+						$scope.select = function(answer) {
+							if ($scope.selectingTheMost()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theMost = answer;
+								}
+							} else if ($scope.selectingTheLess()) {
+								if ($scope.answer.theMost === answer) {
+									$scope.answer.theMost = '';
+								} else {
+									$scope.answer.theLess = answer;
+								}
+							} else {
+								$scope.answer.theLess = '';
+							}
+						}
+						
+						$scope.nextPhase = function() {
+							$scope.task_phase = $scope.task_phase + 1;
+					
+							//Selecting and initing canvas according to phase (most or less image being evaluated)
+							if ($scope.task_phase === 1){
+								var canvasID = "canvas1";
+								var resetID = "reset";
+							}else if (markedElements > 0) {//Checking if at least one element was marked on best image!
+								var canvasID = "canvas2";
+								var resetID = "reset2";
+								selectedPointsMost = selectedPoints.slice();
+								canvas.clear();
+							}else{
+								$scope.task_phase = $scope.task_phase - 1;
+								$("#why").fadeIn();
+								setTimeout(function() { $("#why").fadeOut() }, 1500);
+								return;
+							}
+
+							markedElements = 0;
+							avoidPath = false;
+							selectedPoints = [[],[],[]];
+
+							/*canvas = document.getElementById(canvasID);
+							canvas.width = 0.26 * window.innerWidth;
+							canvas.height = 0.42 * window.innerHeight;*/
+
+							//Load canvas background image
+						        function loadImage(){
+								if ($scope.task_phase === 1){
+									var currentImage = $scope.answer.theMost;
+								}else{
+									var currentImage = $scope.answer.theLess;
+								}
+								fabric.Image.fromURL(currentImage, function(oImg) {
+									oImg.width = canvas.width;
+									oImg.height = canvas.height;
+									canvas.add(oImg);
+									canvas.renderAll();
+									markedElements = 0;
+									selectedPoints = [[],[],[]];
+									var objects = canvas.getObjects();
+									for (var j = 0; j < objects.length; j++){
+										objects[j].selectable = false;
+									}	
+									canvas.selection = false;
+									canvas.isDrawingMode = true;	
+								});
+							}
+	
+							//Restart canvas
+							function reset_draw(){
+								if (markedElements === allowedPointsSize){
+									avoidPath = true;
+								}
+								//alert(canvas.freeDrawingBrush._points);
+								canvas.clear();
+								loadImage();
+							}
+
+							//Init canvas from Fabric.js
+							function configFabric() {
+								//alert("Chamei fabric!");
+								var $ = function(id){return document.getElementById(id)};
+								
+								if (canvas !== null){
+									canvas.dispose();
+									canvas.clear();
+								}
+								canvas = this.__canvas = new fabric.Canvas(canvasID, {
+								   	isDrawingMode: true,
+									selection: false
+								});
+
+								if (screen.width <= 768){//For phones use whole width
+									canvas.setWidth(window.innerWidth * 0.8);
+									canvas.setHeight((window.innerWidth*0.8)/1.3333);
+								}else if (screen.width <= 1200){
+									canvas.setWidth(500);
+									canvas.setHeight(375);
+								}else{
+									canvas.setWidth(600);
+									canvas.setHeight(450);
+								}
+
+		
+								fabric.Object.prototype.transparentCorners = false;
+
+								var drawingColorEl = "#005E7A",
+								      drawingShadowColorEl = "#005E7A",
+								      drawingLineWidthEl = 10,
+								      drawingShadowWidth = 0,
+								      drawingShadowOffset = 0,
+								      clearEl = $(resetID);
+
+								clearEl.onclick = function() { reset_draw(); };
+
+								  
+								if (canvas.freeDrawingBrush) {
+									
+									canvas.freeDrawingBrush.color = drawingColorEl;
+									canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl, 10) || 1;
+									canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+										blur: parseInt(drawingShadowWidth, 10) || 0,
+										offsetX: 0,
+										offsetY: 0,
+										affectStroke: true,
+										color: drawingShadowColorEl
+									});
+
+									canvas.freeDrawingBrush.onMouseMove = function(pointer){
+										if (markedElements < allowedPointsSize && !(avoidPath)){
+										      this._captureDrawingPath(pointer);
+										      // redraw curve
+										      // clear top canvas
+										      this.canvas.clearContext(this.canvas.contextTop);
+										      this._render();
+										}
+									}
+
+									canvas.freeDrawingBrush.onMouseDown = function(pointer){
+										if (markedElements < allowedPointsSize){
+										      this._prepareForDrawing(pointer);
+										      // capture coordinates immediately
+										      // this allows to draw dots (when movement never occurs)
+										      this._captureDrawingPath(pointer);
+										      this._render();
+										      avoidPath = false;
+										}
+									}
+
+									canvas.freeDrawingBrush.onMouseUp = function(){
+										 if (markedElements < allowedPointsSize){
+											selectedPoints[markedElements] = canvas.freeDrawingBrush._points.slice();
+											markedElements = markedElements + 1;
+											this._finalizeAndAddPath();
+										}
+									}
+							      }
+							}
+							//alert("Vou chamar fabric!");
+							configFabric();
+							loadImage();
+						}	
+
+						// Save task
+						$scope.saveTaskTie = function(){
+							$scope.answer.theMost = 'equal';
+							$scope.answer.theLess = 'equal';
+							
+							$scope.saveTask();
+						}
+
+						$scope.saveTask = function() {
+							//Checking if at least one element was marked on worst image!
+							if ($scope.answer.theMost !== 'equal' && markedElements === 0){
+								$("#why").fadeIn();
+								setTimeout(function() { $("#why").fadeOut() }, 1500);
+								return;
+							}
+
+							//Checking if user profile should be persisted
+							var show_stop_option = false;
+							if ($scope.shouldSaveProfile === true) {
+								$scope.userProfile.city = document.getElementById("usercity").value;
+								$scope.answer.userProfile = $scope.userProfile;
+								$scope.shouldSaveProfile = false;
+								show_stop_option = true;
+							}
+
+							//Retrieving and formatting marked points on best and worst image for output
+							selectedPointsLess = selectedPoints;
+							if ( $scope.answer.theMost !== 'equal'){//Retrieving spots!
+								
+								var allPoints = "[";
+								var separator;
+								for (var j = 0; j < allowedPointsSize; j++){
+									separator = "";
+									if (j > 0){
+										separator = ",";
+									}
+									allPoints = allPoints + separator + "[";
+									for (var i = 0; i < selectedPointsMost[j].length; i++){
+										if (i > 0){
+											separator = ",";
+										}else{
+											separator = "";
+										}
+										allPoints = allPoints + separator + "[" + selectedPointsMost[j][i].x+","+selectedPointsMost[j][i].y+"]";
+									}
+									allPoints = allPoints + "]";
+								}
+								allPoints = allPoints + "]";
+								//alert(allPoints);
+								$scope.answer.markMost = allPoints;
+
+								allPoints = "[";
+								for (var j = 0; j < allowedPointsSize; j++){
+									separator = "";
+									if (j > 0){
+										separator = ",";
+									}
+									allPoints = allPoints + separator + "[";
+									for (var i = 0; i < selectedPointsLess[j].length; i++){
+										if (i > 0){
+											separator = ",";
+										}else{
+											separator = "";
+										}
+										allPoints = allPoints + separator + "[" + selectedPointsLess[j][i].x+","+selectedPointsLess[j][i].y+"]";
+									}	
+									allPoints = allPoints + "]";
+								}	
+								allPoints = allPoints + "]";								
+								//alert(allPoints);
+								$scope.answer.markLess = allPoints;
+							}
+
+							//Building answer to be persisted
+							var taskrun = {
+								'project_id': $scope.task.project_id,
+								'task_id': $scope.task.id,
+								'info': $scope.answer
+							};
+
+							//Clearing canvas
+							if ( $scope.answer.theMost !== 'equal'){
+								canvas.clear();
+								markedElements = 0;
+								selectedPoints = [[],[],[]];
+								selectedPointsLess = [[],[],[]];
+								selectedPointsMost = [[],[],[]];
+							}
+
+							//Saving task answers
+							taskrun = JSON.stringify(taskrun);
+							//alert(taskrun);
+							//console.log(taskrun);
+
+							//Asking for points in most and least preferred images
+							//Saving in database!
+							$http.post(apiUrl+'taskrun', taskrun).then(function(response) {
+								// console.log('Saved!');
+								$("#skeleton").fadeOut(0);
+								if (show_stop_option){
+									$("#stop_option").fadeIn();
+								}else{
+									$("#success").fadeIn();
+								}
+								// After save, calls a new task again
+								newTask();
+								$("#skeleton").fadeIn(1000);
+								setTimeout(function() { $("#success").fadeOut() }, 1000);
+							}, function saveTaskErrorCallback(response) {
+								$('#error').show();
+							});
+
+					      }
+					} else {
+						$('#skeleton').hide();
+						$('#loading').hide();
+						$('#skeleton-finished').show();
+						$('#others-controls').hide();
+						$('.row .col-md-12 p').hide();
+					}
+				}, function newTaskErrorCallback(response) {
+					console.log('Request failed');
+					$('#error').show();
+					$('#skeleton').hide();
+				});
+		}
+		newTask();
+		showTutorial();
+	}]);
+
+	app.directive('resize', function ($window) {
+	    return function (scope, element) {
+	        var w = angular.element($window);
+	        scope.getWindowDimensions = function () {
+	            return {
+	                'h': w.height(),
+	                'w': w.width()
+	            };
+	        };
+	        scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+	            scope.windowWidth = newValue.w;
+	            scope.windowHeight = newValue.h;
+
+	            scope.viewportWidth = newValue.h*1.1;
+
+	            scope.style = function () {
+	            	if (scope.windowHeight*1.1 < scope.windowWidth) {
+		                return {
+	                        	'width': (scope.viewportWidth) + 'px'
+		                };
+	            	} else {
+	            		return;
+	            	}
+	            };
+
+	        }, true);
+
+	        w.bind('resize', function () {
+	            scope.$apply();
+	        });
+	    }
+	});
+
+	//Google autocomplete
+  	var cityInput = document.getElementById('usercity');
+	var options = {
+		types: ['(cities)']
+	};
+	var autocomplete = new google.maps.places.Autocomplete(cityInput, options);
+	var pacContainerInitialized = false; 
+	$('#usercity').keypress(function() { 
+	    if (!pacContainerInitialized) { 
+		      $('.pac-container').css('z-index', '10000'); 
+		      pacContainerInitialized = true;  
+	    } 
+	});
+
+</script>
+
+<!-- Nazareno:
+#### Interface/app
+* 1. Tirar a 1a e 3a exclamações do texto de descrição do pp (do parágrafo _agora, estamos interessados em inv…_ inclusive, tira essa vírgula também :)
+* 2. Na 2a tela do tutorial, reduz esse texto: “É importante perceber que ora irão aparecer questões sobre agradabilidade e ora questões sobre segurança! Então verifique sempre qual a questão que está sendo apresentada no momento!” (E esse ora aí não é hora não?)
+* 3. A tela de “conte-nos um pouco mais sobre você” aparece meio abruptamente. que tal se aparecesse primeiro algo como “queríamos lhe perguntar mais sobre você“, e quando a pessoa desse o ok ela caísse no form?
+* 4. Não tinha a parte de clicar no que você mais gostou/menos gostou na foto não?
+* 5. Os elementos da página são carregados em uma ordem meio estranha: primeiro aparece o texto todos desengonçado, e depois começam a aparecer as fotos, né. pergunta a jeff se não tem como melhorar isso
+* 6. Voltei pro ruascampina, e a pergunta que fica no topo da página não me diz o que é pra fazer. e tem um espaço estranho entre o título e as fotos.
+* 7. (tela da marcação) o espaço entre a letra azul e a branca, o alinhamento dos elementos que tem que ter uma lógica perceptível (tudo no mesmo ponto à esquerda por exemplo). talvez seja bom seguir a mesmo leiaute da parte anterior da tarefa, com a foto grande no centro da tela. aí acho que esse monte de texto junto da imagem precisa sair. pode ser algo como “clique/toque (dependendo se é no celular) no que nessa foto faz ela ser o melhor lugar”. e aí os botões de reiniciar e próxima precisam ficar um pouco mais longe um do outro e serem no mesmo look and feel da outra tela.
+* 8. Na parte do formulário do “conte-nos mais”, acho que precisamos tirar o termo “Classe social".  a renda mensal é mesmo da pessoa? ou da família? não está claro
+* 9. Na parte da marcação está aparecendo o “Não consigo escolher!“. É pra aparecer? E aliás, tira essa exclamação também
+* 10. E a do _Tarefa concluída!_ também
+
+#### Contribua
+* 1. Aida clicou no login via facebook e depois de logar ela foi levada pra uma tela pra editar o perfil que pede pra ela editar o email dela. quando ela editou, o contribua salvou mas não mandou ela de volta pra a tarefa. acho que isso não pode ficar assim. por que não pegamos o email do facebook já e depois de logada a pessoa já cai na tarefa? -> em signin.html não estava sendo repassado o next da requisição para as urls de logins de Facebook e Google, apesar de se testar se o next era nulo ou não! Para o Google, não existe um parametro na url (next) que possa ser utilizado para repassar a URL sem erro, então foi criada uma variável local no google.py para armazenar a url de redirecionamento.
+-->
+
+<!-- David:
+* 1. Imagem muito pequena no celular e sem resize quando muda orientação!
+* 2. Marcar com pincel não funcionou no celular!
+-->
+
+<!-- Luiz:
+1. Mudança muito sutil entre agradável e seguro! Deixar mais claro?? Outra aplicação??
+* 2. Marcar mais de uma coisa?? As tres principais?? Arvores em mais de um lado??
+-->
+
+<!-- Paulo:
+1. Zoom nas imagens na hora de escolher a melhor e a pior
+-->
+
+
+
+

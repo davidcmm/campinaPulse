@@ -11,6 +11,11 @@
 		background-size:80px 140px;
 		background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
 	}
+	/*body {
+		background-image: url("https://contribua.org/icones/FUNDO 02.png");
+		background-position: center;
+		background-size: cover;
+	}*/
 	p.title-cg {
 		font-size: 28px;
 		line-height: 75px;
@@ -191,7 +196,7 @@
 		margin-top: 10px;
 	}
 </style>
-<div id="taskpresenter" ng-app="CampinaApp" ng-controller="MainController as MainCtrl">
+<div id="taskpresenter" ng-app="LiberdadeApp" ng-controller="MainController as MainCtrl">
 	<!-- Success and Error Messages for the user -->
 	<div id="success" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
 		<span class="glyphicon glyphicon-ok"></span><strong> Sua resposta foi salva!</strong>
@@ -277,18 +282,19 @@
 				</div>
 				<div class="modal-body">
 					<form>
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label for="userage">Idade:</label>
 							<input class="form-control" id="userage" type="number" min="1" max="120" step="1" name="userage" ng-model="userProfile.age">
-						</div>
+						</div>-->
 						<div class="form-group">
 							<label for="usersex">Sexo:</label>
 							<select class="form-control" id="usersex" name="usersex" ng-model="userProfile.sex">
 								<option value="M">Masculino</option>  
 								<option value="F">Feminino</option>  				
+								<option value="O">Outro</option>
 							</select>
 						</div>
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label for="userrel">Estado Civil:</label>
 							<select class="form-control" id="userrel" name="userrel" ng-model="userProfile.rel">
 								<option value="casado">Casado</option>
@@ -306,32 +312,40 @@
 								<option value="media baixa">Média Baixa (R$ 1.450 a R$ 2.899,99)</option>  
 								<option value="baixa">Baixa (até R$ 1.449,99)</option>
 							</select>
-						</div>
+						</div> -->
 						<div class="form-group">
-							<label for="usereduc">Grau de formação:</label>
-							<select class="form-control" id="usereduc" name="usereduc" name="userclass" ng-model="userProfile.educ">
-								<option value="doutorado">Doutorado</option>  
-								<option value="mestrado">Mestrado</option>  
-								<option value="graduacao" selected>Graduação</option>  
-								<option value="ensino medio">Ensino Médio</option>  
-								<option value="ensino fundamental">Ensino Fundamental</option>
+							<label for="usereduc">Escolaridade:</label>
+							<select class="form-control" id="usereduc" name="usereduc" name="usereduc" ng-model="userProfile.educ">
+								<option value="basica"selected>Educação Básica</option>  
+								<option value="fundamental">Ensino Fundamental</option>  
+								<option value="medio">Ensino Médio</option>  
+								<option value="superior">Ensino Superior</option>  
+<!--								<option value="ensino fundamental">Ensino Fundamental</option> -->
 							</select>
 						</div>
 						<div class="form-group">
+							<label for="live">Reside no bairro da Liberdade - Campina Grande?</label>
+							<select class="form-control" id="live" name="useredliveuc" name="live" ng-model="userProfile.live">
+								<option value="sim"selected>Sim</option>  
+								<option value="nao">Não</option>  
+							</select>
+						</div>
+						<!--<div class="form-group">
 							<label for="usercity">Cidade:</label>
 							<input class="form-control" id="usercity" name="usercity" type="text" ng-model="userProfile.city">
-						</div>
+						</div> -->
+						<!-- 
 						<p>Quais desses bairros você frequenta?</p>
 						<div class="row">
 							<div class="col-sm-4" ng-repeat="item in neighborhood">
 								<div class="checkbox">
 									<label for="{{item.id}}">
-										<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} -->
-                                        <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
+									<!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)"> {{item.name}} --> 
+                                        <!-- <input type="checkbox" id="{{item.id}}" name="{{item.id}}" ng-model="check" ng-change="setNeighborhood(check, item.id)" ng-checked="userProfile.neig.indexOf(item.id) > -1"> {{item.name}}
 									</label>
 								</div>
 							</div>
-						</div>
+						</div> -->
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -345,18 +359,18 @@
 	<!-- Task skeleton -->
 	<div id="skeleton">
 		<div class="score" ng-style="readyToAnswer() && {'visibility': 'hidden'} || {'visibility': 'visible'}">
-			<div class="col-xs-2 col-sm-3 text-right">
-				<span class="icon-cg-lg icon-cg-up-lg iconcg-nice-up"></span>
+			<div class="col-xs-1 col-sm-1">
+				<span class="icon-cg-lg icon-cg-up-lg iconcg-safety-up"></span>
 			</div>
-			<div class="col-xs-10 col-sm-9">
-				<p class="title-cg">Qual lugar lhe parece <strong class="up">mais agradável</strong>?</p>
+			<div class="col-xs-11 col-sm-11">
+				<p class="title-cg">&nbsp;&nbsp;&nbsp; Ao caminhar na rua, em qual das vias você se sente <strong class="up">mais seguro</strong>?</p>
 			</div>
 		</div>
 		<div id="imgs-wrapper" resize ng-style="style()">
 			<div class="row">
 				<div
 					id="imgA"
-					class="col-xs-6 col-lg-5 col-lg-offset-1 div-thumbnail"
+					class="col-xs-6 col-lg-6 div-thumbnail"
 					ng-click="select(task.info.url_a,task.info.url_b)">
 					<div class="icon-wrapper">
 						<span
@@ -364,14 +378,14 @@
 							ng-class="isSelectedIcon(task.info.url_a)"></span>
 					</div>
 					<img
-						class="img-thumbnail" width="100%" alt=""
+						class="img-thumbnail" alt=""
 						ng-src="{{task.info.url_a}}"
 						ng-class="isSelected(task.info.url_a)">
 				</div>
 			
 				<div
 					id="imgB"
-					class="col-xs-6 col-lg-5 div-thumbnail"
+					class="col-xs-6 col-lg-6 div-thumbnail"
 					ng-click="select(task.info.url_b,task.info.url_a)">
 					<div class="icon-wrapper">
 						<span
@@ -379,7 +393,7 @@
 							ng-class="isSelectedIcon(task.info.url_b)"></span>
 					</div>
 					<img
-						class="img-thumbnail" width="100%" alt=""
+						class="img-thumbnail" alt=""
 						ng-src="{{task.info.url_b}}"
 						ng-class="isSelected(task.info.url_b)">
 				</div>
@@ -395,9 +409,9 @@
 				<img src="https://contribua.org/comoecampina-static/imgs/logo.png" alt="Como é Campina?" width="100%">
 			</div>
 		</div>
-		<p class="big">Parabéns! Você completou todas as tarefas.</p>
-		<p>Mas esse projeto ainda precisa de ajuda.<br>Ajude-nos a divulgar o projeto.</p>
-		<p class="big">
+		<p class="title-cg">Parabéns! Você completou todas as tarefas.</p>
+		<p class="title-cg">Mas esse projeto ainda precisa de ajuda.<br>Ajude-nos a divulgar o projeto.</p>
+		<p class="title-cg">
 			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-twitter"></span></a>
 			&nbsp;&nbsp;
 			<a href="https://twitter.com/contribua" target="_blank"><span class="icon icon-facebook"></span></a>
@@ -418,10 +432,10 @@
 		</div>
 		<div class="row">
 			<div class="col-md-9 col-md-offset-1 text-center">
-				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5">Não consigo escolher!</font></a> 
+				      <a href="#" class="btn btn-link btn-sm" data-toggle="modal" ng-click="saveTaskTie()"><font size="5" color="white">Não consigo escolher!</font></a> 
 			</div>
 			<div class="col-md-2 text-right">
-             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5">Ajuda</font></a>
+             			 <a href="#" class="btn btn-link btn-sm" data-toggle="modal" data-target="#modalTutorial" ng-click="tab = 1"><font size="5" color="white">Ajuda</font></a>
 			</div>
 		</div>
 	</div>
@@ -434,9 +448,9 @@
 <script>
 
 	var apiUrl = 'https://contribua.org/api/';
-	var projectId = '589';
-	var formProfileStep = 10;
-	var app = angular.module('CampinaApp', ['ngCookies']);
+	var projectId = '590';
+	var formProfileStep = 1;
+	var app = angular.module('LiberdadeApp', ['ngCookies']);
 	app.controller('MainController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
 		$scope.userProgress = {
 			user_id: '',
@@ -445,13 +459,12 @@
 			progress: 0 
 		}
 		$scope.userProfile = {
-			age: 0,
+			//age: 0,
 			sex: '',
-			rel: '',
-			clas: '',
+			//rel: '',
+			//clas: '',
 			educ: '',
-			city: '',
-			neig: []
+			live: ''
 		}
 		$scope.shouldSaveProfile = false;
 		$scope.neighborhood = [
@@ -480,13 +493,13 @@
 			}
 		};
 		var showTutorial = function() {
-  			var hasDisplayedTutorial = $cookies.get('cg-tutorial');
-  			if (typeof hasDisplayedTutorial == "undefined") {
-    			$cookies.put('cg-tutorial', 'true');
-				$('#modalTutorial').modal();
-    		} else {
-    			return;
-    		}
+  			//var hasDisplayedTutorial = $cookies.get('cg-tutorial');
+  			//if (typeof hasDisplayedTutorial == "undefined") {
+    			//	$cookies.put('cg-tutorial', 'true');
+			//	$('#modalTutorial').modal();
+	    		//} else {
+	    		//	return;
+	    		//}
 		}
 		var showProfileForm = function() {
 			$('#modalProfile').modal();
@@ -494,21 +507,9 @@
 		var getUserProfile = function() {
 			//Iterating through previous profiles
 			//alert("Get user");
-			var foundInPrevious = false;
-			//for (i = 0; i < previousProfilesData.length; i++){
-			//	var currentProfile = previousProfilesData[i];
-			//	if (currentProfile.id == $scope.userProgress.user_id){//previous answer found
-			//		$scope.userProfile = currentProfile.userProfile;
-			//		$scope.userProfile.age = parseInt($scope.userProfile.age);
-			//		foundInPrevious = true;
-                  			//alert("Encontrei!");
-			//	}
-			//}
+			//var foundInPrevious = false;
 
-			
-			//showProfileForm();
-
-			if (!foundInPrevious){//Profile not found in previous version, searching at task-run
+			/*if (!foundInPrevious){//Profile not found in previous version, searching at task-run
 				var finishTime;
 				var offset = 0;
          			//  	alert("Nao Encontrei prev!");
@@ -525,7 +526,7 @@
 									if (finishTime == null || currentFinishTime > finishTime) {
 										finishTime = currentFinishTime;
 										$scope.userProfile = currentData.info.userProfile;
-										$scope.userProfile.age = parseInt($scope.userProfile.age);
+										//$scope.userProfile.age = parseInt($scope.userProfile.age);
 									}
 								}
 							}
@@ -533,12 +534,9 @@
 						// console.log($scope.userProfile);
 						// Calls the form profile if still have data to fill
 						// Neighborhood is not required
-						if (	$scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
-								$scope.userProfile.sex === '' ||
-								$scope.userProfile.rel === '' ||
-								$scope.userProfile.clas === '' ||
+						if (	$scope.userProfile.sex === '' ||
 								$scope.userProfile.educ === '' ||
-								$scope.userProfile.city === '') {
+								$scope.userProfile.live === '') {
 							$scope.shouldSaveProfile = true;
 							showProfileForm();
 						} else {
@@ -546,42 +544,46 @@
 						}
 					});
 			}else{//Checking if profile found in previous version is complete
-              	
-				if ($scope.userProfile.age === '' || $scope.userProfile.age === 0 ||
-					$scope.userProfile.sex === '' ||
-					$scope.userProfile.rel === '' ||
-					$scope.userProfile.clas === '' ||
+				if (	$scope.userProfile.sex === '' ||
 					$scope.userProfile.educ === '' ||
-					$scope.userProfile.city === '') {
+					$scope.userProfile.live === '') {
 					$scope.shouldSaveProfile = true;
 					showProfileForm();
 				} else {
                   	//alert("Encontrei prev cheio!");
 					$scope.shouldSaveProfile = false;
 				}
+			}*/
+			if (	$scope.userProfile.sex === '' ||
+								$scope.userProfile.educ === '' ||
+								$scope.userProfile.live === '') {
+				$scope.shouldSaveProfile = true;
+				showProfileForm();
 			}
 			return;
 		}
 		var getUserProgress = function() {
 			// console.log('Loading user progress...');
-			$http.get(apiUrl+'project/'+projectId+'/userprogress')
-				.then(function(response) {
-					$scope.userProgress.user_id = response.data.user_id;
-					$scope.userProgress.total = response.data.total;
-					$scope.userProgress.done = response.data.done;
-					$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
+			//$http.get(apiUrl+'project/'+projectId+'/userprogress')
+			//	.then(function(response) {
+					//$scope.userProgress.user_id = response.data.user_id;
+			//		$scope.userProgress.total = response.data.total;
+			//		$scope.userProgress.done = response.data.done;
+			//		$scope.userProgress.progress = ($scope.userProgress.total === 0) ? 0 : ($scope.userProgress.done*100)/$scope.userProgress.total;
 					// console.log($scope.userProgress);
 
 					// Get user profile (10 steps)
 					//getUserProfile();
+					$scope.userProgress.done = $scope.userProgress.done + 1;
 					if ($scope.userProgress.done > 0 && $scope.userProgress.done % formProfileStep === 0) {
 						getUserProfile();
 					}
-				}, function getUserProgressErrorCallback(response) {
-					console.log('Request failed');
-					$('#error').show();
-					$('#skeleton').hide();
-				});
+			//	}, function getUserProgressErrorCallback(response) {
+			//		console.log('Request failed');
+			//		$('#error').show();
+			//		$('#skeleton').hide();
+			//	});
+			return;
 		}
 		var newTask = function() {
 			getUserProgress();
@@ -644,7 +646,7 @@
 						}
 						$scope.saveTask = function() {
 							if ($scope.shouldSaveProfile === true) {
-								$scope.userProfile.city = document.getElementById("usercity").value;
+								//$scope.userProfile.city = document.getElementById("usercity").value;
 								$scope.answer.userProfile = $scope.userProfile;
 								$scope.shouldSaveProfile = false;
 							}
@@ -718,16 +720,16 @@
 	});
 
 	//Google autocomplete
-	var cityInput = document.getElementById('usercity');
-	var options = {
-		types: ['(cities)']
-	};
-	var autocomplete = new google.maps.places.Autocomplete(cityInput, options);
-	var pacContainerInitialized = false; 
-	$('#usercity').keypress(function() { 
-	    if (!pacContainerInitialized) { 
-	      $('.pac-container').css('z-index', '10000'); 
-	      pacContainerInitialized = true;  
-	    } 
-	}); 
+	//var cityInput = document.getElementById('usercity');
+	//var options = {
+	//	types: ['(cities)']
+	//};
+	//var autocomplete = new google.maps.places.Autocomplete(cityInput, options);
+	//var pacContainerInitialized = false; 
+	//$('#usercity').keypress(function() { 
+	//    if (!pacContainerInitialized) { 
+	//      $('.pac-container').css('z-index', '10000'); 
+	//      pacContainerInitialized = true;  
+	//    } 
+	//}); 
 </script>

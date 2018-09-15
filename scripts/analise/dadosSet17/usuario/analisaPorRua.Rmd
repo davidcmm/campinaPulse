@@ -301,7 +301,7 @@ count_profile <- function(listOfFiles) {
   income_data <-filter(counters, grepl("Baixa", key) | grepl("Média", key)) %>% mutate(type="Renda") %>% mutate(percent=value/sum(value))
   counters <- rbind(gender_data, income_data, age_data)
   
-  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + xlab("") + ylab("") + theme(legend.title=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
+  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + xlab("") + ylab("") + theme(legend.title=element_blank(), legend.text=element_text(size=12), axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.text.x=element_text(size=10), strip.text.x=element_text(size=15))
   
   #Gráficos de barras para tese
   genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("Masculino", key))$value, filter(counters, grepl("Feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))
@@ -356,11 +356,7 @@ count_profile <- function(listOfFiles) {
   income_data <-filter(counters, grepl("Baixa", key) | grepl("Média", key)) %>% mutate(type="Renda") %>% mutate(percent=value/sum(value))
   counters <- rbind(gender_data, income_data, age_data)
   
-  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + xlab("") + ylab("") + theme(legend.title=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())
-  
-  #Gráficos de barras para tese
-  genero <- data.frame( classe=c("Masculino", "Feminino"), valor=c(filter(counters, grepl("Masculino", key))$value, filter(counters, grepl("Feminino", key))$value) ) %>% mutate(percent=valor/sum(valor))
-  gen_plot <- ggplot(genero, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Gênero") + ylab("Percentual")
+  polar <- ggplot(data=counters, aes(x=factor(1), y=percent, fill = factor(key))) + geom_bar(width = 1, stat="identity") + facet_grid(facets=.~type) + coord_polar(theta="y") + xlab("") + ylab("") + theme(legend.title=element_blank(), legend.text=element_text(size=12), axis.text.y=element_blank(), axis.ticks.y=element_blank(), axis.text.x=element_text(size=10), strip.text.x=element_text(size=15))
   
   renda <- data.frame( classe=c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"), valor=c(72, 47,  83, 51, 50) ) %>% mutate(percent=valor/sum(valor))
   renda$classe <- factor(renda$classe, levels = c("Baixa", "Média Baixa", "Média", "Média Alta", "Alta"))
@@ -370,7 +366,7 @@ count_profile <- function(listOfFiles) {
   idade$classe <- factor(idade$classe, levels = c("18-", "18 a 24", "25 a 34", "35 a 44", "45 a 54", "55+"))
   ida_plot <- ggplot(idade, aes(x=classe, y=percent, fill=classe)) + geom_bar(width=1, stat="identity") + xlab("Idade") + ylab("Percentual")
   
-  multiplot(polar, gen_plot, ren_plot, ida_plot, cols=1)
+  multiplot(polar, ren_plot, ida_plot, cols=1)
   ggsave("polar.pdf", plot=polar, width=10, height=5)
 }
 

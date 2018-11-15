@@ -10,14 +10,15 @@ import json, urllib
 import numpy as np
 
 #User profiles summary dictionaries
-user_age = {}
+#user_age = {}
 user_sex = {}
-user_class = {}
 user_educ = {}
 user_live = {}
-user_city = {}
-user_time = {}
-user_rel = {}
+profiles_detailed = {"M" : {"live" : {"sim" : 0, "nao" : 0}, "educ" : {"basica" : 0, "fundamental" : 0, "medio" : 0, "superior" : 0} }, "F": {"live" : {"sim" : 0, "nao" : 0}, "educ" : {"basica" : 0, "fundamental" : 0, "medio" : 0, "superior" : 0} }, "O" : {"live" : {"sim" : 0, "nao" : 0}, "educ" : {"basica" : 0, "fundamental" : 0, "medio" : 0, "superior" : 0} } }
+#user_class = {}
+#user_city = {}
+#user_time = {}
+#user_rel = {}
 user_neig = {'cen' : 0, 'cat' : 0, 'lib' : 0}
 empty = 0
 
@@ -64,6 +65,7 @@ def countSummary(profileInfo):
 				user_live[live] = user_live[live] + 1
 			else:
 				user_live[live] = 1	
+			profiles_detailed[sex]["live"][live] = profiles_detailed[sex]["live"][live] + 1
 	#	if len(currentClass) > 0:
 	#		if currentClass in user_class.keys():
 	#			user_class[currentClass] = user_class[currentClass] + 1
@@ -74,6 +76,10 @@ def countSummary(profileInfo):
 				user_educ[educ] = user_educ[educ] + 1
 			else:
 				user_educ[educ] = 1
+			profiles_detailed[sex]["educ"][educ] = profiles_detailed[sex]["educ"][educ] + 1
+
+		#Updating general summary
+
 	#	if len(city) > 0:
 	#		if city in user_city.keys():
 	#			user_city[city] = user_city[city] + 1
@@ -127,6 +133,8 @@ def writeOutput(users_tasks):
 	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_educ.values()))+"\n")
 	output_file.write(str(user_live)+"\n")
 	output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_live.values()))+"\n")
+	output_file.write(">> Detalhamento da composição social dos grupos\n")
+	output_file.write(str(profiles_detailed)+"\n")
 	#output_file.write(str(user_city)+"\n")
 	#output_file.write(">> TOTAL RESPOSTAS " + str(np.sum(user_city.values()))+"\n")
 	#output_file.write(str(user_time)+"\n")
@@ -179,6 +187,7 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 	users_tasks = {}
 	firstDate = datetime.date(1970, 6, 24)
 	agrad_dic = {"agradavel?" : "agrad%C3%A1vel?", "agrad%C3%A1vel?" : "agradavel?"}
+	comparing_file = open("comparacoes.txt", "w")
 
 	#Reading from pybossa task-run CSV - V1
 	for line in lines1:
@@ -190,13 +199,13 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 	user_id = 0
 	#Reading from pybossa task-run CSV - V2
 	for line in lines2:
-		#print ">>> Mais uma linha " + str(index)
 		index = index + 1
 
 		data = line.split("+")
 
 		task_id = data[3]
 		user_id = user_id + 1#data[4]
+		print ">>> Mais uma linha " + str(user_id)
 		user_ip = data[5]
 		timeInfo = data[6].split("T")[0].split("-")#2015-02-17T18:19:52.589591
 		finish_time = datetime.date(int(timeInfo[0]), int(timeInfo[1]), int(timeInfo[2]))
@@ -230,11 +239,11 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 			#know =  user_profile_data['knowcampina'].strip(' \t\n\r"')
 			#howknow =  user_profile_data['howknowcampina'].strip(' \t\n\r"')
 
-			if len(city) == 0:
-				if len(user_ip) > 0:
-					response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
-					ip_data = json.loads(response.read())
-					city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
+			#if len(city) == 0:
+			#	if len(user_ip) > 0:
+			#		response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
+			#		ip_data = json.loads(response.read())
+			#		city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
 
 			#if user_executions[0]['age'] == -1:
 			#	user_executions[0]['age'] = age
@@ -257,13 +266,13 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 			#	user_executions[0]['knowcampina'] = know
 			#if len(user_executions[0]['howknowcampina'].strip(' \t\n\r"')) == 0:
 			#	user_executions[0]['howknowcampina'] = howknow
-		else:
-			if len(user_ip) > 0:
-				if len(user_executions[0]['cit'].strip(' \t\n\r"')) == 0:
-					response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
-					ip_data = json.loads(response.read())
-					city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
-					user_executions[0]['cit'] = city
+		#else:
+			#if len(user_ip) > 0:
+			#	if len(user_executions[0]['cit'].strip(' \t\n\r"')) == 0:
+			#		response = urllib.urlopen("http://ip-api.com/json/"+user_ip)
+			#		ip_data = json.loads(response.read())
+			#		city =  ip_data['city'].encode('utf-8') + "," + ip_data['country'].encode('utf-8')
+			#		user_executions[0]['cit'] = city
 			
 		#Saving photos that user evaluated
 		question = user_answer_data['question'].strip(' \t\n\r"')
@@ -277,13 +286,13 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 		#Counting wins for each side
 		if photo1 == "equal":
 			task_def = tasksDef[task_id]
-			print "eq-"+task_def['url_a']+"\t"+task_def['url_b']
+			comparing_file.write("eq-"+task_def['url_a']+"\t"+task_def['url_b']+"\n")
 		else:
 			if "Centro A" in photo1:
 				vit_A = vit_A + 1
 			else:
 				vit_B = vit_B + 1
-			print photo1 + "\t" + photo2
+			comparing_file.write(photo1 + "\t" + photo2+"\n")
 
 		#print str(photosAnsweredPerQuestion.keys())	
 		if user_id in photosAnsweredPerQuestion[question].keys():
@@ -312,8 +321,9 @@ def readUserData(lines1, lines2, outputFileName, tasksDef):
 
 		users_tasks[user_id] = user_executions
 
-	print ">>> Vitórias Lado A " + str(vit_A)
-	print ">>> Vitórias Lado B " + str(vit_B)
+	comparing_file.write(">>> Vitórias Lado A " + str(vit_A)+"\n")
+	comparing_file.write(">>> Vitórias Lado B " + str(vit_B)+"\n")
+	comparing_file.close()
 
 	return users_tasks
 

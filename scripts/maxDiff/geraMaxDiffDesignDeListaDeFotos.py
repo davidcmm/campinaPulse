@@ -54,6 +54,8 @@ def buildMaxDiff(photos_filename, user_question, output_filename):
 			else:
 				photos = random.sample( allPhotos, task_size )
 
+		print ">>> LEN PHOTOS" + str(len(photos))
+		print ">>> PHOTOS " + str(photos)
 		#Updating photos counters
 		for photo in photos:
 			if photo_count.has_key(photo):
@@ -147,7 +149,7 @@ def addMaxDiff(photos_filename, user_question, amount_new_photos, output_filenam
 	#Checking generated tasks
 	new_output_file = open(new_output_filename, "r")
 	for line in new_output_file.readlines():
-		if (not "Cristina" in line) and (not "Floriano" in line):
+		if (not "Aprigio_Veloso" in line) and (not "Rodrigues_Alves" in line):
 			print ">>>>> ERROR! LINE " + str(line.strip(' \t\n\r"'))
 		else:
 			print ">>> LINE OK"
@@ -155,7 +157,7 @@ def addMaxDiff(photos_filename, user_question, amount_new_photos, output_filenam
 
 if __name__ == "__main__":
 	if len(sys.argv) < 5:
-		print "Uso: <arquivo com lista de fotos> <questao> <arquivo de saída> <adiciona ou novo> <amount of new lines> <arquivo de saída add> <arquivo com lista antiga>"
+		print "Uso: <arquivo com todas as fotos atuais> <questao> <arquivo de saída para todas as fotos atuais> <adiciona ou novo> <quantidade de novas fotos> <arquivo de saída para novas fotos> <arquivo com todas as fotos anterior>"
 		sys.exit(1)
 
 	output_filename = sys.argv[3]
